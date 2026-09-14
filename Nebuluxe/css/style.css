@@ -142,3 +142,51 @@ footer {
     object-fit: cover; /* Ensures images fill the space without stretching */
     display: block;
 }
+/* =========================================
+   DETAIL PAGE STYLES
+   ========================================= */
+
+.detail-main {
+    padding: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    flex: 1;
+}
+
+.back-btn {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #3498db;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.back-btn:hover {
+    color: #2980b9;
+}
+
+.detail-container {
+    text-align: center;
+}
+
+.detail-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    margin-bottom: 1.5rem;
+}
+
+.detail-container h2 {
+    color: #2c3e50;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.detail-container p {
+    color: #555;
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 0 auto;
+}

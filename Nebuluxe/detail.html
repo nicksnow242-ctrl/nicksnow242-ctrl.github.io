@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Detail</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">My Portfolio</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="gallery.html" class="active">Gallery</a></li>
+                <li><a href="#" target="_blank">Web Apps</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="detail-main">
+        <!-- Back Button -->
+        <a href="gallery.html" class="back-btn">← Back to Gallery</a>
+
+        <!-- Image Container -->
+        <div class="detail-container">
+            <!-- These IDs will be targeted by our JavaScript -->
+            <img id="detail-image" src="" alt="Loading...">
+            <h2 id="detail-title">Image Title</h2>
+            <p id="detail-description">Image description goes here.</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 [Your Name]. Built with HTML, CSS, and JS.</p>
+    </footer>
+
+    <!-- Link to our JavaScript file. It must be at the bottom of the body! -->
+    <script src="js/main.js"></script>
+
+</body>
+</html>
