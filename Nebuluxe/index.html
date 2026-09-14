@@ -1315,17 +1315,14 @@ if (aboutPulldown) {
 
   // --- Functions ---
   function updateUI() {
-    // Update Icons
     playIcon.style.display = isPlaying ? 'none' : 'block';
     pauseIcon.style.display = isPlaying ? 'block' : 'none';
     playPauseBtn.title = isPlaying ? 'Pause' : 'Play';
 
-    // Update Song Info
     const currentSong = playlist[currentSongIndex];
     const songName = currentSong.split('/').pop().replace('.mp3', '').replace(/-/g, ' ');
     songTitle.textContent = songName;
 
-    // Update Album Art
     albumArtImg.src = albumArtMap[currentSong] || 'https://via.placeholder.com/180x140/1a1a2e/667eea?text=Album';
   }
 
@@ -1339,7 +1336,13 @@ if (aboutPulldown) {
     if (isPlaying) {
       audio.pause();
     } else {
-      audio.play().catch(err => console.log('Autoplay prevented:', err));
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.error("Play promise failed:", error);
+          alert("Play failed! The audio file likely didn't load. Check the console (F12) for the exact file path it's looking for.");
+        });
+      }
     }
   }
 
@@ -1353,7 +1356,7 @@ if (aboutPulldown) {
 
     currentSongIndex = nextIndex;
     audio.src = playlist[currentSongIndex];
-    audio.play().catch(err => console.log('Play error:', err));
+    audio.play().catch(err => console.error('Play error:', err));
   }
 
   function saveState() {
@@ -1377,19 +1380,18 @@ if (aboutPulldown) {
         audio.addEventListener('loadedmetadata', () => {
           audio.currentTime = state.position;
           if (state.playing) {
-            audio.play().catch(err => console.log('Autoplay prevented on restore:', err));
+            audio.play().catch(err => console.error('Autoplay prevented on restore:', err));
           }
         }, { once: true });
       } catch (e) {
         console.error('Failed to restore music state:', e);
       }
     } else {
-      // If no saved state, load the first song
       audio.src = playlist[0];
     }
   }
 
-  // --- Event Listener ---
+  // --- Event Listeners ---
   pulloutTab.addEventListener('click', togglePlayer);
   playPauseBtn.addEventListener('click', togglePlayPause);
   shuffleBtn.addEventListener('click', shuffleNext);
@@ -1398,7 +1400,21 @@ if (aboutPulldown) {
   audio.addEventListener('pause', () => { isPlaying = false; updateUI(); });
   audio.addEventListener('ended', () => shuffleNext());
 
-  // Save state when navigating away or closing tab
+  // NEW: Error listener to tell us exactly why audio is failing
+  audio.addEventListener('error', () => {
+    let errorMsg = "Unknown error";
+    if (audio.error) {
+      switch (audio.error.code) {
+        case 1: errorMsg = "Aborted"; break;
+        case 2: errorMsg = "Network Error"; break;
+        case 3: errorMsg = "Decode Error (File might be corrupted)"; break;
+        case 4: errorMsg = "File Not Found / Unsupported Format"; break;
+      }
+    }
+    console.error("🚨 AUDIO LOAD ERROR:", errorMsg, "| Attempted to load:", audio.src);
+    alert("Music Player Error: " + errorMsg + "\n\nLook at the browser Console (Press F12) to see the exact file path it tried to load.");
+  });
+
   window.addEventListener('beforeunload', saveState);
 
   // --- Initialize ---
