@@ -219,18 +219,18 @@
     <div class="ccm-11__pointer" aria-hidden="true"></div>
     <nav class="ccm-11__machine" aria-label="Sections">
       <ul class="ccm-11__wheel">
-        <li><button type="button" class="ccm-11__stop is-active" aria-pressed="true" data-url="/home">Home</button></li>
-        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="/series">Series</button></li>
-        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="/films">Films</button></li>
-        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="/live">Live</button></li>
-        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="/sports">Sports</button></li>
-        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="/kids">Kids</button></li>
-        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="/music">Music</button></li>
-        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="/my-list">My list</button></li>
+        <li><button type="button" class="ccm-11__stop is-active" aria-pressed="true" data-url="gallery.html">Gallery</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="writings.html">Writings</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="portal.html">Portal</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="other-services.html">Other Services</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="tools.html">Tools</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="events.html">Events</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="my-consumption.html">My Consumption</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="commissions.html">Commissions</button></li>
       </ul>
       <div class="ccm-11__face">
         <em>Now browsing</em>
-        <strong class="ccm-11__current">Home</strong>
+        <strong class="ccm-11__current">Gallery</strong>
         <div class="ccm-11__steer">
           <button type="button" class="ccm-11__prev" aria-label="Previous section">←</button>
           <button type="button" class="ccm-11__next" aria-label="Next section">→</button>
@@ -257,7 +257,6 @@
   let rot = 0;
   let active = 0;
 
-  // Position items in a circle
   const positionItems = () => {
     const radius = 170;
     stops.forEach((stop, i) => {
@@ -268,7 +267,6 @@
     });
   };
 
-  // Apply visual rotation to wheel and counter-rotate stops
   const applyVisualRotation = () => {
     wheel.style.transform = `rotate(${rot}deg)`;
     stops.forEach(stop => {
@@ -276,13 +274,11 @@
     });
   };
 
-  // Calculate which stop is currently at the top
   const getActiveIndex = () => {
     const rawIdx = -rot / step;
     return ((Math.round(rawIdx) % n) + n) % n;
   };
 
-  // Update the active state UI
   const updateActive = (idx) => {
     if (idx === active) return;
     active = idx;
@@ -294,7 +290,6 @@
     live.textContent = stops[active].textContent + ' selected';
   };
 
-  // Animate to a specific rotation value
   const animateTo = (targetRot, duration = 700) => {
     wheel.style.transition = `transform ${duration}ms cubic-bezier(0.3, 1, 0.35, 1)`;
     stops.forEach(s => {
@@ -308,7 +303,6 @@
     }, duration);
   };
 
-  // Navigate to a specific index using shortest path
   const goTo = (idx) => {
     idx = ((idx % n) + n) % n;
     const target = -idx * step;
@@ -326,10 +320,10 @@
   let startAngle = 0;
   let lastAngle = 0;
   let lastTime = 0;
-  let velocity = 0; // degrees per ms
+  let velocity = 0;
   let suppressNextClick = false;
   let inertiaFrame = null;
-  const DRAG_THRESHOLD = 5; // pixels of rotation before drag starts
+  const DRAG_THRESHOLD = 5;
 
   const getAngleFromCenter = (clientX, clientY) => {
     const rect = machine.getBoundingClientRect();
@@ -346,9 +340,7 @@
   };
 
   const onPointerDown = (e) => {
-    // Ignore clicks on the center face (arrows, enter button, text)
     if (e.target.closest('.ccm-11__face')) return;
-    // Only primary button
     if (e.button !== undefined && e.button !== 0) return;
 
     cancelInertia();
@@ -359,7 +351,6 @@
     lastTime = performance.now();
     velocity = 0;
 
-    // Disable transitions during drag for immediate response
     wheel.style.transition = 'none';
     stops.forEach(s => s.style.transition = 'none');
     document.body.style.userSelect = 'none';
@@ -371,12 +362,10 @@
 
     const currentAngle = getAngleFromCenter(e.clientX, e.clientY);
 
-    // Delta since last move (handle angle wrapping)
     let delta = currentAngle - lastAngle;
     if (delta > 180) delta -= 360;
     if (delta < -180) delta += 360;
 
-    // Total delta from start (to check threshold)
     let totalDelta = currentAngle - startAngle;
     if (totalDelta > 180) totalDelta -= 360;
     if (totalDelta < -180) totalDelta += 360;
@@ -387,7 +376,6 @@
       applyVisualRotation();
       updateActive(getActiveIndex());
 
-      // Track velocity (ignore large time gaps)
       const now = performance.now();
       const dt = now - lastTime;
       if (dt > 0 && dt < 100) {
@@ -399,12 +387,10 @@
   };
 
   const snapToNearest = () => {
-    // Find the nearest stop position
     const normalizedRot = ((rot % 360) + 360) % 360;
     const nearestStep = Math.round(normalizedRot / step);
     let targetRot = nearestStep * step;
 
-    // Find the shortest snap distance
     let delta = targetRot - normalizedRot;
     if (delta > 180) delta -= 360;
     if (delta < -180) delta += 360;
@@ -417,7 +403,6 @@
   };
 
   const startInertia = () => {
-    // Convert velocity (deg/ms) to deg/frame (~16ms)
     let currentVel = velocity * 16;
     const friction = 0.94;
     const minVel = 0.3;
@@ -436,7 +421,7 @@
     inertiaFrame = requestAnimationFrame(animate);
   };
 
-  const onPointerUp = (e) => {
+  const onPointerUp = () => {
     if (!isDragging) return;
     isDragging = false;
     document.body.style.userSelect = '';
@@ -445,14 +430,12 @@
     stops.forEach(s => s.style.transition = '');
 
     if (hasMoved) {
-      // It was a drag - apply inertia and suppress the upcoming click event
       suppressNextClick = true;
       startInertia();
     }
-    // If not a drag, let the natural click event handle navigation
   };
 
-  const onPointerCancel = (e) => {
+  const onPointerCancel = () => {
     if (!isDragging) return;
     isDragging = false;
     document.body.style.userSelect = '';
@@ -466,15 +449,14 @@
   positionItems();
   applyVisualRotation();
 
-  // Drag event listeners
+  // Event listeners
   machine.addEventListener('pointerdown', onPointerDown);
   document.addEventListener('pointermove', onPointerMove);
   document.addEventListener('pointerup', onPointerUp);
   document.addEventListener('pointercancel', onPointerCancel);
 
-  // Click handlers (for keyboard activation and non-drag clicks)
   stops.forEach((s, k) => {
-    s.addEventListener('click', (e) => {
+    s.addEventListener('click', () => {
       if (suppressNextClick) {
         suppressNextClick = false;
         return;
@@ -486,14 +468,11 @@
   machine.querySelector('.ccm-11__prev').addEventListener('click', () => goTo(active - 1));
   machine.querySelector('.ccm-11__next').addEventListener('click', () => goTo(active + 1));
 
-  // Enter button handler
   const handleEnter = () => {
     const activeStop = stops[active];
     const url = activeStop.getAttribute('data-url');
     if (url) {
-      console.log('Navigating to:', url);
-      alert(`Navigating to: ${url}`);
-      // window.location.href = url;
+      window.location.href = url;
     }
   };
   enterBtn.addEventListener('click', handleEnter);
