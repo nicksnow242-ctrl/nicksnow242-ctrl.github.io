@@ -363,22 +363,21 @@ html, body {
 /* ========== ABOUT PULLDOWN ========== */
 .about-pulldown {
   position: fixed;
-  top: 0;
-  left: 50%;
-  /* Slides the panel up, leaving only the bottom 60px (the header) visible */
-  transform: translateX(-50%) translateY(calc(-100% + 60px));
-  width: 90%;
-  max-width: 500px;
+  bottom: 0;
+  right: 20px;
+  /* Slides the panel down, leaving only the top 60px (the header) visible at the bottom */
+  transform: translateY(calc(100% - 60px));
+  width: 320px;
   z-index: 100;
 
-  background: rgba(25, 29, 30, 0.65);
+  background: rgba(25, 29, 30, 0.85);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
 
-  border: 1px solid rgba(0, 136, 255, 0.3);
-  border-top: none;
-  border-radius: 0 0 16px 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 255, 255, 0.4);
+  border-bottom: none;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 255, 0.1);
 
   transition: transform 0.5s cubic-bezier(0.25, 1, 0.3, 1), box-shadow 0.5s ease;
   cursor: pointer;
@@ -387,15 +386,15 @@ html, body {
 }
 
 .about-pulldown:hover {
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 136, 255, 0.2);
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(0, 255, 255, 0.2);
 }
 
 .about-pulldown.is-open {
-  transform: translateX(-50%) translateY(0);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 136, 255, 0.3);
+  transform: translateY(0);
+  box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 255, 255, 0.3);
 }
 
-/* ========== HEADER (now at bottom of panel, so it stays visible when closed) ========== */
+/* ========== HEADER (at bottom of panel, visible when closed) ========== */
 .about-header {
   position: relative;
   height: 60px;
@@ -407,28 +406,28 @@ html, body {
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #0088FF;
-  text-shadow: 0 0 8px rgba(0, 136, 255, 0.9), 0 0 16px rgba(0, 136, 255, 0.5);
+  color: #00FFFF;
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.9), 0 0 16px rgba(0, 255, 255, 0.5);
   user-select: none;
 }
 
-/* Pull handle indicator at top of the visible tab */
-.about-header::before {
+/* Pull handle indicator at bottom of the visible tab */
+.about-header::after {
   content: '';
   position: absolute;
-  top: 8px;
+  bottom: 8px;
   left: 50%;
   transform: translateX(-50%);
   width: 40px;
   height: 3px;
-  background: rgba(0, 136, 255, 0.6);
+  background: rgba(0, 255, 255, 0.6);
   border-radius: 2px;
-  box-shadow: 0 0 8px rgba(0, 136, 255, 0.8);
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.8);
 }
 
 .about-arrow {
-  color: #0088FF;
-  filter: drop-shadow(0 0 6px rgba(0, 136, 255, 0.9));
+  color: #00FFFF;
+  filter: drop-shadow(0 0 6px rgba(0, 255, 255, 0.9));
   transition: transform 0.5s cubic-bezier(0.25, 1, 0.3, 1);
   width: 16px;
   height: 16px;
@@ -438,16 +437,16 @@ html, body {
   transform: rotate(180deg);
 }
 
-/* ========== CONTENT (now at top of panel, hidden when closed) ========== */
+/* ========== CONTENT (above header, hidden when closed) ========== */
 .about-content {
-  padding: 20px 24px 24px;
+  padding: 24px 24px 20px;
   font-size: 14px;
   line-height: 1.6;
   color: rgba(224, 255, 255, 0.85);
   text-shadow: 0 1px 2px rgba(0,0,0,0.8);
 
   opacity: 0;
-  transform: translateY(-10px);
+  transform: translateY(10px);
   transition: opacity 0.4s ease 0.15s, transform 0.4s ease 0.15s;
 }
 
@@ -467,7 +466,7 @@ html, body {
   </div>
   <div class="about-header">
     <svg class="about-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="6 9 12 15 18 9"></polyline>
+      <polyline points="6 15 12 9 18 15"></polyline>
     </svg>
     <span>about this website</span>
   </div>
