@@ -1246,6 +1246,7 @@ if (aboutPulldown) {
 
 </script>
 <!-- ========================================== -->
+<!-- ========================================== -->
 <!-- CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- PASTE EVERYTHING BELOW THIS LINE BEFORE </body> -->
 <!-- ========================================== -->
@@ -1294,45 +1295,114 @@ if (aboutPulldown) {
 
   .activation-core:hover .core-icon {
     color: var(--dark-metal);
-    animation: spin-fast 0.5s linear infinite;
+    animation: icon-glitch 0.3s ease-in-out;
   }
 
   .core-icon {
     color: var(--neon-orange);
-    font-size: 28px;
-    transition: all 0.3s ease;
+    font-size: 32px;
+    transition: color 0.3s ease;
+    position: relative;
+    z-index: 2;
   }
 
-  @keyframes spin-fast {
-    0% { transform: rotate(0deg) scale(1); }
-    50% { transform: rotate(180deg) scale(1.2); }
-    100% { transform: rotate(360deg) scale(1); }
+  /* --- SONAR WAVES --- */
+  .sonar-wave {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    border: 2px solid var(--neon-orange);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+    pointer-events: none;
+    animation: sonar-pulse 3s ease-out infinite;
+  }
+
+  .sonar-wave:nth-child(2) {
+    animation-delay: 1s;
+  }
+
+  .sonar-wave:nth-child(3) {
+    animation-delay: 2s;
+  }
+
+  /* Stop sonar when player is open */
+  .mecha-panel.open ~ .activation-core .sonar-wave,
+  .music-player-container.panel-open .sonar-wave {
+    animation: none;
+    opacity: 0;
+  }
+
+  @keyframes sonar-pulse {
+    0% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 0.8;
+      border-width: 3px;
+    }
+    50% {
+      opacity: 0.4;
+      border-width: 2px;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(4);
+      opacity: 0;
+      border-width: 1px;
+    }
+  }
+
+  /* --- ICON GLITCH EFFECT --- */
+  @keyframes icon-glitch {
+    0%, 100% {
+      transform: translate(0);
+      text-shadow: none;
+    }
+    10% {
+      transform: translate(-2px, 1px);
+      text-shadow: 2px 0 #ff0000, -2px 0 #00ffff;
+    }
+    20% {
+      transform: translate(2px, -1px);
+      text-shadow: -2px 0 #ff0000, 2px 0 #00ffff;
+    }
+    30% {
+      transform: translate(-1px, 2px);
+      text-shadow: 1px 0 #ff0000, -1px 0 #00ffff;
+    }
+    40% {
+      transform: translate(1px, -2px);
+      text-shadow: -1px 0 #ff0000, 1px 0 #00ffff;
+    }
+    50% {
+      transform: translate(0);
+      text-shadow: none;
+    }
   }
 
   /* --- THE TRANSFORMER PANEL --- */
   .mecha-panel {
     position: absolute;
-    top: 50px; /* Starts right below the core */
+    top: 50px;
     right: 0;
     width: 340px;
     display: flex;
     flex-direction: column;
-    pointer-events: none; /* Ignore clicks when closed */
+    pointer-events: none;
   }
 
-  /* Mechanical Plates */
   .mech-plate {
     background: var(--dark-metal);
     border: 1px solid #333;
     position: relative;
     overflow: hidden;
     transform-origin: top right;
-    transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Bouncy mechanical feel */
+    transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     opacity: 0;
     transform: scaleY(0) rotateX(-90deg);
   }
 
-  /* Scanline overlay for all plates */
   .mech-plate::before {
     content: "";
     position: absolute;
@@ -1348,7 +1418,6 @@ if (aboutPulldown) {
     z-index: 2;
   }
 
-  /* Plate 1: Header / Status */
   .plate-header {
     height: 40px;
     border-bottom: var(--mech-border);
@@ -1363,7 +1432,6 @@ if (aboutPulldown) {
     clip-path: polygon(0 0, 100% 0, 100% 100%, 10% 100%, 0 70%);
   }
 
-  /* Plate 2: Main Content (Album Art & Info) */
   .plate-main {
     padding: 20px;
     border-bottom: 1px dashed #444;
@@ -1375,7 +1443,6 @@ if (aboutPulldown) {
     clip-path: polygon(0 0, 100% 0, 100% 95%, 95% 100%, 0 100%);
   }
 
-  /* Plate 3: Controls */
   .plate-controls {
     height: 90px;
     display: flex;
@@ -1387,7 +1454,6 @@ if (aboutPulldown) {
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 30%);
   }
 
-  /* Side Hinges (Decorative spinning parts) */
   .mech-hinge {
     position: absolute;
     width: 15px;
@@ -1403,7 +1469,6 @@ if (aboutPulldown) {
     opacity: 0;
   }
 
-  /* --- OPEN STATE ANIMATIONS --- */
   .mecha-panel.open {
     pointer-events: auto;
   }
@@ -1418,7 +1483,6 @@ if (aboutPulldown) {
     transform: rotateY(0deg) scale(1);
   }
 
-  /* --- CONTENT STYLING --- */
   .oval-frame {
     width: 160px;
     height: 160px;
@@ -1430,7 +1494,6 @@ if (aboutPulldown) {
     background: #000;
   }
 
-  /* Gritty overlay on album art */
   .oval-frame::after {
     content: "";
     position: absolute;
@@ -1472,7 +1535,6 @@ if (aboutPulldown) {
     text-transform: uppercase;
   }
 
-  /* --- CONTROLS --- */
   .control-btn {
     background: transparent;
     border: 1px solid #444;
@@ -1506,7 +1568,6 @@ if (aboutPulldown) {
     height: 28px;
   }
 
-  /* --- GLITCH ANIMATION FOR TEXT --- */
   .glitch-text {
     animation: glitch-anim 0.3s cubic-bezier(.25, .46, .45, .94) both;
   }
@@ -1520,7 +1581,6 @@ if (aboutPulldown) {
     100% { transform: translate(0); }
   }
 
-  /* Blinking cursor for header */
   .blink {
     animation: blinker 1s linear infinite;
   }
@@ -1536,22 +1596,24 @@ if (aboutPulldown) {
 </style>
 
 <!-- The Player HTML Structure -->
-<div class="music-player-container">
+<div class="music-player-container" id="player-container">
   <!-- Activation Core (Tab) -->
   <div id="activation-core" class="activation-core">
-    <span class="core-icon">◈</span>
+    <span class="core-icon">♪</span>
+    <!-- Sonar Waves -->
+    <div class="sonar-wave"></div>
+    <div class="sonar-wave"></div>
+    <div class="sonar-wave"></div>
   </div>
 
   <!-- Transformer Panel -->
   <div id="mecha-panel" class="mecha-panel">
 
-    <!-- Plate 1: Header -->
     <div class="mech-plate plate-header">
       <span>SYS.AUDIO_V.9</span>
       <span class="blink">▶_</span>
     </div>
 
-    <!-- Plate 2: Main Content -->
     <div class="mech-plate plate-main">
       <div class="oval-frame">
         <img id="album-art" src="https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=NO+DISC" alt="Album Art" class="album-art">
@@ -1562,15 +1624,12 @@ if (aboutPulldown) {
       </div>
     </div>
 
-    <!-- Plate 3: Controls -->
     <div class="mech-plate plate-controls">
-      <!-- Play/Pause (LEFT) -->
       <button id="play-pause-btn" class="control-btn play-btn" title="Play">
         <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
         <svg id="pause-icon" viewBox="0 0 24 24" fill="currentColor" style="display: none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
       </button>
 
-      <!-- Shuffle (RIGHT) -->
       <button id="shuffle-btn" class="control-btn shuffle-btn" title="Shuffle Next">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
           <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
@@ -1578,48 +1637,45 @@ if (aboutPulldown) {
       </button>
     </div>
 
-    <!-- Decorative Side Hinge -->
     <div class="mech-hinge"></div>
   </div>
 </div>
 
 <!-- The Player JavaScript Logic -->
 <script>
-  // --- Configuration ---
   const playlist = [
     {
       src: 'Tunes/The Uncanny Valley.mp3',
       title: 'The Uncanny Valley',
-      artist: 'Unknown Artist', // <-- UPDATE THIS
+      artist: 'Unknown Artist',
       art: 'Tunes/AlbumArt/artwork.jpg'
     },
     {
       src: 'Tunes/She Moves Like a Knife.mp3',
       title: 'She Moves Like a Knife',
-      artist: 'Unknown Artist', // <-- UPDATE THIS
+      artist: 'Unknown Artist',
       art: 'Tunes/AlbumArt/artwork.jpg'
     },
     {
       src: 'Tunes/Simulated Stimulation.mp3',
       title: 'Simulated Stimulation',
-      artist: 'Unknown Artist', // <-- UPDATE THIS
+      artist: 'Unknown Artist',
       art: 'Tunes/AlbumArt/artwork (copy 2).jpg'
     },
     {
       src: 'Tunes/Nightmarket.mp3',
       title: 'Nightmarket',
-      artist: 'Unknown Artist', // <-- UPDATE THIS
+      artist: 'Unknown Artist',
       art: 'Tunes/AlbumArt/artwork (copy 3).jpg'
     }
   ];
 
-  // --- Variables ---
   let audio = new Audio();
   let currentSongIndex = 0;
   let isPlaying = false;
   let isOpen = false;
 
-  // --- DOM Elements ---
+  const playerContainer = document.getElementById('player-container');
   const activationCore = document.getElementById('activation-core');
   const mechaPanel = document.getElementById('mecha-panel');
   const playPauseBtn = document.getElementById('play-pause-btn');
@@ -1630,7 +1686,6 @@ if (aboutPulldown) {
   const playIcon = document.getElementById('play-icon');
   const pauseIcon = document.getElementById('pause-icon');
 
-  // --- Functions ---
   function updateUI() {
     playIcon.style.display = isPlaying ? 'none' : 'block';
     pauseIcon.style.display = isPlaying ? 'block' : 'none';
@@ -1638,10 +1693,9 @@ if (aboutPulldown) {
 
     const currentSong = playlist[currentSongIndex];
 
-    // Trigger glitch effect on text change
     songTitle.classList.remove('glitch-text');
     artistName.classList.remove('glitch-text');
-    void songTitle.offsetWidth; // Force reflow to restart animation
+    void songTitle.offsetWidth;
     songTitle.classList.add('glitch-text');
     artistName.classList.add('glitch-text');
 
@@ -1654,8 +1708,8 @@ if (aboutPulldown) {
   function togglePlayer() {
     isOpen = !isOpen;
     mechaPanel.classList.toggle('open', isOpen);
+    playerContainer.classList.toggle('panel-open', isOpen);
 
-    // Spin the core icon when toggling
     const coreIcon = document.querySelector('.core-icon');
     coreIcon.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
   }
@@ -1723,7 +1777,6 @@ if (aboutPulldown) {
     }
   }
 
-  // --- Event Listeners ---
   activationCore.addEventListener('click', togglePlayer);
   playPauseBtn.addEventListener('click', togglePlayPause);
   shuffleBtn.addEventListener('click', shuffleNext);
@@ -1747,7 +1800,6 @@ if (aboutPulldown) {
 
   window.addEventListener('beforeunload', saveState);
 
-  // --- Initialize ---
   restoreState();
   updateUI();
 </script>
