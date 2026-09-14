@@ -257,27 +257,6 @@
   }
 }
 
-.glitch-block {
-  position: absolute;
-  opacity: 0;
-  animation: glitchBlock 0.4s ease-out forwards;
-}
-
-@keyframes glitchBlock {
-  0% {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  30% {
-    opacity: 0.9;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1.2);
-  }
-}
-
 .glitch-line {
   position: absolute;
   width: 100%;
@@ -338,6 +317,77 @@
   100% {
     opacity: 0;
     transform: translateX(5px);
+  }
+}
+
+.glitch-moving-bar {
+  position: absolute;
+  height: 3px;
+  opacity: 0;
+  animation: movingBar 0.8s ease-out forwards;
+}
+
+@keyframes movingBar {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100vw);
+  }
+}
+
+.glitch-sweep-line {
+  position: absolute;
+  width: 2px;
+  height: 100%;
+  opacity: 0;
+  animation: sweepLine 1s ease-out forwards;
+}
+
+@keyframes sweepLine {
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  30% {
+    opacity: 0.8;
+  }
+  70% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100vh);
+  }
+}
+
+.glitch-diagonal {
+  position: absolute;
+  width: 200px;
+  height: 2px;
+  opacity: 0;
+  animation: diagonalStreak 0.6s ease-out forwards;
+}
+
+@keyframes diagonalStreak {
+  0% {
+    opacity: 0;
+    transform: translate(-100px, -100px) rotate(45deg);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(100vw, 100vh) rotate(45deg);
   }
 }
 
@@ -613,19 +663,6 @@
     setTimeout(() => bar.remove(), 300);
   };
 
-  const createGlitchBlock = () => {
-    const block = document.createElement('div');
-    block.className = 'glitch-block';
-    block.style.top = Math.random() * 100 + '%';
-    block.style.left = Math.random() * 100 + '%';
-    block.style.width = (Math.random() * 80 + 20) + 'px';
-    block.style.height = (Math.random() * 80 + 20) + 'px';
-    block.style.background = glitchColors[Math.floor(Math.random() * glitchColors.length)];
-    block.style.boxShadow = `0 0 20px ${block.style.background}`;
-    glitchContainer.appendChild(block);
-    setTimeout(() => block.remove(), 400);
-  };
-
   const createGlitchLine = () => {
     const line = document.createElement('div');
     line.className = 'glitch-line';
@@ -660,34 +697,82 @@
     setTimeout(() => split.remove(), 400);
   };
 
+  const createMovingBar = () => {
+    const bar = document.createElement('div');
+    bar.className = 'glitch-moving-bar';
+    bar.style.top = Math.random() * 100 + '%';
+    bar.style.left = '0';
+    bar.style.width = (Math.random() * 200 + 100) + 'px';
+    bar.style.background = glitchColors[Math.floor(Math.random() * glitchColors.length)];
+    bar.style.boxShadow = `0 0 15px ${bar.style.background}`;
+    glitchContainer.appendChild(bar);
+    setTimeout(() => bar.remove(), 800);
+  };
+
+  const createSweepLine = () => {
+    const line = document.createElement('div');
+    line.className = 'glitch-sweep-line';
+    line.style.left = Math.random() * 100 + '%';
+    line.style.top = '0';
+    line.style.background = `linear-gradient(180deg, transparent, ${glitchColors[Math.floor(Math.random() * glitchColors.length)]}, transparent)`;
+    line.style.boxShadow = `0 0 10px ${glitchColors[Math.floor(Math.random() * glitchColors.length)]}`;
+    glitchContainer.appendChild(line);
+    setTimeout(() => line.remove(), 1000);
+  };
+
+  const createDiagonalStreak = () => {
+    const streak = document.createElement('div');
+    streak.className = 'glitch-diagonal';
+    streak.style.top = Math.random() * 100 + '%';
+    streak.style.left = Math.random() * 100 + '%';
+    streak.style.background = `linear-gradient(90deg, transparent, ${glitchColors[Math.floor(Math.random() * glitchColors.length)]}, transparent)`;
+    streak.style.boxShadow = `0 0 12px ${glitchColors[Math.floor(Math.random() * glitchColors.length)]}`;
+    glitchContainer.appendChild(streak);
+    setTimeout(() => streak.remove(), 600);
+  };
+
   const spawnGlitch = () => {
     const glitchType = Math.random();
 
-    if (glitchType < 0.25) {
+    if (glitchType < 0.2) {
       createGlitchBar();
-    } else if (glitchType < 0.45) {
-      createGlitchBlock();
-    } else if (glitchType < 0.6) {
+    } else if (glitchType < 0.35) {
       createGlitchLine();
-    } else if (glitchType < 0.8) {
+    } else if (glitchType < 0.5) {
       createGlitchNoise();
-    } else {
+    } else if (glitchType < 0.65) {
       createRGBSplit();
+    } else if (glitchType < 0.8) {
+      createMovingBar();
+    } else if (glitchType < 0.9) {
+      createSweepLine();
+    } else {
+      createDiagonalStreak();
     }
   };
 
   const startGlitchLoop = () => {
+    let glitchTimeout;
+    const startTime = Date.now();
+    const duration = 30000; // 30 seconds
+
     const spawnGlitchBurst = () => {
+      if (Date.now() - startTime >= duration) {
+        return; // Stop after 30 seconds
+      }
+
       const burstCount = Math.floor(Math.random() * 3) + 1;
       for (let i = 0; i < burstCount; i++) {
         setTimeout(spawnGlitch, i * 50);
       }
 
-      const nextDelay = Math.random() * 3000 + 2000;
-      setTimeout(spawnGlitchBurst, nextDelay);
+      const nextDelay = Math.random() * 3000 + 1000; // 1-4 seconds
+      glitchTimeout = setTimeout(spawnGlitchBurst, nextDelay);
     };
 
     spawnGlitchBurst();
+
+    return () => clearTimeout(glitchTimeout);
   };
 
   positionItems();
