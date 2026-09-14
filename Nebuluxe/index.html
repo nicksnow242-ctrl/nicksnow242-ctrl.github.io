@@ -360,10 +360,87 @@ html, body {
     animation-duration: 0.01s !important;
   }
 }
+/* ========== ABOUT PULLDOWN CSS========== */
+.about-pulldown {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  /* Hides everything except the 40px header */
+  transform: translateX(-50%) translateY(calc(-100% + 40px));
+  width: 90%;
+  max-width: 500px;
+  z-index: 100;
+
+  /* Frosted Glass Effect */
+  background: rgba(25, 29, 30, 0.65);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+
+  border: 1px solid rgba(0, 255, 255, 0.15);
+  border-top: none;
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.3, 1), box-shadow 0.5s ease;
+  cursor: pointer;
+  color: #E0FFFF;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.about-pulldown:hover {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 255, 255, 0.1);
+}
+
+.about-pulldown.is-open {
+  transform: translateX(-50%) translateY(0);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 255, 255, 0.2);
+}
+
+.about-header {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #00FFFF;
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+  user-select: none;
+}
+
+.about-arrow {
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.3, 1);
+}
+
+.about-pulldown.is-open .about-arrow {
+  transform: rotate(180deg);
+}
+
+.about-content {
+  padding: 0 24px 24px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(224, 255, 255, 0.85);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+
+  /* Fade in slightly after the slide down */
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.4s ease 0.15s, transform 0.4s ease 0.15s;
+}
+
+.about-pulldown.is-open .about-content {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* ========== END ABOUT PULLDOWN CSS========== */
 </style>
 </head>
 <body>
-// About this website pull down //
+// About pulldown html //
 <div class="about-pulldown" id="aboutPulldown">
   <div class="about-header">
     <span>about this website</span>
@@ -376,7 +453,7 @@ html, body {
     <p>Built with HTML, CSS, JavaScript, CreateJS, and GSAP.</p>
   </div>
 </div>
-//End about this website pull down //
+//End about pulldown html //
 <canvas id="projector"></canvas>
 
 <section class="ccm-11" aria-label="360 degree wheel navigation demo">
@@ -979,6 +1056,14 @@ var particles;
 
   startGlitchLoop();
 })();
+// ========== ABOUT PULLDOWN LOGIC ==========
+const aboutPulldown = document.getElementById('aboutPulldown');
+if (aboutPulldown) {
+  aboutPulldown.addEventListener('click', () => {
+    aboutPulldown.classList.toggle('is-open');
+  });
+}
+// ========== END ABOUT PULLDOWN LOGIC ==========
 </script>
 
 </body>
