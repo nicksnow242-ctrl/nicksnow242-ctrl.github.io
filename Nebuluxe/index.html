@@ -1,25 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>360° Wheel Navigation</title>
+<style>
+.ccm-11,
+.ccm-11 *,
+.ccm-11 *::before,
+.ccm-11 *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.ccm-11 {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 30%, #3d2817, #1f1410 70%);
+  --brand: #ff6b35;
+  --ink: #f5f5f5;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  color: var(--ink);
+}
+
+.ccm-11__stage {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.ccm-11__pointer {
+  position: absolute;
+  left: 50%;
+  top: calc(50% - 196px);
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border: 9px solid transparent;
+  border-top: 13px solid var(--brand);
+  filter: drop-shadow(0 2px 6px rgba(255, 107, 53, 0.6));
+  z-index: 3;
+}
+
+.ccm-11__machine {
+  position: relative;
+  width: 340px;
+  height: 340px;
+  display: grid;
+  place-items: center;
+}
+
+.ccm-11__wheel {
+  position: absolute;
+  inset: 0;
+  list-style: none;
+  border-radius: 50%;
+  border: 1px solid rgba(128, 100, 80, 0.4);
+  transition: transform 0.7s cubic-bezier(0.3, 1, 0.35, 1);
+}
+
+.ccm-11__wheel li {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.ccm-11__stop {
+  pointer-events: auto;
+  border: 1px solid rgba(128, 100, 80, 0.5);
+  border-radius: 999px;
+  padding: 9px 16px;
+  background: rgba(60, 40, 30, 0.85);
+  color: #d4c5b5;
+  font: 600 13px/1 'Segoe UI', system-ui, sans-serif;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.25s;
+}
+
+.ccm-11__stop:hover {
+  border-color: var(--brand);
+  color: #fff;
+}
+
+.ccm-11__stop:focus-visible {
+  outline: 3px solid var(--brand);
+  outline-offset: 3px;
+}
+
+.ccm-11__stop.is-active {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #2a1810;
+  transform: scale(1.12);
+  box-shadow: 0 0 24px -4px rgba(255, 107, 53, 0.7);
+}
+
+.ccm-11__face {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  place-content: center;
+  text-align: center;
+  background: radial-gradient(circle at 38% 30%, #4a3020, #2a1810);
+  border: 1px solid rgba(128, 100, 80, 0.4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 20px 50px -20px rgba(0, 0, 0, 0.8);
+}
+
+.ccm-11__face em {
+  font-style: normal;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #a08070;
+}
+
+.ccm-11__current {
+  font-size: 25px;
+  letter-spacing: -0.01em;
+}
+
+.ccm-11__steer {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.ccm-11__steer button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(128, 100, 80, 0.5);
+  background: #3d2817;
+  color: var(--ink);
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.ccm-11__steer button:hover {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #2a1810;
+}
+
+.ccm-11__steer button:focus-visible {
+  outline: 3px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.ccm-11__live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ccm-11 * {
+    transition-duration: 0.01s !important;
+  }
+}
+</style>
+</head>
+<body>
+
 <section class="ccm-11" aria-label="360 degree wheel navigation demo">
   <div class="ccm-11__stage">
     <div class="ccm-11__pointer" aria-hidden="true"></div>
-    <nav class="ccm-11__machine" style="--n:8" aria-label="Sections">
+    <nav class="ccm-11__machine" aria-label="Sections">
       <ul class="ccm-11__wheel">
-        <li style="--i:0"><button type="button" class="ccm-11__stop is-active" aria-pressed="true">Home</button></li>
-        <li style="--i:1"><button type="button" class="ccm-11__stop" aria-pressed="false">Series</button></li>
-        <li style="--i:2"><button type="button" class="ccm-11__stop" aria-pressed="false">Films</button></li>
-        <li style="--i:3"><button type="button" class="ccm-11__stop" aria-pressed="false">Live</button></li>
-        <li style="--i:4"><button type="button" class="ccm-11__stop" aria-pressed="false">Sports</button></li>
-        <li style="--i:5"><button type="button" class="ccm-11__stop" aria-pressed="false">Kids</button></li>
-        <li style="--i:6"><button type="button" class="ccm-11__stop" aria-pressed="false">Music</button></li>
-        <li style="--i:7"><button type="button" class="ccm-11__stop" aria-pressed="false">My list</button></li>
+        <li><button type="button" class="ccm-11__stop is-active" aria-pressed="true">Home</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false">Series</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false">Films</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false">Live</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false">Sports</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false">Kids</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false">Music</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false">My list</button></li>
       </ul>
-      <div class="ccm-11__face"><em>Now browsing</em><strong class="ccm-11__current">Home</strong>
-        <div class="ccm-11__steer"><button type="button" class="ccm-11__prev" aria-label="Previous section">←</button><button type="button" class="ccm-11__next" aria-label="Next section">→</button></div>
+      <div class="ccm-11__face">
+        <em>Now browsing</em>
+        <strong class="ccm-11__current">Home</strong>
+        <div class="ccm-11__steer">
+          <button type="button" class="ccm-11__prev" aria-label="Previous section">←</button>
+          <button type="button" class="ccm-11__next" aria-label="Next section">→</button>
+        </div>
       </div>
       <p class="ccm-11__live" aria-live="polite"></p>
     </nav>
   </div>
 </section>
 
+<script>
+(() => {
+  const machine = document.querySelector('.ccm-11__machine');
+  const wheel = machine.querySelector('.ccm-11__wheel');
+  const stops = [...machine.querySelectorAll('.ccm-11__stop')];
+  const current = machine.querySelector('.ccm-11__current');
+  const live = machine.querySelector('.ccm-11__live');
 
+  const n = stops.length;
+  const step = 360 / n;
+  let rot = 0;
+  let active = 0;
 
-    <!-- Footer
+  // Position items in a circle
+  const positionItems = () => {
+    const radius = 170;
+    stops.forEach((stop, i) => {
+      const angle = (step * i - 90) * (Math.PI / 180);
+      const x = Math.cos(angle) * radius;
+      const y = Math.sin(angle) * radius;
+      stop.parentElement.style.transform = `translate(${x}px, ${y}px)`;
+    });
+  };
+
+  // Update counter-rotation for each stop
+  const updateStopRotation = () => {
+    stops.forEach(stop => {
+      stop.style.transform = `rotate(${-rot}deg)`;
+    });
+  };
+
+  // Navigate to a specific index
+  const goTo = (idx) => {
+    // Normalize index to 0..n-1
+    idx = ((idx % n) + n) % n;
+
+    // Calculate target rotation
+    const target = -idx * step;
+
+    // Find shortest rotation path
+    const currentRot = ((rot % 360) + 360) % 360;
+    let delta = target - currentRot;
+
+    // Normalize delta to -180..180 range
+    delta = ((delta % 360) + 540) % 360 - 180;
+
+    rot += delta;
+
+    // Apply rotation to wheel
+    wheel.style.transform = `rotate(${rot}deg)`;
+
+    // Counter-rotate stops to keep them upright
+    updateStopRotation();
+
+    // Update active state
+    stops.forEach((s, k) => {
+      const isActive = k === idx;
+      s.classList.toggle('is-active', isActive);
+      s.setAttribute('aria-pressed', String(isActive));
+    });
+
+    active = idx;
+    current.textContent = stops[idx].textContent;
+    live.textContent = stops[idx].textContent + ' selected';
+  };
+
+  // Initialize
+  positionItems();
+  updateStopRotation();
+
+  // Event listeners
+  stops.forEach((s, k) => s.addEventListener('click', () => goTo(k)));
+  machine.querySelector('.ccm-11__prev').addEventListener('click', () => goTo(active - 1));
+  machine.querySelector('.ccm-11__next').addEventListener('click', () => goTo(active + 1));
+})();
+</script>
+
+</body>
+</html>
