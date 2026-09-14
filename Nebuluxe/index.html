@@ -456,161 +456,168 @@ html, body {
 }
 /* ========== END ABOUT PULLDOWN CSS========== */
 /* --- Music Player Styles --- */
-  .music-player-container {
-    position: fixed;
-    top: 0;
-    right: 0;
-    z-index: 9999;
-    font-family: Arial, sans-serif;
-  }
+.music-player-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 9999;
+  font-family: Arial, sans-serif;
+}
 
-  .pullout-tab {
-    position: absolute;
-    top: 20px;
-    right: 0;
-    width: 50px;
-    height: 50px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 25px 0 0 25px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    box-shadow: -2px 2px 10px rgba(0, 0, 0, 0.3);
-    z-index: 10000;
-  }
+.pullout-tab {
+  position: absolute;
+  top: 20px;
+  right: 0;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 25px 0 0 25px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: -2px 2px 10px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+}
 
-  .pullout-tab:hover {
-    width: 55px;
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-  }
+.pullout-tab:hover {
+  width: 55px;
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
 
-  .pullout-tab.open {
-    right: 320px;
-  }
+.pullout-tab.open {
+  right: 320px;
+}
 
-  .tab-icon {
-    color: white;
-    font-size: 24px;
-  }
+.tab-icon {
+  color: white;
+  font-size: 24px;
+}
 
-  .music-note {
-    animation: pulse 2s infinite;
-  }
+.music-note {
+  animation: pulse 2s infinite;
+}
 
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-  }
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
 
-  .player-panel {
-    position: fixed;
-    top: 0;
-    right: -320px;
-    width: 320px;
-    height: 100vh;
-    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
-    transition: right 0.3s ease;
-    overflow-y: auto;
-    z-index: 9998;
-  }
+.player-panel {
+  position: fixed;
+  top: 0;
+  right: -320px;
+  width: 320px;
+  height: 100vh;
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
+  transition: right 0.3s ease;
+  overflow-y: auto;
+  z-index: 9998;
+}
 
-  .player-panel.open {
-    right: 0;
-  }
+.player-panel.open {
+  right: 0;
+}
 
-  .player-content {
-    padding: 80px 20px 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-  }
+.player-content {
+  padding: 80px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
 
-  .album-frame {
-    width: 200px;
-    height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.album-frame {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  .oval-frame {
-    width: 180px;
-    height: 140px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 4px solid #667eea;
-    box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
-    background: #000;
-  }
+.oval-frame {
+  width: 180px;
+  height: 140px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #667eea;
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+  background: #000;
+}
 
-  .album-art {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+.album-art {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-  .song-info {
-    text-align: center;
-    color: white;
-  }
+.song-info {
+  text-align: center;
+  color: white;
+}
 
-  .song-title {
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 5px;
-    text-transform: capitalize;
-  }
+.song-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  text-transform: capitalize;
+}
 
-  .controls {
-    display: flex;
-    gap: 30px;
-    align-items: center;
-    margin-top: 20px;
-  }
+/* NEW: Artist Name Styling */
+.artist-name {
+  font-size: 14px;
+  color: #a0a0b0; /* Muted light gray/blue */
+  font-weight: normal;
+}
 
-  .control-btn {
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-    padding: 15px;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.controls {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  margin-top: 20px;
+}
 
-  .control-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: scale(1.1);
-  }
+.control-btn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  .shuffle-btn {
-    background: rgba(102, 126, 234, 0.2);
-  }
+.control-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
 
-  .play-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    width: 60px;
-    height: 60px;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-  }
+.shuffle-btn {
+  background: rgba(102, 126, 234, 0.2);
+}
 
-  .play-btn:hover {
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-  }
+.play-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  width: 60px;
+  height: 60px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
 
-  @media (max-width: 768px) {
-    .player-panel { width: 280px; right: -280px; }
-    .pullout-tab.open { right: 280px; }
-    .album-frame { width: 160px; height: 160px; }
-    .oval-frame { width: 140px; height: 110px; }
-  }
+.play-btn:hover {
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+@media (max-width: 768px) {
+  .player-panel { width: 280px; right: -280px; }
+  .pullout-tab.open { right: 280px; }
+  .album-frame { width: 160px; height: 160px; }
+  .oval-frame { width: 140px; height: 110px; }
+}
   /* --- End Music Player Styles --- */
 </style>
 </head>
@@ -674,7 +681,6 @@ html, body {
       <!-- Album Art in Oval Frame -->
       <div class="album-frame">
         <div class="oval-frame">
-          <!-- Change this src to your actual album art image -->
           <img id="album-art" src="https://via.placeholder.com/180x140/1a1a2e/667eea?text=Album+Art" alt="Album Art" class="album-art">
         </div>
       </div>
@@ -682,22 +688,26 @@ html, body {
       <!-- Song Info -->
       <div class="song-info">
         <div id="song-title" class="song-title">No Song Selected</div>
+        <!-- NEW: Artist Name Element -->
+        <div id="artist-name" class="artist-name">Unknown Artist</div>
       </div>
 
-      <!-- Controls -->
+      <!-- Controls (SWAPPED: Play/Pause on Left, Shuffle on Right) -->
       <div class="controls">
-        <button id="shuffle-btn" class="control-btn shuffle-btn" title="Shuffle Next">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
-          </svg>
-        </button>
-
+        <!-- Play/Pause Button (LEFT) -->
         <button id="play-pause-btn" class="control-btn play-btn" title="Play">
           <svg id="play-icon" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
             <path d="M8 5v14l11-7z"/>
           </svg>
           <svg id="pause-icon" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
             <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+          </svg>
+        </button>
+
+        <!-- Shuffle Button (RIGHT) -->
+        <button id="shuffle-btn" class="control-btn shuffle-btn" title="Shuffle Next">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
           </svg>
         </button>
       </div>
@@ -1282,144 +1292,164 @@ if (aboutPulldown) {
 }
 // ========== END ABOUT PULLDOWN LOGIC ==========
 // ========== Music Player Script ==========
-  const playlist = [
-    'Tunes/The Uncanny Valley.mp3',
-    'Tunes/She Moves Like a Knife.mp3',
-    'Tunes/Simulated Stimulation.mp3',
-    'Tunes/Nightmarket.mp3'
-  ];
+const playlist = [
+  {
+    src: 'Tunes/The Uncanny Valley.mp3',
+    title: 'The Uncanny Valley',
+    artist: 'Artist Name', // <-- UPDATE THIS
+    art: 'Tunes/AlbumArt/artwork.jpg'
+  },
+  {
+    src: 'Tunes/She Moves Like a Knife.mp3',
+    title: 'She Moves Like a Knife',
+    artist: 'Artist Name', // <-- UPDATE THIS
+    art: 'Tunes/AlbumArt/artwork.jpg'
+  },
+  {
+    src: 'Tunes/Simulated Stimulation.mp3',
+    title: 'Simulated Stimulation',
+    artist: 'Artist Name', // <-- UPDATE THIS
+    art: 'Tunes/AlbumArt/artwork (copy 2).jpg'
+  },
+  {
+    src: 'Tunes/Nightmarket.mp3',
+    title: 'Nightmarket',
+    artist: 'Artist Name', // <-- UPDATE THIS
+    art: 'Tunes/AlbumArt/artwork (copy 3).jpg'
+  }
+];
 
-  // Map songs to album art (Optional: update paths to your actual images)
-  const albumArtMap = {
-    'Tunes/The Uncanny Valley.mp3': 'Tunes/AlbumArt/artwork.jpg',
-    'Tunes/She Moves Like a Knife.mp3': 'Tunes/AlbumArt/artwork.jpg',
-    'Tunes/Simulated Stimulation.mp3': 'Tunes/AlbumArt/artwork (copy 2).jpg',
-    'Tunes/Nightmarket.mp3': 'Tunes/AlbumArt/artwork (copy 3).jpg',
+// --- Variables ---
+let audio = new Audio();
+let currentSongIndex = 0;
+let isPlaying = false;
+let isOpen = false;
+
+// --- DOM Elements ---
+const pulloutTab = document.getElementById('pullout-tab');
+const playerPanel = document.getElementById('player-panel');
+const playPauseBtn = document.getElementById('play-pause-btn');
+const shuffleBtn = document.getElementById('shuffle-btn');
+const songTitle = document.getElementById('song-title');
+const artistName = document.getElementById('artist-name');
+const albumArtImg = document.getElementById('album-art');
+const playIcon = document.getElementById('play-icon');
+const pauseIcon = document.getElementById('pause-icon');
+
+// --- Functions ---
+function updateUI() {
+  // Update Icons
+  playIcon.style.display = isPlaying ? 'none' : 'block';
+  pauseIcon.style.display = isPlaying ? 'block' : 'none';
+  playPauseBtn.title = isPlaying ? 'Pause' : 'Play';
+
+  // Update Song Info
+  const currentSong = playlist[currentSongIndex];
+  songTitle.textContent = currentSong.title;
+  artistName.textContent = currentSong.artist;
+
+  // Update Album Art
+  albumArtImg.src = currentSong.art || 'https://via.placeholder.com/180x140/1a1a2e/667eea?text=Album';
+}
+
+function togglePlayer() {
+  isOpen = !isOpen;
+  playerPanel.classList.toggle('open', isOpen);
+  pulloutTab.classList.toggle('open', isOpen);
+}
+
+function togglePlayPause() {
+  if (isPlaying) {
+    audio.pause();
+  } else {
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(error => {
+        console.error("Play promise failed:", error);
+        alert("Play failed! Check the console (F12) for the exact file path it's looking for.");
+      });
+    }
+  }
+}
+
+function shuffleNext() {
+  if (playlist.length === 0) return;
+
+  let nextIndex;
+  do {
+    nextIndex = Math.floor(Math.random() * playlist.length);
+  } while (nextIndex === currentSongIndex && playlist.length > 1);
+
+  currentSongIndex = nextIndex;
+  audio.src = playlist[currentSongIndex].src;
+  audio.play().catch(err => console.error('Play error:', err));
+}
+
+function saveState() {
+  const state = {
+    song: playlist[currentSongIndex].src,
+    position: audio.currentTime,
+    playing: !audio.paused,
+    songIndex: currentSongIndex
   };
+  sessionStorage.setItem('musicState', JSON.stringify(state));
+}
 
-  // --- Variables ---
-  let audio = new Audio();
-  let currentSongIndex = 0;
-  let isPlaying = false;
-  let isOpen = false;
+function restoreState() {
+  const savedState = sessionStorage.getItem('musicState');
+  if (savedState) {
+    try {
+      const state = JSON.parse(savedState);
+      // Find the index based on the saved src, in case playlist order changes
+      const foundIndex = playlist.findIndex(song => song.src === state.song);
+      currentSongIndex = foundIndex !== -1 ? foundIndex : 0;
+      audio.src = playlist[currentSongIndex].src;
 
-  // --- DOM Elements ---
-  const pulloutTab = document.getElementById('pullout-tab');
-  const playerPanel = document.getElementById('player-panel');
-  const playPauseBtn = document.getElementById('play-pause-btn');
-  const shuffleBtn = document.getElementById('shuffle-btn');
-  const songTitle = document.getElementById('song-title');
-  const albumArtImg = document.getElementById('album-art');
-  const playIcon = document.getElementById('play-icon');
-  const pauseIcon = document.getElementById('pause-icon');
-
-  // --- Functions ---
-  function updateUI() {
-    playIcon.style.display = isPlaying ? 'none' : 'block';
-    pauseIcon.style.display = isPlaying ? 'block' : 'none';
-    playPauseBtn.title = isPlaying ? 'Pause' : 'Play';
-
-    const currentSong = playlist[currentSongIndex];
-    const songName = currentSong.split('/').pop().replace('.mp3', '').replace(/-/g, ' ');
-    songTitle.textContent = songName;
-
-    albumArtImg.src = albumArtMap[currentSong] || 'https://via.placeholder.com/180x140/1a1a2e/667eea?text=Album';
+      audio.addEventListener('loadedmetadata', () => {
+        audio.currentTime = state.position;
+        if (state.playing) {
+          audio.play().catch(err => console.error('Autoplay prevented on restore:', err));
+        }
+      }, { once: true });
+    } catch (e) {
+      console.error('Failed to restore music state:', e);
+      currentSongIndex = 0;
+      audio.src = playlist[0].src;
+    }
+  } else {
+    currentSongIndex = 0;
+    audio.src = playlist[0].src;
   }
+}
 
-  function togglePlayer() {
-    isOpen = !isOpen;
-    playerPanel.classList.toggle('open', isOpen);
-    pulloutTab.classList.toggle('open', isOpen);
-  }
+// --- Event Listeners ---
+pulloutTab.addEventListener('click', togglePlayer);
+playPauseBtn.addEventListener('click', togglePlayPause);
+shuffleBtn.addEventListener('click', shuffleNext);
 
-  function togglePlayPause() {
-    if (isPlaying) {
-      audio.pause();
-    } else {
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          console.error("Play promise failed:", error);
-          alert("Play failed! The audio file likely didn't load. Check the console (F12) for the exact file path it's looking for.");
-        });
-      }
+audio.addEventListener('play', () => { isPlaying = true; updateUI(); });
+audio.addEventListener('pause', () => { isPlaying = false; updateUI(); });
+audio.addEventListener('ended', () => shuffleNext());
+
+// Error listener to catch file path issues
+audio.addEventListener('error', () => {
+  let errorMsg = "Unknown error";
+  if (audio.error) {
+    switch (audio.error.code) {
+      case 1: errorMsg = "Aborted"; break;
+      case 2: errorMsg = "Network Error"; break;
+      case 3: errorMsg = "Decode Error (File might be corrupted)"; break;
+      case 4: errorMsg = "File Not Found / Unsupported Format"; break;
     }
   }
+  console.error("🚨 AUDIO LOAD ERROR:", errorMsg, "| Attempted to load:", audio.src);
+});
 
-  function shuffleNext() {
-    if (playlist.length === 0) return;
+window.addEventListener('beforeunload', saveState);
 
-    let nextIndex;
-    do {
-      nextIndex = Math.floor(Math.random() * playlist.length);
-    } while (nextIndex === currentSongIndex && playlist.length > 1);
-
-    currentSongIndex = nextIndex;
-    audio.src = playlist[currentSongIndex];
-    audio.play().catch(err => console.error('Play error:', err));
-  }
-
-  function saveState() {
-    const state = {
-      song: playlist[currentSongIndex],
-      position: audio.currentTime,
-      playing: !audio.paused,
-      songIndex: currentSongIndex
-    };
-    sessionStorage.setItem('musicState', JSON.stringify(state));
-  }
-
-  function restoreState() {
-    const savedState = sessionStorage.getItem('musicState');
-    if (savedState) {
-      try {
-        const state = JSON.parse(savedState);
-        currentSongIndex = state.songIndex;
-        audio.src = state.song;
-
-        audio.addEventListener('loadedmetadata', () => {
-          audio.currentTime = state.position;
-          if (state.playing) {
-            audio.play().catch(err => console.error('Autoplay prevented on restore:', err));
-          }
-        }, { once: true });
-      } catch (e) {
-        console.error('Failed to restore music state:', e);
-      }
-    } else {
-      audio.src = playlist[0];
-    }
-  }
-
-  // --- Event Listeners ---
-  pulloutTab.addEventListener('click', togglePlayer);
-  playPauseBtn.addEventListener('click', togglePlayPause);
-  shuffleBtn.addEventListener('click', shuffleNext);
-
-  audio.addEventListener('play', () => { isPlaying = true; updateUI(); });
-  audio.addEventListener('pause', () => { isPlaying = false; updateUI(); });
-  audio.addEventListener('ended', () => shuffleNext());
-
-  // NEW: Error listener to tell us exactly why audio is failing
-  audio.addEventListener('error', () => {
-    let errorMsg = "Unknown error";
-    if (audio.error) {
-      switch (audio.error.code) {
-        case 1: errorMsg = "Aborted"; break;
-        case 2: errorMsg = "Network Error"; break;
-        case 3: errorMsg = "Decode Error (File might be corrupted)"; break;
-        case 4: errorMsg = "File Not Found / Unsupported Format"; break;
-      }
-    }
-    console.error("🚨 AUDIO LOAD ERROR:", errorMsg, "| Attempted to load:", audio.src);
-    alert("Music Player Error: " + errorMsg + "\n\nLook at the browser Console (Press F12) to see the exact file path it tried to load.");
-  });
-
-  window.addEventListener('beforeunload', saveState);
-
-  // --- Initialize ---
-  restoreState();
-  updateUI();
+// --- Initialize ---
+restoreState();
+updateUI();
   // ========== END Music Player Script ==========
 </script>
 
