@@ -23,7 +23,7 @@
   background: radial-gradient(circle at 50% 30%, #3d2817, #1f1410 70%);
   --brand: #ff6b35;
   --ink: #f5f5f5;
-  font-family: Optima, 'Optima Nova', 'URW Classico', system-ui, sans-serif;
+  font-family: 'Segoe UI', system-ui, sans-serif;
   color: var(--ink);
 }
 
@@ -87,7 +87,7 @@
   padding: 9px 16px;
   background: rgba(60, 40, 30, 0.85);
   color: #d4c5b5;
-  font: 600 13px/1.2 Optima, 'Optima Nova', 'URW Classico', system-ui, sans-serif;
+  font: 600 13px/1.2 'Segoe UI', system-ui, sans-serif;
   letter-spacing: 0.02em;
   cursor: pointer;
   text-align: center;
@@ -139,6 +139,11 @@
 .ccm-11__current {
   font-size: 25px;
   letter-spacing: -0.01em;
+  transition: font-size 0.3s ease;
+}
+
+.ccm-11__current--small {
+  font-size: 18px;
 }
 
 .ccm-11__steer {
@@ -177,7 +182,7 @@
   border: 1px solid rgba(128, 100, 80, 0.5);
   background: #3d2817;
   color: var(--ink);
-  font: 600 12px/1 Optima, 'Optima Nova', 'URW Classico', system-ui, sans-serif;
+  font: 600 12px/1 'Segoe UI', system-ui, sans-serif;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   cursor: pointer;
@@ -219,14 +224,14 @@
     <div class="ccm-11__pointer" aria-hidden="true"></div>
     <nav class="ccm-11__machine" aria-label="Sections">
       <ul class="ccm-11__wheel">
-        <li><button type="button" class="ccm-11__stop is-active" aria-pressed="true" data-url="gallery.html">Gallery</button></li>
-        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="writings.html">Writings</button></li>
-        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="portal.html">Portal</button></li>
-        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="other-services.html">Other<br>Services</button></li>
-        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="tools.html">Tools</button></li>
-        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="events.html">Events</button></li>
-        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="my-consumption.html">My<br>Consumption</button></li>
-        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="commissions.html">Commissions</button></li>
+        <li><button type="button" class="ccm-11__stop is-active" aria-pressed="true" data-url="gallery.html" data-label="Gallery">Gallery</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="writings.html" data-label="Writings">Writings</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="portal.html" data-label="Portal">Portal</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="other-services.html" data-label="Other Services">Other<br>Services</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="tools.html" data-label="Tools">Tools</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="events.html" data-label="Events">Events</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="my-consumption.html" data-label="My Consumption">My<br>Consumption</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="commissions.html" data-label="Commissions">Commissions</button></li>
       </ul>
       <div class="ccm-11__face">
         <em>consider:</em>
@@ -286,8 +291,18 @@
       s.classList.toggle('is-active', k === active);
       s.setAttribute('aria-pressed', String(k === active));
     });
-    current.textContent = stops[active].textContent;
-    live.textContent = stops[active].textContent + ' selected';
+
+    const label = stops[active].dataset.label;
+    current.textContent = label;
+
+    // Reduce font size for longer labels
+    if (label === 'Other Services' || label === 'My Consumption') {
+      current.classList.add('ccm-11__current--small');
+    } else {
+      current.classList.remove('ccm-11__current--small');
+    }
+
+    live.textContent = label + ' selected';
   };
 
   const animateTo = (targetRot, duration = 700) => {
