@@ -55,6 +55,12 @@
   height: 340px;
   display: grid;
   place-items: center;
+  touch-action: none;
+  cursor: grab;
+}
+
+.ccm-11__machine.is-dragging {
+  cursor: grabbing;
 }
 
 .ccm-11__wheel {
@@ -214,7 +220,7 @@
     <nav class="ccm-11__machine" aria-label="Sections">
       <ul class="ccm-11__wheel">
         <li><button type="button" class="ccm-11__stop is-active" aria-pressed="true" data-url="/home">Home</button></li>
-        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="gallery.html">Gallery</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="/series">Series</button></li>
         <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="/films">Films</button></li>
         <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="/live">Live</button></li>
         <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="/sports">Sports</button></li>
@@ -244,6 +250,7 @@
   const current = machine.querySelector('.ccm-11__current');
   const live = machine.querySelector('.ccm-11__live');
   const enterBtn = machine.querySelector('.ccm-11__enter');
+  const face = machine.querySelector('.ccm-11__face');
 
   const n = stops.length;
   const step = 360 / n;
@@ -261,70 +268,234 @@
     });
   };
 
-  // Update counter-rotation for each stop
-  const updateStopRotation = () => {
+  // Apply visual rotation to wheel and counter-rotate stops
+  const applyVisualRotation = () => {
+    wheel.style.transform = `rotate(${rot}deg)`;
     stops.forEach(stop => {
       stop.style.transform = `rotate(${-rot}deg)`;
     });
   };
 
-  // Navigate to a specific index
-  const goTo = (idx) => {
-    // Normalize index to 0..n-1
-    idx = ((idx % n) + n) % n;
-
-    // Calculate target rotation
-    const target = -idx * step;
-
-    // Find shortest rotation path
-    const currentRot = ((rot % 360) + 360) % 360;
-    let delta = target - currentRot;
-
-    // Normalize delta to -180..180 range
-    delta = ((delta % 360) + 540) % 360 - 180;
-
-    rot += delta;
-
-    // Apply rotation to wheel
-    wheel.style.transform = `rotate(${rot}deg)`;
-
-    // Counter-rotate stops to keep them upright
-    updateStopRotation();
-
-    // Update active state
-    stops.forEach((s, k) => {
-      const isActive = k === idx;
-      s.classList.toggle('is-active', isActive);
-      s.setAttribute('aria-pressed', String(isActive));
-    });
-
-    active = idx;
-    current.textContent = stops[idx].textContent;
-    live.textContent = stops[idx].textContent + ' selected';
+  // Calculate which stop is currently at the top
+  const getActiveIndex = () => {
+    const rawIdx = -rot / step;
+    return ((Math.round(rawIdx) % n) + n) % n;
   };
 
-  // Enter button handler - navigate to the active section
-  const handleEnter = () => {
-    const activeStop = stops[active];
-    const url = activeStop.getAttribute('data-url');
-    if (url) {
-      // You can replace this with your actual navigation logic
-      console.log('Navigating to:', url);
-     window.location.href = url;
+  // Update the active state UI
+  const updateActive = (idx) => {
+    if (idx === active) return;
+    active = idx;
+    stops.forEach((s, k) => {
+      s.classList.toggle('is-active', k === active);
+      s.setAttribute('aria-pressed', String(k === active));
+    });
+    current.textContent = stops[active].textContent;
+    live.textContent = stops[active].textContent + ' selected';
+  };
 
-      // For demo purposes, show an alert
-      alert(`Navigating to: ${url}`);
+  // Animate to a specific rotation value
+  const animateTo = (targetRot, duration = 700) => {
+    wheel.style.transition = `transform ${duration}ms cubic-bezier(0.3, 1, 0.35, 1)`;
+    stops.forEach(s => {
+      s.style.transition = `transform ${duration}ms cubic-bezier(0.3, 1, 0.35, 1)`;
+    });
+    rot = targetRot;
+    applyVisualRotation();
+    setTimeout(() => {
+      wheel.style.transition = '';
+      stops.forEach(s => s.style.transition = '');
+    }, duration);
+  };
+
+  // Navigate to a specific index using shortest path
+  const goTo = (idx) => {
+    idx = ((idx % n) + n) % n;
+    const target = -idx * step;
+    const currentRot = ((rot % 360) + 360) % 360;
+    let delta = target - currentRot;
+    delta = ((delta % 360) + 540) % 360 - 180;
+    const finalRot = rot + delta;
+    animateTo(finalRot);
+    updateActive(idx);
+  };
+
+  // ========== DRAG LOGIC ==========
+  let isDragging = false;
+  let hasMoved = false;
+  let startAngle = 0;
+  let lastAngle = 0;
+  let lastTime = 0;
+  let velocity = 0; // degrees per ms
+  let suppressNextClick = false;
+  let inertiaFrame = null;
+  const DRAG_THRESHOLD = 5; // pixels of rotation before drag starts
+
+  const getAngleFromCenter = (clientX, clientY) => {
+    const rect = machine.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    return Math.atan2(clientY - cy, clientX - cx) * (180 / Math.PI);
+  };
+
+  const cancelInertia = () => {
+    if (inertiaFrame) {
+      cancelAnimationFrame(inertiaFrame);
+      inertiaFrame = null;
     }
+  };
+
+  const onPointerDown = (e) => {
+    // Ignore clicks on the center face (arrows, enter button, text)
+    if (e.target.closest('.ccm-11__face')) return;
+    // Only primary button
+    if (e.button !== undefined && e.button !== 0) return;
+
+    cancelInertia();
+    isDragging = true;
+    hasMoved = false;
+    startAngle = getAngleFromCenter(e.clientX, e.clientY);
+    lastAngle = startAngle;
+    lastTime = performance.now();
+    velocity = 0;
+
+    // Disable transitions during drag for immediate response
+    wheel.style.transition = 'none';
+    stops.forEach(s => s.style.transition = 'none');
+    document.body.style.userSelect = 'none';
+    machine.classList.add('is-dragging');
+  };
+
+  const onPointerMove = (e) => {
+    if (!isDragging) return;
+
+    const currentAngle = getAngleFromCenter(e.clientX, e.clientY);
+
+    // Delta since last move (handle angle wrapping)
+    let delta = currentAngle - lastAngle;
+    if (delta > 180) delta -= 360;
+    if (delta < -180) delta += 360;
+
+    // Total delta from start (to check threshold)
+    let totalDelta = currentAngle - startAngle;
+    if (totalDelta > 180) totalDelta -= 360;
+    if (totalDelta < -180) totalDelta += 360;
+
+    if (Math.abs(totalDelta) > DRAG_THRESHOLD || hasMoved) {
+      hasMoved = true;
+      rot += delta;
+      applyVisualRotation();
+      updateActive(getActiveIndex());
+
+      // Track velocity (ignore large time gaps)
+      const now = performance.now();
+      const dt = now - lastTime;
+      if (dt > 0 && dt < 100) {
+        velocity = delta / dt;
+      }
+      lastTime = now;
+    }
+    lastAngle = currentAngle;
+  };
+
+  const snapToNearest = () => {
+    // Find the nearest stop position
+    const normalizedRot = ((rot % 360) + 360) % 360;
+    const nearestStep = Math.round(normalizedRot / step);
+    let targetRot = nearestStep * step;
+
+    // Find the shortest snap distance
+    let delta = targetRot - normalizedRot;
+    if (delta > 180) delta -= 360;
+    if (delta < -180) delta += 360;
+
+    const finalRot = rot + delta;
+    const finalIdx = getActiveIndex();
+
+    animateTo(finalRot, 500);
+    updateActive(finalIdx);
+  };
+
+  const startInertia = () => {
+    // Convert velocity (deg/ms) to deg/frame (~16ms)
+    let currentVel = velocity * 16;
+    const friction = 0.94;
+    const minVel = 0.3;
+
+    const animate = () => {
+      currentVel *= friction;
+      if (Math.abs(currentVel) < minVel) {
+        snapToNearest();
+        return;
+      }
+      rot += currentVel;
+      applyVisualRotation();
+      updateActive(getActiveIndex());
+      inertiaFrame = requestAnimationFrame(animate);
+    };
+    inertiaFrame = requestAnimationFrame(animate);
+  };
+
+  const onPointerUp = (e) => {
+    if (!isDragging) return;
+    isDragging = false;
+    document.body.style.userSelect = '';
+    machine.classList.remove('is-dragging');
+    wheel.style.transition = '';
+    stops.forEach(s => s.style.transition = '');
+
+    if (hasMoved) {
+      // It was a drag - apply inertia and suppress the upcoming click event
+      suppressNextClick = true;
+      startInertia();
+    }
+    // If not a drag, let the natural click event handle navigation
+  };
+
+  const onPointerCancel = (e) => {
+    if (!isDragging) return;
+    isDragging = false;
+    document.body.style.userSelect = '';
+    machine.classList.remove('is-dragging');
+    wheel.style.transition = '';
+    stops.forEach(s => s.style.transition = '');
+    snapToNearest();
   };
 
   // Initialize
   positionItems();
-  updateStopRotation();
+  applyVisualRotation();
 
-  // Event listeners
-  stops.forEach((s, k) => s.addEventListener('click', () => goTo(k)));
+  // Drag event listeners
+  machine.addEventListener('pointerdown', onPointerDown);
+  document.addEventListener('pointermove', onPointerMove);
+  document.addEventListener('pointerup', onPointerUp);
+  document.addEventListener('pointercancel', onPointerCancel);
+
+  // Click handlers (for keyboard activation and non-drag clicks)
+  stops.forEach((s, k) => {
+    s.addEventListener('click', (e) => {
+      if (suppressNextClick) {
+        suppressNextClick = false;
+        return;
+      }
+      goTo(k);
+    });
+  });
+
   machine.querySelector('.ccm-11__prev').addEventListener('click', () => goTo(active - 1));
   machine.querySelector('.ccm-11__next').addEventListener('click', () => goTo(active + 1));
+
+  // Enter button handler
+  const handleEnter = () => {
+    const activeStop = stops[active];
+    const url = activeStop.getAttribute('data-url');
+    if (url) {
+      console.log('Navigating to:', url);
+      alert(`Navigating to: ${url}`);
+      // window.location.href = url;
+    }
+  };
   enterBtn.addEventListener('click', handleEnter);
 })();
 </script>
