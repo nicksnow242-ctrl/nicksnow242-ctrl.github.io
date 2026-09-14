@@ -26,6 +26,8 @@
   --ink: #E0FFFF;
   font-family: 'Segoe UI', system-ui, sans-serif;
   color: var(--ink);
+  position: relative;
+  overflow: hidden;
 }
 
 .ccm-11__stage {
@@ -221,9 +223,130 @@
   white-space: nowrap;
 }
 
+/* Glitch Effects */
+.glitch-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.glitch-bar {
+  position: absolute;
+  height: 2px;
+  opacity: 0;
+  animation: glitchBar 0.3s ease-out forwards;
+}
+
+@keyframes glitchBar {
+  0% {
+    opacity: 0.8;
+    transform: scaleX(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(1);
+  }
+}
+
+.glitch-block {
+  position: absolute;
+  opacity: 0;
+  animation: glitchBlock 0.4s ease-out forwards;
+}
+
+@keyframes glitchBlock {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  30% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+
+.glitch-line {
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  opacity: 0;
+  animation: glitchLine 0.5s ease-out forwards;
+}
+
+@keyframes glitchLine {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  20% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.glitch-noise {
+  position: absolute;
+  opacity: 0;
+  animation: glitchNoise 0.3s ease-out forwards;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+@keyframes glitchNoise {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  40% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.3);
+  }
+}
+
+.glitch-rgb-split {
+  position: absolute;
+  opacity: 0;
+  animation: rgbSplit 0.4s ease-out forwards;
+}
+
+@keyframes rgbSplit {
+  0% {
+    opacity: 0.8;
+    transform: translateX(0);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(5px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ccm-11 * {
     transition-duration: 0.01s !important;
+  }
+  .glitch-container * {
+    animation-duration: 0.01s !important;
   }
 }
 </style>
@@ -231,6 +354,7 @@
 <body>
 
 <section class="ccm-11" aria-label="360 degree wheel navigation demo">
+  <div class="glitch-container" id="glitchContainer"></div>
   <div class="ccm-11__stage">
     <div class="ccm-11__pointer" aria-hidden="true"></div>
     <nav class="ccm-11__machine" aria-label="Sections">
@@ -267,6 +391,7 @@
   const live = machine.querySelector('.ccm-11__live');
   const enterBtn = machine.querySelector('.ccm-11__enter');
   const face = machine.querySelector('.ccm-11__face');
+  const glitchContainer = document.getElementById('glitchContainer');
 
   const n = stops.length;
   const step = 360 / n;
@@ -469,6 +594,102 @@
     snapToNearest();
   };
 
+  // ========== GLITCH EFFECTS ==========
+  const glitchColors = [
+    '#FF0000', '#00FF00', '#0000FF', '#FF00FF', '#00FFFF', '#FFFF00',
+    'rgba(255, 0, 0, 0.8)', 'rgba(0, 255, 0, 0.8)', 'rgba(0, 0, 255, 0.8)',
+    'rgba(255, 0, 255, 0.8)', 'rgba(0, 255, 255, 0.8)'
+  ];
+
+  const createGlitchBar = () => {
+    const bar = document.createElement('div');
+    bar.className = 'glitch-bar';
+    bar.style.top = Math.random() * 100 + '%';
+    bar.style.left = Math.random() * 50 + '%';
+    bar.style.width = (Math.random() * 300 + 100) + 'px';
+    bar.style.background = glitchColors[Math.floor(Math.random() * glitchColors.length)];
+    bar.style.boxShadow = `0 0 10px ${bar.style.background}`;
+    glitchContainer.appendChild(bar);
+    setTimeout(() => bar.remove(), 300);
+  };
+
+  const createGlitchBlock = () => {
+    const block = document.createElement('div');
+    block.className = 'glitch-block';
+    block.style.top = Math.random() * 100 + '%';
+    block.style.left = Math.random() * 100 + '%';
+    block.style.width = (Math.random() * 80 + 20) + 'px';
+    block.style.height = (Math.random() * 80 + 20) + 'px';
+    block.style.background = glitchColors[Math.floor(Math.random() * glitchColors.length)];
+    block.style.boxShadow = `0 0 20px ${block.style.background}`;
+    glitchContainer.appendChild(block);
+    setTimeout(() => block.remove(), 400);
+  };
+
+  const createGlitchLine = () => {
+    const line = document.createElement('div');
+    line.className = 'glitch-line';
+    line.style.top = Math.random() * 100 + '%';
+    line.style.background = `linear-gradient(90deg, transparent, ${glitchColors[Math.floor(Math.random() * glitchColors.length)]}, transparent)`;
+    glitchContainer.appendChild(line);
+    setTimeout(() => line.remove(), 500);
+  };
+
+  const createGlitchNoise = () => {
+    const noise = document.createElement('div');
+    noise.className = 'glitch-noise';
+    noise.style.top = Math.random() * 80 + '%';
+    noise.style.left = Math.random() * 80 + '%';
+    noise.style.width = (Math.random() * 200 + 100) + 'px';
+    noise.style.height = (Math.random() * 200 + 100) + 'px';
+    noise.style.mixBlendMode = 'screen';
+    glitchContainer.appendChild(noise);
+    setTimeout(() => noise.remove(), 300);
+  };
+
+  const createRGBSplit = () => {
+    const split = document.createElement('div');
+    split.className = 'glitch-rgb-split';
+    split.style.top = Math.random() * 100 + '%';
+    split.style.left = Math.random() * 100 + '%';
+    split.style.width = (Math.random() * 150 + 50) + 'px';
+    split.style.height = '3px';
+    split.style.background = `linear-gradient(90deg, #FF0000, #00FF00, #0000FF)`;
+    split.style.boxShadow = `0 0 15px rgba(255, 0, 255, 0.8)`;
+    glitchContainer.appendChild(split);
+    setTimeout(() => split.remove(), 400);
+  };
+
+  const spawnGlitch = () => {
+    const glitchType = Math.random();
+
+    if (glitchType < 0.25) {
+      createGlitchBar();
+    } else if (glitchType < 0.45) {
+      createGlitchBlock();
+    } else if (glitchType < 0.6) {
+      createGlitchLine();
+    } else if (glitchType < 0.8) {
+      createGlitchNoise();
+    } else {
+      createRGBSplit();
+    }
+  };
+
+  const startGlitchLoop = () => {
+    const spawnGlitchBurst = () => {
+      const burstCount = Math.floor(Math.random() * 3) + 1;
+      for (let i = 0; i < burstCount; i++) {
+        setTimeout(spawnGlitch, i * 50);
+      }
+
+      const nextDelay = Math.random() * 3000 + 2000;
+      setTimeout(spawnGlitchBurst, nextDelay);
+    };
+
+    spawnGlitchBurst();
+  };
+
   positionItems();
   applyVisualRotation();
 
@@ -498,6 +719,8 @@
     }
   };
   enterBtn.addEventListener('click', handleEnter);
+
+  startGlitchLoop();
 })();
 </script>
 
