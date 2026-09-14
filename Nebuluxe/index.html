@@ -4,7 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>360° Wheel Navigation</title>
+<script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <style>
+html, body {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  background: #191d1e;
+  background: linear-gradient(0deg, #191d1e 50%, #283139 100%);
+  background-attachment: fixed;
+}
+
+#projector {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
 .ccm-11,
 .ccm-11 *,
 .ccm-11 *::before,
@@ -15,19 +37,18 @@
 }
 
 .ccm-11 {
+  position: relative;
+  z-index: 1;
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at 50% 50%, #2E433C 0%, #21292C 70%);
   --brand: #00FFFF;
   --brand-glow: rgba(0, 255, 255, 0.8);
   --ink: #E0FFFF;
   font-family: 'Segoe UI', system-ui, sans-serif;
   color: var(--ink);
-  position: relative;
-  overflow: hidden;
 }
 
 .ccm-11__stage {
@@ -89,7 +110,7 @@
   border: 1px solid rgba(0, 255, 255, 0.4);
   border-radius: 999px;
   padding: 9px 16px;
-  background: rgba(33, 41, 44, 0.9);
+  background: rgba(25, 29, 30, 0.85);
   color: var(--brand);
   font: 600 13px/1.2 'Segoe UI', system-ui, sans-serif;
   letter-spacing: 0.02em;
@@ -129,9 +150,10 @@
   border-radius: 50%;
   place-content: center;
   text-align: center;
-  background: radial-gradient(circle at 38% 30%, #21292C 0%, #1a2022 100%);
+  background: radial-gradient(circle at 38% 30%, rgba(25, 29, 30, 0.9) 0%, rgba(26, 32, 34, 0.95) 100%);
   border: 1px solid rgba(0, 255, 255, 0.3);
   box-shadow: 0 0 30px rgba(0, 255, 255, 0.2), inset 0 0 30px rgba(0, 255, 255, 0.1), inset 0 1px 0 rgba(0, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
 }
 
 .ccm-11__face em {
@@ -166,7 +188,7 @@
   height: 40px;
   border-radius: 50%;
   border: 1px solid rgba(0, 255, 255, 0.4);
-  background: #21292C;
+  background: rgba(25, 29, 30, 0.9);
   color: var(--brand);
   font-size: 15px;
   cursor: pointer;
@@ -191,7 +213,7 @@
   height: 32px;
   border-radius: 16px;
   border: 1px solid rgba(0, 255, 255, 0.4);
-  background: #21292C;
+  background: rgba(25, 29, 30, 0.9);
   color: var(--brand);
   font: 600 12px/1 'Segoe UI', system-ui, sans-serif;
   letter-spacing: 0.05em;
@@ -243,18 +265,9 @@
 }
 
 @keyframes glitchBar {
-  0% {
-    opacity: 0.8;
-    transform: scaleX(0);
-  }
-  50% {
-    opacity: 1;
-    transform: scaleX(1);
-  }
-  100% {
-    opacity: 0;
-    transform: scaleX(1);
-  }
+  0% { opacity: 0.8; transform: scaleX(0); }
+  50% { opacity: 1; transform: scaleX(1); }
+  100% { opacity: 0; transform: scaleX(1); }
 }
 
 .glitch-line {
@@ -266,17 +279,9 @@
 }
 
 @keyframes glitchLine {
-  0% {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  20% {
-    opacity: 0.7;
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(10px);
-  }
+  0% { opacity: 0; transform: translateY(-10px); }
+  20% { opacity: 0.7; }
+  100% { opacity: 0; transform: translateY(10px); }
 }
 
 .glitch-noise {
@@ -287,17 +292,9 @@
 }
 
 @keyframes glitchNoise {
-  0% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  40% {
-    opacity: 0.6;
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1.3);
-  }
+  0% { opacity: 0; transform: scale(0.8); }
+  40% { opacity: 0.6; }
+  100% { opacity: 0; transform: scale(1.3); }
 }
 
 .glitch-rgb-split {
@@ -307,17 +304,9 @@
 }
 
 @keyframes rgbSplit {
-  0% {
-    opacity: 0.8;
-    transform: translateX(0);
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(5px);
-  }
+  0% { opacity: 0.8; transform: translateX(0); }
+  50% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(5px); }
 }
 
 .glitch-moving-bar {
@@ -328,20 +317,10 @@
 }
 
 @keyframes movingBar {
-  0% {
-    opacity: 0;
-    transform: translateX(-100%);
-  }
-  20% {
-    opacity: 1;
-  }
-  80% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(100vw);
-  }
+  0% { opacity: 0; transform: translateX(-100%); }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(100vw); }
 }
 
 .glitch-sweep-line {
@@ -353,20 +332,10 @@
 }
 
 @keyframes sweepLine {
-  0% {
-    opacity: 0;
-    transform: translateY(-100%);
-  }
-  30% {
-    opacity: 0.8;
-  }
-  70% {
-    opacity: 0.8;
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(100vh);
-  }
+  0% { opacity: 0; transform: translateY(-100%); }
+  30% { opacity: 0.8; }
+  70% { opacity: 0.8; }
+  100% { opacity: 0; transform: translateY(100vh); }
 }
 
 .glitch-diagonal {
@@ -378,17 +347,9 @@
 }
 
 @keyframes diagonalStreak {
-  0% {
-    opacity: 0;
-    transform: translate(-100px, -100px) rotate(45deg);
-  }
-  30% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translate(100vw, 100vh) rotate(45deg);
-  }
+  0% { opacity: 0; transform: translate(-100px, -100px) rotate(45deg); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: translate(100vw, 100vh) rotate(45deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -402,6 +363,8 @@
 </style>
 </head>
 <body>
+
+<canvas id="projector"></canvas>
 
 <section class="ccm-11" aria-label="360 degree wheel navigation demo">
   <div class="glitch-container" id="glitchContainer"></div>
@@ -433,6 +396,215 @@
 </section>
 
 <script>
+////////////////////////// PARTICLE ENGINE ////////////////////////////////////////
+var ParticleEngine = (function() {
+	'use strict';
+
+	function ParticleEngine(canvas_id) {
+		if (!(this instanceof ParticleEngine)) {
+			return new ParticleEngine(canvas_id);
+		}
+
+		var _ParticleEngine = this;
+
+		this.canvas_id = canvas_id;
+		this.stage = new createjs.Stage(canvas_id);
+		this.totalWidth = this.canvasWidth = document.getElementById(canvas_id).width = document.getElementById(canvas_id).offsetWidth;
+		this.totalHeight = this.canvasHeight = document.getElementById(canvas_id).height = document.getElementById(canvas_id).offsetHeight;
+		this.compositeStyle = "lighter";
+
+		this.particleSettings = [
+			{id:"small", num:300, fromX:0, toX:this.totalWidth, ballwidth:3, alphamax:0.4, areaHeight:.5, color:"#0cdbf3", fill:false},
+			{id:"medium", num:100, fromX:0, toX:this.totalWidth, ballwidth:8, alphamax:0.3, areaHeight:1, color:"#6fd2f3", fill:true},
+			{id:"large", num:10, fromX:0, toX:this.totalWidth, ballwidth:30, alphamax:0.2, areaHeight:1, color:"#93e9f3", fill:true}
+		];
+		this.particleArray = [];
+		this.lights = [
+			{ellipseWidth:400, ellipseHeight:100, alpha:0.6, offsetX:0, offsetY:0, color:"#6ac6e8"},
+			{ellipseWidth:350, ellipseHeight:250, alpha:0.3, offsetX:-50, offsetY:0, color:"#54d5e8"},
+			{ellipseWidth:100, ellipseHeight:80, alpha:0.2, offsetX:80, offsetY:-50, color:"#2ae8d8"}
+		];
+
+		this.stage.compositeOperation = _ParticleEngine.compositeStyle;
+
+		function drawBgLight() {
+			var light, bounds, blurFilter;
+			for (var i = 0, len = _ParticleEngine.lights.length; i < len; i++) {
+				light = new createjs.Shape();
+				light.graphics.beginFill(_ParticleEngine.lights[i].color).drawEllipse(0, 0, _ParticleEngine.lights[i].ellipseWidth, _ParticleEngine.lights[i].ellipseHeight);
+				light.regX = _ParticleEngine.lights[i].ellipseWidth/2;
+				light.regY = _ParticleEngine.lights[i].ellipseHeight/2;
+				light.y = light.initY = _ParticleEngine.totalHeight/2 + _ParticleEngine.lights[i].offsetY;
+				light.x = light.initX = _ParticleEngine.totalWidth/2 + _ParticleEngine.lights[i].offsetX;
+
+				blurFilter = new createjs.BlurFilter(_ParticleEngine.lights[i].ellipseWidth, _ParticleEngine.lights[i].ellipseHeight, 1);
+				bounds = blurFilter.getBounds();
+				light.filters = [blurFilter];
+				light.cache(bounds.x-_ParticleEngine.lights[i].ellipseWidth/2, bounds.y-_ParticleEngine.lights[i].ellipseHeight/2, bounds.width*2, bounds.height*2);
+				light.alpha = _ParticleEngine.lights[i].alpha;
+				light.compositeOperation = "screen";
+
+				_ParticleEngine.stage.addChildAt(light, 0);
+				_ParticleEngine.lights[i].elem = light;
+			}
+
+			gsap.fromTo(_ParticleEngine.lights[0].elem,
+				{scaleX:1.5, x:_ParticleEngine.lights[0].elem.initX, y:_ParticleEngine.lights[0].elem.initY},
+				{duration: 10, yoyo:true, repeat:-1, ease:"power1.inOut", scaleX:2, scaleY:0.7}
+			);
+			gsap.fromTo(_ParticleEngine.lights[1].elem,
+				{x:_ParticleEngine.lights[1].elem.initX, y:_ParticleEngine.lights[1].elem.initY},
+				{duration: 12, delay:5, yoyo:true, repeat:-1, ease:"power1.inOut", scaleY:2, scaleX:2, y:_ParticleEngine.totalHeight/2-50, x:_ParticleEngine.totalWidth/2+100}
+			);
+			gsap.fromTo(_ParticleEngine.lights[2].elem,
+				{x:_ParticleEngine.lights[2].elem.initX, y:_ParticleEngine.lights[2].elem.initY},
+				{duration: 8, delay:2, yoyo:true, repeat:-1, ease:"power1.inOut", scaleY:1.5, scaleX:1.5, y:_ParticleEngine.totalHeight/2, x:_ParticleEngine.totalWidth/2-200}
+			);
+		}
+
+		function drawParticles() {
+			var blurFilter;
+			for (var i = 0, len = _ParticleEngine.particleSettings.length; i < len; i++) {
+				var ball = _ParticleEngine.particleSettings[i];
+				var circle;
+				for (var s = 0; s < ball.num; s++ ) {
+					circle = new createjs.Shape();
+					if(ball.fill) {
+						circle.graphics.beginFill(ball.color).drawCircle(0, 0, ball.ballwidth);
+						blurFilter = new createjs.BlurFilter(ball.ballwidth/2, ball.ballwidth/2, 1);
+						circle.filters = [blurFilter];
+						var bounds = blurFilter.getBounds();
+						circle.cache(-50+bounds.x, -50+bounds.y, 100+bounds.width, 100+bounds.height);
+					} else {
+						circle.graphics.beginStroke(ball.color).setStrokeStyle(1).drawCircle(0, 0, ball.ballwidth);
+					}
+
+					circle.alpha = range(0, 0.1);
+					circle.alphaMax = ball.alphamax;
+					circle.distance = ball.ballwidth * 2;
+					circle.ballwidth = ball.ballwidth;
+					circle.flag = ball.id;
+					_ParticleEngine.applySettings(circle, ball.fromX, ball.toX, ball.areaHeight);
+					circle.speed = range(2, 10);
+					circle.y = circle.initY;
+					circle.x = circle.initX;
+					circle.scaleX = circle.scaleY = range(0.3, 1);
+
+					_ParticleEngine.stage.addChild(circle);
+					animateBall(circle);
+					_ParticleEngine.particleArray.push(circle);
+				}
+			}
+		}
+
+		this.applySettings = function(circle, positionX, totalWidth, areaHeight) {
+			circle.speed = range(1, 3);
+			circle.initY = weightedRange(0, _ParticleEngine.totalHeight, 1, [_ParticleEngine.totalHeight * (2-areaHeight/2)/4, _ParticleEngine.totalHeight*(2+areaHeight/2)/4], 0.8 );
+			circle.initX = weightedRange(positionX, totalWidth, 1, [positionX+ ((totalWidth-positionX))/4, positionX+ ((totalWidth-positionX)) * 3/4], 0.6);
+		}
+
+		function animateBall(ball) {
+			var scale = range(0.3, 1);
+			var xpos = range(ball.initX - ball.distance, ball.initX + ball.distance);
+			var ypos = range(ball.initY - ball.distance, ball.initY + ball.distance);
+			var speed = ball.speed;
+
+			gsap.to(ball, {
+				duration: speed,
+				scaleX: scale,
+				scaleY: scale,
+				x: xpos,
+				y: ypos,
+				onComplete: animateBall,
+				onCompleteParams: [ball],
+				ease: "power3.inOut"
+			});
+
+			gsap.to(ball, {
+				duration: speed/2,
+				alpha: range(0.1, ball.alphaMax),
+				onComplete: fadeout,
+				onCompleteParams: [ball, speed]
+			});
+		}
+
+		function fadeout(ball, speed) {
+			ball.speed = range(2, 10);
+			gsap.to(ball, {duration: speed/2, alpha: 0 });
+		}
+
+		drawBgLight();
+		drawParticles();
+	}
+
+	ParticleEngine.prototype.render = function() {
+		this.stage.update();
+	}
+
+	ParticleEngine.prototype.resize = function() {
+		this.totalWidth = this.canvasWidth = document.getElementById(this.canvas_id).width = document.getElementById(this.canvas_id).offsetWidth;
+		this.totalHeight = this.canvasHeight = document.getElementById(this.canvas_id).height = document.getElementById(this.canvas_id).offsetHeight;
+		this.render();
+
+		for (var i = 0, length = this.particleArray.length; i < length; i++) {
+			this.applySettings(this.particleArray[i], 0, this.totalWidth, this.particleArray[i].areaHeight);
+		}
+
+		for (var j = 0, len = this.lights.length; j < len; j++) {
+			this.lights[j].elem.initY = this.totalHeight/2 + this.lights[j].offsetY;
+			this.lights[j].elem.initX = this.totalWidth/2 + this.lights[j].offsetX;
+			gsap.to(this.lights[j].elem, {duration: 0.5, x: this.lights[j].elem.initX, y: this.lights[j].elem.initY});
+		}
+	}
+
+	return ParticleEngine;
+}());
+
+//////////////////////// UTILS ////////////////////////////////////////
+function range(min, max) {
+	return min + (max - min) * Math.random();
+}
+
+function round(num, precision) {
+   var decimal = Math.pow(10, precision);
+   return Math.round(decimal * num) / decimal;
+}
+
+function weightedRange(to, from, decimalPlaces, weightedRange, weightStrength) {
+	if (typeof from === "undefined" || from === null) from = 0;
+	if (typeof decimalPlaces === "undefined" || decimalPlaces === null) decimalPlaces = 0;
+	if (typeof weightedRange === "undefined" || weightedRange === null) weightedRange = 0;
+	if (typeof weightStrength === "undefined" || weightStrength === null) weightStrength = 0;
+
+	var ret;
+	if(to == from) { return(to); }
+
+	if(weightedRange && Math.random() <= weightStrength) {
+		ret = round(Math.random() * (weightedRange[1] - weightedRange[0]) + weightedRange[0], decimalPlaces);
+	} else {
+		ret = round(Math.random() * (to - from) + from, decimalPlaces);
+	}
+	return ret;
+}
+
+///////////////// RUN CODE //////////////////////////
+var particles;
+(function(){
+	particles = new ParticleEngine('projector');
+	createjs.Ticker.on("tick", updateCanvas);
+	window.addEventListener('resize', resizeCanvas, false);
+
+	function updateCanvas(){
+		particles.render();
+	}
+
+	function resizeCanvas(){
+		particles.resize();
+	}
+}());
+
+
+//////////////////////// WHEEL NAVIGATION //////////////////////////
 (() => {
   const machine = document.querySelector('.ccm-11__machine');
   const wheel = machine.querySelector('.ccm-11__wheel');
@@ -440,7 +612,6 @@
   const current = machine.querySelector('.ccm-11__current');
   const live = machine.querySelector('.ccm-11__live');
   const enterBtn = machine.querySelector('.ccm-11__enter');
-  const face = machine.querySelector('.ccm-11__face');
   const glitchContainer = document.getElementById('glitchContainer');
 
   const n = stops.length;
@@ -733,45 +904,33 @@
 
   const spawnGlitch = () => {
     const glitchType = Math.random();
-
-    if (glitchType < 0.2) {
-      createGlitchBar();
-    } else if (glitchType < 0.35) {
-      createGlitchLine();
-    } else if (glitchType < 0.5) {
-      createGlitchNoise();
-    } else if (glitchType < 0.65) {
-      createRGBSplit();
-    } else if (glitchType < 0.8) {
-      createMovingBar();
-    } else if (glitchType < 0.9) {
-      createSweepLine();
-    } else {
-      createDiagonalStreak();
-    }
+    if (glitchType < 0.2) createGlitchBar();
+    else if (glitchType < 0.35) createGlitchLine();
+    else if (glitchType < 0.5) createGlitchNoise();
+    else if (glitchType < 0.65) createRGBSplit();
+    else if (glitchType < 0.8) createMovingBar();
+    else if (glitchType < 0.9) createSweepLine();
+    else createDiagonalStreak();
   };
 
   const startGlitchLoop = () => {
     let glitchTimeout;
     const startTime = Date.now();
-    const duration = 30000; // 30 seconds
+    const duration = 30000;
 
     const spawnGlitchBurst = () => {
-      if (Date.now() - startTime >= duration) {
-        return; // Stop after 30 seconds
-      }
+      if (Date.now() - startTime >= duration) return;
 
       const burstCount = Math.floor(Math.random() * 3) + 1;
       for (let i = 0; i < burstCount; i++) {
         setTimeout(spawnGlitch, i * 50);
       }
 
-      const nextDelay = Math.random() * 3000 + 1000; // 1-4 seconds
+      const nextDelay = Math.random() * 3000 + 1000;
       glitchTimeout = setTimeout(spawnGlitchBurst, nextDelay);
     };
 
     spawnGlitchBurst();
-
     return () => clearTimeout(glitchTimeout);
   };
 
