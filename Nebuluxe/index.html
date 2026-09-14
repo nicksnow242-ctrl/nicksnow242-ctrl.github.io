@@ -365,13 +365,12 @@ html, body {
   position: fixed;
   top: 0;
   left: 50%;
-  /* Show the tab (40px) + a small pull handle (20px) = 60px total visible */
   transform: translateX(-50%) translateY(calc(-100% + 60px));
   width: 90%;
   max-width: 500px;
+  height: auto;
   z-index: 100;
 
-  /* Frosted Glass Effect */
   background: rgba(25, 29, 30, 0.65);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
@@ -385,6 +384,7 @@ html, body {
   cursor: pointer;
   color: #E0FFFF;
   font-family: 'Segoe UI', system-ui, sans-serif;
+  overflow: hidden;
 }
 
 .about-pulldown:hover {
