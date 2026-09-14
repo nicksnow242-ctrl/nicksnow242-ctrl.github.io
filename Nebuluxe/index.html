@@ -455,6 +455,163 @@ html, body {
   transform: translateY(0);
 }
 /* ========== END ABOUT PULLDOWN CSS========== */
+/* --- Music Player Styles --- */
+  .music-player-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 9999;
+    font-family: Arial, sans-serif;
+  }
+
+  .pullout-tab {
+    position: absolute;
+    top: 20px;
+    right: 0;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 25px 0 0 25px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: -2px 2px 10px rgba(0, 0, 0, 0.3);
+    z-index: 10000;
+  }
+
+  .pullout-tab:hover {
+    width: 55px;
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  }
+
+  .pullout-tab.open {
+    right: 320px;
+  }
+
+  .tab-icon {
+    color: white;
+    font-size: 24px;
+  }
+
+  .music-note {
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+
+  .player-panel {
+    position: fixed;
+    top: 0;
+    right: -320px;
+    width: 320px;
+    height: 100vh;
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
+    transition: right 0.3s ease;
+    overflow-y: auto;
+    z-index: 9998;
+  }
+
+  .player-panel.open {
+    right: 0;
+  }
+
+  .player-content {
+    padding: 80px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .album-frame {
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .oval-frame {
+    width: 180px;
+    height: 140px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid #667eea;
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+    background: #000;
+  }
+
+  .album-art {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .song-info {
+    text-align: center;
+    color: white;
+  }
+
+  .song-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-transform: capitalize;
+  }
+
+  .controls {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .control-btn {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 15px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .control-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+  }
+
+  .shuffle-btn {
+    background: rgba(102, 126, 234, 0.2);
+  }
+
+  .play-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    width: 60px;
+    height: 60px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  }
+
+  .play-btn:hover {
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+  }
+
+  @media (max-width: 768px) {
+    .player-panel { width: 280px; right: -280px; }
+    .pullout-tab.open { right: 280px; }
+    .album-frame { width: 160px; height: 160px; }
+    .oval-frame { width: 140px; height: 110px; }
+  }
+  /* --- End Music Player Styles --- */
 </style>
 </head>
 <body>
@@ -502,7 +659,52 @@ html, body {
     </nav>
   </div>
 </section>
+<!-- Music Player HTML Structure -->
+<div class="music-player-container">
+  <!-- Pullout Tab -->
+  <div id="pullout-tab" class="pullout-tab">
+    <div class="tab-icon">
+      <span class="music-note">♪</span>
+    </div>
+  </div>
 
+  <!-- Player Panel -->
+  <div id="player-panel" class="player-panel">
+    <div class="player-content">
+      <!-- Album Art in Oval Frame -->
+      <div class="album-frame">
+        <div class="oval-frame">
+          <!-- Change this src to your actual album art image -->
+          <img id="album-art" src="https://via.placeholder.com/180x140/1a1a2e/667eea?text=Album+Art" alt="Album Art" class="album-art">
+        </div>
+      </div>
+
+      <!-- Song Info -->
+      <div class="song-info">
+        <div id="song-title" class="song-title">No Song Selected</div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls">
+        <button id="shuffle-btn" class="control-btn shuffle-btn" title="Shuffle Next">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
+          </svg>
+        </button>
+
+        <button id="play-pause-btn" class="control-btn play-btn" title="Play">
+          <svg id="play-icon" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <svg id="pause-icon" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END Music Player HTML Structure -->
 <script>
 ////////////////////////// PARTICLE ENGINE ////////////////////////////////////////
 var ParticleEngine = (function() {
@@ -1066,9 +1268,6 @@ var particles;
   const handleEnter = () => {
     const activeStop = stops[active];
     const url = activeStop.getAttribute('data-url');
-    if (url) {
-      window.location.href = url;
-    }
   };
   enterBtn.addEventListener('click', handleEnter);
 
@@ -1082,6 +1281,130 @@ if (aboutPulldown) {
   });
 }
 // ========== END ABOUT PULLDOWN LOGIC ==========
+// ========== Music Player Script ==========
+  const playlist = [
+    'Tunes/song1.mp3',
+    'Tunes/song2.mp3',
+    'Tunes/song3.mp3',
+    'Tunes/song4.mp3'
+  ];
+
+  // Map songs to album art (Optional: update paths to your actual images)
+  const albumArtMap = {
+    'Tunes/song1.mp3': 'https://via.placeholder.com/180x140/1a1a2e/667eea?text=Song+1',
+    'Tunes/song2.mp3': 'https://via.placeholder.com/180x140/1a1a2e/667eea?text=Song+2',
+    'Tunes/song3.mp3': 'https://via.placeholder.com/180x140/1a1a2e/667eea?text=Song+3',
+    'Tunes/song4.mp3': 'https://via.placeholder.com/180x140/1a1a2e/667eea?text=Song+4'
+  };
+
+  // --- Variables ---
+  let audio = new Audio();
+  let currentSongIndex = 0;
+  let isPlaying = false;
+  let isOpen = false;
+
+  // --- DOM Elements ---
+  const pulloutTab = document.getElementById('pullout-tab');
+  const playerPanel = document.getElementById('player-panel');
+  const playPauseBtn = document.getElementById('play-pause-btn');
+  const shuffleBtn = document.getElementById('shuffle-btn');
+  const songTitle = document.getElementById('song-title');
+  const albumArtImg = document.getElementById('album-art');
+  const playIcon = document.getElementById('play-icon');
+  const pauseIcon = document.getElementById('pause-icon');
+
+  // --- Functions ---
+  function updateUI() {
+    // Update Icons
+    playIcon.style.display = isPlaying ? 'none' : 'block';
+    pauseIcon.style.display = isPlaying ? 'block' : 'none';
+    playPauseBtn.title = isPlaying ? 'Pause' : 'Play';
+
+    // Update Song Info
+    const currentSong = playlist[currentSongIndex];
+    const songName = currentSong.split('/').pop().replace('.mp3', '').replace(/-/g, ' ');
+    songTitle.textContent = songName;
+
+    // Update Album Art
+    albumArtImg.src = albumArtMap[currentSong] || 'https://via.placeholder.com/180x140/1a1a2e/667eea?text=Album';
+  }
+
+  function togglePlayer() {
+    isOpen = !isOpen;
+    playerPanel.classList.toggle('open', isOpen);
+    pulloutTab.classList.toggle('open', isOpen);
+  }
+
+  function togglePlayPause() {
+    if (isPlaying) {
+      audio.pause();
+    } else {
+      audio.play().catch(err => console.log('Autoplay prevented:', err));
+    }
+  }
+
+  function shuffleNext() {
+    if (playlist.length === 0) return;
+
+    let nextIndex;
+    do {
+      nextIndex = Math.floor(Math.random() * playlist.length);
+    } while (nextIndex === currentSongIndex && playlist.length > 1);
+
+    currentSongIndex = nextIndex;
+    audio.src = playlist[currentSongIndex];
+    audio.play().catch(err => console.log('Play error:', err));
+  }
+
+  function saveState() {
+    const state = {
+      song: playlist[currentSongIndex],
+      position: audio.currentTime,
+      playing: !audio.paused,
+      songIndex: currentSongIndex
+    };
+    sessionStorage.setItem('musicState', JSON.stringify(state));
+  }
+
+  function restoreState() {
+    const savedState = sessionStorage.getItem('musicState');
+    if (savedState) {
+      try {
+        const state = JSON.parse(savedState);
+        currentSongIndex = state.songIndex;
+        audio.src = state.song;
+
+        audio.addEventListener('loadedmetadata', () => {
+          audio.currentTime = state.position;
+          if (state.playing) {
+            audio.play().catch(err => console.log('Autoplay prevented on restore:', err));
+          }
+        }, { once: true });
+      } catch (e) {
+        console.error('Failed to restore music state:', e);
+      }
+    } else {
+      // If no saved state, load the first song
+      audio.src = playlist[0];
+    }
+  }
+
+  // --- Event Listeners ---
+  pulloutTab.addEventListener('click', togglePlayer);
+  playPauseBtn.addEventListener('click', togglePlayPause);
+  shuffleBtn.addEventListener('click', shuffleNext);
+
+  audio.addEventListener('play', () => { isPlaying = true; updateUI(); });
+  audio.addEventListener('pause', () => { isPlaying = false; updateUI(); });
+  audio.addEventListener('ended', () => shuffleNext());
+
+  // Save state when navigating away or closing tab
+  window.addEventListener('beforeunload', saveState);
+
+  // --- Initialize ---
+  restoreState();
+  updateUI();
+  // ========== END Music Player Script ==========
 </script>
 
 </body>
