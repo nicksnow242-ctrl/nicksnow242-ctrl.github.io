@@ -94,3 +94,51 @@ footer {
     color: white;
     font-size: 0.9rem;
 }
+/* =========================================
+   GALLERY PAGE STYLES
+   ========================================= */
+
+/* Main container to give some breathing room */
+.gallery-main {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex: 1;
+}
+
+.gallery-title {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-bottom: 2rem;
+}
+
+/* The CSS Grid Layout */
+.gallery-grid {
+    display: grid;
+    /* This creates responsive columns that automatically adjust to screen size */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Individual Image Container */
+.gallery-item {
+    display: block;
+    border-radius: 8px;
+    overflow: hidden; /* Keeps the image corners rounded */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gallery-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* The Image Itself */
+.gallery-item img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover; /* Ensures images fill the space without stretching */
+    display: block;
+}
