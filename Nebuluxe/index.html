@@ -360,15 +360,15 @@ html, body {
     animation-duration: 0.01s !important;
   }
 }
-/* ========== ABOUT PULLDOWN CSS========== */
+/* ========== ABOUT PULLDOWN ========== */
 .about-pulldown {
   position: fixed;
   top: 0;
   left: 50%;
+  /* Slides the panel up, leaving only the bottom 60px (the header) visible */
   transform: translateX(-50%) translateY(calc(-100% + 60px));
   width: 90%;
   max-width: 500px;
-  height: auto;
   z-index: 100;
 
   background: rgba(25, 29, 30, 0.65);
@@ -384,7 +384,6 @@ html, body {
   cursor: pointer;
   color: #E0FFFF;
   font-family: 'Segoe UI', system-ui, sans-serif;
-  overflow: hidden;
 }
 
 .about-pulldown:hover {
@@ -396,7 +395,7 @@ html, body {
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 136, 255, 0.3);
 }
 
-/* ========== VISIBLE TAB IN CLOSED STATE ========== */
+/* ========== HEADER (now at bottom of panel, so it stays visible when closed) ========== */
 .about-header {
   position: relative;
   height: 60px;
@@ -413,7 +412,7 @@ html, body {
   user-select: none;
 }
 
-/* Small pull handle indicator */
+/* Pull handle indicator at top of the visible tab */
 .about-header::before {
   content: '';
   position: absolute;
@@ -439,8 +438,9 @@ html, body {
   transform: rotate(180deg);
 }
 
+/* ========== CONTENT (now at top of panel, hidden when closed) ========== */
 .about-content {
-  padding: 0 24px 24px;
+  padding: 20px 24px 24px;
   font-size: 14px;
   line-height: 1.6;
   color: rgba(224, 255, 255, 0.85);
@@ -461,16 +461,15 @@ html, body {
 <body>
 <!-- // About pulldown html // -->
 <div class="about-pulldown" id="aboutPulldown">
-
-  <div class="about-header">
-    <span>about this website</span>
-    <svg class="about-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="6 9 12 15 18 9"></polyline>
-    </svg>
-  </div>
   <div class="about-content">
     <p>This is an interactive 360-degree wheel navigation experiment. It features drag-to-spin physics, neon aesthetics, and a dynamic particle background.</p>
     <p>Built with HTML, CSS, JavaScript, CreateJS, and GSAP.</p>
+  </div>
+  <div class="about-header">
+    <svg class="about-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+    <span>about this website</span>
   </div>
 </div>
 <!-- //End about pulldown html // -->
