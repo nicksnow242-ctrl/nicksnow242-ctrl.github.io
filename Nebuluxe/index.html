@@ -1305,18 +1305,27 @@ if (aboutPulldown) {
     z-index: 2;
   }
 
-  /* --- SONAR WAVES --- */
+  /* --- SONAR WAVES (Now outside the icon) --- */
+  .sonar-container {
+    position: fixed;
+    top: 60px; /* Center of the activation core */
+    right: 60px;
+    width: 0;
+    height: 0;
+    z-index: 10000;
+    pointer-events: none;
+  }
+
   .sonar-wave {
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 0;
+    left: 0;
     width: 60px;
     height: 60px;
     border: 2px solid var(--neon-orange);
     border-radius: 50%;
     transform: translate(-50%, -50%) scale(1);
     opacity: 0;
-    pointer-events: none;
     animation: sonar-pulse 3s ease-out infinite;
   }
 
@@ -1329,7 +1338,6 @@ if (aboutPulldown) {
   }
 
   /* Stop sonar when player is open */
-  .mecha-panel.open ~ .activation-core .sonar-wave,
   .music-player-container.panel-open .sonar-wave {
     animation: none;
     opacity: 0;
@@ -1346,7 +1354,7 @@ if (aboutPulldown) {
       border-width: 2px;
     }
     100% {
-      transform: translate(-50%, -50%) scale(4);
+      transform: translate(-50%, -50%) scale(15);
       opacity: 0;
       border-width: 1px;
     }
@@ -1380,7 +1388,7 @@ if (aboutPulldown) {
     }
   }
 
-  /* --- THE TRANSFORMER PANEL --- */
+  /* --- THE TRANSFORMER PANEL (Radial Unfold) --- */
   .mecha-panel {
     position: absolute;
     top: 50px;
@@ -1389,6 +1397,16 @@ if (aboutPulldown) {
     display: flex;
     flex-direction: column;
     pointer-events: none;
+
+    /* Radial clip-path animation */
+    clip-path: circle(0% at 100% 0%);
+    transition: clip-path 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    transform-origin: top right;
+  }
+
+  .mecha-panel.open {
+    pointer-events: auto;
+    clip-path: circle(150% at 100% 0%);
   }
 
   .mech-plate {
@@ -1396,10 +1414,6 @@ if (aboutPulldown) {
     border: 1px solid #333;
     position: relative;
     overflow: hidden;
-    transform-origin: top right;
-    transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    opacity: 0;
-    transform: scaleY(0) rotateX(-90deg);
   }
 
   .mech-plate::before {
@@ -1427,7 +1441,6 @@ if (aboutPulldown) {
     color: var(--neon-orange);
     font-size: 12px;
     letter-spacing: 2px;
-    transition-delay: 0.1s;
     clip-path: polygon(0 0, 100% 0, 100% 100%, 10% 100%, 0 70%);
   }
 
@@ -1438,7 +1451,6 @@ if (aboutPulldown) {
     flex-direction: column;
     align-items: center;
     gap: 15px;
-    transition-delay: 0.25s;
     clip-path: polygon(0 0, 100% 0, 100% 95%, 95% 100%, 0 100%);
   }
 
@@ -1449,7 +1461,6 @@ if (aboutPulldown) {
     justify-content: center;
     gap: 25px;
     background: linear-gradient(180deg, var(--grunge-gray) 0%, var(--dark-metal) 100%);
-    transition-delay: 0.4s;
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 30%);
   }
 
@@ -1461,25 +1472,12 @@ if (aboutPulldown) {
     border-left: 1px solid var(--neon-orange);
     right: -15px;
     top: 0;
-    transform-origin: top center;
-    transform: rotateY(-90deg) scale(0.5);
-    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    transition-delay: 0.5s;
     opacity: 0;
-  }
-
-  .mecha-panel.open {
-    pointer-events: auto;
-  }
-
-  .mecha-panel.open .mech-plate {
-    opacity: 1;
-    transform: scaleY(1) rotateX(0deg);
+    transition: opacity 0.5s ease 0.3s;
   }
 
   .mecha-panel.open .mech-hinge {
     opacity: 1;
-    transform: rotateY(0deg) scale(1);
   }
 
   .oval-frame {
@@ -1596,13 +1594,16 @@ if (aboutPulldown) {
 
 <!-- The Player HTML Structure -->
 <div class="music-player-container" id="player-container">
+  <!-- Sonar Waves (Now outside the icon, positioned at the icon's center) -->
+  <div class="sonar-container">
+    <div class="sonar-wave"></div>
+    <div class="sonar-wave"></div>
+    <div class="sonar-wave"></div>
+  </div>
+
   <!-- Activation Core (Tab) -->
   <div id="activation-core" class="activation-core">
     <span class="core-icon">♪</span>
-    <!-- Sonar Waves -->
-    <div class="sonar-wave"></div>
-    <div class="sonar-wave"></div>
-    <div class="sonar-wave"></div>
   </div>
 
   <!-- Transformer Panel -->
