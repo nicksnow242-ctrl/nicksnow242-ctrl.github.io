@@ -1221,6 +1221,7 @@ var particles;
         return;
       }
       goTo(k);
+      window.location.href = s.dataset.url;
     });
   });
 
@@ -1230,6 +1231,9 @@ var particles;
   const handleEnter = () => {
     const activeStop = stops[active];
     const url = activeStop.getAttribute('data-url');
+    if (url) {
+      window.location.href = url;
+    }
   };
   enterBtn.addEventListener('click', handleEnter);
 
