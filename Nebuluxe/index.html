@@ -1246,8 +1246,8 @@ if (aboutPulldown) {
 
 </script>
 <!-- ========================================== -->
-<!-- CYBERPUNK MECHA MUSIC PLAYER - METAL EDITION -->
-<!-- PASTE BEFORE </body> -->
+<!-- CYBERPUNK MECHA MUSIC PLAYER -->
+<!-- PASTE EVERYTHING BELOW THIS LINE BEFORE </body> -->
 <!-- ========================================== -->
 
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -1256,14 +1256,9 @@ if (aboutPulldown) {
   :root {
     --neon-orange: #ff5e00;
     --neon-glow: rgba(255, 94, 0, 0.6);
-    --dark-metal: #1c1c1e;
-    --mid-metal: #2e2e30;
-    --light-metal: #4a4a4e;
-    --rust-dark: #6b3410;
-    --rust-mid: #8b4513;
-    --rust-light: #a0522d;
-    --pipe-highlight: #9a9a9e;
-    --pipe-shadow: #1a1a1c;
+    --dark-metal: #0a0a0a;
+    --grunge-gray: #1a1a1a;
+    --mech-border: 2px solid var(--neon-orange);
   }
 
   .music-player-container {
@@ -1272,48 +1267,29 @@ if (aboutPulldown) {
     right: 30px;
     z-index: 9999;
     font-family: 'Share Tech Mono', monospace;
-    perspective: 1200px;
+    perspective: 1000px;
   }
 
-  /* ============================================
-     BRUSHED METAL MIXIN (used on plates & core)
-     ============================================ */
-  .brushed-metal {
-    background:
-      repeating-linear-gradient(
-        90deg,
-        transparent,
-        transparent 2px,
-        rgba(255,255,255,0.015) 2px,
-        rgba(255,255,255,0.015) 4px
-      ),
-      linear-gradient(160deg, #2a2a2c 0%, #333336 20%, #28282a 40%, #303033 60%, #262628 80%, #2c2c2f 100%);
-  }
-
-  /* ============================================
-     ACTIVATION CORE
-     ============================================ */
+  /* --- THE ACTIVATION CORE (TAB) --- */
   .activation-core {
-    width: 64px;
-    height: 64px;
-    border: 2px solid #555;
+    width: 60px;
+    height: 60px;
+    background: var(--dark-metal);
+    border: var(--mech-border);
     clip-path: polygon(20% 0%, 100% 0%, 100% 80%, 80% 100%, 0% 100%, 0% 20%);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px var(--neon-glow), inset 0 0 10px rgba(255, 94, 0, 0.2);
     position: relative;
     z-index: 10001;
-    box-shadow:
-      0 0 15px var(--neon-glow),
-      inset 0 1px 0 rgba(255,255,255,0.1),
-      inset 0 -1px 0 rgba(0,0,0,0.5);
-    transition: all 0.3s ease;
   }
 
   .activation-core:hover {
-    border-color: var(--neon-orange);
-    box-shadow: 0 0 30px var(--neon-orange), inset 0 0 15px rgba(255,94,0,0.15);
+    background: var(--neon-orange);
+    box-shadow: 0 0 25px var(--neon-orange);
   }
 
   .activation-core:hover .core-icon {
@@ -1321,37 +1297,21 @@ if (aboutPulldown) {
     animation: icon-glitch 0.3s ease-in-out;
   }
 
-  /* Core rivets */
-  .activation-core::before {
-    content: "";
-    position: absolute;
-    top: 6px; left: 6px;
-    width: 6px; height: 6px;
-    background: radial-gradient(circle at 35% 35%, #888, #333);
-    border-radius: 50%;
-    box-shadow:
-      38px 0 0 0 #555,
-      0 38px 0 0 #555,
-      38px 38px 0 0 #555,
-      inset 0 1px 1px rgba(255,255,255,0.3),
-      38px 0 0 0 #555;
-    z-index: 3;
-  }
-
   .core-icon {
     color: var(--neon-orange);
-    font-size: 30px;
-    transition: color 0.3s ease, transform 0.4s ease;
+    font-size: 32px;
+    transition: color 0.3s ease;
     position: relative;
     z-index: 2;
-    text-shadow: 0 0 10px var(--neon-glow);
   }
 
   /* --- SONAR WAVES --- */
   .sonar-wave {
     position: absolute;
-    top: 50%; left: 50%;
-    width: 64px; height: 64px;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 60px;
     border: 2px solid var(--neon-orange);
     border-radius: 50%;
     transform: translate(-50%, -50%) scale(1);
@@ -1359,75 +1319,71 @@ if (aboutPulldown) {
     pointer-events: none;
     animation: sonar-pulse 3s ease-out infinite;
   }
-  .sonar-wave:nth-child(2) { animation-delay: 1s; }
-  .sonar-wave:nth-child(3) { animation-delay: 2s; }
 
+  .sonar-wave:nth-child(2) {
+    animation-delay: 1s;
+  }
+
+  .sonar-wave:nth-child(3) {
+    animation-delay: 2s;
+  }
+
+  /* Stop sonar when player is open */
+  .mecha-panel.open ~ .activation-core .sonar-wave,
   .music-player-container.panel-open .sonar-wave {
-    animation: none; opacity: 0;
+    animation: none;
+    opacity: 0;
   }
 
   @keyframes sonar-pulse {
-    0%   { transform: translate(-50%,-50%) scale(1); opacity: 0.7; border-width: 3px; }
-    50%  { opacity: 0.3; border-width: 2px; }
-    100% { transform: translate(-50%,-50%) scale(4.5); opacity: 0; border-width: 0.5px; }
+    0% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 0.8;
+      border-width: 3px;
+    }
+    50% {
+      opacity: 0.4;
+      border-width: 2px;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(4);
+      opacity: 0;
+      border-width: 1px;
+    }
   }
 
+  /* --- ICON GLITCH EFFECT --- */
   @keyframes icon-glitch {
-    0%,100% { transform: translate(0); text-shadow: 0 0 10px var(--neon-glow); }
-    10%  { transform: translate(-3px,1px); text-shadow: 3px 0 #ff0000, -3px 0 #00ffff; }
-    20%  { transform: translate(2px,-2px); text-shadow: -2px 0 #ff0000, 2px 0 #00ffff; }
-    30%  { transform: translate(-1px,3px); text-shadow: 1px 0 #ff0000, -1px 0 #00ffff; }
-    40%  { transform: translate(3px,-1px); text-shadow: -3px 0 #ff0000, 3px 0 #00ffff; }
-    50%  { transform: translate(0); text-shadow: 0 0 10px var(--neon-glow); }
+    0%, 100% {
+      transform: translate(0);
+      text-shadow: none;
+    }
+    10% {
+      transform: translate(-2px, 1px);
+      text-shadow: 2px 0 #ff0000, -2px 0 #00ffff;
+    }
+    20% {
+      transform: translate(2px, -1px);
+      text-shadow: -2px 0 #ff0000, 2px 0 #00ffff;
+    }
+    30% {
+      transform: translate(-1px, 2px);
+      text-shadow: 1px 0 #ff0000, -1px 0 #00ffff;
+    }
+    40% {
+      transform: translate(1px, -2px);
+      text-shadow: -1px 0 #ff0000, 1px 0 #00ffff;
+    }
+    50% {
+      transform: translate(0);
+      text-shadow: none;
+    }
   }
 
-  /* ============================================
-     CABLES / WIRES (from core to panel)
-     ============================================ */
-  .cable-bundle {
-    position: absolute;
-    top: 58px;
-    right: 18px;
-    width: 40px;
-    height: 30px;
-    z-index: 10000;
-    pointer-events: none;
-    overflow: visible;
-  }
-
-  .cable-bundle svg {
-    overflow: visible;
-    width: 40px;
-    height: 30px;
-  }
-
-  .cable {
-    fill: none;
-    stroke-linecap: round;
-  }
-
-  .cable-1 {
-    stroke: #555;
-    stroke-width: 3;
-    filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.8));
-  }
-  .cable-2 {
-    stroke: #444;
-    stroke-width: 2;
-    filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.8));
-  }
-  .cable-3 {
-    stroke: var(--rust-mid);
-    stroke-width: 2.5;
-    filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.8));
-  }
-
-  /* ============================================
-     TRANSFORMER PANEL
-     ============================================ */
+  /* --- THE TRANSFORMER PANEL --- */
   .mecha-panel {
     position: absolute;
-    top: 80px;
+    top: 50px;
     right: 0;
     width: 340px;
     display: flex;
@@ -1435,363 +1391,90 @@ if (aboutPulldown) {
     pointer-events: none;
   }
 
-  /* --- MECH PLATES (base) --- */
   .mech-plate {
+    background: var(--dark-metal);
+    border: 1px solid #333;
     position: relative;
     overflow: hidden;
     transform-origin: top right;
     transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     opacity: 0;
     transform: scaleY(0) rotateX(-90deg);
-    border: 1px solid #444;
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,0.07),
-      inset 0 -1px 0 rgba(0,0,0,0.6),
-      3px 3px 8px rgba(0,0,0,0.7);
   }
 
-  /* Scanline overlay */
   .mech-plate::before {
     content: "";
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     background: repeating-linear-gradient(
       0deg,
-      rgba(0,0,0,0.1) 0px,
-      rgba(0,0,0,0.1) 1px,
+      rgba(0, 0, 0, 0.15),
+      rgba(0, 0, 0, 0.15) 1px,
       transparent 1px,
-      transparent 3px
+      transparent 2px
     );
     pointer-events: none;
-    z-index: 5;
+    z-index: 2;
   }
 
-  /* --- RUST PATCHES (pseudo-element on each plate) --- */
-  .mech-plate::after {
-    content: "";
-    position: absolute;
-    pointer-events: none;
-    z-index: 4;
-    filter: blur(1.5px);
-    opacity: 0.55;
-  }
-
-  .plate-header::after {
-    top: 2px; right: 10px;
-    width: 70px; height: 25px;
-    background:
-      radial-gradient(ellipse at 30% 60%, var(--rust-mid) 0%, transparent 70%),
-      radial-gradient(ellipse at 80% 30%, var(--rust-dark) 0%, transparent 60%);
-  }
-
-  .plate-main::after {
-    bottom: 10px; left: 8px;
-    width: 90px; height: 50px;
-    background:
-      radial-gradient(ellipse at 40% 50%, var(--rust-light) 0%, transparent 65%),
-      radial-gradient(ellipse at 75% 70%, var(--rust-dark) 0%, transparent 55%),
-      radial-gradient(ellipse at 20% 80%, var(--rust-mid) 0%, transparent 50%);
-  }
-
-  .plate-controls::after {
-    top: 5px; right: 15px;
-    width: 55px; height: 35px;
-    background:
-      radial-gradient(ellipse at 50% 50%, var(--rust-mid) 0%, transparent 70%),
-      radial-gradient(ellipse at 20% 30%, var(--rust-dark) 0%, transparent 60%);
-  }
-
-  /* --- RIVETS --- */
-  .rivet {
-    position: absolute;
-    width: 8px; height: 8px;
-    background: radial-gradient(circle at 35% 35%, #999, #444 60%, #222);
-    border-radius: 50%;
-    box-shadow:
-      inset 0 1px 1px rgba(255,255,255,0.4),
-      inset 0 -1px 1px rgba(0,0,0,0.6),
-      0 1px 2px rgba(0,0,0,0.8);
-    z-index: 6;
-  }
-
-  /* Rust drip below some rivets */
-  .rivet.rusty::after {
-    content: "";
-    position: absolute;
-    top: 7px; left: 2px;
-    width: 4px; height: 18px;
-    background: linear-gradient(180deg, var(--rust-mid) 0%, var(--rust-dark) 60%, transparent 100%);
-    border-radius: 0 0 50% 50%;
-    opacity: 0.6;
-    filter: blur(0.5px);
-  }
-
-  /* --- WELD SEAMS --- */
-  .weld-seam {
-    position: absolute;
-    left: 0; right: 0;
-    height: 4px;
-    background:
-      repeating-linear-gradient(
-        90deg,
-        #3a3a3c 0px, #3a3a3c 3px,
-        #4a4a4e 3px, #4a4a4e 5px,
-        #353538 5px, #353538 9px
-      );
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,0.08),
-      inset 0 -1px 0 rgba(0,0,0,0.5),
-      0 0 3px rgba(0,0,0,0.5);
-    z-index: 6;
-  }
-
-  /* ============================================
-     PIPES
-     ============================================ */
-  .pipe {
-    position: absolute;
-    z-index: 7;
-    transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    opacity: 0;
-  }
-
-  /* Vertical pipe (left side) */
-  .pipe-vertical {
-    left: -14px;
-    top: 0;
-    width: 14px;
-    height: 100%;
-    background: linear-gradient(90deg,
-      var(--pipe-shadow) 0%,
-      #555 20%,
-      var(--pipe-highlight) 45%,
-      #bbb 50%,
-      var(--pipe-highlight) 55%,
-      #555 80%,
-      var(--pipe-shadow) 100%
-    );
-    box-shadow: 2px 0 6px rgba(0,0,0,0.7);
-    transform-origin: top right;
-    transform: scaleX(0);
-    transition-delay: 0.55s;
-  }
-
-  /* Horizontal pipe (top) */
-  .pipe-horizontal {
-    top: -12px;
-    left: 0;
-    width: 100%;
-    height: 12px;
-    background: linear-gradient(180deg,
-      var(--pipe-shadow) 0%,
-      #555 20%,
-      var(--pipe-highlight) 45%,
-      #bbb 50%,
-      var(--pipe-highlight) 55%,
-      #555 80%,
-      var(--pipe-shadow) 100%
-    );
-    box-shadow: 0 2px 6px rgba(0,0,0,0.7);
-    transform-origin: top right;
-    transform: scaleY(0);
-    transition-delay: 0.5s;
-  }
-
-  /* Pipe flange / joint ring */
-  .pipe-flange {
-    position: absolute;
-    z-index: 8;
-    background: linear-gradient(135deg, #666 0%, #999 40%, #aaa 50%, #888 60%, #555 100%);
-    border: 1px solid #444;
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,0.3),
-      0 2px 4px rgba(0,0,0,0.6);
-    opacity: 0;
-    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    transition-delay: 0.65s;
-  }
-
-  .flange-top-left {
-    top: -16px; left: -18px;
-    width: 22px; height: 20px;
-    border-radius: 4px;
-  }
-
-  .flange-top-left::after {
-    content: "";
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 6px; height: 6px;
-    background: radial-gradient(circle at 35% 35%, #aaa, #444);
-    border-radius: 50%;
-    box-shadow: inset 0 1px 1px rgba(255,255,255,0.4), 0 1px 2px rgba(0,0,0,0.8);
-  }
-
-  .flange-mid-left {
-    top: 50%; left: -18px;
-    width: 22px; height: 16px;
-    border-radius: 3px;
-    transform: translateY(-50%) scale(0);
-  }
-
-  .flange-mid-left::after {
-    content: "";
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 5px; height: 5px;
-    background: radial-gradient(circle at 35% 35%, #aaa, #444);
-    border-radius: 50%;
-    box-shadow: inset 0 1px 1px rgba(255,255,255,0.4);
-  }
-
-  /* Pipe rust streak */
-  .pipe-vertical::after {
-    content: "";
-    position: absolute;
-    top: 30%; left: 2px;
-    width: 8px; height: 40px;
-    background: linear-gradient(180deg,
-      transparent 0%,
-      var(--rust-mid) 20%,
-      var(--rust-dark) 60%,
-      transparent 100%
-    );
-    opacity: 0.5;
-    filter: blur(1px);
-    border-radius: 50%;
-  }
-
-  /* ============================================
-     CAUTION STRIPE ACCENT
-     ============================================ */
-  .caution-stripe {
-    position: absolute;
-    bottom: 0; left: 0;
-    width: 100%; height: 6px;
-    background: repeating-linear-gradient(
-      -45deg,
-      #d4a017 0px, #d4a017 6px,
-      #111 6px, #111 12px
-    );
-    opacity: 0.7;
-    z-index: 6;
-  }
-
-  /* ============================================
-     EXPOSED WIRE BUNDLE (between plates)
-     ============================================ */
-  .exposed-wires {
-    position: absolute;
-    left: 20px;
-    bottom: -6px;
-    width: 60px;
-    height: 12px;
-    z-index: 6;
-    overflow: visible;
-  }
-
-  .exposed-wires svg {
-    overflow: visible;
-  }
-
-  /* ============================================
-     INDIVIDUAL PLATE STYLES
-     ============================================ */
   .plate-header {
-    height: 42px;
-    border-bottom: 2px solid #555;
+    height: 40px;
+    border-bottom: var(--mech-border);
     display: flex;
     align-items: center;
     padding: 0 15px;
     justify-content: space-between;
     color: var(--neon-orange);
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 2px;
     transition-delay: 0.1s;
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 8% 100%, 0 65%);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 10% 100%, 0 70%);
   }
 
   .plate-main {
-    padding: 25px 20px;
-    border-bottom: 1px solid #3a3a3a;
+    padding: 20px;
+    border-bottom: 1px dashed #444;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 15px;
     transition-delay: 0.25s;
-    clip-path: polygon(0 0, 100% 0, 100% 96%, 96% 100%, 0 100%);
+    clip-path: polygon(0 0, 100% 0, 100% 95%, 95% 100%, 0 100%);
   }
 
   .plate-controls {
-    height: 95px;
+    height: 90px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 25px;
+    background: linear-gradient(180deg, var(--grunge-gray) 0%, var(--dark-metal) 100%);
     transition-delay: 0.4s;
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 25%);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 30%);
   }
 
-  /* --- OPEN STATE --- */
-  .mecha-panel.open { pointer-events: auto; }
-
-  .mecha-panel.open .mech-plate {
-    opacity: 1;
-    transform: scaleY(1) rotateX(0deg);
-  }
-
-  .mecha-panel.open .pipe {
-    opacity: 1;
-  }
-  .mecha-panel.open .pipe-vertical { transform: scaleX(1); }
-  .mecha-panel.open .pipe-horizontal { transform: scaleY(1); }
-
-  .mecha-panel.open .pipe-flange {
-    opacity: 1;
-    transform: scale(1);
-  }
-  .mecha-panel.open .flange-mid-left {
-    transform: translateY(-50%) scale(1);
-  }
-
-  /* --- MECH HINGE (upgraded) --- */
   .mech-hinge {
     position: absolute;
-    width: 18px;
+    width: 15px;
     height: 100%;
-    right: -18px;
+    background: repeating-linear-gradient(45deg, #222, #222 5px, #111 5px, #111 10px);
+    border-left: 1px solid var(--neon-orange);
+    right: -15px;
     top: 0;
     transform-origin: top center;
     transform: rotateY(-90deg) scale(0.5);
     transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    transition-delay: 0.6s;
+    transition-delay: 0.5s;
     opacity: 0;
-    z-index: 7;
-    background:
-      repeating-linear-gradient(
-        180deg,
-        #3a3a3c 0px, #3a3a3c 8px,
-        #2a2a2c 8px, #2a2a2c 10px
-      );
-    border-left: 2px solid #555;
-    box-shadow: 2px 0 6px rgba(0,0,0,0.6);
   }
 
-  /* Hinge bolts */
-  .mech-hinge::before {
-    content: "";
-    position: absolute;
-    top: 15px; left: 4px;
-    width: 8px; height: 8px;
-    background: radial-gradient(circle at 35% 35%, #aaa, #444);
-    border-radius: 50%;
-    box-shadow:
-      0 60px 0 0 #666,
-      0 120px 0 0 #666,
-      0 180px 0 0 #666,
-      inset 0 1px 1px rgba(255,255,255,0.4);
+  .mecha-panel.open {
+    pointer-events: auto;
+  }
+
+  .mecha-panel.open .mech-plate {
+    opacity: 1;
+    transform: scaleY(1) rotateX(0deg);
   }
 
   .mecha-panel.open .mech-hinge {
@@ -1799,62 +1482,45 @@ if (aboutPulldown) {
     transform: rotateY(0deg) scale(1);
   }
 
-  /* ============================================
-     ALBUM ART OVAL
-     ============================================ */
   .oval-frame {
-    width: 160px; height: 160px;
+    width: 160px;
+    height: 160px;
     border-radius: 50%;
     overflow: hidden;
-    border: 4px solid #555;
-    box-shadow:
-      0 0 15px var(--neon-glow),
-      inset 0 0 20px rgba(0,0,0,0.9),
-      0 0 0 2px #333,
-      0 0 0 4px #555;
+    border: 3px solid var(--neon-orange);
+    box-shadow: 0 0 15px var(--neon-glow), inset 0 0 20px rgba(0,0,0,0.8);
     position: relative;
     background: #000;
-  }
-
-  /* Inner ring detail */
-  .oval-frame::before {
-    content: "";
-    position: absolute;
-    top: 4px; left: 4px; right: 4px; bottom: 4px;
-    border-radius: 50%;
-    border: 1px solid rgba(255,94,0,0.3);
-    z-index: 3;
-    pointer-events: none;
   }
 
   .oval-frame::after {
     content: "";
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background:
-      linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%, rgba(0,0,0,0.3) 100%);
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.15"/></svg>');
     pointer-events: none;
-    z-index: 2;
+    mix-blend-mode: overlay;
   }
 
   .album-art {
-    width: 100%; height: 100%;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    filter: contrast(1.15) saturate(0.75) brightness(0.95);
+    filter: contrast(1.1) saturate(0.8);
   }
 
-  /* ============================================
-     SONG INFO
-     ============================================ */
-  .song-info { text-align: center; width: 100%; }
+  .song-info {
+    text-align: center;
+    width: 100%;
+  }
 
   .song-title {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: bold;
-    color: #e0e0e0;
+    color: #fff;
     text-transform: uppercase;
     letter-spacing: 1px;
-    text-shadow: 0 0 8px rgba(255,255,255,0.3), 0 1px 0 #000;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
     margin-bottom: 5px;
     white-space: nowrap;
     overflow: hidden;
@@ -1862,99 +1528,65 @@ if (aboutPulldown) {
   }
 
   .artist-name {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--neon-orange);
-    letter-spacing: 3px;
+    letter-spacing: 2px;
     text-transform: uppercase;
-    text-shadow: 0 0 6px var(--neon-glow);
   }
 
-  /* ============================================
-     CONTROL BUTTONS
-     ============================================ */
   .control-btn {
-    background: linear-gradient(160deg, #3a3a3c, #222224);
-    border: 1px solid #555;
+    background: transparent;
+    border: 1px solid #444;
     color: var(--neon-orange);
     cursor: pointer;
-    width: 52px; height: 52px;
+    width: 50px;
+    height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
     clip-path: polygon(20% 0%, 100% 0%, 100% 80%, 80% 100%, 0% 100%, 0% 20%);
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,0.1),
-      0 2px 4px rgba(0,0,0,0.6);
-    position: relative;
   }
 
   .control-btn:hover {
     background: var(--neon-orange);
     color: var(--dark-metal);
-    box-shadow: 0 0 20px var(--neon-glow), inset 0 1px 0 rgba(255,255,255,0.2);
+    box-shadow: 0 0 15px var(--neon-glow);
     border-color: var(--neon-orange);
   }
 
   .play-btn {
-    width: 66px; height: 66px;
+    width: 65px;
+    height: 65px;
     border: 2px solid var(--neon-orange);
-    background: linear-gradient(160deg, #333336, #1a1a1c);
-    box-shadow:
-      0 0 10px rgba(255,94,0,0.2),
-      inset 0 1px 0 rgba(255,255,255,0.1),
-      0 3px 6px rgba(0,0,0,0.7);
+    background: rgba(255, 94, 0, 0.1);
   }
 
-  .play-btn svg { width: 28px; height: 28px; }
+  .play-btn svg {
+    width: 28px;
+    height: 28px;
+  }
 
-  /* ============================================
-     GLITCH & BLINK
-     ============================================ */
   .glitch-text {
-    animation: glitch-anim 0.3s cubic-bezier(.25,.46,.45,.94) both;
+    animation: glitch-anim 0.3s cubic-bezier(.25, .46, .45, .94) both;
   }
 
   @keyframes glitch-anim {
-    0%   { transform: translate(0); }
-    20%  { transform: translate(-2px,2px); }
-    40%  { transform: translate(-2px,-2px); }
-    60%  { transform: translate(2px,2px); }
-    80%  { transform: translate(2px,-2px); }
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
     100% { transform: translate(0); }
   }
 
-  .blink { animation: blinker 1s linear infinite; }
-  @keyframes blinker { 50% { opacity: 0; } }
-
-  /* ============================================
-     SCRATCHES (surface detail)
-     ============================================ */
-  .scratch {
-    position: absolute;
-    background: rgba(255,255,255,0.06);
-    z-index: 4;
-    pointer-events: none;
+  .blink {
+    animation: blinker 1s linear infinite;
   }
-  .scratch-1 {
-    width: 80px; height: 1px;
-    top: 35%; left: 10%;
-    transform: rotate(-12deg);
-  }
-  .scratch-2 {
-    width: 50px; height: 1px;
-    top: 60%; right: 15%;
-    transform: rotate(8deg);
-  }
-  .scratch-3 {
-    width: 40px; height: 1px;
-    top: 20%; left: 50%;
-    transform: rotate(-25deg);
+  @keyframes blinker {
+    50% { opacity: 0; }
   }
 
-  /* ============================================
-     RESPONSIVE
-     ============================================ */
   @media (max-width: 768px) {
     .music-player-container { top: 10px; right: 10px; }
     .mecha-panel { width: 280px; }
@@ -1962,104 +1594,79 @@ if (aboutPulldown) {
   }
 </style>
 
-<!-- The Player HTML -->
+<!-- The Player HTML Structure -->
 <div class="music-player-container" id="player-container">
-
-  <!-- Activation Core -->
-  <div id="activation-core" class="activation-core brushed-metal">
+  <!-- Activation Core (Tab) -->
+  <div id="activation-core" class="activation-core">
     <span class="core-icon">♪</span>
+    <!-- Sonar Waves -->
     <div class="sonar-wave"></div>
     <div class="sonar-wave"></div>
     <div class="sonar-wave"></div>
-  </div>
-
-  <!-- Cables hanging from core to panel -->
-  <div class="cable-bundle">
-    <svg viewBox="0 0 40 30">
-      <path class="cable cable-1" d="M10,0 Q8,12 5,28"/>
-      <path class="cable cable-2" d="M20,0 Q22,15 18,30"/>
-      <path class="cable cable-3" d="M30,0 Q28,10 32,26"/>
-    </svg>
   </div>
 
   <!-- Transformer Panel -->
   <div id="mecha-panel" class="mecha-panel">
 
-    <!-- PIPES -->
-    <div class="pipe pipe-vertical"></div>
-    <div class="pipe pipe-horizontal"></div>
-    <div class="pipe-flange flange-top-left"></div>
-    <div class="pipe-flange flange-mid-left"></div>
-
-    <!-- Plate 1: Header -->
-    <div class="mech-plate plate-header brushed-metal">
+    <div class="mech-plate plate-header">
       <span>SYS.AUDIO_V.9</span>
       <span class="blink">▶_</span>
-      <div class="rivet rusty" style="top:6px;left:12px;"></div>
-      <div class="rivet" style="top:6px;right:40px;"></div>
-      <div class="scratch scratch-1"></div>
     </div>
 
-    <!-- Weld seam between header and main -->
-    <div class="weld-seam" style="position:relative; height:4px; opacity:0; transition: opacity 0.4s ease 0.2s;"></div>
-
-    <!-- Plate 2: Main Content -->
-    <div class="mech-plate plate-main brushed-metal">
+    <div class="mech-plate plate-main">
       <div class="oval-frame">
-        <img id="album-art" src="https://via.placeholder.com/160x160/1c1c1e/ff5e00?text=NO+DISC" alt="Album Art" class="album-art">
+        <img id="album-art" src="https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=NO+DISC" alt="Album Art" class="album-art">
       </div>
       <div class="song-info">
         <div id="song-title" class="song-title">STANDBY</div>
         <div id="artist-name" class="artist-name">WAITING_FOR_INPUT</div>
       </div>
-      <div class="rivet rusty" style="top:10px;left:10px;"></div>
-      <div class="rivet" style="top:10px;right:10px;"></div>
-      <div class="rivet" style="bottom:10px;right:10px;"></div>
-      <div class="rivet rusty" style="bottom:10px;left:10px;"></div>
-      <div class="scratch scratch-2"></div>
-      <div class="scratch scratch-3"></div>
-
-      <!-- Exposed wires at bottom of plate -->
-      <div class="exposed-wires">
-        <svg width="60" height="12" viewBox="0 0 60 12">
-          <path d="M0,3 Q15,10 30,4 Q45,0 60,6" stroke="#555" stroke-width="2" fill="none"/>
-          <path d="M0,7 Q10,2 25,8 Q40,12 60,5" stroke="#8b4513" stroke-width="1.5" fill="none"/>
-          <path d="M0,5 Q20,12 40,3 Q50,0 60,8" stroke="#444" stroke-width="1" fill="none"/>
-        </svg>
-      </div>
     </div>
 
-    <!-- Weld seam between main and controls -->
-    <div class="weld-seam" style="position:relative; height:4px; opacity:0; transition: opacity 0.4s ease 0.35s;"></div>
-
-    <!-- Plate 3: Controls -->
-    <div class="mech-plate plate-controls brushed-metal">
+    <div class="mech-plate plate-controls">
       <button id="play-pause-btn" class="control-btn play-btn" title="Play">
         <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-        <svg id="pause-icon" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        <svg id="pause-icon" viewBox="0 0 24 24" fill="currentColor" style="display: none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
       </button>
+
       <button id="shuffle-btn" class="control-btn shuffle-btn" title="Shuffle Next">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
           <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
         </svg>
       </button>
-      <div class="rivet" style="top:8px;left:12px;"></div>
-      <div class="rivet rusty" style="bottom:12px;right:12px;"></div>
-      <div class="caution-stripe"></div>
     </div>
 
-    <!-- Hinge -->
     <div class="mech-hinge"></div>
   </div>
 </div>
 
-<!-- JavaScript Logic (unchanged) -->
+<!-- The Player JavaScript Logic -->
 <script>
   const playlist = [
-    { src: 'Tunes/The Uncanny Valley.mp3', title: 'The Uncanny Valley', artist: 'Unknown Artist', art: 'Tunes/AlbumArt/artwork.jpg' },
-    { src: 'Tunes/She Moves Like a Knife.mp3', title: 'She Moves Like a Knife', artist: 'Unknown Artist', art: 'Tunes/AlbumArt/artwork.jpg' },
-    { src: 'Tunes/Simulated Stimulation.mp3', title: 'Simulated Stimulation', artist: 'Unknown Artist', art: 'Tunes/AlbumArt/artwork (copy 2).jpg' },
-    { src: 'Tunes/Nightmarket.mp3', title: 'Nightmarket', artist: 'Unknown Artist', art: 'Tunes/AlbumArt/artwork (copy 3).jpg' }
+    {
+      src: 'Tunes/The Uncanny Valley.mp3',
+      title: 'The Uncanny Valley',
+      artist: 'Unknown Artist',
+      art: 'Tunes/AlbumArt/artwork.jpg'
+    },
+    {
+      src: 'Tunes/She Moves Like a Knife.mp3',
+      title: 'She Moves Like a Knife',
+      artist: 'Unknown Artist',
+      art: 'Tunes/AlbumArt/artwork.jpg'
+    },
+    {
+      src: 'Tunes/Simulated Stimulation.mp3',
+      title: 'Simulated Stimulation',
+      artist: 'Unknown Artist',
+      art: 'Tunes/AlbumArt/artwork (copy 2).jpg'
+    },
+    {
+      src: 'Tunes/Nightmarket.mp3',
+      title: 'Nightmarket',
+      artist: 'Unknown Artist',
+      art: 'Tunes/AlbumArt/artwork (copy 3).jpg'
+    }
   ];
 
   let audio = new Audio();
@@ -2084,25 +1691,23 @@ if (aboutPulldown) {
     playPauseBtn.title = isPlaying ? 'Pause' : 'Play';
 
     const currentSong = playlist[currentSongIndex];
+
     songTitle.classList.remove('glitch-text');
     artistName.classList.remove('glitch-text');
     void songTitle.offsetWidth;
     songTitle.classList.add('glitch-text');
     artistName.classList.add('glitch-text');
+
     songTitle.textContent = currentSong.title;
     artistName.textContent = currentSong.artist;
-    albumArtImg.src = currentSong.art || 'https://via.placeholder.com/160x160/1c1c1e/ff5e00?text=NO+DISC';
+
+    albumArtImg.src = currentSong.art || 'https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=NO+DISC';
   }
 
   function togglePlayer() {
     isOpen = !isOpen;
     mechaPanel.classList.toggle('open', isOpen);
     playerContainer.classList.toggle('panel-open', isOpen);
-
-    // Show weld seams when open
-    document.querySelectorAll('.weld-seam').forEach(s => {
-      s.style.opacity = isOpen ? '1' : '0';
-    });
 
     const coreIcon = document.querySelector('.core-icon');
     coreIcon.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
@@ -2124,36 +1729,44 @@ if (aboutPulldown) {
 
   function shuffleNext() {
     if (playlist.length === 0) return;
+
     let nextIndex;
-    do { nextIndex = Math.floor(Math.random() * playlist.length); }
-    while (nextIndex === currentSongIndex && playlist.length > 1);
+    do {
+      nextIndex = Math.floor(Math.random() * playlist.length);
+    } while (nextIndex === currentSongIndex && playlist.length > 1);
+
     currentSongIndex = nextIndex;
     audio.src = playlist[currentSongIndex].src;
     audio.play().catch(err => console.error('Play error:', err));
   }
 
   function saveState() {
-    sessionStorage.setItem('musicState', JSON.stringify({
+    const state = {
       song: playlist[currentSongIndex].src,
       position: audio.currentTime,
       playing: !audio.paused,
       songIndex: currentSongIndex
-    }));
+    };
+    sessionStorage.setItem('musicState', JSON.stringify(state));
   }
 
   function restoreState() {
-    const saved = sessionStorage.getItem('musicState');
-    if (saved) {
+    const savedState = sessionStorage.getItem('musicState');
+    if (savedState) {
       try {
-        const state = JSON.parse(saved);
-        const idx = playlist.findIndex(s => s.src === state.song);
-        currentSongIndex = idx !== -1 ? idx : 0;
+        const state = JSON.parse(savedState);
+        const foundIndex = playlist.findIndex(song => song.src === state.song);
+        currentSongIndex = foundIndex !== -1 ? foundIndex : 0;
         audio.src = playlist[currentSongIndex].src;
+
         audio.addEventListener('loadedmetadata', () => {
           audio.currentTime = state.position;
-          if (state.playing) audio.play().catch(() => {});
+          if (state.playing) {
+            audio.play().catch(err => console.error('Autoplay prevented on restore:', err));
+          }
         }, { once: true });
       } catch (e) {
+        console.error('Failed to restore music state:', e);
         currentSongIndex = 0;
         audio.src = playlist[0].src;
       }
@@ -2166,22 +1779,26 @@ if (aboutPulldown) {
   activationCore.addEventListener('click', togglePlayer);
   playPauseBtn.addEventListener('click', togglePlayPause);
   shuffleBtn.addEventListener('click', shuffleNext);
+
   audio.addEventListener('play', () => { isPlaying = true; updateUI(); });
   audio.addEventListener('pause', () => { isPlaying = false; updateUI(); });
   audio.addEventListener('ended', () => shuffleNext());
+
   audio.addEventListener('error', () => {
-    let msg = "Unknown";
+    let errorMsg = "Unknown error";
     if (audio.error) {
       switch (audio.error.code) {
-        case 1: msg = "Aborted"; break;
-        case 2: msg = "Network Error"; break;
-        case 3: msg = "Decode Error"; break;
-        case 4: msg = "File Not Found"; break;
+        case 1: errorMsg = "Aborted"; break;
+        case 2: errorMsg = "Network Error"; break;
+        case 3: errorMsg = "Decode Error"; break;
+        case 4: errorMsg = "File Not Found / Unsupported Format"; break;
       }
     }
-    console.error("AUDIO ERROR:", msg, audio.src);
+    console.error("🚨 AUDIO LOAD ERROR:", errorMsg, "| Attempted to load:", audio.src);
   });
+
   window.addEventListener('beforeunload', saveState);
+
   restoreState();
   updateUI();
 </script>
