@@ -1305,10 +1305,10 @@ if (aboutPulldown) {
     z-index: 2;
   }
 
-  /* --- SONAR WAVES (Now outside the icon) --- */
+  /* --- SONAR WAVES (50% smaller) --- */
   .sonar-container {
     position: fixed;
-    top: 60px; /* Center of the activation core */
+    top: 60px;
     right: 60px;
     width: 0;
     height: 0;
@@ -1320,8 +1320,8 @@ if (aboutPulldown) {
     position: absolute;
     top: 0;
     left: 0;
-    width: 60px;
-    height: 60px;
+    width: 30px; /* Reduced from 60px */
+    height: 30px; /* Reduced from 60px */
     border: 2px solid var(--neon-orange);
     border-radius: 50%;
     transform: translate(-50%, -50%) scale(1);
@@ -1337,7 +1337,6 @@ if (aboutPulldown) {
     animation-delay: 2s;
   }
 
-  /* Stop sonar when player is open */
   .music-player-container.panel-open .sonar-wave {
     animation: none;
     opacity: 0;
@@ -1354,7 +1353,7 @@ if (aboutPulldown) {
       border-width: 2px;
     }
     100% {
-      transform: translate(-50%, -50%) scale(15);
+      transform: translate(-50%, -50%) scale(7.5); /* Reduced from 15 */
       opacity: 0;
       border-width: 1px;
     }
@@ -1388,7 +1387,7 @@ if (aboutPulldown) {
     }
   }
 
-  /* --- THE TRANSFORMER PANEL (Radial Unfold) --- */
+  /* --- THE TRANSFORMER PANEL (Iris Aperture Animation) --- */
   .mecha-panel {
     position: absolute;
     top: 50px;
@@ -1398,15 +1397,36 @@ if (aboutPulldown) {
     flex-direction: column;
     pointer-events: none;
 
-    /* Radial clip-path animation */
-    clip-path: circle(0% at 100% 0%);
-    transition: clip-path 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    /* Iris aperture effect using clip-path */
+    clip-path: polygon(50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%);
+    transition: clip-path 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     transform-origin: top right;
   }
 
   .mecha-panel.open {
     pointer-events: auto;
-    clip-path: circle(150% at 100% 0%);
+    /* Expands through multiple stages like aperture blades */
+    clip-path: polygon(
+      100% 0%,
+      100% 0%,
+      100% 100%,
+      100% 100%,
+      0% 100%,
+      0% 100%,
+      0% 0%,
+      0% 0%
+    );
+  }
+
+  /* Add rotation for extra mechanical feel */
+  .mecha-panel {
+    transform: rotate(-5deg) scale(0.95);
+    transition: clip-path 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+                transform 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .mecha-panel.open {
+    transform: rotate(0deg) scale(1);
   }
 
   .mech-plate {
@@ -1594,21 +1614,17 @@ if (aboutPulldown) {
 
 <!-- The Player HTML Structure -->
 <div class="music-player-container" id="player-container">
-  <!-- Sonar Waves (Now outside the icon, positioned at the icon's center) -->
   <div class="sonar-container">
     <div class="sonar-wave"></div>
     <div class="sonar-wave"></div>
     <div class="sonar-wave"></div>
   </div>
 
-  <!-- Activation Core (Tab) -->
   <div id="activation-core" class="activation-core">
     <span class="core-icon">♪</span>
   </div>
 
-  <!-- Transformer Panel -->
   <div id="mecha-panel" class="mecha-panel">
-
     <div class="mech-plate plate-header">
       <span>SYS.AUDIO_V.9</span>
       <span class="blink">▶_</span>
