@@ -1080,116 +1080,156 @@ var particles;
 <!-- END CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- ========================================== -->
 <!-- ========================================== -->
-<!-- Gallery Infinite Brick-Wall Mosaic -->
+<!-- Gallery Infinite Masonry Layout -->
 <!-- ========================================== -->
-<style>
-    /* 1. CLEAN BACKGROUND: No gradients, no blobs */
-    html, body {
-        overflow-y: auto !important;
-        overflow-x: hidden !important;
-        scrollbar-width: thin;
-        scrollbar-color: #cbd5e1 transparent;
-    }
 
+<!-- Required Libraries -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+<script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
+
+<style>
+    /* Clean, minimal background */
     body {
-        background-color: #ffffff !important; /* Pure clean background */
+        background-color: #ffffff !important;
         margin: 0;
         font-family: system-ui, -apple-system, sans-serif;
     }
 
-    /* 2. NATIVE BRICK-WALL LAYOUT */
+    /* Gallery container */
     .gallery {
-        column-count: 4; /* Default for large screens */
-        column-gap: 16px;
-        width: 100%;
         max-width: 1400px;
         margin: 0 auto;
         padding: 24px;
     }
 
-    /* Responsive column counts for true mosaic adaptability */
-    @media (max-width: 1200px) { .gallery { column-count: 3; } }
-    @media (max-width: 800px)  { .gallery { column-count: 2; } }
-    @media (max-width: 500px)  { .gallery { column-count: 1; } }
+    /* Grid item styling */
+    .grid-item {
+        width: 25%;
+        padding: 8px;
+        box-sizing: border-box;
+    }
 
-    /* 3. CLEAN CARD STYLING: No glassmorphism, no heavy coloring */
+    /* Responsive widths */
+    @media (max-width: 1200px) {
+        .grid-item { width: 33.333%; }
+    }
+    @media (max-width: 800px) {
+        .grid-item { width: 50%; }
+    }
+    @media (max-width: 500px) {
+        .grid-item { width: 100%; }
+    }
+
+    /* Card styling - clean and minimal */
     .mosaic-card {
-        break-inside: avoid; /* Prevents cards from being split across columns */
-        margin-bottom: 16px;
-        width: 100%;
         border-radius: 12px;
         overflow: hidden;
         background: #ffffff;
         border: 1px solid #e2e8f0;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         transition: transform 0.2s ease, box-shadow 0.2s ease;
-        animation: fadeInUp 0.4s ease-out forwards;
+        cursor: pointer;
     }
 
     .mosaic-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 20px -4px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         border-color: #cbd5e1;
     }
 
-    /* 4. TRUE ASPECT RATIO: No cropping, no stretching */
+    /* True image aspect ratio */
     .mosaic-card img {
         width: 100%;
         height: auto;
         display: block;
     }
 
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(15px); }
-        to   { opacity: 1; transform: translateY(0); }
+    /* Loading indicator */
+    .loading-indicator {
+        text-align: center;
+        padding: 40px;
+        color: #94a3b8;
+        font-size: 14px;
     }
 </style>
 
-<main id="gallery-container" class="gallery"></main>
+<div class="gallery">
+    <div id="masonry-grid"></div>
+    <div id="loading-indicator" class="loading-indicator">Loading more images...</div>
+</div>
 
 <script src="thumbnail.js"></script>
 <script>
+$(document).ready(function() {
     if (typeof thumbnails === 'undefined') {
         console.error("thumbnail.js did not load or 'thumbnails' is not defined globally.");
+        return;
     }
 
-    const container = document.getElementById('gallery-container');
+    const $grid = $('#masonry-grid');
+    const $loading = $('#loading-indicator');
     let currentIndex = 0;
-    const totalImages = thumbnails ? thumbnails.length : 0;
+    const totalImages = thumbnails.length;
     const cardMetadata = new Map();
-
     let isLoading = false;
-    let observedCard = null;
 
-    // ==========================================
-    // INFINITE SCROLL LOGIC (Seamless Loop)
-    // ==========================================
-    const scrollObserver = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && !isLoading) {
-            loadMoreItems(6); // Load 6 more items when reaching the bottom
-        }
-    }, {
-        rootMargin: '500px' // Trigger 500px before the last card hits the viewport
+    // Initialize Masonry
+    $grid.masonry({
+        itemSelector: '.grid-item',
+        percentPosition: true,
+        transitionDuration: '0.3s',
+        gutter: 0
     });
 
-    function observeLastCard() {
-        const cards = container.querySelectorAll('.mosaic-card');
-        if (cards.length > 0) {
-            if (observedCard) scrollObserver.unobserve(observedCard);
-            observedCard = cards[cards.length - 1];
-            scrollObserver.observe(observedCard);
+    // Create card element
+    function createCard(item) {
+        const $card = $('<div class="grid-item"></div>');
+        const $inner = $('<div class="mosaic-card"></div>');
+        const $img = $('<img>');
+
+        $img.attr({
+            src: item.src,
+            alt: item.alt || item.title || 'Gallery Image'
+        });
+
+        // Pre-set aspect ratio to prevent layout shift
+        if (item.width && item.length) {
+            $img.css('aspect-ratio', `${item.width} / ${item.length}`);
         }
+
+        // Handle broken images
+        $img.on('error', function() {
+            $(this).hide();
+            $inner.css({
+                'min-height': '200px',
+                'display': 'flex',
+                'align-items': 'center',
+                'justify-content': 'center'
+            }).html('<span style="color: #94a3b8; font-size: 14px;">Image Not Found</span>');
+        });
+
+        // Store metadata
+        cardMetadata.set(String(item.id), { ...item });
+        $inner.attr('data-id', item.id);
+
+        $inner.append($img);
+        $card.append($inner);
+
+        return $card;
     }
 
-    function loadMoreItems(count = 6) {
-        if (isLoading || totalImages === 0) return;
+    // Load more items
+    function loadMoreItems(count = 10) {
+        if (isLoading) return;
         isLoading = true;
+        $loading.show();
 
-        const fragment = document.createDocumentFragment();
+        const $items = $();
         let loadedCount = 0;
 
         for (let i = 0; i < count; i++) {
-            // TRUE INFINITE SCROLL: Loop back to the beginning when we run out of items
+            // Infinite loop: reset to beginning when reaching the end
             if (currentIndex >= totalImages) {
                 currentIndex = 0;
             }
@@ -1197,98 +1237,44 @@ var particles;
             const nextItem = thumbnails[currentIndex];
             currentIndex++;
 
-            const card = createCard(nextItem);
-            fragment.appendChild(card);
+            const $card = createCard(nextItem);
+            $items = $items.add($card);
             loadedCount++;
         }
 
         if (loadedCount > 0) {
-            container.appendChild(fragment);
+            // Append items to grid
+            $grid.append($items);
 
-            // Wait for images to load before re-observing to ensure smooth layout
-            const newImages = fragment.querySelectorAll('img');
-            let imagesLoaded = 0;
-
-            if (newImages.length === 0) {
-                finalizeLoad();
-            } else {
-                newImages.forEach(img => {
-                    if (img.complete) {
-                        imagesLoaded++;
-                    } else {
-                        img.addEventListener('load', () => {
-                            imagesLoaded++;
-                            if (imagesLoaded === newImages.length) finalizeLoad();
-                        });
-                        img.addEventListener('error', () => {
-                            imagesLoaded++;
-                            if (imagesLoaded === newImages.length) finalizeLoad();
-                        });
-                    }
-                });
-                // Fallback timeout in case an image hangs
-                setTimeout(() => {
-                    if (!isLoading) return; // Already finalized
-                    finalizeLoad();
-                }, 1500);
-            }
+            // Wait for images to load, then layout
+            $grid.imagesLoaded().progress(function() {
+                $grid.masonry('appended', $items);
+            }).always(function() {
+                $grid.masonry('layout');
+                isLoading = false;
+                $loading.hide();
+            });
         } else {
             isLoading = false;
+            $loading.hide();
         }
     }
 
-    function finalizeLoad() {
-        observeLastCard(); // Re-observe the new last card
-        isLoading = false;
-    }
-
-    // ==========================================
-    // CARD CREATION
-    // ==========================================
-    function createCard(item) {
-        const card = document.createElement('div');
-        card.className = 'mosaic-card';
-        card.dataset.id = item.id;
-        cardMetadata.set(String(item.id), { ...item });
-
-        const img = document.createElement('img');
-        img.src = item.src;
-        img.alt = item.alt || item.title || 'Gallery Image';
-        img.loading = 'lazy';
-
-        // Pre-calculate aspect ratio to prevent layout shift before image loads
-        if (item.width && item.length) {
-            img.style.aspectRatio = `${item.width} / ${item.length}`;
+    // Infinite scroll with Intersection Observer
+    const scrollObserver = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && !isLoading) {
+            loadMoreItems(10);
         }
+    }, {
+        rootMargin: '600px'
+    });
 
-        // Handle broken images gracefully
-        img.addEventListener('error', function() {
-            this.style.display = 'none';
-            card.style.minHeight = '200px';
-            card.style.display = 'flex';
-            card.style.alignItems = 'center';
-            card.style.justifyContent = 'center';
-            card.innerHTML = '<span style="color: #94a3b8; font-size: 14px;">Image Not Found</span>';
-        });
+    scrollObserver.observe($loading[0]);
 
-        card.appendChild(img);
-        return card;
-    }
+    // Initial load
+    loadMoreItems(window.innerWidth < 800 ? 8 : 12);
 
-    // ==========================================
-    // INITIALIZATION
-    // ==========================================
-    function init() {
-        if (totalImages === 0) {
-            console.warn("No thumbnails found. Make sure thumbnail.js loads correctly.");
-            return;
-        }
-
-        const batchSize = window.innerWidth < 800 ? 6 : 10;
-        loadMoreItems(batchSize);
-    }
-
-    // Expose metadata globally (preserved from your original code)
+    // Expose metadata globally
     window.getCardMetadata = function(id) {
         return cardMetadata.get(String(id));
     };
@@ -1296,10 +1282,18 @@ var particles;
         return Array.from(cardMetadata.values());
     };
 
-    init();
+    // Handle window resize
+    let resizeTimer;
+    $(window).on('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            $grid.masonry('layout');
+        }, 250);
+    });
+});
 </script>
 <!-- ========================================== -->
-<!-- END Gallery Infinite Brick-Wall Mosaic -->
+<!-- END Gallery Infinite Masonry Layout -->
 <!-- ========================================== -->
 </body>
 </html>
