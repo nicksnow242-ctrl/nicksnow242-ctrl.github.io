@@ -1,7 +1,7 @@
 const thumbnails = [
     {
         id: 1,
-        src: 'Images/Thumbnails/_DSC1847.png',
+        src: 'Images/Thumbnails/DSC1847.png',
         alt: 'A thief came in the night',
         title: 'Western Wind',
         dateCreated: '01-03-23',
@@ -35,7 +35,7 @@ const thumbnails = [
     },
     {
         id: 3,
-        src: 'Images/Thumbnails/_DSC1942.png',
+        src: 'Images/Thumbnails/DSC1942.png',
         alt: 'A thief came in the night',
         title: 'Liminal Fountain',
         dateCreated: '01-01-23',
@@ -52,7 +52,7 @@ const thumbnails = [
     },
     {
         id: 4,
-        src: 'Images/Thumbnails/_DSC1943.png',
+        src: 'Images/Thumbnails/DSC1943.png',
         alt: 'A thief came in the night',
         title: 'Liminal Fountain',
         dateCreated: '01-01-23',
