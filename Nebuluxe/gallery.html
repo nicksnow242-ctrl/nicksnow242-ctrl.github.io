@@ -1080,10 +1080,9 @@ var particles;
 <!-- END CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- ========================================== -->
 <!-- ========================================== -->
-<!-- Gallery Infinite Scroll -->
+<!-- Gallery Infinite Mosaic Scroll -->
 <!-- ========================================== -->
 <style>
-    /* 1. Override the global overflow: hidden to allow gallery scrolling */
     html, body {
         overflow-y: auto !important;
         overflow-x: hidden !important;
@@ -1092,10 +1091,9 @@ var particles;
     }
     body::-webkit-scrollbar { display: none; }
 
-    /* 2. Ensure a dark background so the glass effect is visible
-       (Remove this block if you want to keep your white/gold gradient
-       and adjust the .glass-card colors to be dark instead) */
-
+    body {
+        background: linear-gradient(0deg, #0f172a 0%, #1e293b 100%) !important;
+    }
 
     .bg-blob {
         position: fixed;
@@ -1108,37 +1106,38 @@ var particles;
     .blob-1 { width: 500px; height: 500px; background: #3b82f6; top: -100px; left: -100px; }
     .blob-2 { width: 600px; height: 600px; background: #8b5cf6; bottom: -200px; right: -200px; }
 
+    /* 1. Removed column-count. Added position: relative for absolute children */
     .gallery {
-        column-count: 1;
-        column-gap: 16px;
-        /* 3. Added top padding to clear the 110px fixed top banner */
-        padding: 140px 24px 24px 24px;
+        position: relative;
+        width: 100%;
         max-width: 1400px;
         margin: 0 auto;
-        position: relative;
+        padding: 140px 24px 24px 24px;
         z-index: 20;
     }
-    @media (min-width: 640px)  { .gallery { column-count: 2; } }
-    @media (min-width: 1024px) { .gallery { column-count: 3; } }
-    @media (min-width: 1280px) { .gallery { column-count: 4; } }
 
+    /* 2. Absolute positioning + smooth sliding animation for mosaic shifts */
     .glass-card {
-        break-inside: avoid;
-        margin-bottom: 16px;
-        background: rgba(0, 0, 0, 0.05);
+        position: absolute;
+        margin: 0;
+        background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(14px);
         -webkit-backdrop-filter: blur(14px);
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 16px;
         overflow: hidden;
         box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition: top 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                    left 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                    transform 0.3s ease,
+                    box-shadow 0.3s ease;
         animation: fadeIn 0.5s ease-out;
     }
     .glass-card:hover {
-        transform: translateY(-4px);
+        transform: translateY(-4px) scale(1.02);
         box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
         border-color: rgba(255, 255, 255, 0.2);
+        z-index: 30; /* Ensure hovered card pops above others */
     }
 
     .card-img-wrap {
@@ -1157,8 +1156,8 @@ var particles;
     }
 
     @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to   { opacity: 1; transform: translateY(0); }
+        from { opacity: 0; transform: translateY(20px) scale(0.95); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
     }
 </style>
 
@@ -1174,13 +1173,60 @@ var particles;
         console.error("thumbnail.js did not load or 'thumbnails' is not defined globally.");
     }
 
-    const container  = document.getElementById('gallery-container');
+    const container = document.getElementById('gallery-container');
     let currentIndex = 0;
     const totalImages = thumbnails ? thumbnails.length : 0;
-
     const cardMetadata = new Map();
 
-    // Enforce down-only scrolling loren ipsum
+    // ==========================================
+    // MOSAIC LAYOUT ENGINE
+    // ==========================================
+    function applyMasonry() {
+        const cards = Array.from(container.children);
+        if (cards.length === 0) {
+            container.style.height = '0px';
+            return;
+        }
+
+        const gap = 16;
+        const containerWidth = container.offsetWidth;
+
+        // Determine columns based on screen width
+        let numColumns = 1;
+        if (containerWidth >= 1280) numColumns = 4;
+        else if (containerWidth >= 1024) numColumns = 3;
+        else if (containerWidth >= 640) numColumns = 2;
+
+        const columnWidth = (containerWidth - (gap * (numColumns - 1))) / numColumns;
+        const columnHeights = new Array(numColumns).fill(0);
+
+        cards.forEach(card => {
+            // Fix width so CSS aspect-ratio calculates height correctly
+            card.style.width = `${columnWidth}px`;
+
+            // Get current height. If image hasn't loaded yet, fallback to a minimum
+            // to prevent total collapse during the brief loading window.
+            const cardHeight = Math.max(card.offsetHeight, 100);
+
+            // Find the shortest column
+            const minHeight = Math.min(...columnHeights);
+            const columnIndex = columnHeights.indexOf(minHeight);
+
+            // Position the card
+            card.style.left = `${columnIndex * (columnWidth + gap)}px`;
+            card.style.top = `${minHeight}px`;
+
+            // Add this card's height to the column's total
+            columnHeights[columnIndex] += cardHeight + gap;
+        });
+
+        // Set the container's total height so the page can scroll
+        container.style.height = `${Math.max(...columnHeights)}px`;
+    }
+
+    // ==========================================
+    // SCROLL & RECYCLE LOGIC
+    // ==========================================
     window.addEventListener('wheel', (e) => {
         if (e.deltaY < 0) e.preventDefault();
     }, { passive: false });
@@ -1207,19 +1253,23 @@ var particles;
                 const id = card.dataset.id;
 
                 cardMetadata.delete(id);
-
                 observer.unobserve(card);
                 card.remove();
+
                 renderNextItem();
+                // Re-calculate layout after removal/addition
+                setTimeout(applyMasonry, 50);
             }
         });
     }, { rootMargin: '0px' });
 
+    // ==========================================
+    // CARD CREATION
+    // ==========================================
     function createCard(item) {
         const card = document.createElement('div');
         card.className = 'glass-card';
         card.dataset.id = item.id;
-
         cardMetadata.set(String(item.id), { ...item });
 
         const wrap = document.createElement('div');
@@ -1230,13 +1280,19 @@ var particles;
         img.alt = item.alt || '';
         img.loading = 'lazy';
 
+        // When image loads, set aspect ratio and trigger mosaic reflow
         img.addEventListener('load', function () {
             wrap.style.aspectRatio = `${this.naturalWidth} / ${this.naturalHeight}`;
+            // Double requestAnimationFrame ensures the browser has calculated the new CSS height
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    applyMasonry();
+                });
+            });
         });
 
         wrap.appendChild(img);
         card.appendChild(wrap);
-
         return card;
     }
 
@@ -1249,16 +1305,29 @@ var particles;
         observer.observe(card);
     }
 
+    // ==========================================
+    // INITIALIZATION & RESIZE
+    // ==========================================
     function init() {
         if (totalImages === 0) return;
         const batchSize = window.innerWidth < 768 ? 8 : 14;
         for (let i = 0; i < batchSize; i++) renderNextItem();
+
+        // Initial layout pass after DOM is ready
+        setTimeout(applyMasonry, 100);
     }
 
+    // Handle window resizing smoothly
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(applyMasonry, 100);
+    });
+
+    // Expose metadata for future filtering
     window.getCardMetadata = function(id) {
         return cardMetadata.get(String(id));
     };
-
     window.getAllCardMetadata = function() {
         return Array.from(cardMetadata.values());
     };
@@ -1266,7 +1335,7 @@ var particles;
     init();
 </script>
 <!-- ========================================== -->
-<!-- END Gallery Infinite Scroll -->
+<!-- END Gallery Infinite Mosaic Scroll -->
 <!-- ========================================== -->
 </body>
 </html>
