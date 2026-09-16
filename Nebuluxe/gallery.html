@@ -1080,91 +1080,70 @@ var particles;
 <!-- END CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- ========================================== -->
 <!-- ========================================== -->
-<!-- Gallery Infinite Mosaic Scroll -->
+<!-- Gallery Infinite Brick-Wall Mosaic -->
 <!-- ========================================== -->
 <style>
+    /* 1. CLEAN BACKGROUND: No gradients, no blobs */
     html, body {
         overflow-y: auto !important;
         overflow-x: hidden !important;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
+        scrollbar-width: thin;
+        scrollbar-color: #cbd5e1 transparent;
     }
-    body::-webkit-scrollbar { display: none; }
 
     body {
-        background: linear-gradient(0deg, #0f172a 0%, #1e293b 100%) !important;
+        background-color: #ffffff !important; /* Pure clean background */
         margin: 0;
+        font-family: system-ui, -apple-system, sans-serif;
     }
 
-    .bg-blob {
-        position: fixed;
-        border-radius: 50%;
-        filter: blur(80px);
-        z-index: -1;
-        opacity: 0.6;
-        pointer-events: none;
-    }
-    .blob-1 { width: 500px; height: 500px; background: #3b82f6; top: -100px; left: -100px; }
-    .blob-2 { width: 600px; height: 600px; background: #8b5cf6; bottom: -200px; right: -200px; }
-
+    /* 2. NATIVE BRICK-WALL LAYOUT */
     .gallery {
-        position: relative;
+        column-count: 4; /* Default for large screens */
+        column-gap: 16px;
         width: 100%;
         max-width: 1400px;
         margin: 0 auto;
-        padding: 140px 24px 24px 24px;
-        z-index: 20;
+        padding: 24px;
     }
 
-    .glass-card {
-        position: absolute;
-        top: 0;
-        left: 0;
-        margin: 0;
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-        transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.4s ease;
-        animation: mosaicFadeIn 0.5s ease-out forwards;
-        will-change: transform;
-    }
-    .glass-card:hover {
-        transform: translateY(-4px) scale(1.02);
-        box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
-        border-color: rgba(255, 255, 255, 0.2);
-        z-index: 30;
-    }
+    /* Responsive column counts for true mosaic adaptability */
+    @media (max-width: 1200px) { .gallery { column-count: 3; } }
+    @media (max-width: 800px)  { .gallery { column-count: 2; } }
+    @media (max-width: 500px)  { .gallery { column-count: 1; } }
 
-    .card-img-wrap {
+    /* 3. CLEAN CARD STYLING: No glassmorphism, no heavy coloring */
+    .mosaic-card {
+        break-inside: avoid; /* Prevents cards from being split across columns */
+        margin-bottom: 16px;
         width: 100%;
+        border-radius: 12px;
         overflow: hidden;
-        background: rgba(0, 0, 0, 0.2);
-        min-height: 150px; /* Safe fallback */
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        animation: fadeInUp 0.4s ease-out forwards;
     }
 
-    /* CRITICAL FIX: height: auto ensures true aspect ratio, no cropping or stretching */
-    .card-img-wrap img {
+    .mosaic-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 20px -4px rgba(0, 0, 0, 0.1);
+        border-color: #cbd5e1;
+    }
+
+    /* 4. TRUE ASPECT RATIO: No cropping, no stretching */
+    .mosaic-card img {
         width: 100%;
         height: auto;
         display: block;
-        transition: transform 0.5s ease;
-    }
-    .glass-card:hover .card-img-wrap img {
-        transform: scale(1.03);
     }
 
-    @keyframes mosaicFadeIn {
-        from { opacity: 0; transform: translateY(20px) scale(0.95); }
-        to   { opacity: 1; transform: translateY(0) scale(1); }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(15px); }
+        to   { opacity: 1; transform: translateY(0); }
     }
 </style>
-
-<div class="bg-blob blob-1"></div>
-<div class="bg-blob blob-2"></div>
 
 <main id="gallery-container" class="gallery"></main>
 
@@ -1183,67 +1162,18 @@ var particles;
     let observedCard = null;
 
     // ==========================================
-    // FLUID MOSAIC LAYOUT ENGINE
-    // ==========================================
-    function applyMasonry() {
-        const cards = Array.from(container.children).filter(c => c.classList.contains('glass-card'));
-        if (cards.length === 0) {
-            container.style.height = '0px';
-            return;
-        }
-
-        const gap = 16;
-        const containerWidth = container.offsetWidth;
-
-        // Fluid responsive columns (no rigid traps)
-        let numColumns = 1;
-        if (containerWidth >= 1280) numColumns = 4;
-        else if (containerWidth >= 900) numColumns = 3;
-        else if (containerWidth >= 600) numColumns = 2;
-
-        const columnWidth = (containerWidth - (gap * (numColumns - 1))) / numColumns;
-        const columnHeights = new Array(numColumns).fill(0);
-
-        cards.forEach(card => {
-            card.style.width = `${columnWidth}px`;
-
-            const img = card.querySelector('img');
-            let cardHeight = 150;
-
-            // Prioritize natural image dimensions for perfect aspect ratio math
-            if (img && img.naturalWidth > 0) {
-                cardHeight = columnWidth * (img.naturalHeight / img.naturalWidth);
-            } else if (card.offsetHeight > 150) {
-                // Fallback to DOM measurement (works perfectly because aspect-ratio is pre-set)
-                cardHeight = card.offsetHeight;
-            }
-
-            const minHeight = Math.min(...columnHeights);
-            const colIndex = columnHeights.indexOf(minHeight);
-
-            // Position instantly
-            card.style.left = `${colIndex * (columnWidth + gap)}px`;
-            card.style.top = `${minHeight}px`;
-
-            columnHeights[colIndex] += cardHeight + gap;
-        });
-
-        container.style.height = `${Math.max(...columnHeights)}px`;
-    }
-
-    // ==========================================
     // INFINITE SCROLL LOGIC (Seamless Loop)
     // ==========================================
     const scrollObserver = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && !isLoading) {
-            loadMoreItems(7); // Load 7 more items when reaching the bottom
+            loadMoreItems(6); // Load 6 more items when reaching the bottom
         }
     }, {
-        rootMargin: '400px' // Trigger 400px before the last card hits the viewport
+        rootMargin: '500px' // Trigger 500px before the last card hits the viewport
     });
 
     function observeLastCard() {
-        const cards = container.querySelectorAll('.glass-card');
+        const cards = container.querySelectorAll('.mosaic-card');
         if (cards.length > 0) {
             if (observedCard) scrollObserver.unobserve(observedCard);
             observedCard = cards[cards.length - 1];
@@ -1251,7 +1181,7 @@ var particles;
         }
     }
 
-    function loadMoreItems(count = 7) {
+    function loadMoreItems(count = 6) {
         if (isLoading || totalImages === 0) return;
         isLoading = true;
 
@@ -1274,14 +1204,42 @@ var particles;
 
         if (loadedCount > 0) {
             container.appendChild(fragment);
-            requestAnimationFrame(() => {
-                applyMasonry();
-                observeLastCard(); // Re-observe the new last card
-                isLoading = false;
-            });
+
+            // Wait for images to load before re-observing to ensure smooth layout
+            const newImages = fragment.querySelectorAll('img');
+            let imagesLoaded = 0;
+
+            if (newImages.length === 0) {
+                finalizeLoad();
+            } else {
+                newImages.forEach(img => {
+                    if (img.complete) {
+                        imagesLoaded++;
+                    } else {
+                        img.addEventListener('load', () => {
+                            imagesLoaded++;
+                            if (imagesLoaded === newImages.length) finalizeLoad();
+                        });
+                        img.addEventListener('error', () => {
+                            imagesLoaded++;
+                            if (imagesLoaded === newImages.length) finalizeLoad();
+                        });
+                    }
+                });
+                // Fallback timeout in case an image hangs
+                setTimeout(() => {
+                    if (!isLoading) return; // Already finalized
+                    finalizeLoad();
+                }, 1500);
+            }
         } else {
             isLoading = false;
         }
+    }
+
+    function finalizeLoad() {
+        observeLastCard(); // Re-observe the new last card
+        isLoading = false;
     }
 
     // ==========================================
@@ -1289,50 +1247,36 @@ var particles;
     // ==========================================
     function createCard(item) {
         const card = document.createElement('div');
-        card.className = 'glass-card';
+        card.className = 'mosaic-card';
         card.dataset.id = item.id;
         cardMetadata.set(String(item.id), { ...item });
 
-        const wrap = document.createElement('div');
-        wrap.className = 'card-img-wrap';
-
-        // PRE-CALCULATE ASPECT RATIO: Reserves exact space before image loads, preventing layout shift
-        if (item.width && item.length) {
-            wrap.style.aspectRatio = `${item.width} / ${item.length}`;
-        }
-
         const img = document.createElement('img');
         img.src = item.src;
-        img.alt = item.alt || '';
+        img.alt = item.alt || item.title || 'Gallery Image';
         img.loading = 'lazy';
 
-        // When image loads, update to true natural aspect ratio and reflow
-        img.addEventListener('load', function () {
-            wrap.style.aspectRatio = `${this.naturalWidth} / ${this.naturalHeight}`;
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    applyMasonry();
-                });
-            });
-        });
+        // Pre-calculate aspect ratio to prevent layout shift before image loads
+        if (item.width && item.length) {
+            img.style.aspectRatio = `${item.width} / ${item.length}`;
+        }
 
         // Handle broken images gracefully
         img.addEventListener('error', function() {
-            wrap.style.minHeight = '200px';
-            wrap.style.display = 'flex';
-            wrap.style.alignItems = 'center';
-            wrap.style.justifyContent = 'center';
-            wrap.innerHTML = '<span style="color:rgba(255,255,255,0.3); font-size:12px; text-align:center; padding: 10px;">Image Not Found</span>';
-            requestAnimationFrame(() => requestAnimationFrame(applyMasonry));
+            this.style.display = 'none';
+            card.style.minHeight = '200px';
+            card.style.display = 'flex';
+            card.style.alignItems = 'center';
+            card.style.justifyContent = 'center';
+            card.innerHTML = '<span style="color: #94a3b8; font-size: 14px;">Image Not Found</span>';
         });
 
-        wrap.appendChild(img);
-        card.appendChild(wrap);
+        card.appendChild(img);
         return card;
     }
 
     // ==========================================
-    // INITIALIZATION & RESIZE
+    // INITIALIZATION
     // ==========================================
     function init() {
         if (totalImages === 0) {
@@ -1340,21 +1284,11 @@ var particles;
             return;
         }
 
-        const batchSize = window.innerWidth < 768 ? 8 : 14;
+        const batchSize = window.innerWidth < 800 ? 6 : 10;
         loadMoreItems(batchSize);
-
-        // Initial layout pass
-        setTimeout(applyMasonry, 100);
     }
 
-    // Handle window resizing smoothly
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(applyMasonry, 100);
-    });
-
-    // Expose metadata globally
+    // Expose metadata globally (preserved from your original code)
     window.getCardMetadata = function(id) {
         return cardMetadata.get(String(id));
     };
@@ -1365,7 +1299,7 @@ var particles;
     init();
 </script>
 <!-- ========================================== -->
-<!-- END Gallery Infinite Mosaic Scroll -->
+<!-- END Gallery Infinite Brick-Wall Mosaic -->
 <!-- ========================================== -->
 </body>
 </html>
