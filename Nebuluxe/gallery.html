@@ -1080,37 +1080,44 @@ var particles;
 <!-- END CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- ========================================== -->
 <!-- ========================================== -->
-<!-- Gallery Infinite Masonry Layout -->
+<!-- Gallery Infinite Flexbox Layout -->
 <!-- ========================================== -->
 
-<!-- Required Libraries -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
-<script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
-
 <style>
+    /* 1. CLEAN, MINIMAL BACKGROUND */
     body {
         background-color: #ffffff !important;
         margin: 0;
         font-family: system-ui, -apple-system, sans-serif;
     }
 
+    /* 2. FLEXBOX GALLERY CONTAINER */
     .gallery {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
         max-width: 1400px;
         margin: 0 auto;
         padding: 24px;
     }
 
-    .grid-item {
-        width: 25%;
-        padding: 8px;
+    /* 3. RESPONSIVE FLEX ITEMS */
+    .flex-item {
+        flex: 0 0 calc(25% - 12px); /* 4 columns on large screens */
         box-sizing: border-box;
     }
 
-    @media (max-width: 1200px) { .grid-item { width: 33.333%; } }
-    @media (max-width: 800px)  { .grid-item { width: 50%; } }
-    @media (max-width: 500px)  { .grid-item { width: 100%; } }
+    @media (max-width: 1200px) {
+        .flex-item { flex: 0 0 calc(33.333% - 11px); } /* 3 columns */
+    }
+    @media (max-width: 800px) {
+        .flex-item { flex: 0 0 calc(50% - 8px); } /* 2 columns */
+    }
+    @media (max-width: 500px) {
+        .flex-item { flex: 0 0 100%; } /* 1 column on mobile */
+    }
 
+    /* 4. CLEAN CARD STYLING */
     .mosaic-card {
         border-radius: 12px;
         overflow: hidden;
@@ -1119,114 +1126,112 @@ var particles;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         transition: transform 0.2s ease, box-shadow 0.2s ease;
         cursor: pointer;
+        width: 100%;
     }
 
     .mosaic-card:hover {
-        transform: translateY(-2px);
+        transform: translateY(-3px);
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         border-color: #cbd5e1;
     }
 
+    /* 5. TRUE IMAGE ASPECT RATIO (No cropping or stretching) */
     .mosaic-card img {
         width: 100%;
         height: auto;
         display: block;
     }
 
+    /* Loading indicator at the bottom */
     .loading-indicator {
+        width: 100%;
         text-align: center;
         padding: 40px;
         color: #94a3b8;
         font-size: 14px;
-        display: none; /* Hidden by default */
     }
 </style>
 
-<div class="gallery">
-    <div id="masonry-grid"></div>
-    <div id="loading-indicator" class="loading-indicator">Loading more images...</div>
-</div>
+<main class="gallery" id="gallery-container">
+    <!-- Cards will be injected here -->
+</main>
+
+<div id="loading-indicator" class="loading-indicator">Loading more images...</div>
 
 <!-- Load thumbnail.js BEFORE the main script -->
 <script src="thumbnail.js"></script>
 
 <script>
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Verify data source
     if (typeof thumbnails === 'undefined') {
         console.error("ERROR: thumbnail.js did not load or 'thumbnails' is not defined.");
-        $('#masonry-grid').html('<p style="color:red; text-align:center; padding: 40px;">Error: Could not load thumbnail data. Check console.</p>');
+        document.getElementById('gallery-container').innerHTML =
+            '<p style="color:red; text-align:center; padding: 40px; width:100%;">Error: Could not load thumbnail data.</p>';
         return;
     }
 
     console.log("✓ Thumbnails loaded successfully. Total items:", thumbnails.length);
 
-    const $grid = $('#masonry-grid');
-    const $loading = $('#loading-indicator');
+    const container = document.getElementById('gallery-container');
+    const loader = document.getElementById('loading-indicator');
+
     let currentIndex = 0;
     const totalImages = thumbnails.length;
     const cardMetadata = new Map();
     let isLoading = false;
 
-    // Initialize Masonry
-    $grid.masonry({
-        itemSelector: '.grid-item',
-        percentPosition: true,
-        transitionDuration: '0.3s'
-    });
-
-    // Create card element
+    // 2. Create Card Function
     function createCard(item) {
-        const $card = $('<div class="grid-item"></div>');
-        const $inner = $('<div class="mosaic-card"></div>');
-        const $img = $('<img>');
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'flex-item';
 
-        $img.attr({
-            src: item.src,
-            alt: item.alt || item.title || 'Gallery Image'
-        });
+        const cardDiv = document.createElement('div');
+        cardDiv.className = 'mosaic-card';
+        cardDiv.dataset.id = item.id;
+
+        const img = document.createElement('img');
+        img.src = item.src;
+        img.alt = item.alt || item.title || 'Gallery Image';
+        img.loading = 'lazy';
 
         // Pre-set aspect ratio to prevent layout shift before image loads
         if (item.width && item.length) {
-            $img.css('aspect-ratio', `${item.width} / ${item.length}`);
+            img.style.aspectRatio = `${item.width} / ${item.length}`;
         }
 
         // Handle broken images gracefully
-        $img.on('error', function() {
+        img.addEventListener('error', function() {
             console.warn("⚠️ Failed to load image:", item.src);
-            $(this).hide();
-            $inner.css({
-                'min-height': '150px',
-                'display': 'flex',
-                'align-items': 'center',
-                'justify-content': 'center',
-                'background': '#f8fafc'
-            }).html('<span style="color: #94a3b8; font-size: 12px; text-align: center;">Image Not Found<br><small>' + item.src + '</small></span>');
+            this.style.display = 'none';
+            cardDiv.style.minHeight = '150px';
+            cardDiv.style.display = 'flex';
+            cardDiv.style.alignItems = 'center';
+            cardDiv.style.justifyContent = 'center';
+            cardDiv.style.background = '#f8fafc';
+            cardDiv.innerHTML = '<span style="color: #94a3b8; font-size: 12px; text-align: center;">Image Not Found<br><small>' + item.src + '</small></span>';
         });
 
-        // Store metadata
+        // Store metadata globally as requested
         cardMetadata.set(String(item.id), { ...item });
-        $inner.attr('data-id', item.id);
 
-        $inner.append($img);
-        $card.append($inner);
-
-        return $card;
+        cardDiv.appendChild(img);
+        itemDiv.appendChild(cardDiv);
+        return itemDiv;
     }
 
-    // Load more items
-    function loadMoreItems(count = 10) {
+    // 3. Load More Items Function
+    function loadMoreItems(count = 12) {
         if (isLoading) return;
         isLoading = true;
-        $loading.show();
+        loader.style.display = 'block';
 
         console.log("Loading", count, "more items. Current index:", currentIndex);
 
-        // Use a standard array to collect DOM elements (Fixes the "Assignment to constant variable" error)
-        const itemsArray = [];
-        let loadedCount = 0;
+        const fragment = document.createDocumentFragment();
 
         for (let i = 0; i < count; i++) {
-            // Infinite loop: reset to beginning when reaching the end
+            // TRUE INFINITE SCROLL: Loop back to the beginning when reaching the end
             if (currentIndex >= totalImages) {
                 currentIndex = 0;
                 console.log("↻ Looping back to start of thumbnails array");
@@ -1235,63 +1240,47 @@ $(document).ready(function() {
             const nextItem = thumbnails[currentIndex];
             currentIndex++;
 
-            const $card = createCard(nextItem);
-            itemsArray.push($card[0]); // Push the raw DOM element for better performance
-            loadedCount++;
+            const cardElement = createCard(nextItem);
+            fragment.appendChild(cardElement);
         }
 
-        if (loadedCount > 0) {
-            // Append all items to grid at once
-            $grid.append(itemsArray);
+        // Append all new items to the DOM at once (high performance)
+        container.appendChild(fragment);
 
-            // Wait for images to load, then trigger Masonry layout
-            $grid.imagesLoaded().always(function() {
-                $grid.masonry('appended', itemsArray);
-                $grid.masonry('layout');
-                isLoading = false;
-                $loading.hide();
-                console.log("✓ Batch layout complete.");
-            });
-        } else {
+        // Brief timeout to allow DOM to register before hiding loader
+        setTimeout(() => {
             isLoading = false;
-            $loading.hide();
-        }
+            loader.style.display = 'none';
+            console.log("✓ Batch layout complete.");
+        }, 300);
     }
 
-    // Infinite scroll with Intersection Observer
+    // 4. Infinite Scroll Observer
     const scrollObserver = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && !isLoading) {
-            loadMoreItems(10);
+            loadMoreItems(12); // Load 12 more items when the loader is visible
         }
     }, {
         rootMargin: '600px' // Triggers 600px before the user reaches the bottom
     });
 
-    scrollObserver.observe($loading[0]);
+    scrollObserver.observe(loader);
 
-    // Initial load
-    loadMoreItems(window.innerWidth < 800 ? 8 : 12);
+    // 5. Initial Load
+    const initialBatch = window.innerWidth < 800 ? 8 : 16;
+    loadMoreItems(initialBatch);
 
-    // Expose metadata globally (preserved from your original code)
+    // 6. Expose metadata globally (preserved from your original code)
     window.getCardMetadata = function(id) {
         return cardMetadata.get(String(id));
     };
     window.getAllCardMetadata = function() {
         return Array.from(cardMetadata.values());
     };
-
-    // Handle window resize smoothly
-    let resizeTimer;
-    $(window).on('resize', function() {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(function() {
-            $grid.masonry('layout');
-        }, 250);
-    });
 });
 </script>
 <!-- ========================================== -->
-<!-- END Gallery Infinite Masonry Layout -->
+<!-- END Gallery Infinite Flexbox Layout -->
 <!-- ========================================== -->
 </body>
 </html>
