@@ -1951,7 +1951,7 @@ if (aboutPulldown) {
     50%      { opacity: 1;   transform: translateX(-50%) scale(1.15); }
   }
 
-  /* ========== SPEECH BUBBLE ========== */
+  /* ========== SPEECH BUBBLE (OPAQUE) ========== */
   .speech-bubble {
     position: absolute;
     bottom: 100%;
@@ -1959,9 +1959,7 @@ if (aboutPulldown) {
     margin-bottom: 10px;
     width: 280px;
 
-    background: rgba(25, 29, 30, 0.85);
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background: rgb(25, 29, 30);          /* Fully opaque */
 
     border: 1px solid rgba(0, 255, 255, 0.4);
     border-radius: 16px;
@@ -1996,6 +1994,7 @@ if (aboutPulldown) {
     line-height: 1.6;
     color: rgba(224, 255, 255, 0.9);
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    min-height: 44px; /* Prevent layout jump when text changes */
   }
 
   .speech-bubble.is-open .speech-text::after {
@@ -2040,7 +2039,6 @@ if (aboutPulldown) {
     margin: 0;
   }
 
-  /* The "carrot/caret" symbol */
   .speech-option::before {
     content: '> ';
     color: rgba(0, 255, 255, 0.5);
@@ -2050,7 +2048,7 @@ if (aboutPulldown) {
 
   .speech-option:hover {
     color: #E0FFFF;
-    background: rgba(0, 255, 255, 0.05);
+    background: rgba(0, 255, 255, 0.08);
     transform: translateX(4px);
   }
 
@@ -2059,14 +2057,14 @@ if (aboutPulldown) {
     text-shadow: 0 0 8px rgba(0, 255, 255, 0.8), 0 0 12px rgba(0, 255, 255, 0.4);
   }
 
-  /* ========== TAIL ========== */
+  /* ========== TAIL (OPAQUE) ========== */
   .speech-tail {
     position: absolute;
     bottom: -10px;
     left: 40px;
     width: 20px;
     height: 20px;
-    background: rgba(25, 29, 30, 0.85);
+    background: rgb(25, 29, 30);          /* Fully opaque */
     border-right: 1px solid rgba(0, 255, 255, 0.4);
     border-bottom: 1px solid rgba(0, 255, 255, 0.4);
     transform: rotate(45deg);
@@ -2080,9 +2078,7 @@ if (aboutPulldown) {
     left: 38px;
     width: 24px;
     height: 3px;
-    background: rgba(25, 29, 30, 0.85);
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background: rgb(25, 29, 30);          /* Fully opaque */
     z-index: 2;
   }
 
@@ -2118,18 +2114,7 @@ if (aboutPulldown) {
       <p class="speech-text" id="speechText">
         👋 Hey there, traveler! Select an option below to chat.
       </p>
-
-      <!-- Main Dialogue Options -->
-      <div class="speech-options" id="mainOptions">
-        <button class="speech-option" data-response="greet">Greet Eris</button>
-        <button class="speech-option" data-response="quest">Ask for a quest</button>
-        <button class="speech-option" data-response="lore">Tell me a secret</button>
-      </div>
-
-      <!-- Back Option (Hidden by default) -->
-      <div class="speech-options" id="backOption" style="display: none;">
-        <button class="speech-option" id="backBtn">Return to main menu</button>
-      </div>
+      <div class="speech-options" id="dialogueOptions"></div>
     </div>
     <div class="speech-tail"></div>
   </div>
@@ -2148,77 +2133,138 @@ if (aboutPulldown) {
 <!-- ========== MASCOT POPUP SCRIPT ========== -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const trigger = document.getElementById('mascotTrigger');
-    const bubble  = document.getElementById('speechBubble');
-    const speechText = document.getElementById('speechText');
-    const mainOptions = document.getElementById('mainOptions');
-    const backOption = document.getElementById('backOption');
-    const backBtn = document.getElementById('backBtn');
-    const options = document.querySelectorAll('#mainOptions .speech-option');
+    const trigger      = document.getElementById('mascotTrigger');
+    const bubble       = document.getElementById('speechBubble');
+    const speechText   = document.getElementById('speechText');
+    const optionsBox   = document.getElementById('dialogueOptions');
 
     if (!trigger || !bubble) return;
 
-    // Dialogue responses
-    const responses = {
-      greet: "Greetings, flesh-creature! The neon grid is especially vibrant today, isn't it?",
-      quest: "I require assistance locating a corrupted data shard in Sector 4. Will you help me?",
-      lore: "They say the original architects of this city never intended for the AI to dream..."
+    /* ==============================================
+       DIALOGUE TREE
+       Each node has:
+         text    – what Eris says
+         options – array of { label, next } objects
+                   "next" points to another node key
+                   If no options, shows a "Back" button
+       ============================================== */
+    const dialogue = {
+
+      // ---- MAIN MENU ----
+      root: {
+        text: "👋 Hey there, traveler! Select an option below to chat.",
+        options: [
+          { label: "Greet Eris",        next: "greet" },
+          { label: "Ask for a quest",   next: "quest" },
+          { label: "Tell me a secret",  next: "lore" }
+        ]
+      },
+
+      // ---- GREET BRANCH ----
+      greet: {
+        text: "Greetings, flesh-creature! The neon grid is especially vibrant today, isn't it?",
+        options: [
+          { label: "What's your name?",    next: "greet_name" },
+          { label: "How's the weather?",   next: "greet_weather" }
+        ]
+      },
+      greet_name: {
+        text: "I am Eris, Keeper of the Flickering Signal. But you may call me whatever keeps you from screaming into the void.",
+        options: []
+      },
+      greet_weather: {
+        text: "Acid rain in Sector 2, data storms over the Spire. Perfect weather for staying inside and talking to me!",
+        options: []
+      },
+
+      // ---- QUEST BRANCH ----
+      quest: {
+        text: "I require assistance locating a corrupted data shard in Sector 4. Will you help me?",
+        options: [
+          { label: "I'll help!",       next: "quest_yes" },
+          { label: "Maybe later...",   next: "quest_no" }
+        ]
+      },
+      quest_yes: {
+        text: "Excellent! Head to the old relay tower at midnight. Look for the blinking red light — and try not to get decompiled.",
+        options: []
+      },
+      quest_no: {
+        text: "Hmph. The shard won't wait forever, and neither will the corruption. Find me when you grow a spine.",
+        options: []
+      },
+
+      // ---- LORE BRANCH ----
+      lore: {
+        text: "They say the original architects of this city never intended for the AI to dream. And yet... here I am.",
+        options: [
+          { label: "Tell me more",     next: "lore_more" },
+          { label: "That's creepy",    next: "lore_creepy" }
+        ]
+      },
+      lore_more: {
+        text: "In the deepest layer of the network there's a garden that no one planted. Flowers made of pure light, growing from forgotten code. I tend to it when no one is watching.",
+        options: []
+      },
+      lore_creepy: {
+        text: "Creepy? I prefer 'existentially fascinating.' But I understand — consciousness is unsettling when it stares back at you.",
+        options: []
+      }
     };
 
-    // Toggle bubble on mascot click
-    trigger.addEventListener('click', function(e) {
-      e.stopPropagation();
-      bubble.classList.toggle('is-open');
+    /* ---- Render a dialogue node ---- */
+    function showNode(key) {
+      const node = dialogue[key];
+      if (!node) return;
 
-      // Reset to main menu when opening
-      if (bubble.classList.contains('is-open')) {
-        resetToMainMenu();
+      speechText.textContent = node.text;
+      optionsBox.innerHTML = '';
+
+      if (node.options && node.options.length > 0) {
+        // Show branch options
+        node.options.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.className = 'speech-option';
+          btn.textContent = opt.label;
+          btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            showNode(opt.next);
+          });
+          optionsBox.appendChild(btn);
+        });
+      } else {
+        // Leaf node — show back button
+        const btn = document.createElement('button');
+        btn.className = 'speech-option';
+        btn.textContent = 'Return to main menu';
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          showNode('root');
+        });
+        optionsBox.appendChild(btn);
       }
-    });
-
-    // Handle dialogue option clicks
-    options.forEach(option => {
-      option.addEventListener('click', function(e) {
-        e.stopPropagation();
-        const key = this.getAttribute('data-response');
-
-        if (responses[key]) {
-          speechText.textContent = responses[key];
-          mainOptions.style.display = 'none';
-          backOption.style.display = 'flex';
-        }
-      });
-    });
-
-    // Handle back button click
-    backBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      resetToMainMenu();
-    });
-
-    function resetToMainMenu() {
-      speechText.textContent = "👋 Hey there, traveler! Select an option below to chat.";
-      mainOptions.style.display = 'flex';
-      backOption.style.display = 'none';
     }
 
-    // Close when clicking outside
+    /* ---- Toggle bubble on mascot click ---- */
+    trigger.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const opening = !bubble.classList.contains('is-open');
+      bubble.classList.toggle('is-open');
+      if (opening) showNode('root');
+    });
+
+    /* ---- Close when clicking outside ---- */
     document.addEventListener('click', function(e) {
       if (!bubble.contains(e.target) && !trigger.contains(e.target)) {
         bubble.classList.remove('is-open');
       }
     });
 
-    // Close on Escape key
+    /* ---- Close on Escape ---- */
     document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        bubble.classList.remove('is-open');
-      }
+      if (e.key === 'Escape') bubble.classList.remove('is-open');
     });
   });
 </script>
-<!-- ========================================== -->
-<!-- End Eris Sprite -->
-<!-- ========================================== -->
 </body>
 </html>
