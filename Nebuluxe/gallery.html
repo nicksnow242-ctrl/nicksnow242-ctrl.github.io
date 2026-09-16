@@ -1093,6 +1093,7 @@ var particles;
 
     body {
         background: linear-gradient(0deg, #0f172a 0%, #1e293b 100%) !important;
+        margin: 0;
     }
 
     .bg-blob {
@@ -1106,7 +1107,6 @@ var particles;
     .blob-1 { width: 500px; height: 500px; background: #3b82f6; top: -100px; left: -100px; }
     .blob-2 { width: 600px; height: 600px; background: #8b5cf6; bottom: -200px; right: -200px; }
 
-    /* 1. STRICTLY NO CSS COLUMNS. Absolute positioning container. */
     .gallery {
         position: relative;
         width: 100%;
@@ -1114,12 +1114,9 @@ var particles;
         margin: 0 auto;
         padding: 140px 24px 24px 24px;
         z-index: 20;
-        /* Force disable any inherited column layouts */
-        column-count: 1 !important;
-        column-gap: 0 !important;
+        column-count: 1 !important; /* Force disable any inherited column layouts */
     }
 
-    /* 2. NO TOP/LEFT TRANSITIONS. Prevents scroll glitching. */
     .glass-card {
         position: absolute;
         top: 0;
@@ -1132,7 +1129,6 @@ var particles;
         border-radius: 16px;
         overflow: hidden;
         box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-        /* Only animate hover effects and initial fade-in, NOT position */
         transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.4s ease;
         animation: mosaicFadeIn 0.5s ease-out forwards;
         will-change: transform;
@@ -1148,12 +1144,12 @@ var particles;
         width: 100%;
         overflow: hidden;
         background: rgba(0, 0, 0, 0.2);
-        /* Prevent collapse before image loads */
-        min-height: 150px;
+        min-height: 150px; /* Fallback if aspect ratio is missing */
     }
     .card-img-wrap img {
         width: 100%;
-        height: auto;
+        height: 100%;
+        object-fit: cover;
         display: block;
         transition: transform 0.5s ease;
     }
@@ -1173,7 +1169,6 @@ var particles;
 <main id="gallery-container" class="gallery"></main>
 
 <script src="thumbnail.js"></script>
-
 <script>
     if (typeof thumbnails === 'undefined') {
         console.error("thumbnail.js did not load or 'thumbnails' is not defined globally.");
@@ -1184,11 +1179,14 @@ var particles;
     const totalImages = thumbnails ? thumbnails.length : 0;
     const cardMetadata = new Map();
 
+    let isLoading = false;
+    let observedCard = null;
+
     // ==========================================
     // GLITCH-FREE MOSAIC LAYOUT ENGINE
     // ==========================================
     function applyMasonry() {
-        const cards = Array.from(container.children);
+        const cards = Array.from(container.children).filter(c => c.classList.contains('glass-card'));
         if (cards.length === 0) {
             container.style.height = '0px';
             return;
@@ -1217,8 +1215,8 @@ var particles;
             if (img && img.naturalWidth > 0) {
                 // Height = Width * (Native Height / Native Width)
                 cardHeight = columnWidth * (img.naturalHeight / img.naturalWidth);
-            } else if (card.offsetHeight > 0) {
-                // Fallback to DOM measurement if image is somehow already rendered
+            } else if (card.offsetHeight > 150) {
+                // Fallback to DOM measurement (works perfectly because aspect-ratio is pre-set)
                 cardHeight = card.offsetHeight;
             }
 
@@ -1239,43 +1237,59 @@ var particles;
     }
 
     // ==========================================
-    // SCROLL & RECYCLE LOGIC
+    // INFINITE SCROLL LOGIC (Append, don't recycle)
     // ==========================================
-    window.addEventListener('wheel', (e) => {
-        if (e.deltaY < 0) e.preventDefault();
-    }, { passive: false });
-
-    let touchStartY = 0;
-    window.addEventListener('touchstart', (e) => {
-        touchStartY = e.touches[0].clientY;
-    }, { passive: true });
-    window.addEventListener('touchmove', (e) => {
-        if (e.touches[0].clientY > touchStartY) e.preventDefault();
-    }, { passive: false });
-
-    window.addEventListener('keydown', (e) => {
-        if (['ArrowUp', 'PageUp', 'Home', 'Space'].includes(e.key)) {
-            if (e.key === 'Space' && e.shiftKey) return;
-            e.preventDefault();
+    const scrollObserver = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+            loadMoreItems(7); // Load 7 more items when reaching the bottom
         }
+    }, {
+        rootMargin: '400px' // Trigger 400px before the last card hits the viewport
     });
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
-                const card = entry.target;
-                const id = card.dataset.id;
-
-                cardMetadata.delete(id);
-                observer.unobserve(card);
-                card.remove();
-
-                renderNextItem();
-                // Recalculate layout instantly after DOM change
-                requestAnimationFrame(applyMasonry);
+    function observeLastCard() {
+        const cards = container.querySelectorAll('.glass-card');
+        if (cards.length > 0) {
+            if (observedCard) {
+                scrollObserver.unobserve(observedCard);
             }
-        });
-    }, { rootMargin: '0px' });
+            observedCard = cards[cards.length - 1];
+            scrollObserver.observe(observedCard);
+        }
+    }
+
+    function loadMoreItems(count = 7) {
+        if (isLoading || totalImages === 0) return;
+        isLoading = true;
+
+        const fragment = document.createDocumentFragment();
+        let loadedCount = 0;
+
+        for (let i = 0; i < count; i++) {
+            if (currentIndex >= totalImages) {
+                // To loop infinitely, uncomment the next line:
+                // currentIndex = 0;
+                break;
+            }
+            const nextItem = thumbnails[currentIndex];
+            currentIndex++;
+            const card = createCard(nextItem);
+            fragment.appendChild(card);
+            loadedCount++;
+        }
+
+        if (loadedCount > 0) {
+            container.appendChild(fragment);
+            // Apply masonry after new items are added to the DOM
+            requestAnimationFrame(() => {
+                applyMasonry();
+                observeLastCard(); // Re-observe the new last card
+                isLoading = false;
+            });
+        } else {
+            isLoading = false;
+        }
+    }
 
     // ==========================================
     // CARD CREATION
@@ -1289,15 +1303,19 @@ var particles;
         const wrap = document.createElement('div');
         wrap.className = 'card-img-wrap';
 
+        // PRE-CALCULATE ASPECT RATIO: Reserves exact space before image loads, preventing layout shift
+        if (item.width && item.length) {
+            wrap.style.aspectRatio = `${item.width} / ${item.length}`;
+        }
+
         const img = document.createElement('img');
         img.src = item.src;
         img.alt = item.alt || '';
         img.loading = 'lazy';
 
-        // When image loads, set aspect ratio and trigger mosaic reflow
+        // When image loads, update to true natural aspect ratio and reflow
         img.addEventListener('load', function () {
             wrap.style.aspectRatio = `${this.naturalWidth} / ${this.naturalHeight}`;
-            // Double rAF ensures browser has painted the new aspect ratio before measuring
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     applyMasonry();
@@ -1311,7 +1329,7 @@ var particles;
             wrap.style.display = 'flex';
             wrap.style.alignItems = 'center';
             wrap.style.justifyContent = 'center';
-            wrap.innerHTML = '<span style="color:rgba(255,255,255,0.3); font-size:12px;">Image Not Found</span>';
+            wrap.innerHTML = '<span style="color:rgba(255,255,255,0.3); font-size:12px; text-align:center; padding: 10px;">Image Not Found</span>';
             requestAnimationFrame(() => requestAnimationFrame(applyMasonry));
         });
 
@@ -1320,22 +1338,17 @@ var particles;
         return card;
     }
 
-    function renderNextItem() {
-        if (totalImages === 0) return;
-        const nextItem = thumbnails[currentIndex % totalImages];
-        currentIndex++;
-        const card = createCard(nextItem);
-        container.appendChild(card);
-        observer.observe(card);
-    }
-
     // ==========================================
     // INITIALIZATION & RESIZE
     // ==========================================
     function init() {
-        if (totalImages === 0) return;
+        if (totalImages === 0) {
+            console.warn("No thumbnails found. Make sure thumbnail.js loads correctly.");
+            return;
+        }
+
         const batchSize = window.innerWidth < 768 ? 8 : 14;
-        for (let i = 0; i < batchSize; i++) renderNextItem();
+        loadMoreItems(batchSize);
 
         // Initial layout pass
         setTimeout(applyMasonry, 100);
@@ -1348,6 +1361,7 @@ var particles;
         resizeTimer = setTimeout(applyMasonry, 100);
     });
 
+    // Expose metadata globally as requested
     window.getCardMetadata = function(id) {
         return cardMetadata.get(String(id));
     };

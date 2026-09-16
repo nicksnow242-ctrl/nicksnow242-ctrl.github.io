@@ -18,7 +18,7 @@ const thumbnails = [
     },
     {
         id: 2,
-        src: 'https://picsum.photos/400/600',
+        src: 'Images/Thumbnails/DSC1930.png',
         alt: 'A thief came in the night',
         title: 'Divergence',
         dateCreated: '01-01-23',
