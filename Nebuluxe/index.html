@@ -1251,6 +1251,7 @@ if (aboutPulldown) {
 </script>
 <!-- ========================================== -->
 <!-- ========================================== -->
+<!-- ========================================== -->
 <!-- CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- PASTE EVERYTHING BELOW THIS LINE BEFORE </body> -->
 <!-- ========================================== -->
@@ -1310,11 +1311,9 @@ if (aboutPulldown) {
     z-index: 2;
   }
 
-  /* --- SONAR WAVES (Fixed positioning relative to parent) --- */
+  /* --- SONAR WAVES (Positioned via JavaScript at icon center) --- */
   .sonar-container {
-    position: absolute;
-    top: 30px; /* Center of 60px icon */
-    left: 30px; /* Center of 60px icon */
+    position: fixed;
     width: 0;
     height: 0;
     z-index: 10000;
@@ -1620,14 +1619,15 @@ if (aboutPulldown) {
 
 <!-- The Player HTML Structure -->
 <div class="music-player-container" id="player-container">
+  <!-- Sonar container is now a direct child of body, positioned via JavaScript -->
+  <div id="sonar-container" class="sonar-container">
+    <div class="sonar-wave"></div>
+    <div class="sonar-wave"></div>
+    <div class="sonar-wave"></div>
+  </div>
+
   <div id="activation-core" class="activation-core">
     <span class="core-icon">♪</span>
-    <!-- Sonar container now inside the activation core for perfect centering -->
-    <div class="sonar-container">
-      <div class="sonar-wave"></div>
-      <div class="sonar-wave"></div>
-      <div class="sonar-wave"></div>
-    </div>
   </div>
 
   <div id="mecha-panel" class="mecha-panel">
@@ -1681,6 +1681,22 @@ if (aboutPulldown) {
   const albumArtImg = document.getElementById('album-art');
   const playIcon = document.getElementById('play-icon');
   const pauseIcon = document.getElementById('pause-icon');
+  const sonarContainer = document.getElementById('sonar-container');
+
+  // Position sonar container at the exact center of the icon
+  function positionSonar() {
+    const rect = activationCore.getBoundingClientRect();
+    const centerX = rect.left + (rect.width / 2);
+    const centerY = rect.top + (rect.height / 2);
+
+    sonarContainer.style.left = centerX + 'px';
+    sonarContainer.style.top = centerY + 'px';
+  }
+
+  // Position sonar on load and window resize
+  window.addEventListener('load', positionSonar);
+  window.addEventListener('resize', positionSonar);
+  positionSonar(); // Initial position
 
   function updateUI() {
     playIcon.style.display = isPlaying ? 'none' : 'block';
