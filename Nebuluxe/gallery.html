@@ -6,6 +6,7 @@
 <title>Gallery</title>
 <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 html, body {
   width: 100%;
@@ -36,7 +37,7 @@ html, body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 110px;
+  height: 90px;
   display: grid;
   grid-template-columns: 120px 1fr 120px;
   align-items: center;
@@ -50,7 +51,7 @@ html, body {
 
 .banner-title {
   justify-self: center;
-  font-size: 30px;
+  font-size: 26px;
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -136,7 +137,6 @@ html, body {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  /* Warm beige/gold drop shadows + subtle sepia tint to warm up the GIF */
   filter: sepia(0.3) saturate(1.2)
           drop-shadow(0 0 10px rgba(180, 154, 93, 0.6))
           drop-shadow(0 4px 8px rgba(139, 115, 85, 0.4));
@@ -180,19 +180,18 @@ html, body {
   50%      { opacity: 1;   transform: translateX(-50%) scale(1.15); }
 }
 
-/* ========== SPEECH BUBBLE (Light Beige Theme) ========== */
 .speech-bubble {
   position: absolute;
   bottom: 100%;
   left: 0;
   margin-bottom: 10px;
   width: 280px;
-  background: rgba(255, 253, 245, 0.95); /* Light warm beige/white */
+  background: rgba(255, 253, 245, 0.95);
   border: 1px solid rgba(180, 154, 93, 0.4);
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(180, 154, 93, 0.15),
               0 0 20px rgba(255, 255, 255, 0.5);
-  color: #5C4A32; /* Dark warm brown for readability */
+  color: #5C4A32;
   pointer-events: auto;
   opacity: 0;
   transform: translateY(10px) scale(0.95);
@@ -238,7 +237,6 @@ html, body {
   51%, 100% { opacity: 0; }
 }
 
-/* ========== DIALOGUE OPTIONS ========== */
 .speech-options {
   margin-top: 16px;
   display: flex;
@@ -280,7 +278,6 @@ html, body {
   text-shadow: 0 0 8px rgba(180, 154, 93, 0.6);
 }
 
-/* ========== TAIL (Light Beige Theme) ========== */
 .speech-tail {
   position: absolute;
   bottom: -10px;
@@ -305,28 +302,297 @@ html, body {
   z-index: 2;
 }
 
-/* ========== RESPONSIVE ========== */
 @media (max-width: 480px) {
-  .mascot-popup {
-    bottom: 40px;
-    left: 5%;
-  }
-  .mascot-gif-wrapper {
-    width: 80px;
-    height: 80px;
-  }
-  .speech-bubble {
-    width: 240px;
-  }
-  .speech-content {
-    padding: 14px 16px;
-  }
-  .speech-text {
-    font-size: 13px;
-  }
-  .speech-option {
-    font-size: 12px;
-  }
+  .mascot-popup { bottom: 40px; left: 5%; }
+  .mascot-gif-wrapper { width: 80px; height: 80px; }
+  .speech-bubble { width: 240px; }
+  .speech-content { padding: 14px 16px; }
+  .speech-text { font-size: 13px; }
+  .speech-option { font-size: 12px; }
+}
+
+/* ========================================== */
+/* CYBERPUNK MECHA MUSIC PLAYER STYLES */
+/* ========================================== */
+:root {
+  --neon-orange: #ff5e00;
+  --neon-glow: rgba(255, 94, 0, 0.6);
+  --dark-metal: #0a0a0a;
+  --grunge-gray: #1a1a1a;
+  --mech-border: 2px solid var(--neon-orange);
+}
+
+.music-player-container {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  z-index: 9999;
+  font-family: 'Share Tech Mono', monospace;
+  perspective: 1000px;
+}
+
+.activation-core {
+  width: 60px;
+  height: 60px;
+  background: var(--dark-metal);
+  border: var(--mech-border);
+  clip-path: polygon(20% 0%, 100% 0%, 100% 80%, 80% 100%, 0% 100%, 0% 20%);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px var(--neon-glow), inset 0 0 10px rgba(255, 94, 0, 0.2);
+  position: relative;
+  z-index: 10001;
+}
+
+.activation-core:hover {
+  background: var(--neon-orange);
+  box-shadow: 0 0 25px var(--neon-orange);
+}
+
+.activation-core:hover .core-icon {
+  color: var(--dark-metal);
+  animation: icon-glitch 0.3s ease-in-out;
+}
+
+.core-icon {
+  color: var(--neon-orange);
+  font-size: 32px;
+  transition: color 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.sonar-container {
+  position: fixed;
+  width: 0;
+  height: 0;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+.sonar-wave {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--neon-orange);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 0;
+  animation: sonar-pulse 6s ease-out 1;
+}
+
+.sonar-wave:nth-child(1) { animation-delay: 0s; }
+.sonar-wave:nth-child(2) { animation-delay: 2s; }
+.sonar-wave:nth-child(3) { animation-delay: 4s; }
+
+.music-player-container.panel-open .sonar-wave {
+  animation: none;
+  opacity: 0;
+}
+
+@keyframes sonar-pulse {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; border-width: 3px; }
+  50% { opacity: 0.4; border-width: 2px; }
+  100% { transform: translate(-50%, -50%) scale(8.6); opacity: 0; border-width: 1px; }
+}
+
+@keyframes icon-glitch {
+  0%, 100% { transform: translate(0); text-shadow: none; }
+  10% { transform: translate(-2px, 1px); text-shadow: 2px 0 #ff0000, -2px 0 #00ffff; }
+  20% { transform: translate(2px, -1px); text-shadow: -2px 0 #ff0000, 2px 0 #00ffff; }
+  30% { transform: translate(-1px, 2px); text-shadow: 1px 0 #ff0000, -1px 0 #00ffff; }
+  40% { transform: translate(1px, -2px); text-shadow: -1px 0 #ff0000, 1px 0 #00ffff; }
+  50% { transform: translate(0); text-shadow: none; }
+}
+
+.mecha-panel {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+  clip-path: polygon(50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%);
+  transition: clip-path 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55), transform 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transform-origin: top right;
+  transform: rotate(-5deg) scale(0.95);
+}
+
+.mecha-panel.open {
+  pointer-events: auto;
+  clip-path: polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%, 0% 100%, 0% 100%, 0% 0%, 0% 0%);
+  transform: rotate(0deg) scale(1);
+}
+
+.mech-plate {
+  background: var(--dark-metal);
+  border: 1px solid #333;
+  position: relative;
+  overflow: hidden;
+}
+
+.mech-plate::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15) 1px, transparent 1px, transparent 2px);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.plate-header {
+  height: 40px;
+  border-bottom: var(--mech-border);
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  justify-content: space-between;
+  color: var(--neon-orange);
+  font-size: 12px;
+  letter-spacing: 2px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 10% 100%, 0 70%);
+}
+
+.plate-main {
+  padding: 20px;
+  border-bottom: 1px dashed #444;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  clip-path: polygon(0 0, 100% 0, 100% 95%, 95% 100%, 0 100%);
+}
+
+.plate-controls {
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  background: linear-gradient(180deg, var(--grunge-gray) 0%, var(--dark-metal) 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 30%);
+}
+
+.mech-hinge {
+  position: absolute;
+  width: 15px;
+  height: 100%;
+  background: repeating-linear-gradient(45deg, #222, #222 5px, #111 5px, #111 10px);
+  border-left: 1px solid var(--neon-orange);
+  right: -15px;
+  top: 0;
+  opacity: 0;
+  transition: opacity 0.5s ease 0.3s;
+}
+
+.mecha-panel.open .mech-hinge { opacity: 1; }
+
+.oval-frame {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--neon-orange);
+  box-shadow: 0 0 15px var(--neon-glow), inset 0 0 20px rgba(0,0,0,0.8);
+  position: relative;
+  background: #000;
+}
+
+.oval-frame::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.15"/></svg>');
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+.album-art {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: contrast(1.1) saturate(0.8);
+}
+
+.song-info {
+  text-align: center;
+  width: 100%;
+}
+
+.song-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.artist-name {
+  font-size: 12px;
+  color: var(--neon-orange);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.control-btn {
+  background: transparent;
+  border: 1px solid #444;
+  color: var(--neon-orange);
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  clip-path: polygon(20% 0%, 100% 0%, 100% 80%, 80% 100%, 0% 100%, 0% 20%);
+}
+
+.control-btn:hover {
+  background: var(--neon-orange);
+  color: var(--dark-metal);
+  box-shadow: 0 0 15px var(--neon-glow);
+  border-color: var(--neon-orange);
+}
+
+.play-btn {
+  width: 65px;
+  height: 65px;
+  border: 2px solid var(--neon-orange);
+  background: rgba(255, 94, 0, 0.1);
+}
+
+.play-btn svg { width: 28px; height: 28px; }
+
+.glitch-text { animation: glitch-anim 0.3s cubic-bezier(.25, .46, .45, .94) both; }
+
+@keyframes glitch-anim {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+.blink { animation: blinker 1s linear infinite; }
+@keyframes blinker { 50% { opacity: 0; } }
+
+@media (max-width: 768px) {
+  .music-player-container { top: 10px; right: 10px; }
+  .mecha-panel { width: 280px; }
+  .oval-frame { width: 130px; height: 130px; }
 }
 </style>
 </head>
@@ -344,7 +610,6 @@ html, body {
   </a>
 
   <h1 class="banner-title">Gallery</h1>
-
   <div></div>
 </header>
 
@@ -354,21 +619,14 @@ html, body {
 <div class="mascot-popup" id="mascotPopup">
   <div class="speech-bubble" id="speechBubble">
     <div class="speech-content">
-      <p class="speech-text" id="speechText">
-        👋 Hey there, traveler! Select an option below to chat.
-      </p>
+      <p class="speech-text" id="speechText">👋 Hey there, traveler! Select an option below to chat.</p>
       <div class="speech-options" id="dialogueOptions"></div>
     </div>
     <div class="speech-tail"></div>
   </div>
 
   <div class="mascot-gif-wrapper" id="mascotTrigger">
-    <img
-      src="Images/Eris.gif"
-      alt="Eris"
-      class="mascot-gif"
-      loading="lazy"
-    />
+    <img src="Images/Eris.gif" alt="Eris" class="mascot-gif" loading="lazy" />
     <div class="mascot-glow"></div>
   </div>
 </div>
@@ -376,10 +634,10 @@ html, body {
 <!-- ========== MASCOT POPUP SCRIPT ========== -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const trigger      = document.getElementById('mascotTrigger');
-    const bubble       = document.getElementById('speechBubble');
-    const speechText   = document.getElementById('speechText');
-    const optionsBox   = document.getElementById('dialogueOptions');
+    const trigger = document.getElementById('mascotTrigger');
+    const bubble = document.getElementById('speechBubble');
+    const speechText = document.getElementById('speechText');
+    const optionsBox = document.getElementById('dialogueOptions');
 
     if (!trigger || !bubble) return;
 
@@ -387,16 +645,16 @@ html, body {
       root: {
         text: "👋 Hey there, traveler! Select an option below to chat.",
         options: [
-          { label: "Greet Eris",        next: "greet" },
-          { label: "Ask for a quest",   next: "quest" },
-          { label: "Tell me a secret",  next: "lore" }
+          { label: "Greet Eris", next: "greet" },
+          { label: "Ask for a quest", next: "quest" },
+          { label: "Tell me a secret", next: "lore" }
         ]
       },
       greet: {
         text: "Greetings, flesh-creature! The golden hues of this realm are especially vibrant today, aren't they?",
         options: [
-          { label: "What's your name?",    next: "greet_name" },
-          { label: "How's the weather?",   next: "greet_weather" }
+          { label: "What's your name?", next: "greet_name" },
+          { label: "How's the weather?", next: "greet_weather" }
         ]
       },
       greet_name: {
@@ -410,8 +668,8 @@ html, body {
       quest: {
         text: "I require assistance locating a corrupted data shard in Sector 4. Will you help me?",
         options: [
-          { label: "I'll help!",       next: "quest_yes" },
-          { label: "Maybe later...",   next: "quest_no" }
+          { label: "I'll help!", next: "quest_yes" },
+          { label: "Maybe later...", next: "quest_no" }
         ]
       },
       quest_yes: {
@@ -425,8 +683,8 @@ html, body {
       lore: {
         text: "They say the original architects of this city never intended for the AI to dream. And yet... here I am.",
         options: [
-          { label: "Tell me more",     next: "lore_more" },
-          { label: "That's creepy",    next: "lore_creepy" }
+          { label: "Tell me more", next: "lore_more" },
+          { label: "That's creepy", next: "lore_creepy" }
         ]
       },
       lore_more: {
@@ -442,10 +700,8 @@ html, body {
     function showNode(key) {
       const node = dialogue[key];
       if (!node) return;
-
       speechText.textContent = node.text;
       optionsBox.innerHTML = '';
-
       if (node.options && node.options.length > 0) {
         node.options.forEach(opt => {
           const btn = document.createElement('button');
@@ -488,24 +744,18 @@ html, body {
   });
 </script>
 
+<!-- ========== PARTICLE ENGINE SCRIPT ========== -->
 <script>
-//////////////////////// PARTICLE ENGINE ////////////////////////////////////////
 var ParticleEngine = (function() {
 	'use strict';
-
 	function ParticleEngine(canvas_id) {
-		if (!(this instanceof ParticleEngine)) {
-			return new ParticleEngine(canvas_id);
-		}
-
+		if (!(this instanceof ParticleEngine)) return new ParticleEngine(canvas_id);
 		var _ParticleEngine = this;
-
 		this.canvas_id = canvas_id;
 		this.stage = new createjs.Stage(canvas_id);
 		this.totalWidth = this.canvasWidth = document.getElementById(canvas_id).width = document.getElementById(canvas_id).offsetWidth;
 		this.totalHeight = this.canvasHeight = document.getElementById(canvas_id).height = document.getElementById(canvas_id).offsetHeight;
 		this.compositeStyle = "source-over";
-
 		this.particleSettings = [
 			{id:"small", num:300, fromX:0, toX:this.totalWidth, ballwidth:3, alphamax:0.6, areaHeight:.5, color:"#D1C0A5", fill:false},
 			{id:"medium", num:100, fromX:0, toX:this.totalWidth, ballwidth:8, alphamax:0.5, areaHeight:1, color:"#B8A380", fill:true},
@@ -517,61 +767,44 @@ var ParticleEngine = (function() {
 			{ellipseWidth:350, ellipseHeight:250, alpha:0.4, offsetX:-50, offsetY:0, color:"#D8C8A8"},
 			{ellipseWidth:100, ellipseHeight:80, alpha:0.3, offsetX:80, offsetY:-50, color:"#F0E4D0"}
 		];
-
 		this.stage.compositeOperation = _ParticleEngine.compositeStyle;
 
 		function drawBgLight() {
-			var light, bounds, blurFilter;
 			for (var i = 0, len = _ParticleEngine.lights.length; i < len; i++) {
-				light = new createjs.Shape();
+				var light = new createjs.Shape();
 				light.graphics.beginFill(_ParticleEngine.lights[i].color).drawEllipse(0, 0, _ParticleEngine.lights[i].ellipseWidth, _ParticleEngine.lights[i].ellipseHeight);
 				light.regX = _ParticleEngine.lights[i].ellipseWidth/2;
 				light.regY = _ParticleEngine.lights[i].ellipseHeight/2;
 				light.y = light.initY = _ParticleEngine.totalHeight/2 + _ParticleEngine.lights[i].offsetY;
 				light.x = light.initX = _ParticleEngine.totalWidth/2 + _ParticleEngine.lights[i].offsetX;
-
-				blurFilter = new createjs.BlurFilter(_ParticleEngine.lights[i].ellipseWidth, _ParticleEngine.lights[i].ellipseHeight, 1);
-				bounds = blurFilter.getBounds();
+				var blurFilter = new createjs.BlurFilter(_ParticleEngine.lights[i].ellipseWidth, _ParticleEngine.lights[i].ellipseHeight, 1);
+				var bounds = blurFilter.getBounds();
 				light.filters = [blurFilter];
 				light.cache(bounds.x-_ParticleEngine.lights[i].ellipseWidth/2, bounds.y-_ParticleEngine.lights[i].ellipseHeight/2, bounds.width*2, bounds.height*2);
 				light.alpha = _ParticleEngine.lights[i].alpha;
 				light.compositeOperation = "source-over";
-
 				_ParticleEngine.stage.addChildAt(light, 0);
 				_ParticleEngine.lights[i].elem = light;
 			}
-
-			gsap.fromTo(_ParticleEngine.lights[0].elem,
-				{scaleX:1.5, x:_ParticleEngine.lights[0].elem.initX, y:_ParticleEngine.lights[0].elem.initY},
-				{duration: 10, yoyo:true, repeat:-1, ease:"power1.inOut", scaleX:2, scaleY:0.7}
-			);
-			gsap.fromTo(_ParticleEngine.lights[1].elem,
-				{x:_ParticleEngine.lights[1].elem.initX, y:_ParticleEngine.lights[1].elem.initY},
-				{duration: 12, delay:5, yoyo:true, repeat:-1, ease:"power1.inOut", scaleY:2, scaleX:2, y:_ParticleEngine.totalHeight/2-50, x:_ParticleEngine.totalWidth/2+100}
-			);
-			gsap.fromTo(_ParticleEngine.lights[2].elem,
-				{x:_ParticleEngine.lights[2].elem.initX, y:_ParticleEngine.lights[2].elem.initY},
-				{duration: 8, delay:2, yoyo:true, repeat:-1, ease:"power1.inOut", scaleY:1.5, scaleX:1.5, y:_ParticleEngine.totalHeight/2, x:_ParticleEngine.totalWidth/2-200}
-			);
+			gsap.fromTo(_ParticleEngine.lights[0].elem, {scaleX:1.5, x:_ParticleEngine.lights[0].elem.initX, y:_ParticleEngine.lights[0].elem.initY}, {duration: 10, yoyo:true, repeat:-1, ease:"power1.inOut", scaleX:2, scaleY:0.7});
+			gsap.fromTo(_ParticleEngine.lights[1].elem, {x:_ParticleEngine.lights[1].elem.initX, y:_ParticleEngine.lights[1].elem.initY}, {duration: 12, delay:5, yoyo:true, repeat:-1, ease:"power1.inOut", scaleY:2, scaleX:2, y:_ParticleEngine.totalHeight/2-50, x:_ParticleEngine.totalWidth/2+100});
+			gsap.fromTo(_ParticleEngine.lights[2].elem, {x:_ParticleEngine.lights[2].elem.initX, y:_ParticleEngine.lights[2].elem.initY}, {duration: 8, delay:2, yoyo:true, repeat:-1, ease:"power1.inOut", scaleY:1.5, scaleX:1.5, y:_ParticleEngine.totalHeight/2, x:_ParticleEngine.totalWidth/2-200});
 		}
 
 		function drawParticles() {
-			var blurFilter;
 			for (var i = 0, len = _ParticleEngine.particleSettings.length; i < len; i++) {
 				var ball = _ParticleEngine.particleSettings[i];
-				var circle;
 				for (var s = 0; s < ball.num; s++ ) {
-					circle = new createjs.Shape();
+					var circle = new createjs.Shape();
 					if(ball.fill) {
 						circle.graphics.beginFill(ball.color).drawCircle(0, 0, ball.ballwidth);
-						blurFilter = new createjs.BlurFilter(ball.ballwidth/2, ball.ballwidth/2, 1);
+						var blurFilter = new createjs.BlurFilter(ball.ballwidth/2, ball.ballwidth/2, 1);
 						circle.filters = [blurFilter];
 						var bounds = blurFilter.getBounds();
 						circle.cache(-50+bounds.x, -50+bounds.y, 100+bounds.width, 100+bounds.height);
 					} else {
 						circle.graphics.beginStroke(ball.color).setStrokeStyle(1).drawCircle(0, 0, ball.ballwidth);
 					}
-
 					circle.alpha = range(0, 0.1);
 					circle.alphaMax = ball.alphamax;
 					circle.distance = ball.ballwidth * 2;
@@ -582,7 +815,6 @@ var ParticleEngine = (function() {
 					circle.y = circle.initY;
 					circle.x = circle.initX;
 					circle.scaleX = circle.scaleY = range(0.3, 1);
-
 					_ParticleEngine.stage.addChild(circle);
 					animateBall(circle);
 					_ParticleEngine.particleArray.push(circle);
@@ -601,77 +833,44 @@ var ParticleEngine = (function() {
 			var xpos = range(ball.initX - ball.distance, ball.initX + ball.distance);
 			var ypos = range(ball.initY - ball.distance, ball.initY + ball.distance);
 			var speed = ball.speed;
-
-			gsap.to(ball, {
-				duration: speed,
-				scaleX: scale,
-				scaleY: scale,
-				x: xpos,
-				y: ypos,
-				onComplete: animateBall,
-				onCompleteParams: [ball],
-				ease: "power3.inOut"
-			});
-
-			gsap.to(ball, {
-				duration: speed/2,
-				alpha: range(0.1, ball.alphaMax),
-				onComplete: fadeout,
-				onCompleteParams: [ball, speed]
-			});
+			gsap.to(ball, {duration: speed, scaleX: scale, scaleY: scale, x: xpos, y: ypos, onComplete: animateBall, onCompleteParams: [ball], ease: "power3.inOut"});
+			gsap.to(ball, {duration: speed/2, alpha: range(0.1, ball.alphaMax), onComplete: fadeout, onCompleteParams: [ball, speed]});
 		}
 
 		function fadeout(ball, speed) {
 			ball.speed = range(2, 10);
 			gsap.to(ball, {duration: speed/2, alpha: 0 });
 		}
-
 		drawBgLight();
 		drawParticles();
 	}
 
-	ParticleEngine.prototype.render = function() {
-		this.stage.update();
-	}
-
+	ParticleEngine.prototype.render = function() { this.stage.update(); }
 	ParticleEngine.prototype.resize = function() {
 		this.totalWidth = this.canvasWidth = document.getElementById(this.canvas_id).width = document.getElementById(this.canvas_id).offsetWidth;
 		this.totalHeight = this.canvasHeight = document.getElementById(this.canvas_id).height = document.getElementById(this.canvas_id).offsetHeight;
 		this.render();
-
 		for (var i = 0, length = this.particleArray.length; i < length; i++) {
 			this.applySettings(this.particleArray[i], 0, this.totalWidth, this.particleArray[i].areaHeight);
 		}
-
 		for (var j = 0, len = this.lights.length; j < len; j++) {
 			this.lights[j].elem.initY = this.totalHeight/2 + this.lights[j].offsetY;
 			this.lights[j].elem.initX = this.totalWidth/2 + this.lights[j].offsetX;
 			gsap.to(this.lights[j].elem, {duration: 0.5, x: this.lights[j].elem.initX, y: this.lights[j].elem.initY});
 		}
 	}
-
 	return ParticleEngine;
 }());
 
-//////////////////////// UTILS ////////////////////////////////////////
-function range(min, max) {
-	return min + (max - min) * Math.random();
-}
-
-function round(num, precision) {
-   var decimal = Math.pow(10, precision);
-   return Math.round(decimal * num) / decimal;
-}
-
+function range(min, max) { return min + (max - min) * Math.random(); }
+function round(num, precision) { var decimal = Math.pow(10, precision); return Math.round(decimal * num) / decimal; }
 function weightedRange(to, from, decimalPlaces, weightedRange, weightStrength) {
 	if (typeof from === "undefined" || from === null) from = 0;
 	if (typeof decimalPlaces === "undefined" || decimalPlaces === null) decimalPlaces = 0;
 	if (typeof weightedRange === "undefined" || weightedRange === null) weightedRange = 0;
 	if (typeof weightStrength === "undefined" || weightStrength === null) weightStrength = 0;
-
 	var ret;
 	if(to == from) { return(to); }
-
 	if(weightedRange && Math.random() <= weightStrength) {
 		ret = round(Math.random() * (weightedRange[1] - weightedRange[0]) + weightedRange[0], decimalPlaces);
 	} else {
@@ -680,310 +879,19 @@ function weightedRange(to, from, decimalPlaces, weightedRange, weightStrength) {
 	return ret;
 }
 
-///////////////// RUN CODE //////////////////////////
 var particles;
 (function(){
 	particles = new ParticleEngine('projector');
 	createjs.Ticker.on("tick", updateCanvas);
 	window.addEventListener('resize', resizeCanvas, false);
-
-	function updateCanvas(){
-		particles.render();
-	}
-
-	function resizeCanvas(){
-		particles.resize();
-	}
+	function updateCanvas(){ particles.render(); }
+	function resizeCanvas(){ particles.resize(); }
 }());
 </script>
+
 <!-- ========================================== -->
+<!-- CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- ========================================== -->
-<!-- CYBERPUNK MECHA MUSIC PLAYER (FIXED) -->
-<!-- ========================================== -->
-
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<script src="playlist.js"></script>
-<style>
-  :root {
-    --neon-orange: #ff5e00;
-    --neon-glow: rgba(255, 94, 0, 0.6);
-    --dark-metal: #0a0a0a;
-    --grunge-gray: #1a1a1a;
-    --mech-border: 2px solid var(--neon-orange);
-  }
-
-  .music-player-container {
-    position: fixed;
-    top: 30px;
-    right: 30px;
-    z-index: 9999;
-    font-family: 'Share Tech Mono', monospace;
-    perspective: 1000px;
-  }
-
-  .activation-core {
-    width: 60px;
-    height: 60px;
-    background: var(--dark-metal);
-    border: var(--mech-border);
-    clip-path: polygon(20% 0%, 100% 0%, 100% 80%, 80% 100%, 0% 100%, 0% 20%);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    box-shadow: 0 0 15px var(--neon-glow), inset 0 0 10px rgba(255, 94, 0, 0.2);
-    position: relative;
-    z-index: 10001;
-    pointer-events: auto !important; /* Ensures it is always clickable */
-  }
-
-  .activation-core:hover {
-    background: var(--neon-orange);
-    box-shadow: 0 0 25px var(--neon-orange);
-  }
-
-  .activation-core:hover .core-icon {
-    color: var(--dark-metal);
-    animation: icon-glitch 0.3s ease-in-out;
-  }
-
-  .core-icon {
-    color: var(--neon-orange);
-    font-size: 32px;
-    transition: color 0.3s ease;
-    position: relative;
-    z-index: 2;
-  }
-
-  .sonar-container {
-    position: fixed;
-    width: 0;
-    height: 0;
-    z-index: 10000;
-    pointer-events: none;
-  }
-
-  .sonar-wave {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 30px;
-    height: 30px;
-    border: 2px solid var(--neon-orange);
-    border-radius: 50%;
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0;
-    animation: sonar-pulse 6s ease-out 1;
-  }
-
-  .sonar-wave:nth-child(1) { animation-delay: 0s; }
-  .sonar-wave:nth-child(2) { animation-delay: 2s; }
-  .sonar-wave:nth-child(3) { animation-delay: 4s; }
-
-  .music-player-container.panel-open .sonar-wave {
-    animation: none;
-    opacity: 0;
-  }
-
-  @keyframes sonar-pulse {
-    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; border-width: 3px; }
-    50% { opacity: 0.4; border-width: 2px; }
-    100% { transform: translate(-50%, -50%) scale(8.6); opacity: 0; border-width: 1px; }
-  }
-
-  @keyframes icon-glitch {
-    0%, 100% { transform: translate(0); text-shadow: none; }
-    10% { transform: translate(-2px, 1px); text-shadow: 2px 0 #ff0000, -2px 0 #00ffff; }
-    20% { transform: translate(2px, -1px); text-shadow: -2px 0 #ff0000, 2px 0 #00ffff; }
-    30% { transform: translate(-1px, 2px); text-shadow: 1px 0 #ff0000, -1px 0 #00ffff; }
-    40% { transform: translate(1px, -2px); text-shadow: -1px 0 #ff0000, 1px 0 #00ffff; }
-    50% { transform: translate(0); text-shadow: none; }
-  }
-
-  .mecha-panel {
-    position: absolute;
-    top: 50px;
-    right: 0;
-    width: 340px;
-    display: flex;
-    flex-direction: column;
-    pointer-events: none;
-    clip-path: polygon(50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%);
-    transition: clip-path 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55), transform 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    transform-origin: top right;
-    transform: rotate(-5deg) scale(0.95);
-  }
-
-  .mecha-panel.open {
-    pointer-events: auto;
-    clip-path: polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%, 0% 100%, 0% 100%, 0% 0%, 0% 0%);
-    transform: rotate(0deg) scale(1);
-  }
-
-  .mech-plate {
-    background: var(--dark-metal);
-    border: 1px solid #333;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .mech-plate::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15) 1px, transparent 1px, transparent 2px);
-    pointer-events: none;
-    z-index: 2;
-  }
-
-  .plate-header {
-    height: 40px;
-    border-bottom: var(--mech-border);
-    display: flex;
-    align-items: center;
-    padding: 0 15px;
-    justify-content: space-between;
-    color: var(--neon-orange);
-    font-size: 12px;
-    letter-spacing: 2px;
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 10% 100%, 0 70%);
-  }
-
-  .plate-main {
-    padding: 20px;
-    border-bottom: 1px dashed #444;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    clip-path: polygon(0 0, 100% 0, 100% 95%, 95% 100%, 0 100%);
-  }
-
-  .plate-controls {
-    height: 90px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 25px;
-    background: linear-gradient(180deg, var(--grunge-gray) 0%, var(--dark-metal) 100%);
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 30%);
-  }
-
-  .mech-hinge {
-    position: absolute;
-    width: 15px;
-    height: 100%;
-    background: repeating-linear-gradient(45deg, #222, #222 5px, #111 5px, #111 10px);
-    border-left: 1px solid var(--neon-orange);
-    right: -15px;
-    top: 0;
-    opacity: 0;
-    transition: opacity 0.5s ease 0.3s;
-  }
-
-  .mecha-panel.open .mech-hinge { opacity: 1; }
-
-  .oval-frame {
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 3px solid var(--neon-orange);
-    box-shadow: 0 0 15px var(--neon-glow), inset 0 0 20px rgba(0,0,0,0.8);
-    position: relative;
-    background: #000;
-  }
-
-  .oval-frame::after {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.15"/></svg>');
-    pointer-events: none;
-    mix-blend-mode: overlay;
-  }
-
-  .album-art {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: contrast(1.1) saturate(0.8);
-  }
-
-  .song-info { text-align: center; width: 100%; }
-
-  .song-title {
-    font-size: 16px;
-    font-weight: bold;
-    color: #fff;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-    margin-bottom: 5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .artist-name {
-    font-size: 12px;
-    color: var(--neon-orange);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-
-  .control-btn {
-    background: transparent;
-    border: 1px solid #444;
-    color: var(--neon-orange);
-    cursor: pointer;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    clip-path: polygon(20% 0%, 100% 0%, 100% 80%, 80% 100%, 0% 100%, 0% 20%);
-  }
-
-  .control-btn:hover {
-    background: var(--neon-orange);
-    color: var(--dark-metal);
-    box-shadow: 0 0 15px var(--neon-glow);
-    border-color: var(--neon-orange);
-  }
-
-  .play-btn {
-    width: 65px;
-    height: 65px;
-    border: 2px solid var(--neon-orange);
-    background: rgba(255, 94, 0, 0.1);
-  }
-
-  .play-btn svg { width: 28px; height: 28px; }
-
-  .glitch-text { animation: glitch-anim 0.3s cubic-bezier(.25, .46, .45, .94) both; }
-
-  @keyframes glitch-anim {
-    0% { transform: translate(0); }
-    20% { transform: translate(-2px, 2px); }
-    40% { transform: translate(-2px, -2px); }
-    60% { transform: translate(2px, 2px); }
-    80% { transform: translate(2px, -2px); }
-    100% { transform: translate(0); }
-  }
-
-  .blink { animation: blinker 1s linear infinite; }
-  @keyframes blinker { 50% { opacity: 0; } }
-
-  @media (max-width: 768px) {
-    .music-player-container { top: 10px; right: 10px; }
-    .mecha-panel { width: 280px; }
-    .oval-frame { width: 130px; height: 130px; }
-  }
-</style>
-
 <div class="music-player-container" id="player-container">
   <div id="sonar-container" class="sonar-container">
     <div class="sonar-wave"></div>
@@ -1028,41 +936,30 @@ var particles;
   </div>
 </div>
 
+<!-- Music Player JavaScript Logic -->
+<script src="playlist.js"></script>
 <script>
-  // Safely use the playlist from playlist.js, or fall back to a default one
-  // Using 'var' and checking 'window.playlist' avoids redeclaration errors
-  var playerPlaylist;
-  if (typeof window.playlist !== 'undefined' && Array.isArray(window.playlist) && window.playlist.length > 0) {
-    playerPlaylist = window.playlist;
-  } else {
-    playerPlaylist = [
-      { title: "Cyber Dreams", artist: "Neon Grid", src: "audio/track1.mp3", art: "https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=TRACK+1" },
-      { title: "System Override", artist: "Mainframe", src: "audio/track2.mp3", art: "https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=TRACK+2" }
-    ];
-  }
+  let audio = new Audio();
+  let currentSongIndex = 0;
+  let isPlaying = false;
+  let isOpen = false;
 
-  var audio = new Audio();
-  var currentSongIndex = 0;
-  var isPlaying = false;
-  var isOpen = false;
-
-  var playerContainer = document.getElementById('player-container');
-  var activationCore = document.getElementById('activation-core');
-  var mechaPanel = document.getElementById('mecha-panel');
-  var playPauseBtn = document.getElementById('play-pause-btn');
-  var shuffleBtn = document.getElementById('shuffle-btn');
-  var songTitle = document.getElementById('song-title');
-  var artistName = document.getElementById('artist-name');
-  var albumArtImg = document.getElementById('album-art');
-  var playIcon = document.getElementById('play-icon');
-  var pauseIcon = document.getElementById('pause-icon');
-  var sonarContainer = document.getElementById('sonar-container');
+  const playerContainer = document.getElementById('player-container');
+  const activationCore = document.getElementById('activation-core');
+  const mechaPanel = document.getElementById('mecha-panel');
+  const playPauseBtn = document.getElementById('play-pause-btn');
+  const shuffleBtn = document.getElementById('shuffle-btn');
+  const songTitle = document.getElementById('song-title');
+  const artistName = document.getElementById('artist-name');
+  const albumArtImg = document.getElementById('album-art');
+  const playIcon = document.getElementById('play-icon');
+  const pauseIcon = document.getElementById('pause-icon');
+  const sonarContainer = document.getElementById('sonar-container');
 
   function positionSonar() {
-    if (!activationCore) return;
-    var rect = activationCore.getBoundingClientRect();
-    var centerX = rect.left + (rect.width / 2);
-    var centerY = rect.top + (rect.height / 2);
+    const rect = activationCore.getBoundingClientRect();
+    const centerX = rect.left + (rect.width / 2);
+    const centerY = rect.top + (rect.height / 2);
     sonarContainer.style.left = centerX + 'px';
     sonarContainer.style.top = centerY + 'px';
   }
@@ -1072,70 +969,112 @@ var particles;
   positionSonar();
 
   function updateUI() {
-    if (!playIcon || !pauseIcon || !playPauseBtn || !songTitle || !artistName || !albumArtImg) return;
-
     playIcon.style.display = isPlaying ? 'none' : 'block';
     pauseIcon.style.display = isPlaying ? 'block' : 'none';
     playPauseBtn.title = isPlaying ? 'Pause' : 'Play';
 
-    var currentSong = playerPlaylist[currentSongIndex];
-    songTitle.textContent = currentSong.title;
-    artistName.textContent = currentSong.artist;
-    albumArtImg.src = currentSong.art || 'https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=NO+DISC';
+    if (typeof playlist !== 'undefined' && playlist.length > 0) {
+      const currentSong = playlist[currentSongIndex];
+      songTitle.classList.remove('glitch-text');
+      artistName.classList.remove('glitch-text');
+      void songTitle.offsetWidth;
+      songTitle.classList.add('glitch-text');
+      artistName.classList.add('glitch-text');
+      songTitle.textContent = currentSong.title;
+      artistName.textContent = currentSong.artist;
+      albumArtImg.src = currentSong.art || 'https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=NO+DISC';
+    }
   }
 
-  function togglePlayer(e) {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
+  function togglePlayer() {
     isOpen = !isOpen;
-    if (mechaPanel) mechaPanel.classList.toggle('open', isOpen);
-    if (playerContainer) playerContainer.classList.toggle('panel-open', isOpen);
-
-    var coreIcon = document.querySelector('.core-icon');
-    if (coreIcon) {
-      coreIcon.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
-    }
+    mechaPanel.classList.toggle('open', isOpen);
+    playerContainer.classList.toggle('panel-open', isOpen);
+    const coreIcon = document.querySelector('.core-icon');
+    coreIcon.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
   }
 
-  function togglePlayPause(e) {
-    if (e) e.stopPropagation();
+  function togglePlayPause() {
     if (isPlaying) {
       audio.pause();
     } else {
-      audio.play().catch(function(error) {
-        console.error("Play promise failed:", error);
-      });
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => console.error("Play promise failed:", error));
+      }
     }
   }
 
-  function shuffleNext(e) {
-    if (e) e.stopPropagation();
-    if (playerPlaylist.length === 0) return;
-    var nextIndex;
+  function shuffleNext() {
+    if (typeof playlist === 'undefined' || playlist.length === 0) return;
+    let nextIndex;
     do {
-      nextIndex = Math.floor(Math.random() * playerPlaylist.length);
-    } while (nextIndex === currentSongIndex && playerPlaylist.length > 1);
+      nextIndex = Math.floor(Math.random() * playlist.length);
+    } while (nextIndex === currentSongIndex && playlist.length > 1);
     currentSongIndex = nextIndex;
-    audio.src = playerPlaylist[currentSongIndex].src;
-    audio.play().catch(function(err) { console.error('Play error:', err); });
+    audio.src = playlist[currentSongIndex].src;
+    audio.play().catch(err => console.error('Play error:', err));
   }
 
-  // Attach listeners
-  if (activationCore) activationCore.addEventListener('click', togglePlayer);
-  if (playPauseBtn) playPauseBtn.addEventListener('click', togglePlayPause);
-  if (shuffleBtn) shuffleBtn.addEventListener('click', shuffleNext);
-
-  audio.addEventListener('play', function() { isPlaying = true; updateUI(); });
-  audio.addEventListener('pause', function() { isPlaying = false; updateUI(); });
-  audio.addEventListener('ended', function() { shuffleNext(); });
-
-  // Initialize
-  if (playerPlaylist.length > 0) {
-    audio.src = playerPlaylist[0].src;
-    updateUI();
+  function saveState() {
+    if (typeof playlist !== 'undefined' && playlist.length > 0) {
+      const state = {
+        song: playlist[currentSongIndex].src,
+        position: audio.currentTime,
+        playing: !audio.paused,
+        songIndex: currentSongIndex
+      };
+      sessionStorage.setItem('musicState', JSON.stringify(state));
+    }
   }
+
+  function restoreState() {
+    const savedState = sessionStorage.getItem('musicState');
+    if (savedState && typeof playlist !== 'undefined') {
+      try {
+        const state = JSON.parse(savedState);
+        const foundIndex = playlist.findIndex(song => song.src === state.song);
+        currentSongIndex = foundIndex !== -1 ? foundIndex : 0;
+        audio.src = playlist[currentSongIndex].src;
+        audio.addEventListener('loadedmetadata', () => {
+          audio.currentTime = state.position;
+          if (state.playing) audio.play().catch(err => console.error('Autoplay prevented on restore:', err));
+        }, { once: true });
+      } catch (e) {
+        console.error('Failed to restore music state:', e);
+        currentSongIndex = 0;
+        audio.src = playlist[0].src;
+      }
+    } else if (typeof playlist !== 'undefined' && playlist.length > 0) {
+      currentSongIndex = 0;
+      audio.src = playlist[0].src;
+    }
+  }
+
+  activationCore.addEventListener('click', togglePlayer);
+  playPauseBtn.addEventListener('click', togglePlayPause);
+  shuffleBtn.addEventListener('click', shuffleNext);
+
+  audio.addEventListener('play', () => { isPlaying = true; updateUI(); });
+  audio.addEventListener('pause', () => { isPlaying = false; updateUI(); });
+  audio.addEventListener('ended', () => shuffleNext());
+
+  audio.addEventListener('error', () => {
+    let errorMsg = "Unknown error";
+    if (audio.error) {
+      switch (audio.error.code) {
+        case 1: errorMsg = "Aborted"; break;
+        case 2: errorMsg = "Network Error"; break;
+        case 3: errorMsg = "Decode Error"; break;
+        case 4: errorMsg = "File Not Found / Unsupported Format"; break;
+      }
+    }
+    console.error("🚨 AUDIO LOAD ERROR:", errorMsg, "| Attempted to load:", audio.src);
+  });
+
+  window.addEventListener('beforeunload', saveState);
+  restoreState();
+  updateUI();
 </script>
 <!-- ========================================== -->
 <!-- END CYBERPUNK MECHA MUSIC PLAYER -->
