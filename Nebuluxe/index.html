@@ -650,7 +650,7 @@ html, body {
         <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="other-services.html" data-label="Other Services">Other<br>Services</button></li>
         <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="tools.html" data-label="Tools">Tools</button></li>
         <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="events.html" data-label="Events">Events</button></li>
-        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="my-consumption.html" data-label="My Consumption">My<br>Consumption</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="my-consumption.html" data-label="Reading List">My<br>Consumption</button></li>
         <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="commissions.html" data-label="Commissions">Commissions</button></li>
       </ul>
       <div class="ccm-11__face">
@@ -924,7 +924,7 @@ var particles;
     const label = stops[active].dataset.label;
     current.textContent = label;
 
-    if (label === 'Other Services' || label === 'My Consumption') {
+    if (label === 'Other Services' || label === 'Reading List') {
       current.classList.add('ccm-11__current--small');
     } else {
       current.classList.remove('ccm-11__current--small');
@@ -1999,8 +1999,10 @@ if (aboutPulldown) {
   }
 
   /*
-    TAIL: Solid background, NO backdrop-filter to avoid double-blur
-    Only left and bottom borders visible to form the triangle
+    TAIL: Fixed border positions
+    After 45deg rotation:
+    - border-right → becomes bottom-right edge of diamond
+    - border-bottom → becomes bottom-left edge of diamond
   */
   .speech-tail {
     position: absolute;
@@ -2009,7 +2011,7 @@ if (aboutPulldown) {
     width: 20px;
     height: 20px;
     background: rgba(25, 29, 30, 0.85);
-    border-left: 1px solid rgba(0, 255, 255, 0.4);
+    border-right: 1px solid rgba(0, 255, 255, 0.4);
     border-bottom: 1px solid rgba(0, 255, 255, 0.4);
     transform: rotate(45deg);
     z-index: 0;
@@ -2017,7 +2019,6 @@ if (aboutPulldown) {
 
   /*
     SEAM PATCH: Covers where tail meets bubble
-    Has backdrop-filter to match bubble's glass effect
   */
   .speech-bubble::before {
     content: '';
