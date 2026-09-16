@@ -1084,21 +1084,17 @@ var particles;
 <!-- ========================================== -->
 
 <style>
-    /* Clean, minimal base */
     body {
         background-color: #ffffff !important;
         margin: 0;
         font-family: system-ui, -apple-system, sans-serif;
     }
 
-    /* Spacer to maintain scroll position when trimming old DOM nodes */
     #top-spacer {
         width: 100%;
         height: 0px;
-        transition: height 0.1s ease;
     }
 
-    /* Gallery Container */
     #gallery-container {
         width: 100%;
         max-width: 1400px;
@@ -1107,24 +1103,20 @@ var particles;
         box-sizing: border-box;
     }
 
-    /* Justified Row */
     .justified-row {
         display: flex;
-        gap: 6px; /* Consistent 6px gap between images */
+        gap: 6px;
         margin-bottom: 6px;
         width: 100%;
     }
 
-    /* Individual Image Card */
     .image-card {
-        background-color: #f1f5f9; /* Subtle placeholder color while loading */
+        background-color: #f1f5f9;
         border-radius: 4px;
         overflow: hidden;
         position: relative;
-        /* Height is intentionally NOT set here; the image's natural height dictates the row */
     }
 
-    /* True Aspect Ratio Image (NO CROP, NO DISTORTION) */
     .image-card img {
         width: 100%;
         height: auto;
@@ -1138,11 +1130,10 @@ var particles;
     }
 
     .image-card:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
         z-index: 2;
     }
 
-    /* Loading Sentinel */
     #loading-sentinel {
         width: 100%;
         text-align: center;
@@ -1152,14 +1143,13 @@ var particles;
         font-weight: 500;
     }
 
-    /* Error state styling */
     .img-error {
         display: flex;
         align-items: center;
         justify-content: center;
         width: 100%;
         height: 100%;
-        min-height: 150px;
+        min-height: 120px;
         color: #94a3b8;
         font-size: 12px;
         text-align: center;
@@ -1167,234 +1157,208 @@ var particles;
     }
 </style>
 
-<!-- Invisible spacer for DOM trimming -->
 <div id="top-spacer"></div>
-
-<!-- Main Gallery -->
 <main id="gallery-container"></main>
-
-<!-- Infinite Scroll Trigger -->
 <div id="loading-sentinel">Loading more images...</div>
 
-<!-- Load your global data file -->
 <script src="thumbnail.js"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // 1. Validate Data Source
+document.addEventListener('DOMContentLoaded', function () {
+
     if (typeof thumbnails === 'undefined') {
         console.error("ERROR: thumbnail.js did not load or 'thumbnails' is not defined.");
         document.getElementById('gallery-container').innerHTML =
-            '<p style="color:#ef4444; text-align:center; padding: 40px;">Error: Could not load thumbnail data.</p>';
+            '<p style="color:#ef4444; text-align:center; padding:40px;">Error: Could not load thumbnail data.</p>';
         return;
     }
 
-    console.log(`✓ Gallery initialized. Total images available: ${thumbnails.length}`);
+    console.log('✓ Gallery initialized. Total images available:', thumbnails.length);
 
-    // 2. Configuration
+    // ── Configuration ──────────────────────────────
     const CONFIG = {
         gap: 6,
-        minRowHeight: 200,      // Minimum height before forcing a row to render
-        maxRowHeight: 350,      // Prevent last row from stretching absurdly tall
-        batchSize: 24,          // Images to load per scroll event
-        maxDomRows: 15,         // Maximum rows to keep in DOM before trimming (prevents memory bloat)
-        trimRowCount: 5         // Number of rows to remove when trimming
+        targetRowHeight: 280,   // Ideal row height the algorithm aims for
+        maxRowHeight: 400,      // Cap for the very last row so it doesn't stretch tall
+        batchSize: 20,          // Images added per scroll trigger
+        maxDomRows: 20,         // Max rows kept in DOM before trimming
+        trimRowCount: 5         // Rows removed per trim
     };
 
     const container = document.getElementById('gallery-container');
     const topSpacer = document.getElementById('top-spacer');
-    const sentinel = document.getElementById('loading-sentinel');
+    const sentinel  = document.getElementById('loading-sentinel');
 
-    // 3. State Management
     let currentIndex = 0;
     const totalImages = thumbnails.length;
-    let activeItems = [];       // Keeps all loaded items in memory for resize re-flow
-    let pendingRow = [];        // Items waiting to be flushed into a row
+    let activeItems = [];
+    let pendingRow = [];
     let pendingAspectRatioSum = 0;
     let isLoading = false;
 
-    // Pre-calculate aspect ratios for performance
-    const processedThumbnails = thumbnails.map(item => ({
-        ...item,
-        aspectRatio: (item.width && item.length) ? (item.width / item.length) : (16 / 9) // Fallback to 16:9
-    }));
+    // Pre-compute aspect ratios once
+    const processedThumbnails = thumbnails.map(function (item) {
+        return Object.assign({}, item, {
+            aspectRatio: (item.width && item.length)
+                ? (item.width / item.length)
+                : (16 / 9)
+        });
+    });
 
-    // 4. Core Layout Engine: Flush a completed row to the DOM
-    function flushRow(isLastRow = false) {
+    // ── Flush a completed row to the DOM ───────────
+    function flushRow(isLastRow) {
         if (pendingRow.length === 0) return;
 
-        const containerWidth = container.offsetWidth;
-        // Calculate the ideal height for this specific row
-        let rowHeight = (containerWidth - ((pendingRow.length - 1) * CONFIG.gap)) / pendingAspectRatioSum;
+        var containerWidth = container.offsetWidth;
+        var rowHeight = (containerWidth - ((pendingRow.length - 1) * CONFIG.gap)) / pendingAspectRatioSum;
 
-        // Prevent the final row from stretching to unnatural heights
+        // Cap the last row so it doesn't stretch absurdly tall
         if (isLastRow && rowHeight > CONFIG.maxRowHeight) {
             rowHeight = CONFIG.maxRowHeight;
         }
 
-        const rowDiv = document.createElement('div');
+        var rowDiv = document.createElement('div');
         rowDiv.className = 'justified-row';
 
-        pendingRow.forEach(item => {
-            // Calculate exact width to maintain perfect aspect ratio at this row height
-            const imgWidth = rowHeight * item.aspectRatio;
+        for (var i = 0; i < pendingRow.length; i++) {
+            var item = pendingRow[i];
+            var imgWidth = rowHeight * item.aspectRatio;
 
-            const card = document.createElement('div');
+            var card = document.createElement('div');
             card.className = 'image-card';
-            // We set width explicitly, but leave height to 'auto' to guarantee ZERO cropping
-            card.style.width = `${imgWidth}px`;
+            card.style.width = imgWidth + 'px';
             card.dataset.id = item.id;
 
-            const img = document.createElement('img');
+            var img = document.createElement('img');
             img.src = item.src;
             img.alt = item.alt || item.title || 'Gallery Image';
-            img.loading = 'lazy'; // Native lazy loading
+            img.loading = 'lazy';
 
-            // Smooth fade-in when loaded
-            img.onload = () => img.classList.add('loaded');
+            // Reserve space before the image loads to prevent layout shift
+            if (item.width && item.length) {
+                img.style.aspectRatio = item.width + ' / ' + item.length;
+            }
 
-            // Graceful error handling without breaking the row layout
-            img.onerror = () => {
-                img.style.display = 'none';
-                card.innerHTML = `<div class="img-error">Image Not Found<br><small>${item.src.split('/').pop()}</small></div>`;
+            img.onload = function () { this.classList.add('loaded'); };
+
+            img.onerror = function () {
+                this.style.display = 'none';
+                this.parentNode.innerHTML =
+                    '<div class="img-error">Image Not Found<br><small>' +
+                    item.src.split('/').pop() + '</small></div>';
             };
 
             card.appendChild(img);
             rowDiv.appendChild(card);
-        });
+        }
 
         container.appendChild(rowDiv);
 
-        // Reset pending row state
         pendingRow = [];
         pendingAspectRatioSum = 0;
     }
 
-    // 5. Process new items into rows
+    // ── Process new items into justified rows ──────
     function processItems(newItems) {
         activeItems = activeItems.concat(newItems);
 
-        for (const item of newItems) {
+        for (var i = 0; i < newItems.length; i++) {
+            var item = newItems[i];
             pendingRow.push(item);
             pendingAspectRatioSum += item.aspectRatio;
 
-            // Estimate the height this row would be if we closed it now
-            const containerWidth = container.offsetWidth;
-            const estimatedHeight = (containerWidth - ((pendingRow.length - 1) * CONFIG.gap)) / pendingAspectRatioSum;
+            var containerWidth = container.offsetWidth;
+            var estimatedHeight =
+                (containerWidth - ((pendingRow.length - 1) * CONFIG.gap)) / pendingAspectRatioSum;
 
-            // If the row is tall enough, or we've hit a safety limit of items per row, flush it
-            if (estimatedHeight >= CONFIG.minRowHeight || pendingRow.length >= 12) {
-                flushRow();
+            //  ★ CORE FIX ★
+            //  Keep adding images until the row height DROPS to or below the target.
+            //  (The old code had this backwards: >= minRowHeight, which flushed
+            //   a single image at full width on the very first iteration.)
+            if (estimatedHeight <= CONFIG.targetRowHeight || pendingRow.length >= 12) {
+                flushRow(false);
             }
         }
     }
 
-    // 6. DOM Trimming (Virtualization-lite)
-    // Prevents the browser from choking on hundreds of DOM nodes
+    // ── DOM Trimming (keeps memory low) ────────────
     function trimDOM() {
-        const rows = container.querySelectorAll('.justified-row');
+        var rows = container.querySelectorAll('.justified-row');
         if (rows.length > CONFIG.maxDomRows) {
-            let removedHeight = 0;
-
-            for (let i = 0; i < CONFIG.trimRowCount; i++) {
+            var removedHeight = 0;
+            for (var i = 0; i < CONFIG.trimRowCount; i++) {
                 if (rows[i]) {
                     removedHeight += rows[i].offsetHeight + CONFIG.gap;
                     rows[i].remove();
                 }
             }
-
-            // Add the removed height to the top spacer to prevent scroll jumping
-            const currentSpacerHeight = parseFloat(topSpacer.style.height || 0);
-            topSpacer.style.height = `${currentSpacerHeight + removedHeight}px`;
-
-            console.log(`✓ Trimmed DOM. Spacer height: ${topSpacer.style.height}`);
+            var current = parseFloat(topSpacer.style.height) || 0;
+            topSpacer.style.height = (current + removedHeight) + 'px';
         }
     }
 
-    // 7. Infinite Scroll Loader
+    // ── Infinite Scroll Loader ─────────────────────
     function loadMoreItems() {
-        if (isLoading || currentIndex >= totalImages) {
-            sentinel.textContent = "End of gallery";
-            return;
-        }
-
+        if (isLoading) return;
         isLoading = true;
-        sentinel.textContent = "Loading more images...";
+        sentinel.textContent = 'Loading more images\u2026';
 
-        const batch = [];
-        const count = Math.min(CONFIG.batchSize, totalImages - currentIndex);
-
-        for (let i = 0; i < count; i++) {
-            // Seamless infinite loop if desired (uncomment next line to loop forever)
-            // if (currentIndex >= totalImages) currentIndex = 0;
-
+        var batch = [];
+        for (var i = 0; i < CONFIG.batchSize; i++) {
+            // ★ CORE FIX ★ — Seamless infinite loop
+            if (currentIndex >= totalImages) currentIndex = 0;
             batch.push(processedThumbnails[currentIndex]);
             currentIndex++;
         }
 
-        // Use setTimeout to allow the browser to paint the loading state
-        setTimeout(() => {
+        setTimeout(function () {
             processItems(batch);
 
-            // If there are leftover items in the pending row that didn't meet the min height,
-            // and we've reached the end of the data, flush them anyway.
-            if (currentIndex >= totalImages && pendingRow.length > 0) {
+            // Flush any leftover pending items if we somehow stop
+            if (pendingRow.length > 0 && currentIndex >= totalImages) {
                 flushRow(true);
             }
 
             trimDOM();
             isLoading = false;
-
-            if (currentIndex >= totalImages) {
-                sentinel.textContent = "All images loaded";
-            }
+            sentinel.textContent = 'Scroll for more\u2026';
         }, 50);
     }
 
-    // 8. Intersection Observer for Infinite Scroll
-    const scrollObserver = new IntersectionObserver((entries) => {
+    // ── Intersection Observer ──────────────────────
+    var scrollObserver = new IntersectionObserver(function (entries) {
         if (entries[0].isIntersecting && !isLoading) {
             loadMoreItems();
         }
-    }, {
-        rootMargin: '600px' // Trigger load 600px before reaching the bottom
-    });
+    }, { rootMargin: '600px' });
 
     scrollObserver.observe(sentinel);
 
-    // 9. Resize Handler (Debounced)
-    // Re-flows the gallery to maintain perfect justification on window resize
-    let resizeTimer;
-    window.addEventListener('resize', () => {
+    // ── Resize Handler ─────────────────────────────
+    var resizeTimer;
+    window.addEventListener('resize', function () {
         clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-            console.log("↻ Recalculating justified layout for new width...");
-
-            // Save scroll position
-            const scrollY = window.scrollY;
-
-            // Clear DOM and reset state
+        resizeTimer = setTimeout(function () {
+            var scrollY = window.scrollY;
             container.innerHTML = '';
             topSpacer.style.height = '0px';
             pendingRow = [];
             pendingAspectRatioSum = 0;
-
-            // Re-process all active items
             processItems(activeItems);
-
-            // Restore scroll position
             window.scrollTo(0, scrollY);
         }, 250);
     });
 
-    // 10. Initial Load
+    // ── Initial Load ───────────────────────────────
     loadMoreItems();
 
-    // Expose metadata globally (preserved from your original requirements)
-    window.getCardMetadata = function(id) {
-        return processedThumbnails.find(item => String(item.id) === String(id));
+    // ── Global Metadata Access ─────────────────────
+    window.getCardMetadata = function (id) {
+        return processedThumbnails.find(function (item) {
+            return String(item.id) === String(id);
+        });
     };
-    window.getAllCardMetadata = function() {
+    window.getAllCardMetadata = function () {
         return activeItems;
     };
 });
