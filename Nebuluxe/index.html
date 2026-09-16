@@ -1955,7 +1955,7 @@ if (aboutPulldown) {
   .speech-bubble {
     position: absolute;
     bottom: 100%;          /* Above the mascot */
-    right: 0;              /* Right edge aligns with mascot's right edge */
+    left: 0;               /* Left edge aligns with mascot's left edge -> EXTENDS RIGHT */
     margin-bottom: 10px;
     width: 280px;
 
@@ -1973,7 +1973,7 @@ if (aboutPulldown) {
 
     opacity: 0;
     transform: translateY(10px) scale(0.95);
-    transform-origin: bottom right;
+    transform-origin: bottom left; /* Expands from the bottom-left corner */
     transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
     visibility: hidden;
   }
@@ -1998,31 +1998,39 @@ if (aboutPulldown) {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
   }
 
-  /* Tail points down toward mascot */
+  /* Tail points down-left toward the mascot */
   .speech-tail {
     position: absolute;
-    bottom: -10px;
-    right: 40px;          /* Positioned to point near mascot center */
-    width: 20px;
-    height: 20px;
+    bottom: -14px;
+    left: 36px;
+    width: 24px;
+    height: 24px;
     background: rgba(25, 29, 30, 0.85);
     backdrop-filter: blur(16px) saturate(180%);
     -webkit-backdrop-filter: blur(16px) saturate(180%);
-    border-right: 1px solid rgba(0, 255, 255, 0.4);
+    /* Only show the left and bottom borders to form the triangle */
+    border-left: 1px solid rgba(0, 255, 255, 0.4);
     border-bottom: 1px solid rgba(0, 255, 255, 0.4);
     transform: rotate(45deg);
-    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+    z-index: 1;
   }
 
+  /*
+    Seamless blend patch:
+    Covers the inner corner of the tail.
+    Uses the exact same glass effect as the bubble so it's invisible.
+  */
   .speech-bubble::before {
     content: '';
     position: absolute;
     bottom: -1px;
-    right: 36px;
+    left: 34px;
     width: 28px;
     height: 4px;
     background: rgba(25, 29, 30, 0.85);
-    z-index: 1;
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    z-index: 2;
   }
 
   .speech-bubble.is-open .speech-text::after {
@@ -2112,8 +2120,5 @@ if (aboutPulldown) {
     });
   });
 </script>
-<!-- ========================================== -->
-<!-- END Eris Sprite -->
-<!-- ========================================== -->
 </body>
 </html>
