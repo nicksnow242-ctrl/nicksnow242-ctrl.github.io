@@ -1083,328 +1083,188 @@ var particles;
 <!-- Gallery Infinite Scroll -->
 <!-- ========================================== -->
 <style>
-        /* ==============================
-           RESET & BASE
-           ============================== */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
 
-        body {
-            min-height: 100vh;
-            background-color: #0f172a;
-            font-family: system-ui, -apple-system, sans-serif;
-            overflow-x: hidden;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-        body::-webkit-scrollbar { display: none; }
+    body {
+        min-height: 100vh;
+        background-color: #0f172a;
+        font-family: system-ui, -apple-system, sans-serif;
+        overflow-x: hidden;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    body::-webkit-scrollbar { display: none; }
 
-        /* ==============================
-           BACKGROUND BLOBS
-           ============================== */
-        .bg-blob {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(80px);
-            z-index: -1;
-            opacity: 0.6;
-            pointer-events: none;
-        }
-        .blob-1 { width: 500px; height: 500px; background: #3b82f6; top: -100px; left: -100px; }
-        .blob-2 { width: 600px; height: 600px; background: #8b5cf6; bottom: -200px; right: -200px; }
+    .bg-blob {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(80px);
+        z-index: -1;
+        opacity: 0.6;
+        pointer-events: none;
+    }
+    .blob-1 { width: 500px; height: 500px; background: #3b82f6; top: -100px; left: -100px; }
+    .blob-2 { width: 600px; height: 600px; background: #8b5cf6; bottom: -200px; right: -200px; }
 
-        /* ==============================
-           MASONRY LAYOUT (CSS Columns)
-           ============================== */
-        .gallery {
-            column-count: 1;
-            column-gap: 16px;
-            padding: 24px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        @media (min-width: 640px)  { .gallery { column-count: 2; } }
-        @media (min-width: 1024px) { .gallery { column-count: 3; } }
-        @media (min-width: 1280px) { .gallery { column-count: 4; } }
+    .gallery {
+        column-count: 1;
+        column-gap: 16px;
+        padding: 24px;
+        max-width: 1400px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 20;
+    }
+    @media (min-width: 640px)  { .gallery { column-count: 2; } }
+    @media (min-width: 1024px) { .gallery { column-count: 3; } }
+    @media (min-width: 1280px) { .gallery { column-count: 4; } }
 
-        /* ==============================
-           GLASS CARD
-           ============================== */
-        .glass-card {
-            break-inside: avoid;
-            margin-bottom: 16px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            animation: fadeIn 0.5s ease-out;
-        }
-        .glass-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
+    .glass-card {
+        break-inside: avoid;
+        margin-bottom: 16px;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: fadeIn 0.5s ease-out;
+    }
+    .glass-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+        border-color: rgba(255, 255, 255, 0.2);
+    }
 
-        /* Image wrapper reserves space via aspect-ratio set by JS */
-        .card-img-wrap {
-            width: 100%;
-            overflow: hidden;
-            background: rgba(0, 0, 0, 0.2); /* Placeholder color while loading */
-        }
-        .card-img-wrap img {
-            width: 100%;
-            height: auto;
-            display: block;
-            transition: transform 0.5s ease;
-        }
-        .glass-card:hover .card-img-wrap img {
-            transform: scale(1.03);
-        }
+    .card-img-wrap {
+        width: 100%;
+        overflow: hidden;
+        background: rgba(0, 0, 0, 0.2);
+    }
+    .card-img-wrap img {
+        width: 100%;
+        height: auto;
+        display: block;
+        transition: transform 0.5s ease;
+    }
+    .glass-card:hover .card-img-wrap img {
+        transform: scale(1.03);
+    }
 
-        /* ==============================
-           METADATA SECTION
-           ============================== */
-        .card-meta {
-            padding: 12px 16px 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-        }
-        .meta-title {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: #f1f5f9;
-            letter-spacing: 0.01em;
-            margin-bottom: 2px;
-        }
-        .meta-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.78rem;
-            color: #94a3b8;
-        }
-        .meta-row .label {
-            color: #64748b;
-            text-transform: uppercase;
-            font-size: 0.68rem;
-            letter-spacing: 0.05em;
-            font-weight: 500;
-        }
-        .meta-row .value {
-            color: #cbd5e1;
-        }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+</style>
 
-        /* Stock badge */
-        .stock-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 9999px;
-            font-size: 0.68rem;
-            font-weight: 600;
-            letter-spacing: 0.03em;
-            text-transform: uppercase;
+<div class="bg-blob blob-1"></div>
+<div class="bg-blob blob-2"></div>
+
+<main id="gallery-container" class="gallery"></main>
+
+<script src="thumbnail.js"></script>
+
+<script>
+    if (typeof thumbnails === 'undefined') {
+        console.error("thumbnail.js did not load or 'thumbnails' is not defined globally.");
+    }
+
+    const container  = document.getElementById('gallery-container');
+    let currentIndex = 0;
+    const totalImages = thumbnails ? thumbnails.length : 0;
+
+    const cardMetadata = new Map();
+
+    window.addEventListener('wheel', (e) => {
+        if (e.deltaY < 0) e.preventDefault();
+    }, { passive: false });
+
+    let touchStartY = 0;
+    window.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    window.addEventListener('touchmove', (e) => {
+        if (e.touches[0].clientY > touchStartY) e.preventDefault();
+    }, { passive: false });
+
+    window.addEventListener('keydown', (e) => {
+        if (['ArrowUp', 'PageUp', 'Home', 'Space'].includes(e.key)) {
+            if (e.key === 'Space' && e.shiftKey) return;
+            e.preventDefault();
         }
-        .stock-badge.in-stock {
-            background: rgba(34, 197, 94, 0.15);
-            color: #4ade80;
-            border: 1px solid rgba(34, 197, 94, 0.25);
-        }
-        .stock-badge.out-of-stock {
-            background: rgba(239, 68, 68, 0.12);
-            color: #f87171;
-            border: 1px solid rgba(239, 68, 68, 0.2);
-        }
+    });
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-    </style>
-</head>
-<body>
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+                const card = entry.target;
+                const id = card.dataset.id;
 
-    <div class="bg-blob blob-1"></div>
-    <div class="bg-blob blob-2"></div>
+                cardMetadata.delete(id);
 
-    <main id="gallery-container" class="gallery"></main>
-
-    <!-- Your data file (make sure 'thumbnails' is a plain global const, no 'export') -->
-    <script src="thumbnail.js"></script>
-
-    <script>
-        if (typeof thumbnails === 'undefined') {
-            console.error("thumbnail.js did not load or 'thumbnails' is not defined globally.");
-        }
-
-        const container  = document.getElementById('gallery-container');
-        let currentIndex = 0;
-        const totalImages = thumbnails ? thumbnails.length : 0;
-
-        // ==========================================
-        // 1. ENFORCE DOWN-ONLY SCROLLING
-        // ==========================================
-        window.addEventListener('wheel', (e) => {
-            if (e.deltaY < 0) e.preventDefault();
-        }, { passive: false });
-
-        let touchStartY = 0;
-        window.addEventListener('touchstart', (e) => {
-            touchStartY = e.touches[0].clientY;
-        }, { passive: true });
-        window.addEventListener('touchmove', (e) => {
-            if (e.touches[0].clientY > touchStartY) e.preventDefault();
-        }, { passive: false });
-
-        window.addEventListener('keydown', (e) => {
-            if (['ArrowUp', 'PageUp', 'Home', 'Space'].includes(e.key)) {
-                if (e.key === 'Space' && e.shiftKey) return;
-                e.preventDefault();
+                observer.unobserve(card);
+                card.remove();
+                renderNextItem();
             }
         });
+    }, { rootMargin: '0px' });
 
-        // ==========================================
-        // 2. RECYCLING OBSERVER
-        // ==========================================
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
-                    observer.unobserve(entry.target);
-                    entry.target.remove();
-                    renderNextItem();
-                }
-            });
-        }, { rootMargin: '0px' });
+    function createCard(item) {
+        const card = document.createElement('div');
+        card.className = 'glass-card';
+        card.dataset.id = item.id;
 
-        // ==========================================
-        // 3. METADATA FIELD CONFIG
-        //    Add/remove/reorder fields here to
-        //    control what shows on every card.
-        // ==========================================
-        const metaFields = [
-            { key: 'dateCreated', label: 'Created' },
-            { key: 'size',        label: 'Size'    }
-            // 'inStock' is handled separately as a badge
-            // 'title' is handled separately as the heading
-            // Add more here: { key: 'artist', label: 'Artist' }, etc.
-        ];
+        cardMetadata.set(String(item.id), { ...item });
 
-        // ==========================================
-        // 4. CARD BUILDER
-        // ==========================================
-        function createCard(item) {
-            const card = document.createElement('div');
-            card.className = 'glass-card';
-            card.dataset.id = item.id;
+        const wrap = document.createElement('div');
+        wrap.className = 'card-img-wrap';
 
-            // --- Image with auto-dimension ---
-            const wrap = document.createElement('div');
-            wrap.className = 'card-img-wrap';
+        const img = document.createElement('img');
+        img.src = item.src;
+        img.alt = item.alt || '';
+        img.loading = 'lazy';
 
-            const img = document.createElement('img');
-            img.src = item.src;
-            img.alt = item.alt || '';
-            img.loading = 'lazy';
+        img.addEventListener('load', function () {
+            wrap.style.aspectRatio = `${this.naturalWidth} / ${this.naturalHeight}`;
+        });
 
-            // Auto-detect dimensions once the image loads
-            img.addEventListener('load', function () {
-                wrap.style.aspectRatio = `${this.naturalWidth} / ${this.naturalHeight}`;
-            });
+        wrap.appendChild(img);
+        card.appendChild(wrap);
 
-            wrap.appendChild(img);
-            card.appendChild(wrap);
+        return card;
+    }
 
-            // --- Metadata Section ---
-            // Only build the meta section if there is any metadata to show
-            const hasMeta = item.title
-                || item.inStock !== undefined
-                || metaFields.some(f => item[f.key] !== undefined);
+    function renderNextItem() {
+        if (totalImages === 0) return;
+        const nextItem = thumbnails[currentIndex % totalImages];
+        currentIndex++;
+        const card = createCard(nextItem);
+        container.appendChild(card);
+        observer.observe(card);
+    }
 
-            if (hasMeta) {
-                const meta = document.createElement('div');
-                meta.className = 'card-meta';
+    function init() {
+        if (totalImages === 0) return;
+        const batchSize = window.innerWidth < 768 ? 8 : 14;
+        for (let i = 0; i < batchSize; i++) renderNextItem();
+    }
 
-                // Title
-                if (item.title) {
-                    const title = document.createElement('div');
-                    title.className = 'meta-title';
-                    title.textContent = item.title;
-                    meta.appendChild(title);
-                }
+    window.getCardMetadata = function(id) {
+        return cardMetadata.get(String(id));
+    };
 
-                // Dynamic rows from metaFields config
-                metaFields.forEach(field => {
-                    if (item[field.key] !== undefined) {
-                        const row = document.createElement('div');
-                        row.className = 'meta-row';
+    window.getAllCardMetadata = function() {
+        return Array.from(cardMetadata.values());
+    };
 
-                        const label = document.createElement('span');
-                        label.className = 'label';
-                        label.textContent = field.label;
-
-                        const value = document.createElement('span');
-                        value.className = 'value';
-                        value.textContent = item[field.key];
-
-                        row.appendChild(label);
-                        row.appendChild(value);
-                        meta.appendChild(row);
-                    }
-                });
-
-                // In-Stock badge
-                if (item.inStock !== undefined) {
-                    const row = document.createElement('div');
-                    row.className = 'meta-row';
-
-                    const label = document.createElement('span');
-                    label.className = 'label';
-                    label.textContent = 'Status';
-
-                    const badge = document.createElement('span');
-                    badge.className = 'stock-badge '
-                        + (item.inStock ? 'in-stock' : 'out-of-stock');
-                    badge.textContent = item.inStock ? 'In Stock' : 'Out of Stock';
-
-                    row.appendChild(label);
-                    row.appendChild(badge);
-                    meta.appendChild(row);
-                }
-
-                card.appendChild(meta);
-            }
-
-            return card;
-        }
-
-        // ==========================================
-        // 5. RENDER & INIT
-        // ==========================================
-        function renderNextItem() {
-            if (totalImages === 0) return;
-            const nextItem = thumbnails[currentIndex % totalImages];
-            currentIndex++;
-            const card = createCard(nextItem);
-            container.appendChild(card);
-            observer.observe(card);
-        }
-
-        function init() {
-            if (totalImages === 0) return;
-            const batchSize = window.innerWidth < 768 ? 8 : 14;
-            for (let i = 0; i < batchSize; i++) renderNextItem();
-        }
-
-        init();
-    </script>
+    init();
+</script>
 <!-- ========================================== -->
 <!-- END Gallery Infinte Scroll -->
 <!-- ========================================== -->
