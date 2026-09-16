@@ -1253,13 +1253,10 @@ if (aboutPulldown) {
 <!-- CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- PASTE EVERYTHING BELOW THIS LINE BEFORE </body> -->
 <!-- ========================================== -->
-<!-- ========================================== -->
-<!-- CYBERPUNK MECHA MUSIC PLAYER -->
-<!-- PASTE EVERYTHING BELOW THIS LINE BEFORE </body> -->
-<!-- ========================================== -->
+
 
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<script src="playlist.js"></script>
+
 <style>
   :root {
     --neon-orange: #ff5e00;
@@ -1313,11 +1310,11 @@ if (aboutPulldown) {
     z-index: 2;
   }
 
-  /* --- SONAR WAVES (Centered on icon, 15% larger) --- */
+  /* --- SONAR WAVES (Outside icon, centered on icon's position) --- */
   .sonar-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
+    position: fixed;
+    top: 60px; /* Center of icon: 30px (icon top) + 30px (half of 60px height) */
+    right: 60px; /* Center of icon: 30px (icon right) + 30px (half of 60px width) */
     width: 0;
     height: 0;
     z-index: 10000;
@@ -1365,7 +1362,7 @@ if (aboutPulldown) {
       border-width: 2px;
     }
     100% {
-      transform: translate(-50%, -50%) scale(8.6); /* Increased from 7.5 (15% larger) */
+      transform: translate(-50%, -50%) scale(8.6);
       opacity: 0;
       border-width: 1px;
     }
@@ -1623,14 +1620,15 @@ if (aboutPulldown) {
 
 <!-- The Player HTML Structure -->
 <div class="music-player-container" id="player-container">
+  <!-- Sonar container moved OUTSIDE the activation core -->
+  <div class="sonar-container">
+    <div class="sonar-wave"></div>
+    <div class="sonar-wave"></div>
+    <div class="sonar-wave"></div>
+  </div>
+
   <div id="activation-core" class="activation-core">
     <span class="core-icon">♪</span>
-    <!-- Sonar waves now inside the activation core for perfect centering -->
-    <div class="sonar-container">
-      <div class="sonar-wave"></div>
-      <div class="sonar-wave"></div>
-      <div class="sonar-wave"></div>
-    </div>
   </div>
 
   <div id="mecha-panel" class="mecha-panel">
@@ -1668,7 +1666,32 @@ if (aboutPulldown) {
 
 <!-- The Player JavaScript Logic -->
 <script>
-  
+  const playlist = [
+    {
+      src: 'Tunes/The Uncanny Valley.mp3',
+      title: 'The Uncanny Valley',
+      artist: 'Unknown Artist',
+      art: 'Tunes/AlbumArt/artwork.jpg'
+    },
+    {
+      src: 'Tunes/She Moves Like a Knife.mp3',
+      title: 'She Moves Like a Knife',
+      artist: 'Unknown Artist',
+      art: 'Tunes/AlbumArt/artwork.jpg'
+    },
+    {
+      src: 'Tunes/Simulated Stimulation.mp3',
+      title: 'Simulated Stimulation',
+      artist: 'Unknown Artist',
+      art: 'Tunes/AlbumArt/artwork (copy 2).jpg'
+    },
+    {
+      src: 'Tunes/Nightmarket.mp3',
+      title: 'Nightmarket',
+      artist: 'Unknown Artist',
+      art: 'Tunes/AlbumArt/artwork (copy 3).jpg'
+    }
+  ];
 
   let audio = new Audio();
   let currentSongIndex = 0;
@@ -1803,9 +1826,7 @@ if (aboutPulldown) {
   restoreState();
   updateUI();
 </script>
-<!-- ========================================== -->
-<!-- END CYBERPUNK MECHA MUSIC PLAYER -->
-<!-- ========================================== -->
+
 <!-- ========================================== -->
 <!-- END CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- ========================================== -->
