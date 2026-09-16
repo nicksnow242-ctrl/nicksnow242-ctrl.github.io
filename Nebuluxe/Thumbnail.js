@@ -1,9 +1,9 @@
 const thumbnails = [
     {
         id: 1,
-        src: 'https://picsum.photos/id/1015/400/600',
+        src: 'Images/Thumbnails/_DSC1847.png',
         alt: 'River',
-        title: 'Mountain River',
+        title: 'Western Wind',
         dateCreated: '2025-03-12',
         inStock: true,
         size: '24 × 36 in'
