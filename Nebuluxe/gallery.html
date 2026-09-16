@@ -1083,21 +1083,21 @@ var particles;
 <!-- Gallery Infinite Scroll -->
 <!-- ========================================== -->
 <style>
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-
-    body {
-        min-height: 100vh;
-        background-color: #0f172a;
-        font-family: system-ui, -apple-system, sans-serif;
-        overflow-x: hidden;
+    /* 1. Override the global overflow: hidden to allow gallery scrolling */
+    html, body {
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
         scrollbar-width: none;
         -ms-overflow-style: none;
     }
     body::-webkit-scrollbar { display: none; }
+
+    /* 2. Ensure a dark background so the glass effect is visible
+       (Remove this block if you want to keep your white/gold gradient
+       and adjust the .glass-card colors to be dark instead) */
+    body {
+        background: linear-gradient(0deg, #0f172a 0%, #1e293b 100%) !important;
+    }
 
     .bg-blob {
         position: fixed;
@@ -1113,7 +1113,8 @@ var particles;
     .gallery {
         column-count: 1;
         column-gap: 16px;
-        padding: 24px;
+        /* 3. Added top padding to clear the 110px fixed top banner */
+        padding: 140px 24px 24px 24px;
         max-width: 1400px;
         margin: 0 auto;
         position: relative;
@@ -1181,6 +1182,7 @@ var particles;
 
     const cardMetadata = new Map();
 
+    // Enforce down-only scrolling
     window.addEventListener('wheel', (e) => {
         if (e.deltaY < 0) e.preventDefault();
     }, { passive: false });
@@ -1266,7 +1268,7 @@ var particles;
     init();
 </script>
 <!-- ========================================== -->
-<!-- END Gallery Infinte Scroll -->
+<!-- END Gallery Infinite Scroll -->
 <!-- ========================================== -->
 </body>
 </html>
