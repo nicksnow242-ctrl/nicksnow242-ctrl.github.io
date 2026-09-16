@@ -1029,34 +1029,40 @@ var particles;
 </div>
 
 <script>
-  // Fallback playlist ensures the player appears even if playlist.js is missing
-  const playlist = (typeof window.playlist !== 'undefined') ? window.playlist : [
-    { title: "Cyber Dreams", artist: "Neon Grid", src: "audio/track1.mp3", art: "https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=TRACK+1" },
-    { title: "System Override", artist: "Mainframe", src: "audio/track2.mp3", art: "https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=TRACK+2" }
-  ];
+  // Safely use the playlist from playlist.js, or fall back to a default one
+  // Using 'var' and checking 'window.playlist' avoids redeclaration errors
+  var playerPlaylist;
+  if (typeof window.playlist !== 'undefined' && Array.isArray(window.playlist) && window.playlist.length > 0) {
+    playerPlaylist = window.playlist;
+  } else {
+    playerPlaylist = [
+      { title: "Cyber Dreams", artist: "Neon Grid", src: "audio/track1.mp3", art: "https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=TRACK+1" },
+      { title: "System Override", artist: "Mainframe", src: "audio/track2.mp3", art: "https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=TRACK+2" }
+    ];
+  }
 
-  let audio = new Audio();
-  let currentSongIndex = 0;
-  let isPlaying = false;
-  let isOpen = false;
+  var audio = new Audio();
+  var currentSongIndex = 0;
+  var isPlaying = false;
+  var isOpen = false;
 
-  const playerContainer = document.getElementById('player-container');
-  const activationCore = document.getElementById('activation-core');
-  const mechaPanel = document.getElementById('mecha-panel');
-  const playPauseBtn = document.getElementById('play-pause-btn');
-  const shuffleBtn = document.getElementById('shuffle-btn');
-  const songTitle = document.getElementById('song-title');
-  const artistName = document.getElementById('artist-name');
-  const albumArtImg = document.getElementById('album-art');
-  const playIcon = document.getElementById('play-icon');
-  const pauseIcon = document.getElementById('pause-icon');
-  const sonarContainer = document.getElementById('sonar-container');
+  var playerContainer = document.getElementById('player-container');
+  var activationCore = document.getElementById('activation-core');
+  var mechaPanel = document.getElementById('mecha-panel');
+  var playPauseBtn = document.getElementById('play-pause-btn');
+  var shuffleBtn = document.getElementById('shuffle-btn');
+  var songTitle = document.getElementById('song-title');
+  var artistName = document.getElementById('artist-name');
+  var albumArtImg = document.getElementById('album-art');
+  var playIcon = document.getElementById('play-icon');
+  var pauseIcon = document.getElementById('pause-icon');
+  var sonarContainer = document.getElementById('sonar-container');
 
   function positionSonar() {
     if (!activationCore) return;
-    const rect = activationCore.getBoundingClientRect();
-    const centerX = rect.left + (rect.width / 2);
-    const centerY = rect.top + (rect.height / 2);
+    var rect = activationCore.getBoundingClientRect();
+    var centerX = rect.left + (rect.width / 2);
+    var centerY = rect.top + (rect.height / 2);
     sonarContainer.style.left = centerX + 'px';
     sonarContainer.style.top = centerY + 'px';
   }
@@ -1072,7 +1078,7 @@ var particles;
     pauseIcon.style.display = isPlaying ? 'block' : 'none';
     playPauseBtn.title = isPlaying ? 'Pause' : 'Play';
 
-    const currentSong = playlist[currentSongIndex];
+    var currentSong = playerPlaylist[currentSongIndex];
     songTitle.textContent = currentSong.title;
     artistName.textContent = currentSong.artist;
     albumArtImg.src = currentSong.art || 'https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=NO+DISC';
@@ -1081,13 +1087,13 @@ var particles;
   function togglePlayer(e) {
     if (e) {
       e.preventDefault();
-      e.stopPropagation(); // Prevents other document click listeners from immediately closing it
+      e.stopPropagation();
     }
     isOpen = !isOpen;
     if (mechaPanel) mechaPanel.classList.toggle('open', isOpen);
     if (playerContainer) playerContainer.classList.toggle('panel-open', isOpen);
 
-    const coreIcon = document.querySelector('.core-icon');
+    var coreIcon = document.querySelector('.core-icon');
     if (coreIcon) {
       coreIcon.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
     }
@@ -1098,7 +1104,7 @@ var particles;
     if (isPlaying) {
       audio.pause();
     } else {
-      audio.play().catch(error => {
+      audio.play().catch(function(error) {
         console.error("Play promise failed:", error);
       });
     }
@@ -1106,28 +1112,28 @@ var particles;
 
   function shuffleNext(e) {
     if (e) e.stopPropagation();
-    if (playlist.length === 0) return;
-    let nextIndex;
+    if (playerPlaylist.length === 0) return;
+    var nextIndex;
     do {
-      nextIndex = Math.floor(Math.random() * playlist.length);
-    } while (nextIndex === currentSongIndex && playlist.length > 1);
+      nextIndex = Math.floor(Math.random() * playerPlaylist.length);
+    } while (nextIndex === currentSongIndex && playerPlaylist.length > 1);
     currentSongIndex = nextIndex;
-    audio.src = playlist[currentSongIndex].src;
-    audio.play().catch(err => console.error('Play error:', err));
+    audio.src = playerPlaylist[currentSongIndex].src;
+    audio.play().catch(function(err) { console.error('Play error:', err); });
   }
 
-  // Attach listeners with safety checks
+  // Attach listeners
   if (activationCore) activationCore.addEventListener('click', togglePlayer);
   if (playPauseBtn) playPauseBtn.addEventListener('click', togglePlayPause);
   if (shuffleBtn) shuffleBtn.addEventListener('click', shuffleNext);
 
-  audio.addEventListener('play', () => { isPlaying = true; updateUI(); });
-  audio.addEventListener('pause', () => { isPlaying = false; updateUI(); });
-  audio.addEventListener('ended', () => shuffleNext());
+  audio.addEventListener('play', function() { isPlaying = true; updateUI(); });
+  audio.addEventListener('pause', function() { isPlaying = false; updateUI(); });
+  audio.addEventListener('ended', function() { shuffleNext(); });
 
   // Initialize
-  if (playlist.length > 0) {
-    audio.src = playlist[0].src;
+  if (playerPlaylist.length > 0) {
+    audio.src = playerPlaylist[0].src;
     updateUI();
   }
 </script>
