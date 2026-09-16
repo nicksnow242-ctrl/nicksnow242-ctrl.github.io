@@ -2,38 +2,74 @@ const thumbnails = [
     {
         id: 1,
         src: 'Images/Thumbnails/_DSC1847.png',
-        alt: 'River',
+        alt: 'A thief came in the night',
         title: 'Western Wind',
-        dateCreated: '2025-03-12',
+        dateCreated: '01-01-23',
         inStock: true,
-        size: '24 × 36 in'
+        length: 12
+        width: 12
+        retired: true
+        remakecustom: true
+        pricemultiplier: 1
+        featured: false
+        suggestedprice: 100
+        description: loren ipsum
+        type:normal
+
     },
     {
         id: 2,
-        src: 'https://picsum.photos/id/1016/600/400',
-        alt: 'Mountains',
-        title: 'Alpine Ridge',
-        dateCreated: '2024-11-05',
+        src: 'Images/Thumbnails/_DSC1930.png',
+        alt: 'A thief came in the night',
+        title: 'Divergence',
+        dateCreated: '01-01-23',
         inStock: false,
-        size: '18 × 12 in'
+        width: 24
+        length: 48
+        retired: false
+        remakecustom: true
+        pricemultiplier: 1
+        featured: false
+        suggestedprice: 200
+        description: loren ipsum
+        type: window_hanging
+
     },
     {
         id: 3,
-        src: 'https://picsum.photos/id/1018/400/500',
-        alt: 'Mist',
-        title: 'Morning Fog',
-        dateCreated: '2026-01-20',
-        inStock: true,
-        size: '16 × 20 in'
+        src: 'Images/Thumbnails/_DSC1942.png',
+        alt: 'A thief came in the night',
+        title: 'Liminal Fountain',
+        dateCreated: '01-01-23',
+        inStock: false,
+        width: 10
+        length: 8
+        retired: false
+        remakecustom: true
+        pricemultiplier: 1
+        featured: false
+        suggestedprice: 80
+        description: loren ipsum
+        type: normal
+
     },
     {
         id: 4,
-        src: 'https://picsum.photos/id/1019/500/300',
-        alt: 'Ocean',
-        title: 'Coastal Sunset',
-        dateCreated: '2025-07-08',
-        inStock: true,
-        size: '30 × 18 in'
-    }
+        src: 'Images/Thumbnails/_DSC1943.png',
+        alt: 'A thief came in the night',
+        title: 'Liminal Fountain',
+        dateCreated: '01-01-23',
+        inStock: false,
+        width: 10
+        length: 8
+        retired: false
+        remakecustom: true
+        pricemultiplier: 1
+        featured: false
+        suggestedprice: 80
+        description: loren ipsum
+        type: normal
+
+    },
     // Add as many as you like. Include or omit any metadata field per item.
 ];
