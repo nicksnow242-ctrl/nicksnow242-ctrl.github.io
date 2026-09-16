@@ -1253,6 +1253,10 @@ if (aboutPulldown) {
 <!-- CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- PASTE EVERYTHING BELOW THIS LINE BEFORE </body> -->
 <!-- ========================================== -->
+<!-- ========================================== -->
+<!-- CYBERPUNK MECHA MUSIC PLAYER -->
+<!-- PASTE EVERYTHING BELOW THIS LINE BEFORE </body> -->
+<!-- ========================================== -->
 
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
@@ -1309,11 +1313,11 @@ if (aboutPulldown) {
     z-index: 2;
   }
 
-  /* --- SONAR WAVES (Slower, ends after 10 seconds) --- */
+  /* --- SONAR WAVES (Centered on icon, 15% larger) --- */
   .sonar-container {
-    position: fixed;
-    top: 60px;
-    right: 60px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
     width: 0;
     height: 0;
     z-index: 10000;
@@ -1330,7 +1334,7 @@ if (aboutPulldown) {
     border-radius: 50%;
     transform: translate(-50%, -50%) scale(1);
     opacity: 0;
-    animation: sonar-pulse 6s ease-out 1; /* Changed: 6s duration, plays only once */
+    animation: sonar-pulse 6s ease-out 1;
   }
 
   .sonar-wave:nth-child(1) {
@@ -1338,14 +1342,13 @@ if (aboutPulldown) {
   }
 
   .sonar-wave:nth-child(2) {
-    animation-delay: 2s; /* Staggered by 2 seconds */
+    animation-delay: 2s;
   }
 
   .sonar-wave:nth-child(3) {
-    animation-delay: 4s; /* Staggered by 4 seconds */
+    animation-delay: 4s;
   }
 
-  /* Stop sonar when player is open */
   .music-player-container.panel-open .sonar-wave {
     animation: none;
     opacity: 0;
@@ -1362,7 +1365,7 @@ if (aboutPulldown) {
       border-width: 2px;
     }
     100% {
-      transform: translate(-50%, -50%) scale(7.5);
+      transform: translate(-50%, -50%) scale(8.6); /* Increased from 7.5 (15% larger) */
       opacity: 0;
       border-width: 1px;
     }
@@ -1620,19 +1623,19 @@ if (aboutPulldown) {
 
 <!-- The Player HTML Structure -->
 <div class="music-player-container" id="player-container">
-  <div class="sonar-container">
-    <div class="sonar-wave"></div>
-    <div class="sonar-wave"></div>
-    <div class="sonar-wave"></div>
-  </div>
-
   <div id="activation-core" class="activation-core">
     <span class="core-icon">♪</span>
+    <!-- Sonar waves now inside the activation core for perfect centering -->
+    <div class="sonar-container">
+      <div class="sonar-wave"></div>
+      <div class="sonar-wave"></div>
+      <div class="sonar-wave"></div>
+    </div>
   </div>
 
   <div id="mecha-panel" class="mecha-panel">
     <div class="mech-plate plate-header">
-      <span>Jack In Choom</span>
+      <span>SYS.AUDIO_V.9</span>
       <span class="blink">▶_</span>
     </div>
 
@@ -1825,6 +1828,9 @@ if (aboutPulldown) {
   restoreState();
   updateUI();
 </script>
+<!-- ========================================== -->
+<!-- END CYBERPUNK MECHA MUSIC PLAYER -->
+<!-- ========================================== -->
 <!-- ========================================== -->
 <!-- END CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- ========================================== -->
