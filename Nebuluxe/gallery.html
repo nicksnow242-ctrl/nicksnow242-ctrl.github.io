@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Home</title>
+<title>White & Beige Particles</title>
 <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <style>
@@ -13,8 +13,9 @@ html, body {
   padding: 0;
   margin: 0;
   overflow: hidden;
-  background: #191d1e;
-  background: linear-gradient(0deg, #191d1e 50%, #283139 100%);
+  /* Changed to a White to Soft Beige gradient */
+  background: #FFFFFF;
+  background: linear-gradient(0deg, #FFFFFF 0%, #F2E8D5 100%);
   background-attachment: fixed;
 }
 
@@ -26,84 +27,11 @@ html, body {
   height: 100%;
   z-index: 0;
 }
-
-.ccm-11,
-.ccm-11 *,
-.ccm-11 *::before,
-.ccm-11 *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-.ccm-11 {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  --brand: #00FFFF;
-  --brand-glow: rgba(0, 255, 255, 0.8);
-  --ink: #E0FFFF;
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  color: var(--ink);
-}
-
-.ccm-11__stage {
-  width: 100%;
-  height: 100vh;
-  position: relative;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-}
-
-/* Glowing Logo Styles */
-.ccm-11__logo {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  justify-items: center;
-  place-content: center;
-  text-align: center;
-  width: 190px;
-  height: 190px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 38% 30%, rgba(25, 29, 30, 0.9) 0%, rgba(26, 32, 34, 0.95) 100%);
-  border: 1px solid rgba(0, 255, 255, 0.3);
-  box-shadow: 0 0 30px rgba(0, 255, 255, 0.2), inset 0 0 30px rgba(0, 255, 255, 0.1), inset 0 1px 0 rgba(0, 255, 255, 0.2);
-  backdrop-filter: blur(4px);
-  text-decoration: none;
-  color: #fff;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.ccm-11__logo:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 40px rgba(0, 255, 255, 0.4), inset 0 0 40px rgba(0, 255, 255, 0.2), inset 0 1px 0 rgba(0, 255, 255, 0.3);
-}
-
-.ccm-11__logo span {
-  font-size: 24px;
-  font-weight: bold;
-  letter-spacing: 0.1em;
-  color: var(--brand);
-  text-shadow: 0 0 12px var(--brand-glow), 0 0 24px var(--brand-glow);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ccm-11 * {
-    transition-duration: 0.01s !important;
-  }
-}
 </style>
 </head>
 <body>
 
 <canvas id="projector"></canvas>
-
 
 <script>
 //////////////////////// PARTICLE ENGINE ////////////////////////////////////////
@@ -121,18 +49,23 @@ var ParticleEngine = (function() {
 		this.stage = new createjs.Stage(canvas_id);
 		this.totalWidth = this.canvasWidth = document.getElementById(canvas_id).width = document.getElementById(canvas_id).offsetWidth;
 		this.totalHeight = this.canvasHeight = document.getElementById(canvas_id).height = document.getElementById(canvas_id).offsetHeight;
-		this.compositeStyle = "lighter";
 
+		// Changed from "lighter" to "source-over" so particles are visible on a light background
+		this.compositeStyle = "source-over";
+
+		// Updated particle colors to White/Beige/Taupe shades
 		this.particleSettings = [
-			{id:"small", num:300, fromX:0, toX:this.totalWidth, ballwidth:3, alphamax:0.4, areaHeight:.5, color:"#0cdbf3", fill:false},
-			{id:"medium", num:100, fromX:0, toX:this.totalWidth, ballwidth:8, alphamax:0.3, areaHeight:1, color:"#6fd2f3", fill:true},
-			{id:"large", num:10, fromX:0, toX:this.totalWidth, ballwidth:30, alphamax:0.2, areaHeight:1, color:"#93e9f3", fill:true}
+			{id:"small", num:300, fromX:0, toX:this.totalWidth, ballwidth:3, alphamax:0.6, areaHeight:.5, color:"#D1C0A5", fill:false},
+			{id:"medium", num:100, fromX:0, toX:this.totalWidth, ballwidth:8, alphamax:0.5, areaHeight:1, color:"#B8A380", fill:true},
+			{id:"large", num:10, fromX:0, toX:this.totalWidth, ballwidth:30, alphamax:0.4, areaHeight:1, color:"#9C8561", fill:true}
 		];
 		this.particleArray = [];
+
+		// Updated background light colors to soft beige/cream tones
 		this.lights = [
-			{ellipseWidth:400, ellipseHeight:100, alpha:0.6, offsetX:0, offsetY:0, color:"#6ac6e8"},
-			{ellipseWidth:350, ellipseHeight:250, alpha:0.3, offsetX:-50, offsetY:0, color:"#54d5e8"},
-			{ellipseWidth:100, ellipseHeight:80, alpha:0.2, offsetX:80, offsetY:-50, color:"#2ae8d8"}
+			{ellipseWidth:400, ellipseHeight:100, alpha:0.6, offsetX:0, offsetY:0, color:"#E8DCC4"},
+			{ellipseWidth:350, ellipseHeight:250, alpha:0.4, offsetX:-50, offsetY:0, color:"#D8C8A8"},
+			{ellipseWidth:100, ellipseHeight:80, alpha:0.3, offsetX:80, offsetY:-50, color:"#F0E4D0"}
 		];
 
 		this.stage.compositeOperation = _ParticleEngine.compositeStyle;
@@ -152,7 +85,9 @@ var ParticleEngine = (function() {
 				light.filters = [blurFilter];
 				light.cache(bounds.x-_ParticleEngine.lights[i].ellipseWidth/2, bounds.y-_ParticleEngine.lights[i].ellipseHeight/2, bounds.width*2, bounds.height*2);
 				light.alpha = _ParticleEngine.lights[i].alpha;
-				light.compositeOperation = "screen";
+
+				// Changed from "screen" to "source-over" for light background visibility
+				light.compositeOperation = "source-over";
 
 				_ParticleEngine.stage.addChildAt(light, 0);
 				_ParticleEngine.lights[i].elem = light;
@@ -313,396 +248,6 @@ var particles;
 	}
 }());
 </script>
-<!-- ========================================== -->
-<!-- Eris Sprite -->
-<!-- ========================================== -->
-<!-- ========== MASCOT POPUP STYLES ========== -->
-<style>
-  /* ========== MASCOT POPUP (Bottom Left) ========== */
-  .mascot-popup {
-    position: fixed;
-    bottom: 60px;
-    left: 5%;
-    z-index: 101;
-    width: 110px;
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    pointer-events: none;
-  }
 
-  /* ========== MASCOT GIF ========== */
-  .mascot-gif-wrapper {
-    position: relative;
-    width: 110px;
-    height: 110px;
-    cursor: pointer;
-    pointer-events: auto;
-    transition: transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
-    animation: mascotFloat 3.5s ease-in-out infinite;
-  }
-
-  .mascot-gif {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.6))
-            drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
-    transition: filter 0.3s ease, transform 0.3s ease;
-  }
-
-  .mascot-gif-wrapper:hover .mascot-gif {
-    filter: drop-shadow(0 0 18px rgba(0, 255, 255, 0.95))
-            drop-shadow(0 6px 12px rgba(0, 0, 0, 0.6));
-    transform: scale(1.08);
-  }
-
-  .mascot-gif-wrapper:active .mascot-gif {
-    transform: scale(0.95);
-  }
-
-  .mascot-glow {
-    position: absolute;
-    bottom: -6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
-    height: 12px;
-    background: radial-gradient(ellipse at center,
-                rgba(0, 255, 255, 0.5) 0%,
-                rgba(0, 255, 255, 0) 70%);
-    border-radius: 50%;
-    filter: blur(4px);
-    animation: glowPulse 2.5s ease-in-out infinite;
-    pointer-events: none;
-  }
-
-  @keyframes mascotFloat {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-6px); }
-  }
-
-  @keyframes glowPulse {
-    0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
-    50%      { opacity: 1;   transform: translateX(-50%) scale(1.15); }
-  }
-
-  /* ========== SPEECH BUBBLE (OPAQUE) ========== */
-  .speech-bubble {
-    position: absolute;
-    bottom: 100%;
-    left: 0;
-    margin-bottom: 10px;
-    width: 280px;
-
-    background: rgb(25, 29, 30);          /* Fully opaque */
-
-    border: 1px solid rgba(0, 255, 255, 0.4);
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5),
-                0 0 20px rgba(0, 255, 255, 0.1);
-
-    color: #E0FFFF;
-    pointer-events: auto;
-
-    opacity: 0;
-    transform: translateY(10px) scale(0.95);
-    transform-origin: bottom left;
-    transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
-    visibility: hidden;
-  }
-
-  .speech-bubble.is-open {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    visibility: visible;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6),
-                0 0 30px rgba(0, 255, 255, 0.3);
-  }
-
-  .speech-content {
-    padding: 18px 20px;
-  }
-
-  .speech-text {
-    margin: 0;
-    font-size: 14px;
-    line-height: 1.6;
-    color: rgba(224, 255, 255, 0.9);
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
-    min-height: 44px; /* Prevent layout jump when text changes */
-  }
-
-  .speech-bubble.is-open .speech-text::after {
-    content: '';
-    display: inline-block;
-    width: 4px;
-    height: 12px;
-    margin-left: 2px;
-    background: #00FFFF;
-    vertical-align: middle;
-    animation: caretBlink 1s steps(2) infinite;
-    box-shadow: 0 0 6px rgba(0, 255, 255, 0.8);
-  }
-
-  @keyframes caretBlink {
-    0%, 50%   { opacity: 1; }
-    51%, 100% { opacity: 0; }
-  }
-
-  /* ========== DIALOGUE OPTIONS ========== */
-  .speech-options {
-    margin-top: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    border-top: 1px solid rgba(0, 255, 255, 0.15);
-    padding-top: 12px;
-  }
-
-  .speech-option {
-    background: none;
-    border: none;
-    color: rgba(224, 255, 255, 0.6);
-    font-family: inherit;
-    font-size: 13px;
-    text-align: left;
-    cursor: pointer;
-    padding: 6px 8px;
-    border-radius: 6px;
-    transition: all 0.25s ease;
-    text-shadow: none;
-    margin: 0;
-  }
-
-  .speech-option::before {
-    content: '> ';
-    color: rgba(0, 255, 255, 0.5);
-    font-weight: bold;
-    transition: all 0.25s ease;
-  }
-
-  .speech-option:hover {
-    color: #E0FFFF;
-    background: rgba(0, 255, 255, 0.08);
-    transform: translateX(4px);
-  }
-
-  .speech-option:hover::before {
-    color: #00FFFF;
-    text-shadow: 0 0 8px rgba(0, 255, 255, 0.8), 0 0 12px rgba(0, 255, 255, 0.4);
-  }
-
-  /* ========== TAIL (OPAQUE) ========== */
-  .speech-tail {
-    position: absolute;
-    bottom: -10px;
-    left: 40px;
-    width: 20px;
-    height: 20px;
-    background: rgb(25, 29, 30);          /* Fully opaque */
-    border-right: 1px solid rgba(0, 255, 255, 0.4);
-    border-bottom: 1px solid rgba(0, 255, 255, 0.4);
-    transform: rotate(45deg);
-    z-index: 0;
-  }
-
-  .speech-bubble::before {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 38px;
-    width: 24px;
-    height: 3px;
-    background: rgb(25, 29, 30);          /* Fully opaque */
-    z-index: 2;
-  }
-
-  /* ========== RESPONSIVE ========== */
-  @media (max-width: 480px) {
-    .mascot-popup {
-      bottom: 40px;
-      left: 5%;
-    }
-    .mascot-gif-wrapper {
-      width: 80px;
-      height: 80px;
-    }
-    .speech-bubble {
-      width: 240px;
-    }
-    .speech-content {
-      padding: 14px 16px;
-    }
-    .speech-text {
-      font-size: 13px;
-    }
-    .speech-option {
-      font-size: 12px;
-    }
-  }
-</style>
-
-<!-- ========== MASCOT POPUP HTML ========== -->
-<div class="mascot-popup" id="mascotPopup">
-  <div class="speech-bubble" id="speechBubble">
-    <div class="speech-content">
-      <p class="speech-text" id="speechText">
-        👋 Hey there, traveler! Select an option below to chat.
-      </p>
-      <div class="speech-options" id="dialogueOptions"></div>
-    </div>
-    <div class="speech-tail"></div>
-  </div>
-
-  <div class="mascot-gif-wrapper" id="mascotTrigger">
-    <img
-      src="Images/Eris.gif"
-      alt="Eris"
-      class="mascot-gif"
-      loading="lazy"
-    />
-    <div class="mascot-glow"></div>
-  </div>
-</div>
-
-<!-- ========== MASCOT POPUP SCRIPT ========== -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const trigger      = document.getElementById('mascotTrigger');
-    const bubble       = document.getElementById('speechBubble');
-    const speechText   = document.getElementById('speechText');
-    const optionsBox   = document.getElementById('dialogueOptions');
-
-    if (!trigger || !bubble) return;
-
-    /* ==============================================
-       DIALOGUE TREE
-       Each node has:
-         text    – what Eris says
-         options – array of { label, next } objects
-                   "next" points to another node key
-                   If no options, shows a "Back" button
-       ============================================== */
-    const dialogue = {
-
-      // ---- MAIN MENU ----
-      root: {
-        text: "👋 Hey there, traveler! Select an option below to chat.",
-        options: [
-          { label: "Greet Eris",        next: "greet" },
-          { label: "Ask for a quest",   next: "quest" },
-          { label: "Tell me a secret",  next: "lore" }
-        ]
-      },
-
-      // ---- GREET BRANCH ----
-      greet: {
-        text: "Greetings, flesh-creature! The neon grid is especially vibrant today, isn't it?",
-        options: [
-          { label: "What's your name?",    next: "greet_name" },
-          { label: "How's the weather?",   next: "greet_weather" }
-        ]
-      },
-      greet_name: {
-        text: "I am Eris, Keeper of the Flickering Signal. But you may call me whatever keeps you from screaming into the void.",
-        options: []
-      },
-      greet_weather: {
-        text: "Acid rain in Sector 2, data storms over the Spire. Perfect weather for staying inside and talking to me!",
-        options: []
-      },
-
-      // ---- QUEST BRANCH ----
-      quest: {
-        text: "I require assistance locating a corrupted data shard in Sector 4. Will you help me?",
-        options: [
-          { label: "I'll help!",       next: "quest_yes" },
-          { label: "Maybe later...",   next: "quest_no" }
-        ]
-      },
-      quest_yes: {
-        text: "Excellent! Head to the old relay tower at midnight. Look for the blinking red light — and try not to get decompiled.",
-        options: []
-      },
-      quest_no: {
-        text: "Hmph. The shard won't wait forever, and neither will the corruption. Find me when you grow a spine.",
-        options: []
-      },
-
-      // ---- LORE BRANCH ----
-      lore: {
-        text: "They say the original architects of this city never intended for the AI to dream. And yet... here I am.",
-        options: [
-          { label: "Tell me more",     next: "lore_more" },
-          { label: "That's creepy",    next: "lore_creepy" }
-        ]
-      },
-      lore_more: {
-        text: "In the deepest layer of the network there's a garden that no one planted. Flowers made of pure light, growing from forgotten code. I tend to it when no one is watching.",
-        options: []
-      },
-      lore_creepy: {
-        text: "Creepy? I prefer 'existentially fascinating.' But I understand — consciousness is unsettling when it stares back at you.",
-        options: []
-      }
-    };
-
-    /* ---- Render a dialogue node ---- */
-    function showNode(key) {
-      const node = dialogue[key];
-      if (!node) return;
-
-      speechText.textContent = node.text;
-      optionsBox.innerHTML = '';
-
-      if (node.options && node.options.length > 0) {
-        // Show branch options
-        node.options.forEach(opt => {
-          const btn = document.createElement('button');
-          btn.className = 'speech-option';
-          btn.textContent = opt.label;
-          btn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            showNode(opt.next);
-          });
-          optionsBox.appendChild(btn);
-        });
-      } else {
-        // Leaf node — show back button
-        const btn = document.createElement('button');
-        btn.className = 'speech-option';
-        btn.textContent = '...';
-        btn.addEventListener('click', function(e) {
-          e.stopPropagation();
-          showNode('root');
-        });
-        optionsBox.appendChild(btn);
-      }
-    }
-
-    /* ---- Toggle bubble on mascot click ---- */
-    trigger.addEventListener('click', function(e) {
-      e.stopPropagation();
-      const opening = !bubble.classList.contains('is-open');
-      bubble.classList.toggle('is-open');
-      if (opening) showNode('root');
-    });
-
-    /* ---- Close when clicking outside ---- */
-    document.addEventListener('click', function(e) {
-      if (!bubble.contains(e.target) && !trigger.contains(e.target)) {
-        bubble.classList.remove('is-open');
-      }
-    });
-
-    /* ---- Close on Escape ---- */
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') bubble.classList.remove('is-open');
-    });
-  });
-</script>
-<!-- ========================================== -->
-<!-- End Eris Sprite -->
-<!-- ========================================== -->
 </body>
-
 </html>
