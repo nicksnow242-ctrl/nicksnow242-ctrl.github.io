@@ -1080,207 +1080,327 @@ var particles;
 <!-- END CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- ========================================== -->
 <!-- ========================================== -->
-<!-- Gallery Infinite Flexbox Layout -->
+<!-- Justified Infinite Mosaic Gallery -->
 <!-- ========================================== -->
 
 <style>
-    /* 1. CLEAN, MINIMAL BACKGROUND */
+    /* Clean, minimal base */
     body {
         background-color: #ffffff !important;
         margin: 0;
         font-family: system-ui, -apple-system, sans-serif;
     }
 
-    /* 2. FLEXBOX GALLERY CONTAINER */
-    .gallery {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px;
+    /* Spacer to maintain scroll position when trimming old DOM nodes */
+    #top-spacer {
+        width: 100%;
+        height: 0px;
+        transition: height 0.1s ease;
+    }
+
+    /* Gallery Container */
+    #gallery-container {
+        width: 100%;
         max-width: 1400px;
         margin: 0 auto;
         padding: 24px;
-    }
-
-    /* 3. RESPONSIVE FLEX ITEMS */
-    .flex-item {
-        flex: 0 0 calc(25% - 12px); /* 4 columns on large screens */
         box-sizing: border-box;
     }
 
-    @media (max-width: 1200px) {
-        .flex-item { flex: 0 0 calc(33.333% - 11px); } /* 3 columns */
-    }
-    @media (max-width: 800px) {
-        .flex-item { flex: 0 0 calc(50% - 8px); } /* 2 columns */
-    }
-    @media (max-width: 500px) {
-        .flex-item { flex: 0 0 100%; } /* 1 column on mobile */
-    }
-
-    /* 4. CLEAN CARD STYLING */
-    .mosaic-card {
-        border-radius: 12px;
-        overflow: hidden;
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        cursor: pointer;
+    /* Justified Row */
+    .justified-row {
+        display: flex;
+        gap: 6px; /* Consistent 6px gap between images */
+        margin-bottom: 6px;
         width: 100%;
     }
 
-    .mosaic-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        border-color: #cbd5e1;
+    /* Individual Image Card */
+    .image-card {
+        background-color: #f1f5f9; /* Subtle placeholder color while loading */
+        border-radius: 4px;
+        overflow: hidden;
+        position: relative;
+        /* Height is intentionally NOT set here; the image's natural height dictates the row */
     }
 
-    /* 5. TRUE IMAGE ASPECT RATIO (No cropping or stretching) */
-    .mosaic-card img {
+    /* True Aspect Ratio Image (NO CROP, NO DISTORTION) */
+    .image-card img {
         width: 100%;
         height: auto;
         display: block;
+        opacity: 0;
+        transition: opacity 0.4s ease;
     }
 
-    /* Loading indicator at the bottom */
-    .loading-indicator {
+    .image-card img.loaded {
+        opacity: 1;
+    }
+
+    .image-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        z-index: 2;
+    }
+
+    /* Loading Sentinel */
+    #loading-sentinel {
         width: 100%;
         text-align: center;
-        padding: 40px;
+        padding: 40px 24px;
         color: #94a3b8;
         font-size: 14px;
+        font-weight: 500;
+    }
+
+    /* Error state styling */
+    .img-error {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        min-height: 150px;
+        color: #94a3b8;
+        font-size: 12px;
+        text-align: center;
+        background: #f8fafc;
     }
 </style>
 
-<main class="gallery" id="gallery-container">
-    <!-- Cards will be injected here -->
-</main>
+<!-- Invisible spacer for DOM trimming -->
+<div id="top-spacer"></div>
 
-<div id="loading-indicator" class="loading-indicator">Loading more images...</div>
+<!-- Main Gallery -->
+<main id="gallery-container"></main>
 
-<!-- Load thumbnail.js BEFORE the main script -->
+<!-- Infinite Scroll Trigger -->
+<div id="loading-sentinel">Loading more images...</div>
+
+<!-- Load your global data file -->
 <script src="thumbnail.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // 1. Verify data source
+    // 1. Validate Data Source
     if (typeof thumbnails === 'undefined') {
         console.error("ERROR: thumbnail.js did not load or 'thumbnails' is not defined.");
         document.getElementById('gallery-container').innerHTML =
-            '<p style="color:red; text-align:center; padding: 40px; width:100%;">Error: Could not load thumbnail data.</p>';
+            '<p style="color:#ef4444; text-align:center; padding: 40px;">Error: Could not load thumbnail data.</p>';
         return;
     }
 
-    console.log("✓ Thumbnails loaded successfully. Total items:", thumbnails.length);
+    console.log(`✓ Gallery initialized. Total images available: ${thumbnails.length}`);
+
+    // 2. Configuration
+    const CONFIG = {
+        gap: 6,
+        minRowHeight: 200,      // Minimum height before forcing a row to render
+        maxRowHeight: 350,      // Prevent last row from stretching absurdly tall
+        batchSize: 24,          // Images to load per scroll event
+        maxDomRows: 15,         // Maximum rows to keep in DOM before trimming (prevents memory bloat)
+        trimRowCount: 5         // Number of rows to remove when trimming
+    };
 
     const container = document.getElementById('gallery-container');
-    const loader = document.getElementById('loading-indicator');
+    const topSpacer = document.getElementById('top-spacer');
+    const sentinel = document.getElementById('loading-sentinel');
 
+    // 3. State Management
     let currentIndex = 0;
     const totalImages = thumbnails.length;
-    const cardMetadata = new Map();
+    let activeItems = [];       // Keeps all loaded items in memory for resize re-flow
+    let pendingRow = [];        // Items waiting to be flushed into a row
+    let pendingAspectRatioSum = 0;
     let isLoading = false;
 
-    // 2. Create Card Function
-    function createCard(item) {
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'flex-item';
+    // Pre-calculate aspect ratios for performance
+    const processedThumbnails = thumbnails.map(item => ({
+        ...item,
+        aspectRatio: (item.width && item.length) ? (item.width / item.length) : (16 / 9) // Fallback to 16:9
+    }));
 
-        const cardDiv = document.createElement('div');
-        cardDiv.className = 'mosaic-card';
-        cardDiv.dataset.id = item.id;
+    // 4. Core Layout Engine: Flush a completed row to the DOM
+    function flushRow(isLastRow = false) {
+        if (pendingRow.length === 0) return;
 
-        const img = document.createElement('img');
-        img.src = item.src;
-        img.alt = item.alt || item.title || 'Gallery Image';
-        img.loading = 'lazy';
+        const containerWidth = container.offsetWidth;
+        // Calculate the ideal height for this specific row
+        let rowHeight = (containerWidth - ((pendingRow.length - 1) * CONFIG.gap)) / pendingAspectRatioSum;
 
-        // Pre-set aspect ratio to prevent layout shift before image loads
-        if (item.width && item.length) {
-            img.style.aspectRatio = `${item.width} / ${item.length}`;
+        // Prevent the final row from stretching to unnatural heights
+        if (isLastRow && rowHeight > CONFIG.maxRowHeight) {
+            rowHeight = CONFIG.maxRowHeight;
         }
 
-        // Handle broken images gracefully
-        img.addEventListener('error', function() {
-            console.warn("⚠️ Failed to load image:", item.src);
-            this.style.display = 'none';
-            cardDiv.style.minHeight = '150px';
-            cardDiv.style.display = 'flex';
-            cardDiv.style.alignItems = 'center';
-            cardDiv.style.justifyContent = 'center';
-            cardDiv.style.background = '#f8fafc';
-            cardDiv.innerHTML = '<span style="color: #94a3b8; font-size: 12px; text-align: center;">Image Not Found<br><small>' + item.src + '</small></span>';
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'justified-row';
+
+        pendingRow.forEach(item => {
+            // Calculate exact width to maintain perfect aspect ratio at this row height
+            const imgWidth = rowHeight * item.aspectRatio;
+
+            const card = document.createElement('div');
+            card.className = 'image-card';
+            // We set width explicitly, but leave height to 'auto' to guarantee ZERO cropping
+            card.style.width = `${imgWidth}px`;
+            card.dataset.id = item.id;
+
+            const img = document.createElement('img');
+            img.src = item.src;
+            img.alt = item.alt || item.title || 'Gallery Image';
+            img.loading = 'lazy'; // Native lazy loading
+
+            // Smooth fade-in when loaded
+            img.onload = () => img.classList.add('loaded');
+
+            // Graceful error handling without breaking the row layout
+            img.onerror = () => {
+                img.style.display = 'none';
+                card.innerHTML = `<div class="img-error">Image Not Found<br><small>${item.src.split('/').pop()}</small></div>`;
+            };
+
+            card.appendChild(img);
+            rowDiv.appendChild(card);
         });
 
-        // Store metadata globally as requested
-        cardMetadata.set(String(item.id), { ...item });
+        container.appendChild(rowDiv);
 
-        cardDiv.appendChild(img);
-        itemDiv.appendChild(cardDiv);
-        return itemDiv;
+        // Reset pending row state
+        pendingRow = [];
+        pendingAspectRatioSum = 0;
     }
 
-    // 3. Load More Items Function
-    function loadMoreItems(count = 12) {
-        if (isLoading) return;
-        isLoading = true;
-        loader.style.display = 'block';
+    // 5. Process new items into rows
+    function processItems(newItems) {
+        activeItems = activeItems.concat(newItems);
 
-        console.log("Loading", count, "more items. Current index:", currentIndex);
+        for (const item of newItems) {
+            pendingRow.push(item);
+            pendingAspectRatioSum += item.aspectRatio;
 
-        const fragment = document.createDocumentFragment();
+            // Estimate the height this row would be if we closed it now
+            const containerWidth = container.offsetWidth;
+            const estimatedHeight = (containerWidth - ((pendingRow.length - 1) * CONFIG.gap)) / pendingAspectRatioSum;
 
-        for (let i = 0; i < count; i++) {
-            // TRUE INFINITE SCROLL: Loop back to the beginning when reaching the end
-            if (currentIndex >= totalImages) {
-                currentIndex = 0;
-                console.log("↻ Looping back to start of thumbnails array");
+            // If the row is tall enough, or we've hit a safety limit of items per row, flush it
+            if (estimatedHeight >= CONFIG.minRowHeight || pendingRow.length >= 12) {
+                flushRow();
+            }
+        }
+    }
+
+    // 6. DOM Trimming (Virtualization-lite)
+    // Prevents the browser from choking on hundreds of DOM nodes
+    function trimDOM() {
+        const rows = container.querySelectorAll('.justified-row');
+        if (rows.length > CONFIG.maxDomRows) {
+            let removedHeight = 0;
+
+            for (let i = 0; i < CONFIG.trimRowCount; i++) {
+                if (rows[i]) {
+                    removedHeight += rows[i].offsetHeight + CONFIG.gap;
+                    rows[i].remove();
+                }
             }
 
-            const nextItem = thumbnails[currentIndex];
-            currentIndex++;
+            // Add the removed height to the top spacer to prevent scroll jumping
+            const currentSpacerHeight = parseFloat(topSpacer.style.height || 0);
+            topSpacer.style.height = `${currentSpacerHeight + removedHeight}px`;
 
-            const cardElement = createCard(nextItem);
-            fragment.appendChild(cardElement);
+            console.log(`✓ Trimmed DOM. Spacer height: ${topSpacer.style.height}`);
         }
-
-        // Append all new items to the DOM at once (high performance)
-        container.appendChild(fragment);
-
-        // Brief timeout to allow DOM to register before hiding loader
-        setTimeout(() => {
-            isLoading = false;
-            loader.style.display = 'none';
-            console.log("✓ Batch layout complete.");
-        }, 300);
     }
 
-    // 4. Infinite Scroll Observer
+    // 7. Infinite Scroll Loader
+    function loadMoreItems() {
+        if (isLoading || currentIndex >= totalImages) {
+            sentinel.textContent = "End of gallery";
+            return;
+        }
+
+        isLoading = true;
+        sentinel.textContent = "Loading more images...";
+
+        const batch = [];
+        const count = Math.min(CONFIG.batchSize, totalImages - currentIndex);
+
+        for (let i = 0; i < count; i++) {
+            // Seamless infinite loop if desired (uncomment next line to loop forever)
+            // if (currentIndex >= totalImages) currentIndex = 0;
+
+            batch.push(processedThumbnails[currentIndex]);
+            currentIndex++;
+        }
+
+        // Use setTimeout to allow the browser to paint the loading state
+        setTimeout(() => {
+            processItems(batch);
+
+            // If there are leftover items in the pending row that didn't meet the min height,
+            // and we've reached the end of the data, flush them anyway.
+            if (currentIndex >= totalImages && pendingRow.length > 0) {
+                flushRow(true);
+            }
+
+            trimDOM();
+            isLoading = false;
+
+            if (currentIndex >= totalImages) {
+                sentinel.textContent = "All images loaded";
+            }
+        }, 50);
+    }
+
+    // 8. Intersection Observer for Infinite Scroll
     const scrollObserver = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && !isLoading) {
-            loadMoreItems(12); // Load 12 more items when the loader is visible
+            loadMoreItems();
         }
     }, {
-        rootMargin: '600px' // Triggers 600px before the user reaches the bottom
+        rootMargin: '600px' // Trigger load 600px before reaching the bottom
     });
 
-    scrollObserver.observe(loader);
+    scrollObserver.observe(sentinel);
 
-    // 5. Initial Load
-    const initialBatch = window.innerWidth < 800 ? 8 : 16;
-    loadMoreItems(initialBatch);
+    // 9. Resize Handler (Debounced)
+    // Re-flows the gallery to maintain perfect justification on window resize
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            console.log("↻ Recalculating justified layout for new width...");
 
-    // 6. Expose metadata globally (preserved from your original code)
+            // Save scroll position
+            const scrollY = window.scrollY;
+
+            // Clear DOM and reset state
+            container.innerHTML = '';
+            topSpacer.style.height = '0px';
+            pendingRow = [];
+            pendingAspectRatioSum = 0;
+
+            // Re-process all active items
+            processItems(activeItems);
+
+            // Restore scroll position
+            window.scrollTo(0, scrollY);
+        }, 250);
+    });
+
+    // 10. Initial Load
+    loadMoreItems();
+
+    // Expose metadata globally (preserved from your original requirements)
     window.getCardMetadata = function(id) {
-        return cardMetadata.get(String(id));
+        return processedThumbnails.find(item => String(item.id) === String(id));
     };
     window.getAllCardMetadata = function() {
-        return Array.from(cardMetadata.values());
+        return activeItems;
     };
 });
 </script>
 <!-- ========================================== -->
-<!-- END Gallery Infinite Flexbox Layout -->
+<!-- END Justified Infinite Mosaic Gallery -->
 <!-- ========================================== -->
 </body>
 </html>
