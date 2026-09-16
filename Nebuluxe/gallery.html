@@ -1114,7 +1114,6 @@ var particles;
         margin: 0 auto;
         padding: 140px 24px 24px 24px;
         z-index: 20;
-        column-count: 1 !important; /* Force disable any inherited column layouts */
     }
 
     .glass-card {
@@ -1144,12 +1143,13 @@ var particles;
         width: 100%;
         overflow: hidden;
         background: rgba(0, 0, 0, 0.2);
-        min-height: 150px; /* Fallback if aspect ratio is missing */
+        min-height: 150px; /* Safe fallback */
     }
+
+    /* CRITICAL FIX: height: auto ensures true aspect ratio, no cropping or stretching */
     .card-img-wrap img {
         width: 100%;
-        height: 100%;
-        object-fit: cover;
+        height: auto;
         display: block;
         transition: transform 0.5s ease;
     }
@@ -1183,7 +1183,7 @@ var particles;
     let observedCard = null;
 
     // ==========================================
-    // GLITCH-FREE MOSAIC LAYOUT ENGINE
+    // FLUID MOSAIC LAYOUT ENGINE
     // ==========================================
     function applyMasonry() {
         const cards = Array.from(container.children).filter(c => c.classList.contains('glass-card'));
@@ -1195,52 +1195,47 @@ var particles;
         const gap = 16;
         const containerWidth = container.offsetWidth;
 
-        // Determine columns based on screen width
+        // Fluid responsive columns (no rigid traps)
         let numColumns = 1;
         if (containerWidth >= 1280) numColumns = 4;
-        else if (containerWidth >= 1024) numColumns = 3;
-        else if (containerWidth >= 640) numColumns = 2;
+        else if (containerWidth >= 900) numColumns = 3;
+        else if (containerWidth >= 600) numColumns = 2;
 
         const columnWidth = (containerWidth - (gap * (numColumns - 1))) / numColumns;
         const columnHeights = new Array(numColumns).fill(0);
 
         cards.forEach(card => {
-            // 1. Set exact width
             card.style.width = `${columnWidth}px`;
 
-            // 2. Calculate height mathematically to prevent 0-height glitches
             const img = card.querySelector('img');
-            let cardHeight = 150; // Fallback minimum
+            let cardHeight = 150;
 
+            // Prioritize natural image dimensions for perfect aspect ratio math
             if (img && img.naturalWidth > 0) {
-                // Height = Width * (Native Height / Native Width)
                 cardHeight = columnWidth * (img.naturalHeight / img.naturalWidth);
             } else if (card.offsetHeight > 150) {
                 // Fallback to DOM measurement (works perfectly because aspect-ratio is pre-set)
                 cardHeight = card.offsetHeight;
             }
 
-            // 3. Find the shortest column
             const minHeight = Math.min(...columnHeights);
             const colIndex = columnHeights.indexOf(minHeight);
 
-            // 4. Position instantly (NO CSS transition on top/left)
+            // Position instantly
             card.style.left = `${colIndex * (columnWidth + gap)}px`;
             card.style.top = `${minHeight}px`;
 
-            // 5. Add to column height
             columnHeights[colIndex] += cardHeight + gap;
         });
 
-        // 6. Set container height so page scrolling works
         container.style.height = `${Math.max(...columnHeights)}px`;
     }
 
     // ==========================================
-    // INFINITE SCROLL LOGIC (Append, don't recycle)
+    // INFINITE SCROLL LOGIC (Seamless Loop)
     // ==========================================
     const scrollObserver = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
+        if (entries[0].isIntersecting && !isLoading) {
             loadMoreItems(7); // Load 7 more items when reaching the bottom
         }
     }, {
@@ -1250,9 +1245,7 @@ var particles;
     function observeLastCard() {
         const cards = container.querySelectorAll('.glass-card');
         if (cards.length > 0) {
-            if (observedCard) {
-                scrollObserver.unobserve(observedCard);
-            }
+            if (observedCard) scrollObserver.unobserve(observedCard);
             observedCard = cards[cards.length - 1];
             scrollObserver.observe(observedCard);
         }
@@ -1266,13 +1259,14 @@ var particles;
         let loadedCount = 0;
 
         for (let i = 0; i < count; i++) {
+            // TRUE INFINITE SCROLL: Loop back to the beginning when we run out of items
             if (currentIndex >= totalImages) {
-                // To loop infinitely, uncomment the next line:
-                // currentIndex = 0;
-                break;
+                currentIndex = 0;
             }
+
             const nextItem = thumbnails[currentIndex];
             currentIndex++;
+
             const card = createCard(nextItem);
             fragment.appendChild(card);
             loadedCount++;
@@ -1280,7 +1274,6 @@ var particles;
 
         if (loadedCount > 0) {
             container.appendChild(fragment);
-            // Apply masonry after new items are added to the DOM
             requestAnimationFrame(() => {
                 applyMasonry();
                 observeLastCard(); // Re-observe the new last card
@@ -1361,7 +1354,7 @@ var particles;
         resizeTimer = setTimeout(applyMasonry, 100);
     });
 
-    // Expose metadata globally as requested
+    // Expose metadata globally
     window.getCardMetadata = function(id) {
         return cardMetadata.get(String(id));
     };
