@@ -1887,13 +1887,10 @@ if (aboutPulldown) {
   /* ========== MASCOT POPUP (Bottom Left) ========== */
   .mascot-popup {
     position: fixed;
-    bottom: 3%;          /* Moved up from 20px */
-    left: 5%;             /* 10% from left edge */
+    bottom: 60px;
+    left: 2%;              /* Mascot position from left edge */
     z-index: 101;
-    display: flex;
-    flex-direction: column; /* Stack vertically: bubble on top, mascot below */
-    align-items: flex-end;  /* Right-align both items so bubble extends LEFT */
-    gap: 0;
+    width: 110px;          /* Container only as wide as mascot */
     font-family: 'Segoe UI', system-ui, sans-serif;
     pointer-events: none;
   }
@@ -1956,9 +1953,11 @@ if (aboutPulldown) {
 
   /* ========== SPEECH BUBBLE ========== */
   .speech-bubble {
-    position: relative;
+    position: absolute;
+    bottom: 100%;          /* Above the mascot */
+    right: 0;              /* Right edge aligns with mascot's right edge */
+    margin-bottom: 10px;
     width: 280px;
-    margin-bottom: 10px; /* Gap between bubble bottom and mascot top */
 
     background: rgba(25, 29, 30, 0.85);
     backdrop-filter: blur(16px) saturate(180%);
@@ -1972,10 +1971,9 @@ if (aboutPulldown) {
     color: #E0FFFF;
     pointer-events: auto;
 
-    /* Hidden by default */
     opacity: 0;
     transform: translateY(10px) scale(0.95);
-    transform-origin: bottom right; /* Expands from the corner nearest the mascot */
+    transform-origin: bottom right;
     transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
     visibility: hidden;
   }
@@ -2000,11 +1998,11 @@ if (aboutPulldown) {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
   }
 
-  /* ---- Tail: points DOWN toward the mascot ---- */
+  /* Tail points down toward mascot */
   .speech-tail {
     position: absolute;
     bottom: -10px;
-    right: 30px;          /* Aligned near the right edge (above the mascot) */
+    right: 40px;          /* Positioned to point near mascot center */
     width: 20px;
     height: 20px;
     background: rgba(25, 29, 30, 0.85);
@@ -2016,19 +2014,17 @@ if (aboutPulldown) {
     box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
   }
 
-  /* Covers the seam where the tail meets the bubble */
   .speech-bubble::before {
     content: '';
     position: absolute;
     bottom: -1px;
-    right: 26px;
+    right: 36px;
     width: 28px;
     height: 4px;
     background: rgba(25, 29, 30, 0.85);
     z-index: 1;
   }
 
-  /* Blinking caret */
   .speech-bubble.is-open .speech-text::after {
     content: '';
     display: inline-block;
@@ -2050,7 +2046,7 @@ if (aboutPulldown) {
   @media (max-width: 480px) {
     .mascot-popup {
       bottom: 40px;
-      left: 5%;
+      left: 2%;
     }
     .mascot-gif-wrapper {
       width: 80px;
@@ -2070,7 +2066,6 @@ if (aboutPulldown) {
 
 <!-- ========== MASCOT POPUP HTML ========== -->
 <div class="mascot-popup" id="mascotPopup">
-  <!-- Bubble comes first in the DOM so it renders ABOVE the mascot -->
   <div class="speech-bubble" id="speechBubble">
     <div class="speech-content">
       <p class="speech-text">
@@ -2081,10 +2076,9 @@ if (aboutPulldown) {
   </div>
 
   <div class="mascot-gif-wrapper" id="mascotTrigger">
-    <!-- CHANGE THE SRC BELOW TO YOUR ACTUAL GIF PATH -->
     <img
       src="Images/Eris.gif"
-      alt="Mascot"
+      alt="Eris"
       class="mascot-gif"
       loading="lazy"
     />
