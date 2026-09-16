@@ -38,7 +38,6 @@ html, body {
   width: 100%;
   height: 90px;
   display: grid;
-  /* 3 columns: logo area, centered title, empty spacer for perfect centering */
   grid-template-columns: 120px 1fr 120px;
   align-items: center;
   padding: 0 30px;
@@ -55,7 +54,7 @@ html, body {
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #b49a5d; /* Matches the logo gold/beige */
+  color: #b49a5d;
   text-shadow: 0 0 10px rgba(180, 154, 93, 0.3);
   margin: 0;
 }
@@ -64,15 +63,15 @@ html, body {
 /* Glowing Logo (Adapted for Banner) */
 /* ========================================== */
 .glowing-logo-wrapper {
-  position: relative; /* Changed from fixed to flow with banner */
+  position: relative;
   left: auto;
   top: auto;
   transform: none;
-  width: 90px; /* Resized to fit nicely in the banner */
+  width: 90px;
   z-index: 101;
-  pointer-events: auto; /* Allows clicking */
+  pointer-events: auto;
   justify-self: start;
-  text-decoration: none; /* Prevents default link underlines */
+  text-decoration: none;
   color: inherit;
   cursor: pointer;
 }
@@ -81,11 +80,23 @@ html, body {
   width: 100%;
   height: auto;
   display: block;
-  /* Layered drop-shadows create a realistic, shape-tracing glow */
+  /* Base layered drop-shadows */
   filter: drop-shadow(0 0 8px rgba(180, 154, 93, 0.7))
           drop-shadow(0 0 15px rgba(180, 154, 93, 0.5))
           drop-shadow(0 0 30px rgba(255, 215, 0, 0.3));
   animation: logo-glow-pulse 4s ease-in-out infinite alternate;
+  /* Added smooth transition for the hover effect */
+  transition: filter 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Much Brighter Hover Effect */
+.glowing-logo-wrapper:hover .glowing-logo-svg {
+  animation-play-state: paused; /* Freezes the pulse */
+  filter: drop-shadow(0 0 15px rgba(255, 215, 0, 1))
+          drop-shadow(0 0 35px rgba(180, 154, 93, 1))
+          drop-shadow(0 0 70px rgba(255, 215, 0, 0.8))
+          drop-shadow(0 0 100px rgba(255, 240, 150, 0.6));
+  transform: scale(1.08); /* Slight pop-out effect */
 }
 
 @keyframes logo-glow-pulse {
@@ -106,7 +117,6 @@ html, body {
 
 <!-- Top Banner -->
 <header class="top-banner">
-  <!-- Changed from <div> to <a> to make it clickable -->
   <a href="index.html" class="glowing-logo-wrapper" aria-label="Go to Home">
     <svg class="glowing-logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1767 1270">
       <g fill="#b49a5d">
@@ -118,7 +128,6 @@ html, body {
 
   <h1 class="banner-title">Gallery</h1>
 
-  <!-- Empty spacer to balance the grid and keep the title perfectly centered -->
   <div></div>
 </header>
 
