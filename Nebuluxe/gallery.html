@@ -696,5 +696,572 @@ var particles;
 	}
 }());
 </script>
+<!-- ========================================== -->
+<!-- CYBERPUNK MECHA MUSIC PLAYER -->
+<!-- PASTE EVERYTHING BELOW THIS LINE BEFORE </body> -->
+<!-- ========================================== -->
+
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --neon-orange: #ff5e00;
+    --neon-glow: rgba(255, 94, 0, 0.6);
+    --dark-metal: #0a0a0a;
+    --grunge-gray: #1a1a1a;
+    --mech-border: 2px solid var(--neon-orange);
+  }
+
+  .music-player-container {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    z-index: 9999;
+    font-family: 'Share Tech Mono', monospace;
+    perspective: 1000px;
+  }
+
+  /* --- THE ACTIVATION CORE (TAB) --- */
+  .activation-core {
+    width: 60px;
+    height: 60px;
+    background: var(--dark-metal);
+    border: var(--mech-border);
+    clip-path: polygon(20% 0%, 100% 0%, 100% 80%, 80% 100%, 0% 100%, 0% 20%);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px var(--neon-glow), inset 0 0 10px rgba(255, 94, 0, 0.2);
+    position: relative;
+    z-index: 10001;
+  }
+
+  .activation-core:hover {
+    background: var(--neon-orange);
+    box-shadow: 0 0 25px var(--neon-orange);
+  }
+
+  .activation-core:hover .core-icon {
+    color: var(--dark-metal);
+    animation: icon-glitch 0.3s ease-in-out;
+  }
+
+  .core-icon {
+    color: var(--neon-orange);
+    font-size: 32px;
+    transition: color 0.3s ease;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* --- SONAR WAVES (Positioned via JavaScript at icon center) --- */
+  .sonar-container {
+    position: fixed;
+    width: 0;
+    height: 0;
+    z-index: 10000;
+    pointer-events: none;
+  }
+
+  .sonar-wave {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30px;
+    height: 30px;
+    border: 2px solid var(--neon-orange);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+    animation: sonar-pulse 6s ease-out 1;
+  }
+
+  .sonar-wave:nth-child(1) {
+    animation-delay: 0s;
+  }
+
+  .sonar-wave:nth-child(2) {
+    animation-delay: 2s;
+  }
+
+  .sonar-wave:nth-child(3) {
+    animation-delay: 4s;
+  }
+
+  .music-player-container.panel-open .sonar-wave {
+    animation: none;
+    opacity: 0;
+  }
+
+  @keyframes sonar-pulse {
+    0% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 0.8;
+      border-width: 3px;
+    }
+    50% {
+      opacity: 0.4;
+      border-width: 2px;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(8.6);
+      opacity: 0;
+      border-width: 1px;
+    }
+  }
+
+  /* --- ICON GLITCH EFFECT --- */
+  @keyframes icon-glitch {
+    0%, 100% {
+      transform: translate(0);
+      text-shadow: none;
+    }
+    10% {
+      transform: translate(-2px, 1px);
+      text-shadow: 2px 0 #ff0000, -2px 0 #00ffff;
+    }
+    20% {
+      transform: translate(2px, -1px);
+      text-shadow: -2px 0 #ff0000, 2px 0 #00ffff;
+    }
+    30% {
+      transform: translate(-1px, 2px);
+      text-shadow: 1px 0 #ff0000, -1px 0 #00ffff;
+    }
+    40% {
+      transform: translate(1px, -2px);
+      text-shadow: -1px 0 #ff0000, 1px 0 #00ffff;
+    }
+    50% {
+      transform: translate(0);
+      text-shadow: none;
+    }
+  }
+
+  /* --- THE TRANSFORMER PANEL (Iris Aperture Animation) --- */
+  .mecha-panel {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    width: 340px;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+
+    clip-path: polygon(50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%);
+    transition: clip-path 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    transform-origin: top right;
+  }
+
+  .mecha-panel.open {
+    pointer-events: auto;
+    clip-path: polygon(
+      100% 0%,
+      100% 0%,
+      100% 100%,
+      100% 100%,
+      0% 100%,
+      0% 100%,
+      0% 0%,
+      0% 0%
+    );
+  }
+
+  .mecha-panel {
+    transform: rotate(-5deg) scale(0.95);
+    transition: clip-path 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+                transform 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .mecha-panel.open {
+    transform: rotate(0deg) scale(1);
+  }
+
+  .mech-plate {
+    background: var(--dark-metal);
+    border: 1px solid #333;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mech-plate::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.15),
+      rgba(0, 0, 0, 0.15) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .plate-header {
+    height: 40px;
+    border-bottom: var(--mech-border);
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    justify-content: space-between;
+    color: var(--neon-orange);
+    font-size: 12px;
+    letter-spacing: 2px;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 10% 100%, 0 70%);
+  }
+
+  .plate-main {
+    padding: 20px;
+    border-bottom: 1px dashed #444;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    clip-path: polygon(0 0, 100% 0, 100% 95%, 95% 100%, 0 100%);
+  }
+
+  .plate-controls {
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+    background: linear-gradient(180deg, var(--grunge-gray) 0%, var(--dark-metal) 100%);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 30%);
+  }
+
+  .mech-hinge {
+    position: absolute;
+    width: 15px;
+    height: 100%;
+    background: repeating-linear-gradient(45deg, #222, #222 5px, #111 5px, #111 10px);
+    border-left: 1px solid var(--neon-orange);
+    right: -15px;
+    top: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease 0.3s;
+  }
+
+  .mecha-panel.open .mech-hinge {
+    opacity: 1;
+  }
+
+  .oval-frame {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--neon-orange);
+    box-shadow: 0 0 15px var(--neon-glow), inset 0 0 20px rgba(0,0,0,0.8);
+    position: relative;
+    background: #000;
+  }
+
+  .oval-frame::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.15"/></svg>');
+    pointer-events: none;
+    mix-blend-mode: overlay;
+  }
+
+  .album-art {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: contrast(1.1) saturate(0.8);
+  }
+
+  .song-info {
+    text-align: center;
+    width: 100%;
+  }
+
+  .song-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .artist-name {
+    font-size: 12px;
+    color: var(--neon-orange);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .control-btn {
+    background: transparent;
+    border: 1px solid #444;
+    color: var(--neon-orange);
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    clip-path: polygon(20% 0%, 100% 0%, 100% 80%, 80% 100%, 0% 100%, 0% 20%);
+  }
+
+  .control-btn:hover {
+    background: var(--neon-orange);
+    color: var(--dark-metal);
+    box-shadow: 0 0 15px var(--neon-glow);
+    border-color: var(--neon-orange);
+  }
+
+  .play-btn {
+    width: 65px;
+    height: 65px;
+    border: 2px solid var(--neon-orange);
+    background: rgba(255, 94, 0, 0.1);
+  }
+
+  .play-btn svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .glitch-text {
+    animation: glitch-anim 0.3s cubic-bezier(.25, .46, .45, .94) both;
+  }
+
+  @keyframes glitch-anim {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+  }
+
+  .blink {
+    animation: blinker 1s linear infinite;
+  }
+  @keyframes blinker {
+    50% { opacity: 0; }
+  }
+
+  @media (max-width: 768px) {
+    .music-player-container { top: 10px; right: 10px; }
+    .mecha-panel { width: 280px; }
+    .oval-frame { width: 130px; height: 130px; }
+  }
+</style>
+
+<!-- The Player HTML Structure -->
+<div class="music-player-container" id="player-container">
+  <!-- Sonar container is now a direct child of body, positioned via JavaScript -->
+  <div id="sonar-container" class="sonar-container">
+    <div class="sonar-wave"></div>
+    <div class="sonar-wave"></div>
+    <div class="sonar-wave"></div>
+  </div>
+
+  <div id="activation-core" class="activation-core">
+    <span class="core-icon">♪</span>
+  </div>
+
+  <div id="mecha-panel" class="mecha-panel">
+    <div class="mech-plate plate-header">
+      <span>Wetware_Vibe_Alignment.exe</span>
+      <span class="blink">▶_</span>
+    </div>
+
+    <div class="mech-plate plate-main">
+      <div class="oval-frame">
+        <img id="album-art" src="https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=NO+DISC" alt="Album Art" class="album-art">
+      </div>
+      <div class="song-info">
+        <div id="song-title" class="song-title">STANDBY</div>
+        <div id="artist-name" class="artist-name">WAITING_FOR_INPUT</div>
+      </div>
+    </div>
+
+    <div class="mech-plate plate-controls">
+      <button id="play-pause-btn" class="control-btn play-btn" title="Play">
+        <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pause-icon" viewBox="0 0 24 24" fill="currentColor" style="display: none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+
+      <button id="shuffle-btn" class="control-btn shuffle-btn" title="Shuffle Next">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="mech-hinge"></div>
+  </div>
+</div>
+
+<!-- The Player JavaScript Logic -->
+<script src="playlist.js"></script>
+<script>
+  let audio = new Audio();
+  let currentSongIndex = 0;
+  let isPlaying = false;
+  let isOpen = false;
+
+  const playerContainer = document.getElementById('player-container');
+  const activationCore = document.getElementById('activation-core');
+  const mechaPanel = document.getElementById('mecha-panel');
+  const playPauseBtn = document.getElementById('play-pause-btn');
+  const shuffleBtn = document.getElementById('shuffle-btn');
+  const songTitle = document.getElementById('song-title');
+  const artistName = document.getElementById('artist-name');
+  const albumArtImg = document.getElementById('album-art');
+  const playIcon = document.getElementById('play-icon');
+  const pauseIcon = document.getElementById('pause-icon');
+  const sonarContainer = document.getElementById('sonar-container');
+
+  // Position sonar container at the exact center of the icon
+  function positionSonar() {
+    const rect = activationCore.getBoundingClientRect();
+    const centerX = rect.left + (rect.width / 2);
+    const centerY = rect.top + (rect.height / 2);
+
+    sonarContainer.style.left = centerX + 'px';
+    sonarContainer.style.top = centerY + 'px';
+  }
+
+  // Position sonar on load and window resize
+  window.addEventListener('load', positionSonar);
+  window.addEventListener('resize', positionSonar);
+  positionSonar(); // Initial position
+
+  function updateUI() {
+    playIcon.style.display = isPlaying ? 'none' : 'block';
+    pauseIcon.style.display = isPlaying ? 'block' : 'none';
+    playPauseBtn.title = isPlaying ? 'Pause' : 'Play';
+
+    const currentSong = playlist[currentSongIndex];
+
+    songTitle.classList.remove('glitch-text');
+    artistName.classList.remove('glitch-text');
+    void songTitle.offsetWidth;
+    songTitle.classList.add('glitch-text');
+    artistName.classList.add('glitch-text');
+
+    songTitle.textContent = currentSong.title;
+    artistName.textContent = currentSong.artist;
+
+    albumArtImg.src = currentSong.art || 'https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=NO+DISC';
+  }
+
+  function togglePlayer() {
+    isOpen = !isOpen;
+    mechaPanel.classList.toggle('open', isOpen);
+    playerContainer.classList.toggle('panel-open', isOpen);
+
+    const coreIcon = document.querySelector('.core-icon');
+    coreIcon.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+  }
+
+  function togglePlayPause() {
+    if (isPlaying) {
+      audio.pause();
+    } else {
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.error("Play promise failed:", error);
+          alert("SYSTEM ERROR: Audio file not found or blocked. Check console (F12).");
+        });
+      }
+    }
+  }
+
+  function shuffleNext() {
+    if (playlist.length === 0) return;
+
+    let nextIndex;
+    do {
+      nextIndex = Math.floor(Math.random() * playlist.length);
+    } while (nextIndex === currentSongIndex && playlist.length > 1);
+
+    currentSongIndex = nextIndex;
+    audio.src = playlist[currentSongIndex].src;
+    audio.play().catch(err => console.error('Play error:', err));
+  }
+
+  function saveState() {
+    const state = {
+      song: playlist[currentSongIndex].src,
+      position: audio.currentTime,
+      playing: !audio.paused,
+      songIndex: currentSongIndex
+    };
+    sessionStorage.setItem('musicState', JSON.stringify(state));
+  }
+
+  function restoreState() {
+    const savedState = sessionStorage.getItem('musicState');
+    if (savedState) {
+      try {
+        const state = JSON.parse(savedState);
+        const foundIndex = playlist.findIndex(song => song.src === state.song);
+        currentSongIndex = foundIndex !== -1 ? foundIndex : 0;
+        audio.src = playlist[currentSongIndex].src;
+
+        audio.addEventListener('loadedmetadata', () => {
+          audio.currentTime = state.position;
+          if (state.playing) {
+            audio.play().catch(err => console.error('Autoplay prevented on restore:', err));
+          }
+        }, { once: true });
+      } catch (e) {
+        console.error('Failed to restore music state:', e);
+        currentSongIndex = 0;
+        audio.src = playlist[0].src;
+      }
+    } else {
+      currentSongIndex = 0;
+      audio.src = playlist[0].src;
+    }
+  }
+
+  activationCore.addEventListener('click', togglePlayer);
+  playPauseBtn.addEventListener('click', togglePlayPause);
+  shuffleBtn.addEventListener('click', shuffleNext);
+
+  audio.addEventListener('play', () => { isPlaying = true; updateUI(); });
+  audio.addEventListener('pause', () => { isPlaying = false; updateUI(); });
+  audio.addEventListener('ended', () => shuffleNext());
+
+  audio.addEventListener('error', () => {
+    let errorMsg = "Unknown error";
+    if (audio.error) {
+      switch (audio.error.code) {
+        case 1: errorMsg = "Aborted"; break;
+        case 2: errorMsg = "Network Error"; break;
+        case 3: errorMsg = "Decode Error"; break;
+        case 4: errorMsg = "File Not Found / Unsupported Format"; break;
+      }
+    }
+    console.error("🚨 AUDIO LOAD ERROR:", errorMsg, "| Attempted to load:", audio.src);
+  });
+
+  window.addEventListener('beforeunload', saveState);
+
+  restoreState();
+  updateUI();
+</script>
+<!-- ========================================== -->
+<!-- END CYBERPUNK MECHA MUSIC PLAYER -->
+<!-- ========================================== -->
 </body>
 </html>
