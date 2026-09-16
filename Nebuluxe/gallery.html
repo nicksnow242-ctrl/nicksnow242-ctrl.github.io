@@ -698,17 +698,18 @@ var particles;
 </script>
 <!-- ========================================== -->
 <!-- ========================================== -->
-<!-- WHITE & BEIGE MUSIC PLAYER -->
-<!-- Replace your entire old music player section with this -->
+<!-- CYBERPUNK MECHA MUSIC PLAYER (REVERTED) -->
 <!-- ========================================== -->
+
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
 <style>
   :root {
-    --mech-accent: #b49a5d;
-    --mech-glow: rgba(180, 154, 93, 0.5);
-    --mech-bg: rgba(255, 253, 245, 0.95);
-    --mech-dark: #5C4A32;
-    --mech-border: 2px solid var(--mech-accent);
+    --neon-orange: #ff5e00;
+    --neon-glow: rgba(255, 94, 0, 0.6);
+    --dark-metal: #0a0a0a;
+    --grunge-gray: #1a1a1a;
+    --mech-border: 2px solid var(--neon-orange);
   }
 
   .music-player-container {
@@ -716,14 +717,14 @@ var particles;
     top: 30px;
     right: 30px;
     z-index: 9999;
-    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Share Tech Mono', monospace;
     perspective: 1000px;
   }
 
   .activation-core {
     width: 60px;
     height: 60px;
-    background: var(--mech-bg);
+    background: var(--dark-metal);
     border: var(--mech-border);
     clip-path: polygon(20% 0%, 100% 0%, 100% 80%, 80% 100%, 0% 100%, 0% 20%);
     cursor: pointer;
@@ -731,22 +732,23 @@ var particles;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
-    box-shadow: 0 0 15px var(--mech-glow), inset 0 0 10px rgba(180, 154, 93, 0.2);
+    box-shadow: 0 0 15px var(--neon-glow), inset 0 0 10px rgba(255, 94, 0, 0.2);
     position: relative;
     z-index: 10001;
   }
 
   .activation-core:hover {
-    background: var(--mech-accent);
-    box-shadow: 0 0 25px var(--mech-glow);
+    background: var(--neon-orange);
+    box-shadow: 0 0 25px var(--neon-orange);
   }
 
   .activation-core:hover .core-icon {
-    color: #FFFFFF;
+    color: var(--dark-metal);
+    animation: icon-glitch 0.3s ease-in-out;
   }
 
   .core-icon {
-    color: var(--mech-accent);
+    color: var(--neon-orange);
     font-size: 32px;
     transition: color 0.3s ease;
     position: relative;
@@ -767,7 +769,7 @@ var particles;
     left: 0;
     width: 30px;
     height: 30px;
-    border: 2px solid var(--mech-accent);
+    border: 2px solid var(--neon-orange);
     border-radius: 50%;
     transform: translate(-50%, -50%) scale(1);
     opacity: 0;
@@ -787,6 +789,15 @@ var particles;
     0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; border-width: 3px; }
     50% { opacity: 0.4; border-width: 2px; }
     100% { transform: translate(-50%, -50%) scale(8.6); opacity: 0; border-width: 1px; }
+  }
+
+  @keyframes icon-glitch {
+    0%, 100% { transform: translate(0); text-shadow: none; }
+    10% { transform: translate(-2px, 1px); text-shadow: 2px 0 #ff0000, -2px 0 #00ffff; }
+    20% { transform: translate(2px, -1px); text-shadow: -2px 0 #ff0000, 2px 0 #00ffff; }
+    30% { transform: translate(-1px, 2px); text-shadow: 1px 0 #ff0000, -1px 0 #00ffff; }
+    40% { transform: translate(1px, -2px); text-shadow: -1px 0 #ff0000, 1px 0 #00ffff; }
+    50% { transform: translate(0); text-shadow: none; }
   }
 
   .mecha-panel {
@@ -810,11 +821,19 @@ var particles;
   }
 
   .mech-plate {
-    background: var(--mech-bg);
-    border: 1px solid rgba(180, 154, 93, 0.3);
+    background: var(--dark-metal);
+    border: 1px solid #333;
     position: relative;
     overflow: hidden;
-    color: var(--mech-dark);
+  }
+
+  .mech-plate::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15) 1px, transparent 1px, transparent 2px);
+    pointer-events: none;
+    z-index: 2;
   }
 
   .plate-header {
@@ -824,16 +843,15 @@ var particles;
     align-items: center;
     padding: 0 15px;
     justify-content: space-between;
-    color: var(--mech-accent);
+    color: var(--neon-orange);
     font-size: 12px;
-    font-weight: 600;
     letter-spacing: 2px;
     clip-path: polygon(0 0, 100% 0, 100% 100%, 10% 100%, 0 70%);
   }
 
   .plate-main {
     padding: 20px;
-    border-bottom: 1px dashed rgba(180, 154, 93, 0.3);
+    border-bottom: 1px dashed #444;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -847,7 +865,7 @@ var particles;
     align-items: center;
     justify-content: center;
     gap: 25px;
-    background: linear-gradient(180deg, rgba(242, 232, 213, 0.5) 0%, rgba(255, 253, 245, 0.95) 100%);
+    background: linear-gradient(180deg, var(--grunge-gray) 0%, var(--dark-metal) 100%);
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 30%);
   }
 
@@ -855,8 +873,8 @@ var particles;
     position: absolute;
     width: 15px;
     height: 100%;
-    background: repeating-linear-gradient(45deg, rgba(180, 154, 93, 0.1), rgba(180, 154, 93, 0.1) 5px, rgba(180, 154, 93, 0.2) 5px, rgba(180, 154, 93, 0.2) 10px);
-    border-left: 1px solid var(--mech-accent);
+    background: repeating-linear-gradient(45deg, #222, #222 5px, #111 5px, #111 10px);
+    border-left: 1px solid var(--neon-orange);
     right: -15px;
     top: 0;
     opacity: 0;
@@ -870,16 +888,26 @@ var particles;
     height: 160px;
     border-radius: 50%;
     overflow: hidden;
-    border: 3px solid var(--mech-accent);
-    box-shadow: 0 0 15px var(--mech-glow), inset 0 0 20px rgba(180, 154, 93, 0.2);
+    border: 3px solid var(--neon-orange);
+    box-shadow: 0 0 15px var(--neon-glow), inset 0 0 20px rgba(0,0,0,0.8);
     position: relative;
-    background: #fff;
+    background: #000;
+  }
+
+  .oval-frame::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.15"/></svg>');
+    pointer-events: none;
+    mix-blend-mode: overlay;
   }
 
   .album-art {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    filter: contrast(1.1) saturate(0.8);
   }
 
   .song-info { text-align: center; width: 100%; }
@@ -887,9 +915,10 @@ var particles;
   .song-title {
     font-size: 16px;
     font-weight: bold;
-    color: var(--mech-dark);
+    color: #fff;
     text-transform: uppercase;
     letter-spacing: 1px;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
     margin-bottom: 5px;
     white-space: nowrap;
     overflow: hidden;
@@ -898,15 +927,15 @@ var particles;
 
   .artist-name {
     font-size: 12px;
-    color: var(--mech-accent);
+    color: var(--neon-orange);
     letter-spacing: 2px;
     text-transform: uppercase;
   }
 
   .control-btn {
     background: transparent;
-    border: 1px solid rgba(180, 154, 93, 0.4);
-    color: var(--mech-accent);
+    border: 1px solid #444;
+    color: var(--neon-orange);
     cursor: pointer;
     width: 50px;
     height: 50px;
@@ -918,20 +947,31 @@ var particles;
   }
 
   .control-btn:hover {
-    background: var(--mech-accent);
-    color: #FFFFFF;
-    box-shadow: 0 0 15px var(--mech-glow);
-    border-color: var(--mech-accent);
+    background: var(--neon-orange);
+    color: var(--dark-metal);
+    box-shadow: 0 0 15px var(--neon-glow);
+    border-color: var(--neon-orange);
   }
 
   .play-btn {
     width: 65px;
     height: 65px;
-    border: 2px solid var(--mech-accent);
-    background: rgba(180, 154, 93, 0.1);
+    border: 2px solid var(--neon-orange);
+    background: rgba(255, 94, 0, 0.1);
   }
 
   .play-btn svg { width: 28px; height: 28px; }
+
+  .glitch-text { animation: glitch-anim 0.3s cubic-bezier(.25, .46, .45, .94) both; }
+
+  @keyframes glitch-anim {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+  }
 
   .blink { animation: blinker 1s linear infinite; }
   @keyframes blinker { 50% { opacity: 0; } }
@@ -956,13 +996,13 @@ var particles;
 
   <div id="mecha-panel" class="mecha-panel">
     <div class="mech-plate plate-header">
-      <span>Audio_Vibe_Alignment.exe</span>
+      <span>Wetware_Vibe_Alignment.exe</span>
       <span class="blink">▶_</span>
     </div>
 
     <div class="mech-plate plate-main">
       <div class="oval-frame">
-        <img id="album-art" src="https://via.placeholder.com/160x160/F2E8D5/b49a5d?text=NO+DISC" alt="Album Art" class="album-art">
+        <img id="album-art" src="https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=NO+DISC" alt="Album Art" class="album-art">
       </div>
       <div class="song-info">
         <div id="song-title" class="song-title">STANDBY</div>
@@ -988,10 +1028,10 @@ var particles;
 </div>
 <script src="playlist.js"></script>
 <script>
-  // Fallback playlist in case playlist.js is missing or fails to load
+  // Fallback playlist ensures the player appears even if playlist.js is missing
   const playlist = (typeof window.playlist !== 'undefined') ? window.playlist : [
-    { title: "Ambient Dreams", artist: "Eris", src: "audio/track1.mp3", art: "https://via.placeholder.com/160x160/F2E8D5/b49a5d?text=TRACK+1" },
-    { title: "Golden Hues", artist: "The Architects", src: "audio/track2.mp3", art: "https://via.placeholder.com/160x160/F2E8D5/b49a5d?text=TRACK+2" }
+    { title: "Cyber Dreams", artist: "Neon Grid", src: "audio/track1.mp3", art: "https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=TRACK+1" },
+    { title: "System Override", artist: "Mainframe", src: "audio/track2.mp3", art: "https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=TRACK+2" }
   ];
 
   let audio = new Audio();
@@ -1031,7 +1071,7 @@ var particles;
     const currentSong = playlist[currentSongIndex];
     songTitle.textContent = currentSong.title;
     artistName.textContent = currentSong.artist;
-    albumArtImg.src = currentSong.art || 'https://via.placeholder.com/160x160/F2E8D5/b49a5d?text=NO+DISC';
+    albumArtImg.src = currentSong.art || 'https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=NO+DISC';
   }
 
   function togglePlayer() {
@@ -1078,7 +1118,6 @@ var particles;
     updateUI();
   }
 </script>
-
 <!-- ========================================== -->
 <!-- END CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- ========================================== -->
