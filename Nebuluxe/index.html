@@ -1879,5 +1879,252 @@ if (aboutPulldown) {
 <!-- ========================================== -->
 <!-- END Glowing Logo -->
 <!-- ========================================== -->
+<!-- ========================================== -->
+<!-- Eris Sprite -->
+<!-- ========================================== -->
+<!-- ========== MASCOT POPUP STYLES ========== -->
+<style>
+  /* ========== MASCOT POPUP (Bottom Left) ========== */
+  .mascot-popup {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 101; /* Sits above the about-pulldown */
+    display: flex;
+    align-items: flex-end;
+    gap: 0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    pointer-events: none; /* Let clicks pass through container */
+  }
+
+  /* ========== MASCOT GIF ========== */
+  .mascot-gif-wrapper {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
+    animation: mascotFloat 3.5s ease-in-out infinite;
+  }
+
+  .mascot-gif {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.6))
+            drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+    transition: filter 0.3s ease, transform 0.3s ease;
+  }
+
+  .mascot-gif-wrapper:hover .mascot-gif {
+    filter: drop-shadow(0 0 18px rgba(0, 255, 255, 0.95))
+            drop-shadow(0 6px 12px rgba(0, 0, 0, 0.6));
+    transform: scale(1.08);
+  }
+
+  .mascot-gif-wrapper:active .mascot-gif {
+    transform: scale(0.95);
+  }
+
+  /* Pulsing glow ring under the mascot */
+  .mascot-glow {
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 12px;
+    background: radial-gradient(ellipse at center,
+                rgba(0, 255, 255, 0.5) 0%,
+                rgba(0, 255, 255, 0) 70%);
+    border-radius: 50%;
+    filter: blur(4px);
+    animation: glowPulse 2.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes mascotFloat {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+  }
+
+  @keyframes glowPulse {
+    0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+    50%      { opacity: 1;   transform: translateX(-50%) scale(1.15); }
+  }
+
+  /* ========== SPEECH BUBBLE ========== */
+  .speech-bubble {
+    position: relative;
+    width: 280px;
+    margin-bottom: 20px; /* Space for the mascot below */
+    margin-right: -10px; /* Overlap slightly toward mascot */
+
+    background: rgba(25, 29, 30, 0.85);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+
+    border: 1px solid rgba(0, 255, 255, 0.4);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5),
+                0 0 20px rgba(0, 255, 255, 0.1);
+
+    color: #E0FFFF;
+    pointer-events: auto;
+
+    /* Hidden by default */
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+    transform-origin: bottom right; /* Expands from mascot direction */
+    transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
+    visibility: hidden;
+  }
+
+  .speech-bubble.is-open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    visibility: visible;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6),
+                0 0 30px rgba(0, 255, 255, 0.3);
+  }
+
+  .speech-content {
+    padding: 18px 20px;
+  }
+
+  .speech-text {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(224, 255, 255, 0.9);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  }
+
+  /* Speech bubble tail pointing down-right toward mascot */
+  .speech-tail {
+    position: absolute;
+    bottom: -10px;
+    right: 24px;
+    width: 20px;
+    height: 20px;
+    background: rgba(25, 29, 30, 0.85);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border-right: 1px solid rgba(0, 255, 255, 0.4);
+    border-bottom: 1px solid rgba(0, 255, 255, 0.4);
+    transform: rotate(45deg);
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3),
+                0 0 12px rgba(0, 255, 255, 0.15);
+  }
+
+  /* Hide the top edges of the tail where it meets the bubble */
+  .speech-bubble::before {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    right: 20px;
+    width: 28px;
+    height: 4px;
+    background: rgba(25, 29, 30, 0.85);
+    z-index: 1;
+  }
+
+  /* Optional: blinking caret animation for extra flair */
+  .speech-bubble.is-open .speech-text::after {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 12px;
+    margin-left: 2px;
+    background: #00FFFF;
+    vertical-align: middle;
+    animation: caretBlink 1s steps(2) infinite;
+    box-shadow: 0 0 6px rgba(0, 255, 255, 0.8);
+  }
+
+  @keyframes caretBlink {
+    0%, 50%   { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width: 480px) {
+    .mascot-popup {
+      bottom: 12px;
+      left: 12px;
+    }
+    .mascot-gif-wrapper {
+      width: 80px;
+      height: 80px;
+    }
+    .speech-bubble {
+      width: 220px;
+    }
+    .speech-content {
+      padding: 14px 16px;
+    }
+    .speech-text {
+      font-size: 13px;
+    }
+  }
+</style>
+
+<!-- ========== MASCOT POPUP HTML ========== -->
+<div class="mascot-popup" id="mascotPopup">
+  <div class="speech-bubble" id="speechBubble">
+    <div class="speech-content">
+      <p class="speech-text">
+        👋 Hey there, traveler! Click me again to close, or explore the about panel on the right →
+      </p>
+    </div>
+    <!-- Tail pointing down-left toward the mascot -->
+    <div class="speech-tail"></div>
+  </div>
+
+  <div class="mascot-gif-wrapper" id="mascotTrigger">
+    <!-- CHANGE THE SRC BELOW TO YOUR ACTUAL GIF PATH -->
+    <img
+      src="images/mascot.gif"
+      alt="Mascot"
+      class="mascot-gif"
+      loading="lazy"
+    />
+    <div class="mascot-glow"></div>
+  </div>
+</div>
+
+<!-- ========== MASCOT POPUP SCRIPT ========== -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const trigger = document.getElementById('mascotTrigger');
+    const bubble  = document.getElementById('speechBubble');
+
+    if (!trigger || !bubble) return;
+
+    // Toggle on click
+    trigger.addEventListener('click', function(e) {
+      e.stopPropagation();
+      bubble.classList.toggle('is-open');
+    });
+
+    // Close when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!bubble.contains(e.target) && !trigger.contains(e.target)) {
+        bubble.classList.remove('is-open');
+      }
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        bubble.classList.remove('is-open');
+      }
+    });
+  });
+</script>
+<!-- ========================================== -->
+<!-- END Eris Sprite -->
+<!-- ========================================== -->
 </body>
 </html>
