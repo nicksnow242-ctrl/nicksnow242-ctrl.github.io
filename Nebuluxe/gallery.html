@@ -1089,39 +1089,28 @@ var particles;
 <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
 
 <style>
-    /* Clean, minimal background */
     body {
         background-color: #ffffff !important;
         margin: 0;
         font-family: system-ui, -apple-system, sans-serif;
     }
 
-    /* Gallery container */
     .gallery {
         max-width: 1400px;
         margin: 0 auto;
         padding: 24px;
     }
 
-    /* Grid item styling */
     .grid-item {
         width: 25%;
         padding: 8px;
         box-sizing: border-box;
     }
 
-    /* Responsive widths */
-    @media (max-width: 1200px) {
-        .grid-item { width: 33.333%; }
-    }
-    @media (max-width: 800px) {
-        .grid-item { width: 50%; }
-    }
-    @media (max-width: 500px) {
-        .grid-item { width: 100%; }
-    }
+    @media (max-width: 1200px) { .grid-item { width: 33.333%; } }
+    @media (max-width: 800px)  { .grid-item { width: 50%; } }
+    @media (max-width: 500px)  { .grid-item { width: 100%; } }
 
-    /* Card styling - clean and minimal */
     .mosaic-card {
         border-radius: 12px;
         overflow: hidden;
@@ -1138,19 +1127,18 @@ var particles;
         border-color: #cbd5e1;
     }
 
-    /* True image aspect ratio */
     .mosaic-card img {
         width: 100%;
         height: auto;
         display: block;
     }
 
-    /* Loading indicator */
     .loading-indicator {
         text-align: center;
         padding: 40px;
         color: #94a3b8;
         font-size: 14px;
+        display: none; /* Hidden by default */
     }
 </style>
 
@@ -1159,13 +1147,18 @@ var particles;
     <div id="loading-indicator" class="loading-indicator">Loading more images...</div>
 </div>
 
+<!-- Load thumbnail.js BEFORE the main script -->
 <script src="thumbnail.js"></script>
+
 <script>
 $(document).ready(function() {
     if (typeof thumbnails === 'undefined') {
-        console.error("thumbnail.js did not load or 'thumbnails' is not defined globally.");
+        console.error("ERROR: thumbnail.js did not load or 'thumbnails' is not defined.");
+        $('#masonry-grid').html('<p style="color:red; text-align:center; padding: 40px;">Error: Could not load thumbnail data. Check console.</p>');
         return;
     }
+
+    console.log("✓ Thumbnails loaded successfully. Total items:", thumbnails.length);
 
     const $grid = $('#masonry-grid');
     const $loading = $('#loading-indicator');
@@ -1178,8 +1171,7 @@ $(document).ready(function() {
     $grid.masonry({
         itemSelector: '.grid-item',
         percentPosition: true,
-        transitionDuration: '0.3s',
-        gutter: 0
+        transitionDuration: '0.3s'
     });
 
     // Create card element
@@ -1193,20 +1185,22 @@ $(document).ready(function() {
             alt: item.alt || item.title || 'Gallery Image'
         });
 
-        // Pre-set aspect ratio to prevent layout shift
+        // Pre-set aspect ratio to prevent layout shift before image loads
         if (item.width && item.length) {
             $img.css('aspect-ratio', `${item.width} / ${item.length}`);
         }
 
-        // Handle broken images
+        // Handle broken images gracefully
         $img.on('error', function() {
+            console.warn("⚠️ Failed to load image:", item.src);
             $(this).hide();
             $inner.css({
-                'min-height': '200px',
+                'min-height': '150px',
                 'display': 'flex',
                 'align-items': 'center',
-                'justify-content': 'center'
-            }).html('<span style="color: #94a3b8; font-size: 14px;">Image Not Found</span>');
+                'justify-content': 'center',
+                'background': '#f8fafc'
+            }).html('<span style="color: #94a3b8; font-size: 12px; text-align: center;">Image Not Found<br><small>' + item.src + '</small></span>');
         });
 
         // Store metadata
@@ -1225,34 +1219,38 @@ $(document).ready(function() {
         isLoading = true;
         $loading.show();
 
-        const $items = $();
+        console.log("Loading", count, "more items. Current index:", currentIndex);
+
+        // Use a standard array to collect DOM elements (Fixes the "Assignment to constant variable" error)
+        const itemsArray = [];
         let loadedCount = 0;
 
         for (let i = 0; i < count; i++) {
             // Infinite loop: reset to beginning when reaching the end
             if (currentIndex >= totalImages) {
                 currentIndex = 0;
+                console.log("↻ Looping back to start of thumbnails array");
             }
 
             const nextItem = thumbnails[currentIndex];
             currentIndex++;
 
             const $card = createCard(nextItem);
-            $items = $items.add($card);
+            itemsArray.push($card[0]); // Push the raw DOM element for better performance
             loadedCount++;
         }
 
         if (loadedCount > 0) {
-            // Append items to grid
-            $grid.append($items);
+            // Append all items to grid at once
+            $grid.append(itemsArray);
 
-            // Wait for images to load, then layout
-            $grid.imagesLoaded().progress(function() {
-                $grid.masonry('appended', $items);
-            }).always(function() {
+            // Wait for images to load, then trigger Masonry layout
+            $grid.imagesLoaded().always(function() {
+                $grid.masonry('appended', itemsArray);
                 $grid.masonry('layout');
                 isLoading = false;
                 $loading.hide();
+                console.log("✓ Batch layout complete.");
             });
         } else {
             isLoading = false;
@@ -1266,7 +1264,7 @@ $(document).ready(function() {
             loadMoreItems(10);
         }
     }, {
-        rootMargin: '600px'
+        rootMargin: '600px' // Triggers 600px before the user reaches the bottom
     });
 
     scrollObserver.observe($loading[0]);
@@ -1274,7 +1272,7 @@ $(document).ready(function() {
     // Initial load
     loadMoreItems(window.innerWidth < 800 ? 8 : 12);
 
-    // Expose metadata globally
+    // Expose metadata globally (preserved from your original code)
     window.getCardMetadata = function(id) {
         return cardMetadata.get(String(id));
     };
@@ -1282,7 +1280,7 @@ $(document).ready(function() {
         return Array.from(cardMetadata.values());
     };
 
-    // Handle window resize
+    // Handle window resize smoothly
     let resizeTimer;
     $(window).on('resize', function() {
         clearTimeout(resizeTimer);
