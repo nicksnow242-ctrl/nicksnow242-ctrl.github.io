@@ -6,16 +6,15 @@ const thumbnails = [
         title: 'Western Wind',
         dateCreated: '01-01-23',
         inStock: true,
-        length: 12
-        width: 12
-        retired: true
-        remakecustom: true
-        pricemultiplier: 1
-        featured: false
-        suggestedprice: 100
-        description: loren ipsum
-        type:normal
-
+        length: 12,
+        width: 12,
+        retired: true,
+        remakecustom: true,
+        pricemultiplier: 1,
+        featured: false,
+        suggestedprice: 100,
+        description: 'loren ipsum',
+        type: 'normal'
     },
     {
         id: 2,
@@ -24,16 +23,15 @@ const thumbnails = [
         title: 'Divergence',
         dateCreated: '01-01-23',
         inStock: false,
-        width: 24
-        length: 48
-        retired: false
-        remakecustom: true
-        pricemultiplier: 1
-        featured: false
-        suggestedprice: 200
-        description: loren ipsum
-        type: window_hanging
-
+        width: 24,
+        length: 48,
+        retired: false,
+        remakecustom: true,
+        pricemultiplier: 1,
+        featured: false,
+        suggestedprice: 200,
+        description: 'loren ipsum',
+        type: 'window_hanging'
     },
     {
         id: 3,
@@ -42,16 +40,15 @@ const thumbnails = [
         title: 'Liminal Fountain',
         dateCreated: '01-01-23',
         inStock: false,
-        width: 10
-        length: 8
-        retired: false
-        remakecustom: true
-        pricemultiplier: 1
-        featured: false
-        suggestedprice: 80
-        description: loren ipsum
-        type: normal
-
+        width: 10,
+        length: 8,
+        retired: false,
+        remakecustom: true,
+        pricemultiplier: 1,
+        featured: false,
+        suggestedprice: 80,
+        description: 'loren ipsum',
+        type: 'normal'
     },
     {
         id: 4,
@@ -60,16 +57,14 @@ const thumbnails = [
         title: 'Liminal Fountain',
         dateCreated: '01-01-23',
         inStock: false,
-        width: 10
-        length: 8
-        retired: false
-        remakecustom: true
-        pricemultiplier: 1
-        featured: false
-        suggestedprice: 80
-        description: loren ipsum
-        type: normal
-
-    },
-    // Add as many as you like. Include or omit any metadata field per item.
+        width: 10,
+        length: 8,
+        retired: false,
+        remakecustom: true,
+        pricemultiplier: 1,
+        featured: false,
+        suggestedprice: 80,
+        description: 'loren ipsum',
+        type: 'normal'
+    }
 ];
