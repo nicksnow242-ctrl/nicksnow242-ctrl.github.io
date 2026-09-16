@@ -4,7 +4,7 @@ const thumbnails = [
         src: 'Images/Thumbnails/_DSC1847.png',
         alt: 'A thief came in the night',
         title: 'Western Wind',
-        dateCreated: '01-02-23',
+        dateCreated: '01-03-23',
         inStock: true,
         length: 12,
         width: 12,
