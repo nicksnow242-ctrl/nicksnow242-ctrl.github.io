@@ -1106,7 +1106,7 @@ var particles;
     .blob-1 { width: 500px; height: 500px; background: #3b82f6; top: -100px; left: -100px; }
     .blob-2 { width: 600px; height: 600px; background: #8b5cf6; bottom: -200px; right: -200px; }
 
-    /* 1. Removed column-count. Added position: relative for absolute children */
+    /* 1. STRICTLY NO CSS COLUMNS. Absolute positioning container. */
     .gallery {
         position: relative;
         width: 100%;
@@ -1114,11 +1114,16 @@ var particles;
         margin: 0 auto;
         padding: 140px 24px 24px 24px;
         z-index: 20;
+        /* Force disable any inherited column layouts */
+        column-count: 1 !important;
+        column-gap: 0 !important;
     }
 
-    /* 2. Absolute positioning + smooth sliding animation for mosaic shifts */
+    /* 2. NO TOP/LEFT TRANSITIONS. Prevents scroll glitching. */
     .glass-card {
         position: absolute;
+        top: 0;
+        left: 0;
         margin: 0;
         background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(14px);
@@ -1127,23 +1132,24 @@ var particles;
         border-radius: 16px;
         overflow: hidden;
         box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-        transition: top 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-                    left 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-                    transform 0.3s ease,
-                    box-shadow 0.3s ease;
-        animation: fadeIn 0.5s ease-out;
+        /* Only animate hover effects and initial fade-in, NOT position */
+        transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.4s ease;
+        animation: mosaicFadeIn 0.5s ease-out forwards;
+        will-change: transform;
     }
     .glass-card:hover {
         transform: translateY(-4px) scale(1.02);
         box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
         border-color: rgba(255, 255, 255, 0.2);
-        z-index: 30; /* Ensure hovered card pops above others */
+        z-index: 30;
     }
 
     .card-img-wrap {
         width: 100%;
         overflow: hidden;
         background: rgba(0, 0, 0, 0.2);
+        /* Prevent collapse before image loads */
+        min-height: 150px;
     }
     .card-img-wrap img {
         width: 100%;
@@ -1155,7 +1161,7 @@ var particles;
         transform: scale(1.03);
     }
 
-    @keyframes fadeIn {
+    @keyframes mosaicFadeIn {
         from { opacity: 0; transform: translateY(20px) scale(0.95); }
         to   { opacity: 1; transform: translateY(0) scale(1); }
     }
@@ -1179,7 +1185,7 @@ var particles;
     const cardMetadata = new Map();
 
     // ==========================================
-    // MOSAIC LAYOUT ENGINE
+    // GLITCH-FREE MOSAIC LAYOUT ENGINE
     // ==========================================
     function applyMasonry() {
         const cards = Array.from(container.children);
@@ -1201,26 +1207,34 @@ var particles;
         const columnHeights = new Array(numColumns).fill(0);
 
         cards.forEach(card => {
-            // Fix width so CSS aspect-ratio calculates height correctly
+            // 1. Set exact width
             card.style.width = `${columnWidth}px`;
 
-            // Get current height. If image hasn't loaded yet, fallback to a minimum
-            // to prevent total collapse during the brief loading window.
-            const cardHeight = Math.max(card.offsetHeight, 100);
+            // 2. Calculate height mathematically to prevent 0-height glitches
+            const img = card.querySelector('img');
+            let cardHeight = 150; // Fallback minimum
 
-            // Find the shortest column
+            if (img && img.naturalWidth > 0) {
+                // Height = Width * (Native Height / Native Width)
+                cardHeight = columnWidth * (img.naturalHeight / img.naturalWidth);
+            } else if (card.offsetHeight > 0) {
+                // Fallback to DOM measurement if image is somehow already rendered
+                cardHeight = card.offsetHeight;
+            }
+
+            // 3. Find the shortest column
             const minHeight = Math.min(...columnHeights);
-            const columnIndex = columnHeights.indexOf(minHeight);
+            const colIndex = columnHeights.indexOf(minHeight);
 
-            // Position the card
-            card.style.left = `${columnIndex * (columnWidth + gap)}px`;
+            // 4. Position instantly (NO CSS transition on top/left)
+            card.style.left = `${colIndex * (columnWidth + gap)}px`;
             card.style.top = `${minHeight}px`;
 
-            // Add this card's height to the column's total
-            columnHeights[columnIndex] += cardHeight + gap;
+            // 5. Add to column height
+            columnHeights[colIndex] += cardHeight + gap;
         });
 
-        // Set the container's total height so the page can scroll
+        // 6. Set container height so page scrolling works
         container.style.height = `${Math.max(...columnHeights)}px`;
     }
 
@@ -1257,8 +1271,8 @@ var particles;
                 card.remove();
 
                 renderNextItem();
-                // Re-calculate layout after removal/addition
-                setTimeout(applyMasonry, 50);
+                // Recalculate layout instantly after DOM change
+                requestAnimationFrame(applyMasonry);
             }
         });
     }, { rootMargin: '0px' });
@@ -1283,12 +1297,22 @@ var particles;
         // When image loads, set aspect ratio and trigger mosaic reflow
         img.addEventListener('load', function () {
             wrap.style.aspectRatio = `${this.naturalWidth} / ${this.naturalHeight}`;
-            // Double requestAnimationFrame ensures the browser has calculated the new CSS height
+            // Double rAF ensures browser has painted the new aspect ratio before measuring
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     applyMasonry();
                 });
             });
+        });
+
+        // Handle broken images gracefully
+        img.addEventListener('error', function() {
+            wrap.style.minHeight = '200px';
+            wrap.style.display = 'flex';
+            wrap.style.alignItems = 'center';
+            wrap.style.justifyContent = 'center';
+            wrap.innerHTML = '<span style="color:rgba(255,255,255,0.3); font-size:12px;">Image Not Found</span>';
+            requestAnimationFrame(() => requestAnimationFrame(applyMasonry));
         });
 
         wrap.appendChild(img);
@@ -1313,7 +1337,7 @@ var particles;
         const batchSize = window.innerWidth < 768 ? 8 : 14;
         for (let i = 0; i < batchSize; i++) renderNextItem();
 
-        // Initial layout pass after DOM is ready
+        // Initial layout pass
         setTimeout(applyMasonry, 100);
     }
 
@@ -1324,7 +1348,6 @@ var particles;
         resizeTimer = setTimeout(applyMasonry, 100);
     });
 
-    // Expose metadata for future filtering
     window.getCardMetadata = function(id) {
         return cardMetadata.get(String(id));
     };
