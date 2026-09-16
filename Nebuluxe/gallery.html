@@ -1079,5 +1079,228 @@ var particles;
 <!-- ========================================== -->
 <!-- END CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- ========================================== -->
+<!-- ========================================== -->
+<!-- Gallery Infinite Scroll -->
+<!-- ========================================== -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinite Glass Gallery</title>
+    <style>
+        /* --- RESET & BASE STYLES --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: #0f172a; /* Dark slate base */
+            font-family: system-ui, -apple-system, sans-serif;
+            overflow-x: hidden;
+            /* Hide scrollbar for a cleaner infinite scroll look */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        body::-webkit-scrollbar { display: none; }
+
+        /* --- BACKGROUND BLOBS (Makes the glass effect visible) --- */
+        .bg-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        .blob-1 { width: 500px; height: 500px; background: #3b82f6; top: -100px; left: -100px; }
+        .blob-2 { width: 600px; height: 600px; background: #8b5cf6; bottom: -200px; right: -200px; }
+
+        /* --- DENSE MASONRY LAYOUT --- */
+        .gallery {
+            column-count: 1;
+            column-gap: 16px;
+            padding: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 640px) { .gallery { column-count: 2; } }
+        @media (min-width: 1024px) { .gallery { column-count: 3; } }
+        @media (min-width: 1280px) { .gallery { column-count: 4; } }
+
+        /* --- GLASS CARD STYLING --- */
+        .glass-card {
+            break-inside: avoid; /* Prevents cards from breaking across columns */
+            margin-bottom: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .glass-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .glass-card:hover img {
+            transform: scale(1.03);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background blobs to make the glass effect pop -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+
+    <!-- Gallery Container -->
+    <main id="gallery-container" class="gallery">
+        <!-- Images will be injected here by JavaScript -->
+    </main>
+
+    <!-- Load your external data file first -->
+    <script src="thumbnail.js"></script>
+
+    <script>
+        // Ensure the data loaded correctly
+        if (typeof thumbnails === 'undefined') {
+            console.error("thumbnail.js did not load or 'thumbnails' is not defined globally.");
+        }
+
+        const container = document.getElementById('gallery-container');
+        let currentIndex = 0; // Acts as our infinite circular queue pointer
+        const totalImages = thumbnails ? thumbnails.length : 0;
+
+        const observerOptions = { rootMargin: '0px' };
+
+        // ==========================================
+        // 1. ENFORCE DOWN-ONLY SCROLLING
+        // ==========================================
+
+        // Block Mouse Wheel Up
+        window.addEventListener('wheel', (e) => {
+            if (e.deltaY < 0) e.preventDefault();
+        }, { passive: false });
+
+        // Block Touch Scroll Up (Swipe Down)
+        let touchStartY = 0;
+        window.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        window.addEventListener('touchmove', (e) => {
+            const touchEndY = e.touches[0].clientY;
+            if (touchEndY > touchStartY) { // Finger moving down = content moving up
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Block Keyboard Up Scroll
+        window.addEventListener('keydown', (e) => {
+            if (['ArrowUp', 'PageUp', 'Home', 'Space'].includes(e.key)) {
+                // Allow Space if holding Shift (scroll down), but block normal Space/Up
+                if (e.key === 'Space' && e.shiftKey) return;
+                e.preventDefault();
+            }
+        });
+
+        // ==========================================
+        // 2. INTERSECTION OBSERVER FOR RECYCLING
+        // ==========================================
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                // If the element is completely out of view AND it's above the viewport
+                if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+                    const card = entry.target;
+
+                    // 1. Stop observing and remove from DOM
+                    observer.unobserve(card);
+                    card.remove();
+
+                    // 2. Render the next item in the infinite sequence at the bottom
+                    renderNextItem();
+                }
+            });
+        }, observerOptions);
+
+        // ==========================================
+        // 3. RENDERING FUNCTIONS
+        // ==========================================
+        function createCard(item) {
+            const card = document.createElement('div');
+            card.className = 'glass-card';
+            card.dataset.id = item.id;
+
+            const img = document.createElement('img');
+            img.src = item.src;
+            img.alt = item.alt;
+            img.width = item.width;
+            img.height = item.height;
+            img.loading = 'lazy';
+
+            card.appendChild(img);
+            return card;
+        }
+
+        function renderNextItem() {
+            if (totalImages === 0) return;
+
+            // Get the next item using modulo to create an infinite loop
+            const nextItem = thumbnails[currentIndex % totalImages];
+            currentIndex++;
+
+            const card = createCard(nextItem);
+
+            // Append to the bottom of the gallery
+            container.appendChild(card);
+
+            // Start observing it so we know when it goes off-screen
+            observer.observe(card);
+        }
+
+        // ==========================================
+        // 4. INITIALIZATION
+        // ==========================================
+        function init() {
+            if (totalImages === 0) return;
+
+            // Render enough items to fill the screen and trigger scroll
+            const initialBatchSize = Math.max(12, window.innerWidth < 768 ? 6 : 12);
+
+            for (let i = 0; i < initialBatchSize; i++) {
+                renderNextItem();
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
+<!-- ========================================== -->
+<!-- END Gallery Infinte Scroll -->
+<!-- ========================================== -->
 </body>
 </html>
