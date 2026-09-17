@@ -1270,7 +1270,7 @@ class InfinitePortraitGallery {
         this.viewOffset = { x: 0, y: 0 };
         this.drag = { isDragging: false, lastX: 0, lastY: 0, velocityX: 0, velocityY: 0 };
         this.inertia = 0.95;
-        this.bulgeStrength = 0.4;
+        this.bulgeStrength = 0.2;
         this.bulgeRadius = 1.5;
         this.adjustedBulgeRadius = this.bulgeRadius;
 
@@ -1588,8 +1588,8 @@ class InfinitePortraitGallery {
             if (!this.drag.isDragging) return;
             const dx = e.touches[0].clientX - this.drag.lastX;
             const dy = e.touches[0].clientY - this.drag.lastY;
-            this.drag.velocityX = dx * 0.3 + this.drag.velocityX * 0.7;
-            this.drag.velocityY = dy * 0.3 + this.drag.velocityY * 0.7;
+            this.drag.velocityX = dx * 0.3 + this.drag.velocityX * 0.3;
+            this.drag.velocityY = dy * 0.3 + this.drag.velocityY * 0.3;
 
             // INVERTED: Added instead of subtracted
             this.viewOffset.x += this.drag.velocityX;
