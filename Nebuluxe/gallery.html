@@ -1195,35 +1195,48 @@ var particles;
 
   /* ---------- data ingestion ---------------------------------------- */
   JustifiedGallery.prototype._ingestThumbnails = function () {
-  var self = this;
   var raw = window.thumbnails || [];
-  var pending = 0;
   var out = [];
 
-  // Create a placeholder for each item
   for (var i = 0; i < raw.length; i++) {
     var t = raw[i];
     if (!t) continue;
     var src = t.src || t.url || t.href;
-    if (!src) continue;
 
-    var item = {
+    // Prefer pixel dimensions, fall back to parsing inch strings
+    var w, h;
+    if (t.pixelWidth && t.pixelHeight) {
+      w = Number(t.pixelWidth);
+      h = Number(t.pixelHeight);
+    } else {
+      // Fallback: parse inch strings like '12"'
+      w = parseDimension(t.width  != null ? t.width  : t.w);
+      h = parseDimension(t.height != null ? t.height : (t.length != null ? t.length : t.h));
+    }
+
+    if (!src || !(w > 0) || !(h > 0)) continue;
+
+    out.push({
       index: out.length,
-      src: src,
-      w: 0,
-      h: 0,
-      aspect: 1,
-      alt: t.alt || t.title || '',
-      loaded: false
-    };
-    out.push(item);
-    pending++;
+      src:   src,
+      w:     w,
+      h:     h,
+      aspect: w / h,
+      alt:   t.alt || t.title || ''
+    });
   }
+  this.items = out;
+};
 
-  if (pending === 0) {
-    this.items = [];
-    return;
+// Helper function (add this before the JustifiedGallery constructor)
+function parseDimension(val) {
+  if (typeof val === 'number') return val;
+  if (typeof val === 'string') {
+    var match = val.match(/^([\d.]+)/);
+    if (match) return parseFloat(match[1]);
   }
+  return 0;
+}
 
   // Load each image to get dimensions
   out.forEach(function(item) {

@@ -8,6 +8,8 @@ const thumbnails = [
         inStock: true,
         length: '12"',
         width: '12"',
+        pixelWidth: 200,    // Add actual pixel width
+        pixelHeight: 1200,
         retired: true,
         remakecustom: true,
         pricemultiplier: 1,
@@ -25,6 +27,8 @@ const thumbnails = [
         inStock: false,
         width: '24"',
         length: '48"',
+        pixelWidth: 300,    // Add actual pixel width
+        pixelHeight: 449,
         retired: false,
         remakecustom: true,
         pricemultiplier: 1,
@@ -42,6 +46,8 @@ const thumbnails = [
         inStock: false,
         width: '10"',
         length: '8"',
+        pixelWidth: 252,    // Add actual pixel width
+        pixelHeight: 180,
         retired: false,
         remakecustom: true,
         pricemultiplier: 1,
@@ -59,6 +65,8 @@ const thumbnails = [
         inStock: false,
         width: '10"',
         length: '8"',
+        pixelWidth: 450,    // Add actual pixel width
+        pixelHeight: 300,
         retired: false,
         remakecustom: true,
         pricemultiplier: 1,
