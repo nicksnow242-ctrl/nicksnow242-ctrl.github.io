@@ -1195,27 +1195,68 @@ var particles;
 
   /* ---------- data ingestion ---------------------------------------- */
   JustifiedGallery.prototype._ingestThumbnails = function () {
-    var raw = window.thumbnails || [];
-    var out = [];
-    for (var i = 0; i < raw.length; i++) {
-      var t = raw[i];
-      if (!t) continue;
-      var src = t.src || t.url || t.href;
-      var w   = Number(t.width  != null ? t.width  : t.w);
-      var h   = Number(t.height != null ? t.height : t.h);
-      if (!src || !(w > 0) || !(h > 0)) continue;
-      out.push({
-        index: out.length,
-        src:   src,
-        w:     w,
-        h:     h,
-        aspect: w / h,
-        alt:   t.alt || t.title || ''
-      });
-    }
-    this.items = out;
-  };
+  var self = this;
+  var raw = window.thumbnails || [];
+  var pending = 0;
+  var out = [];
 
+  // Create a placeholder for each item
+  for (var i = 0; i < raw.length; i++) {
+    var t = raw[i];
+    if (!t) continue;
+    var src = t.src || t.url || t.href;
+    if (!src) continue;
+
+    var item = {
+      index: out.length,
+      src: src,
+      w: 0,
+      h: 0,
+      aspect: 1,
+      alt: t.alt || t.title || '',
+      loaded: false
+    };
+    out.push(item);
+    pending++;
+  }
+
+  if (pending === 0) {
+    this.items = [];
+    return;
+  }
+
+  // Load each image to get dimensions
+  out.forEach(function(item) {
+    var img = new Image();
+    img.onload = function() {
+      item.w = img.naturalWidth;
+      item.h = img.naturalHeight;
+      item.aspect = img.naturalWidth / img.naturalHeight;
+      item.loaded = true;
+      pending--;
+
+      if (pending === 0) {
+        // All dimensions loaded, filter out any that failed
+        self.items = out.filter(function(it) { return it.loaded && it.w > 0 && it.h > 0; });
+        // Re-index
+        self.items.forEach(function(it, idx) { it.index = idx; });
+        self._reflow();
+      }
+    };
+    img.onerror = function() {
+      pending--;
+      if (pending === 0) {
+        self.items = out.filter(function(it) { return it.loaded && it.w > 0 && it.h > 0; });
+        self.items.forEach(function(it, idx) { it.index = idx; });
+        self._reflow();
+      }
+    };
+    img.src = item.src;
+  });
+
+  // Start with empty items until dimensions are loaded
+  this.items = [];
+};
   /* ---------- layout algorithm -------------------------------------- */
   JustifiedGallery.prototype._computeLayout = function () {
     var containerW = this.root.clientWidth;
@@ -1407,23 +1448,23 @@ var particles;
 
   /* ---------- bootstrap --------------------------------------------- */
   function boot() {
-    var root = document.getElementById('mosaic-gallery');
-    if (!root) return;
-    // thumbnail.js may load after us; wait until it's present.
-    var attempts = 0;
-    var tryInit = function () {
-      if (window.thumbnails && window.thumbnails.length) {
-        new JustifiedGallery(root, {
-          targetRowHeight: 220,   // tune for denser/sparser rows
-          gap: 6,                 // 4–8px consistent gap
-          buffer: 1200            // pre-render this many px beyond viewport
-        });
-      } else if (attempts++ < 50) {
-        setTimeout(tryInit, 100);
-      }
-    };
-    tryInit();
-  }
+  var root = document.getElementById('mosaic-gallery');
+  if (!root) return;
+
+  var attempts = 0;
+  var tryInit = function() {
+    if (window.thumbnails && window.thumbnails.length) {
+      var gallery = new JustifiedGallery(root, {
+        targetRowHeight: 220,
+        gap: 6,
+        buffer: 1200
+      });
+    } else if (attempts++ < 50) {
+      setTimeout(tryInit, 100);
+    }
+  };
+  tryInit();
+}
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);
