@@ -1093,7 +1093,7 @@ var particles;
   height: calc(100vh - 110px); /* Accounts for your 110px fixed top banner */
   min-height: 500px;
   overflow: hidden;
-  background: transparent; /* Changed from #000 to transparent */
+  background: transparent;
   touch-action: none;
   margin-top: 110px; /* Pushes content below the fixed top banner */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
@@ -1123,10 +1123,10 @@ var particles;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #5C4A32; /* Changed to match your page's text color */
+  color: #5C4A32;
   font-size: 20px;
   z-index: 1000;
-  background: rgba(255, 253, 245, 0.9); /* Changed to match your page's light theme */
+  background: rgba(255, 253, 245, 0.9);
   padding: 20px 40px;
   border-radius: 10px;
   border: 1px solid rgba(180, 154, 93, 0.4);
@@ -1140,7 +1140,7 @@ var particles;
   width: 100%;
   top: 0;
   left: 0;
-  background-color: transparent; /* Changed from #000 to transparent */
+  background-color: transparent;
   z-index: 999;
 }
 
@@ -1224,7 +1224,7 @@ var particles;
 }
 </style>
 
-<!-- Font Awesome for fullscreen icon (if not already included in your head) -->
+<!-- Font Awesome for fullscreen icon -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <div id="gallery-container" class="gallery-wrapper">
@@ -1240,7 +1240,6 @@ var particles;
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Brief delay ensures thumbnail.js has fully populated window.thumbnails
     setTimeout(() => {
         new InfinitePortraitGallery('gallery-container');
     }, 100);
@@ -1264,8 +1263,9 @@ class InfinitePortraitGallery {
             return;
         }
 
-        this.imageData = []; // Stores { img, texture, width, height }
-        this.maxDimension = 200; // Max width or height, aspect ratio will be preserved
+        this.imageData = [];
+        this.maxDimension = 150; // Changed to 150px
+        this.zoom = 1.6;         // Added zoom factor for a "zoomed in" initial state
         this.gap = 30;
         this.viewOffset = { x: 0, y: 0 };
         this.drag = { isDragging: false, lastX: 0, lastY: 0, velocityX: 0, velocityY: 0 };
@@ -1293,7 +1293,6 @@ class InfinitePortraitGallery {
     }
 
     init() {
-        // Updated shader to use dynamic uImageSize instead of hardcoded dimensions
         const vsSource = `
         attribute vec2 aPosition;
         attribute vec2 aTexCoord;
@@ -1406,7 +1405,6 @@ class InfinitePortraitGallery {
 
             const promise = new Promise((resolve) => {
                 img.onload = () => {
-                    // Calculate aspect-ratio-preserving dimensions
                     let w = img.naturalWidth;
                     let h = img.naturalHeight;
                     if (w > h) {
@@ -1426,7 +1424,6 @@ class InfinitePortraitGallery {
                     resolve();
                 };
                 img.onerror = () => {
-                    // Fallback to placeholder if local path fails
                     img.src = `https://picsum.photos/id/${(i % 100) + 1000}/${this.maxDimension}/${this.maxDimension}`;
                     img.onload = () => {
                         this.imageData.push({
@@ -1474,28 +1471,34 @@ class InfinitePortraitGallery {
 
     getVisibleTiles() {
         const tiles = [];
-        const tileW = this.maxDimension + this.gap;
-        const tileH = this.maxDimension + this.gap;
-        const visibleLeft = this.viewOffset.x - this.canvas.width;
-        const visibleRight = this.viewOffset.x + this.canvas.width * 2;
-        const visibleTop = this.viewOffset.y - this.canvas.height;
-        const visibleBottom = this.viewOffset.y + this.canvas.height * 2;
+        const baseTileW = this.maxDimension + this.gap;
+        const baseTileH = this.maxDimension + this.gap;
 
-        for (let y = Math.floor(visibleTop / tileH) - 1; y <= Math.ceil(visibleBottom / tileH) + 1; y++) {
-            for (let x = Math.floor(visibleLeft / tileW) - 1; x <= Math.ceil(visibleRight / tileW) + 1; x++) {
+        // Apply zoom to tile dimensions for culling calculations
+        const tileW = baseTileW * this.zoom;
+        const tileH = baseTileH * this.zoom;
+
+        // Adjust visible bounds by zoom to ensure proper culling
+        const visibleLeft = (this.viewOffset.x - this.canvas.width) / this.zoom;
+        const visibleRight = (this.viewOffset.x + this.canvas.width * 2) / this.zoom;
+        const visibleTop = (this.viewOffset.y - this.canvas.height) / this.zoom;
+        const visibleBottom = (this.viewOffset.y + this.canvas.height * 2) / this.zoom;
+
+        for (let y = Math.floor(visibleTop / baseTileH) - 1; y <= Math.ceil(visibleBottom / baseTileH) + 1; y++) {
+            for (let x = Math.floor(visibleLeft / baseTileW) - 1; x <= Math.ceil(visibleRight / baseTileW) + 1; x++) {
                 const hash = (x * 7919 + y * 7307) % this.imageData.length;
                 const idx = Math.abs(hash);
                 const data = this.imageData[idx];
 
-                // Center the image within its grid cell to respect aspect ratio
-                const offsetX = (tileW - data.width) / 2;
-                const offsetY = (tileH - data.height) / 2;
+                const offsetX = (baseTileW - data.width) / 2;
+                const offsetY = (baseTileH - data.height) / 2;
 
                 tiles.push({
-                    x: x * tileW + offsetX,
-                    y: y * tileH + offsetY,
-                    width: data.width,
-                    height: data.height,
+                    // Apply zoom to final rendered positions and sizes
+                    x: (x * baseTileW + offsetX) * this.zoom,
+                    y: (y * baseTileH + offsetY) * this.zoom,
+                    width: data.width * this.zoom,
+                    height: data.height * this.zoom,
                     imageIndex: idx
                 });
             }
@@ -1506,7 +1509,7 @@ class InfinitePortraitGallery {
     render() {
         if (!this.program || this.imageData.length === 0) return;
         this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-        this.gl.clearColor(0, 0, 0, 0); // Fully transparent clear
+        this.gl.clearColor(0, 0, 0, 0);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
         this.gl.useProgram(this.program);
 
@@ -1533,7 +1536,7 @@ class InfinitePortraitGallery {
         for (const t of this.getVisibleTiles()) {
             this.gl.uniform2f(offsetLoc, this.viewOffset.x, this.viewOffset.y);
             this.gl.uniform2f(imgPosLoc, t.x, t.y);
-            this.gl.uniform2f(imgSizeLoc, t.width, t.height); // Pass dynamic size
+            this.gl.uniform2f(imgSizeLoc, t.width, t.height);
 
             this.gl.activeTexture(this.gl.TEXTURE0);
             this.gl.bindTexture(this.gl.TEXTURE_2D, this.imageData[t.imageIndex].texture);
@@ -1561,8 +1564,11 @@ class InfinitePortraitGallery {
             const dy = e.clientY - this.drag.lastY;
             this.drag.velocityX = dx * 0.3 + this.drag.velocityX * 0.7;
             this.drag.velocityY = dy * 0.3 + this.drag.velocityY * 0.7;
-            this.viewOffset.x -= this.drag.velocityX;
-            this.viewOffset.y -= this.drag.velocityY;
+
+            // INVERTED: Added instead of subtracted
+            this.viewOffset.x += this.drag.velocityX;
+            this.viewOffset.y += this.drag.velocityY;
+
             this.drag.lastX = e.clientX;
             this.drag.lastY = e.clientY;
         });
@@ -1584,8 +1590,11 @@ class InfinitePortraitGallery {
             const dy = e.touches[0].clientY - this.drag.lastY;
             this.drag.velocityX = dx * 0.3 + this.drag.velocityX * 0.7;
             this.drag.velocityY = dy * 0.3 + this.drag.velocityY * 0.7;
-            this.viewOffset.x -= this.drag.velocityX;
-            this.viewOffset.y -= this.drag.velocityY;
+
+            // INVERTED: Added instead of subtracted
+            this.viewOffset.x += this.drag.velocityX;
+            this.viewOffset.y += this.drag.velocityY;
+
             this.drag.lastX = e.touches[0].clientX;
             this.drag.lastY = e.touches[0].clientY;
         }, { passive: false });
@@ -1594,8 +1603,9 @@ class InfinitePortraitGallery {
 
         this.canvas.addEventListener('wheel', (e) => {
             e.preventDefault();
-            this.drag.velocityX += e.deltaX * 0.5;
-            this.drag.velocityY += e.deltaY * 0.5;
+            // INVERTED: Subtracted to match the new += application logic below
+            this.drag.velocityX -= e.deltaX * 0.5;
+            this.drag.velocityY -= e.deltaY * 0.5;
         }, { passive: false });
 
         this.canvas.addEventListener('keydown', (e) => {
@@ -1632,8 +1642,10 @@ class InfinitePortraitGallery {
 
     animate() {
         if (!this.drag.isDragging) {
-            this.viewOffset.x -= this.drag.velocityX;
-            this.viewOffset.y -= this.drag.velocityY;
+            // INVERTED: Added instead of subtracted to match drag direction
+            this.viewOffset.x += this.drag.velocityX;
+            this.viewOffset.y += this.drag.velocityY;
+
             this.drag.velocityX *= this.inertia;
             this.drag.velocityY *= this.inertia;
             if (Math.abs(this.drag.velocityX) < 0.01) this.drag.velocityX = 0;
