@@ -1087,9 +1087,7 @@ var particles;
 /* ========================================== */
 /* INFINITE WEBGL GALLERY STYLES (SCOPED) */
 /* ========================================== */
-<!-- ============================================================
-      GALLERY SECTION
-     ============================================================ -->
+
 <style>
 /* ========================================== */
 /* INFINITE WEBGL GALLERY STYLES (SCOPED) */
@@ -1223,7 +1221,7 @@ var particles;
 }
 
 .gallery-card {
-  background: #FFFD F5;
+  background: #FFFDF5;
   border: 1px solid rgba(180, 154, 93, 0.4);
   border-radius: 12px;
   width: 100%;
@@ -1266,9 +1264,14 @@ var particles;
   color: #fff;
 }
 
+/* Fixed image display to preserve aspect ratio */
 .gallery-card-image {
-  width: 100%;
-  max-height: 350px;
+  display: block;
+  max-width: 100%;
+  max-height: 400px;
+  width: auto;
+  height: auto;
+  margin: 0 auto;
   object-fit: contain;
   background: #1a1a1a;
   border-bottom: 1px solid rgba(180, 154, 93, 0.2);
@@ -1415,7 +1418,6 @@ var particles;
                 </div>
                 <div id="modal-description" class="gallery-card-desc">
                     Description goes here.
-               .
                 </div>
             </div>
             <div class="gallery-card-footer">
@@ -1451,8 +1453,8 @@ class InfinitePortraitGallery {
         }
 
         this.imageData = [];
-        this.maxDimension = 100; // Smaller base size
-        this.zoom = 0.9;         // Zoomed out to fit more on screen
+        this.maxDimension = 100;
+        this.zoom = 0.9;
         this.gap = 15;
         this.viewOffset = { x: 0, y: 0 };
         this.drag = { isDragging: false, lastX: 0, lastY: 0, velocityX: 0, velocityY: 0 };
@@ -1461,12 +1463,25 @@ class InfinitePortraitGallery {
         this.bulgeRadius = 1.5;
         this.adjustedBulgeRadius = this.bulgeRadius;
 
-        // Modal state
         this.modal = this.container.querySelector('#gallery-modal');
         this.closeModalBtn = this.container.querySelector('#modal-close-btn');
 
+        // Initial resize
         this.resizeCanvas();
-        window.addEventListener('resize', () => this.resizeCanvas());
+
+        // Fallback timeout to ensure layout has fully settled before sizing
+        setTimeout(() => this.resizeCanvas(), 150);
+
+        // Use ResizeObserver to automatically fix canvas size if container dimensions change
+        if (window.ResizeObserver) {
+            this.resizeObserver = new ResizeObserver(() => {
+                this.resizeCanvas();
+            });
+            this.resizeObserver.observe(this.container);
+        } else {
+            window.addEventListener('resize', () => this.resizeCanvas());
+        }
+
         this.init();
         this.loadImages();
         this.setupEventListeners();
@@ -1740,8 +1755,8 @@ class InfinitePortraitGallery {
 
         // --- HIT TESTING FOR MODAL ---
         this.canvas.addEventListener('click', (e) => {
-            // Prevent opening if it was a drag
-            if (Math.abs(this.drag.velocityX) > 2 || Math.abs(this.drag.velocityY) > 2) return;
+            // Prevent opening modal if the user was actively dragging
+            if (Math.abs(this.drag.velocityX) > 5 || Math.abs(this.drag.velocityY) > 5) return;
 
             const rect = this.canvas.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
@@ -1838,7 +1853,6 @@ class InfinitePortraitGallery {
     }
 
     openModal(index) {
-        // Fallback to index 0 or find matching src if indices drift
         const item = window.thumbnails[index] || window.thumbnails[0];
         if (!item) return;
 
@@ -1851,25 +1865,31 @@ class InfinitePortraitGallery {
             availability += ", will not remake.";
         }
 
-        const sizeStr = `${item.length || '?'} x ${item.width || '?'}`;
+        // Check multiple capitalizations just in case
+        const fullSizeSrc = item.fullsizesrc || item.fullSizeSrc || item.src;
 
-        // Populate DOM
-        document.getElementById('modal-full-image').src = item.fullsizesrc || item.src;
-        document.getElementById('modal-full-image').alt = item.alt || item.title;
+        const imgEl = document.getElementById('modal-full-image');
+        imgEl.src = fullSizeSrc;
+        imgEl.alt = item.alt || item.title;
+
+        // Fallback if fullsize image fails to load (e.g., path typo or missing file)
+        imgEl.onerror = () => {
+            console.warn(`Failed to load fullsize image: ${fullSizeSrc}. Falling back to thumbnail.`);
+            imgEl.src = item.src;
+        };
+
         document.getElementById('modal-title').textContent = item.title || 'Untitled';
         document.getElementById('modal-price').textContent = `$${price.toFixed(2)}`;
         document.getElementById('modal-availability').textContent = availability;
-        document.getElementById('modal-size').textContent = sizeStr;
+        document.getElementById('modal-size').textContent = `${item.length || '?'} x ${item.width || '?'}`;
         document.getElementById('modal-description').textContent = item.description || 'No description available.';
 
-        // Setup mailto link (opens user's default email client with pre-filled form)
         // REPLACE 'your-email@example.com' with your actual email address
         const email = "your-email@example.com";
         const subject = encodeURIComponent(`Inquiry about: ${item.title}`);
         const body = encodeURIComponent(`Hello,\n\nI am interested in learning more about "${item.title}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`);
         document.getElementById('modal-inquire-btn').href = `mailto:${email}?subject=${subject}&body=${body}`;
 
-        // Show modal
         this.modal.classList.add('is-open');
     }
 
