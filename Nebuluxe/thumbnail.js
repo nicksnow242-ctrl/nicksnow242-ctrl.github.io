@@ -9,7 +9,7 @@ window.thumbnails = [
         length: '12"',
         width: '12"',
         pixelWidth: 200,    // Add actual pixel width
-        pixelHeight: 1200,
+        pixelHeight: 200,
         retired: true,
         remakecustom: true,
         pricemultiplier: 1,
