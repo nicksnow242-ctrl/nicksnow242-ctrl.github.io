@@ -1087,22 +1087,15 @@ var particles;
 /* ========================================== */
 /* INFINITE WEBGL GALLERY STYLES (SCOPED) */
 /* ========================================== */
-<!-- ============================================================
-      GALLERY SECTION
-     ============================================================ -->
-<style>
-/* ========================================== */
-/* INFINITE WEBGL GALLERY STYLES (SCOPED) */
-/* ========================================== */
 .gallery-wrapper {
   position: relative;
   width: 100%;
-  height: calc(100vh - 110px);
+  height: calc(100vh - 110px); /* Accounts for your 110px fixed top banner */
   min-height: 500px;
   overflow: hidden;
   background: transparent;
   touch-action: none;
-  margin-top: 110px;
+  margin-top: 110px; /* Pushes content below the fixed top banner */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
 }
 
@@ -1123,33 +1116,6 @@ var particles;
 
 .gallery-wrapper canvas:active {
   cursor: grabbing;
-}
-
-/* Particle canvas sits behind the WebGL gallery canvas */
-.gallery-wrapper #gallery-particles {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-
-.gallery-wrapper #gallery-canvas {
-  position: relative;
-  z-index: 1;
-}
-
-/* When fullscreen, show the particle background */
-.gallery-wrapper:fullscreen {
-  background: linear-gradient(0deg, #FFFFFF 0%, #F2E8D5 100%);
-}
-
-.gallery-wrapper:fullscreen #gallery-particles {
-  opacity: 1;
 }
 
 .gallery-wrapper .loading {
@@ -1227,20 +1193,7 @@ var particles;
   font-weight: bold;
 }
 
-.gallery-wrapper .copy {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  background: rgba(255, 253, 245, 0.9);
-  color: #5C4A32;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid rgba(180, 154, 93, 0.3);
-  font-size: 12px;
-  z-index: 100;
-  pointer-events: none;
-  font-family: 'Share Tech Mono', monospace;
-}
+
 
 @media (max-width: 768px) {
   .gallery-wrapper .hint {
@@ -1262,7 +1215,6 @@ var particles;
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <div id="gallery-container" class="gallery-wrapper">
-    <canvas id="gallery-particles"></canvas>
     <div class="cache"></div>
     <div class="loading">Loading... 0%</div>
 
@@ -1270,7 +1222,6 @@ var particles;
         <i class="fas fa-expand"></i>
     </button>
     <div class="hint">Scroll / drag / use - or + to adjust bulge</div>
-    <div class="copy">&Toc</div>
 </div>
 
 <script>
@@ -1286,7 +1237,6 @@ class InfinitePortraitGallery {
         if (!this.container) return;
 
         this.canvas = document.createElement('canvas');
-        this.canvas.id = 'gallery-canvas';
         this.canvas.setAttribute('tabindex', '0');
         this.canvas.style.outline = 'none';
         this.canvas.style.width = '100%';
@@ -1300,26 +1250,15 @@ class InfinitePortraitGallery {
         }
 
         this.imageData = [];
-        this.maxDimension = 150;
-        this.zoom = 1.6;
+        this.maxDimension = 150; // Changed to 150px
+        this.zoom = 1.2;         // Added zoom factor for a "zoomed in" initial state
         this.gap = 10;
         this.viewOffset = { x: 0, y: 0 };
         this.drag = { isDragging: false, lastX: 0, lastY: 0, velocityX: 0, velocityY: 0 };
-        this.inertia = 0.95;
-        this.bulgeStrength = 0.2;
+        this.inertia = 0.75;
+        this.bulgeStrength = 0.8;
         this.bulgeRadius = 1.5;
         this.adjustedBulgeRadius = this.bulgeRadius;
-
-        // Hover tracking
-        this.mouseX = 0;
-        this.mouseY = 0;
-        this.hoveredTileKey = null;
-        this.hoverStartTime = 0;
-        this.hoverDelay = 2000;
-        this.glowColor = [0.71, 0.60, 0.36]; // #b49a5d
-
-        // Fullscreen particle engine reference
-        this.fsParticleEngine = null;
 
         this.resizeCanvas();
         window.addEventListener('resize', () => this.resizeCanvas());
@@ -1337,14 +1276,6 @@ class InfinitePortraitGallery {
         const diagonal = Math.sqrt(Math.pow(this.canvas.width / Math.min(this.canvas.width, this.canvas.height), 2) + Math.pow(this.canvas.height / Math.min(this.canvas.width, this.canvas.height), 2));
         this.adjustedBulgeRadius = Math.max(this.bulgeRadius, diagonal * 0.6 * 1.2);
         if (this.gl) this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-
-        // Resize particle canvas if it exists
-        const pCanvas = this.container.querySelector('#gallery-particles');
-        if (pCanvas && this.fsParticleEngine) {
-            pCanvas.width = this.container.clientWidth;
-            pCanvas.height = this.container.clientHeight;
-            if (this.fsParticleEngine.resize) this.fsParticleEngine.resize();
-        }
     }
 
     init() {
@@ -1401,18 +1332,10 @@ class InfinitePortraitGallery {
         precision mediump float;
         varying vec2 vTexCoord;
         uniform sampler2D uSampler;
-        uniform float uGlow;
-        uniform vec3 uGlowColor;
-
         void main(){
             vec2 uv = vec2(vTexCoord.x, 1.0 - vTexCoord.y);
             vec4 color = texture2D(uSampler, uv);
             if(color.a < 0.01) discard;
-
-            // Add glow effect
-            color.rgb = mix(color.rgb, uGlowColor, uGlow * 0.3);
-            color.rgb += uGlowColor * uGlow * 0.5;
-
             gl_FragColor = color;
         }`;
 
@@ -1537,9 +1460,11 @@ class InfinitePortraitGallery {
         const baseTileW = this.maxDimension + this.gap;
         const baseTileH = this.maxDimension + this.gap;
 
+        // Apply zoom to tile dimensions for culling calculations
         const tileW = baseTileW * this.zoom;
         const tileH = baseTileH * this.zoom;
 
+        // Adjust visible bounds by zoom to ensure proper culling
         const visibleLeft = (this.viewOffset.x - this.canvas.width) / this.zoom;
         const visibleRight = (this.viewOffset.x + this.canvas.width * 2) / this.zoom;
         const visibleTop = (this.viewOffset.y - this.canvas.height) / this.zoom;
@@ -1555,6 +1480,7 @@ class InfinitePortraitGallery {
                 const offsetY = (baseTileH - data.height) / 2;
 
                 tiles.push({
+                    // Apply zoom to final rendered positions and sizes
                     x: (x * baseTileW + offsetX) * this.zoom,
                     y: (y * baseTileH + offsetY) * this.zoom,
                     width: data.width * this.zoom,
@@ -1592,45 +1518,11 @@ class InfinitePortraitGallery {
         const imgPosLoc = this.gl.getUniformLocation(this.program, 'uImagePosition');
         const imgSizeLoc = this.gl.getUniformLocation(this.program, 'uImageSize');
         const samplerLoc = this.gl.getUniformLocation(this.program, 'uSampler');
-        const glowLoc = this.gl.getUniformLocation(this.program, 'uGlow');
-        const glowColorLoc = this.gl.getUniformLocation(this.program, 'uGlowColor');
-        this.gl.uniform3f(glowColorLoc, this.glowColor[0], this.glowColor[1], this.glowColor[2]);
 
         for (const t of this.getVisibleTiles()) {
-            const tileKey = `${t.x},${t.y}`;
-            let scale = 1.0;
-            let glow = 0.0;
-
-            const screenX = t.x - this.viewOffset.x;
-            const screenY = t.y - this.viewOffset.y;
-            const isHovered = this.mouseX >= screenX && this.mouseX <= screenX + t.width &&
-                              this.mouseY >= screenY && this.mouseY <= screenY + t.height;
-
-            if (isHovered) {
-                if (this.hoveredTileKey !== tileKey) {
-                    this.hoveredTileKey = tileKey;
-                    this.hoverStartTime = Date.now();
-                }
-
-                const elapsed = Date.now() - this.hoverStartTime;
-                if (elapsed >= this.hoverDelay) {
-                    const animProgress = Math.min(1.0, (elapsed - this.hoverDelay) / 300);
-                    scale = 1.0 + 0.5 * animProgress;
-                    glow = animProgress;
-                }
-            } else if (this.hoveredTileKey === tileKey) {
-                this.hoveredTileKey = null;
-            }
-
-            const scaledWidth = t.width * scale;
-            const scaledHeight = t.height * scale;
-            const offsetX = (scaledWidth - t.width) / 2;
-            const offsetY = (scaledHeight - t.height) / 2;
-
             this.gl.uniform2f(offsetLoc, this.viewOffset.x, this.viewOffset.y);
-            this.gl.uniform2f(imgPosLoc, t.x - offsetX, t.y - offsetY);
-            this.gl.uniform2f(imgSizeLoc, scaledWidth, scaledHeight);
-            this.gl.uniform1f(glowLoc, glow);
+            this.gl.uniform2f(imgPosLoc, t.x, t.y);
+            this.gl.uniform2f(imgSizeLoc, t.width, t.height);
 
             this.gl.activeTexture(this.gl.TEXTURE0);
             this.gl.bindTexture(this.gl.TEXTURE_2D, this.imageData[t.imageIndex].texture);
@@ -1652,17 +1544,14 @@ class InfinitePortraitGallery {
             this.canvas.style.cursor = 'grabbing';
         });
 
-        this.canvas.addEventListener('mousemove', (e) => {
-            const rect = this.canvas.getBoundingClientRect();
-            this.mouseX = e.clientX - rect.left;
-            this.mouseY = e.clientY - rect.top;
-
+        window.addEventListener('mousemove', (e) => {
             if (!this.drag.isDragging) return;
             const dx = e.clientX - this.drag.lastX;
             const dy = e.clientY - this.drag.lastY;
-            this.drag.velocityX = dx * 0.3 + this.drag.velocityX * 0.7;
-            this.drag.velocityY = dy * 0.3 + this.drag.velocityY * 0.7;
+            this.drag.velocityX = dx * 0.1 + this.drag.velocityX * 0.5;
+            this.drag.velocityY = dy * 0.1 + this.drag.velocityY * 0.5;
 
+            // INVERTED: Added instead of subtracted
             this.viewOffset.x += this.drag.velocityX;
             this.viewOffset.y += this.drag.velocityY;
 
@@ -1688,6 +1577,7 @@ class InfinitePortraitGallery {
             this.drag.velocityX = dx * 0.3 + this.drag.velocityX * 0.7;
             this.drag.velocityY = dy * 0.3 + this.drag.velocityY * 0.7;
 
+            // INVERTED: Added instead of subtracted
             this.viewOffset.x += this.drag.velocityX;
             this.viewOffset.y += this.drag.velocityY;
 
@@ -1699,7 +1589,8 @@ class InfinitePortraitGallery {
 
         this.canvas.addEventListener('wheel', (e) => {
             e.preventDefault();
-            this.drag.velocityX += e.deltaX * 0.25;
+            // INVERTED: Subtracted to match the new += application logic below
+            this.drag.velocityX -= e.deltaX * 0.25;
             this.drag.velocityY -= e.deltaY * 0.25;
         }, { passive: false });
 
@@ -1731,51 +1622,13 @@ class InfinitePortraitGallery {
 
         document.addEventListener('fullscreenchange', () => {
             if (icon) icon.className = document.fullscreenElement ? 'fas fa-compress' : 'fas fa-expand';
-
-            // Start/stop particle engine based on fullscreen state
-            if (document.fullscreenElement === this.container) {
-                this.startFullscreenParticles();
-            } else {
-                this.stopFullscreenParticles();
-            }
-
             setTimeout(() => this.resizeCanvas(), 100);
         });
     }
 
-    startFullscreenParticles() {
-        // Only start if ParticleEngine is available (from the main page's projector script)
-        if (typeof ParticleEngine === 'undefined') return;
-
-        const pCanvas = this.container.querySelector('#gallery-particles');
-        if (!pCanvas) return;
-
-        // Set canvas dimensions
-        pCanvas.width = this.container.clientWidth;
-        pCanvas.height = this.container.clientHeight;
-
-        // Create a new particle engine instance on this canvas
-        this.fsParticleEngine = new ParticleEngine('gallery-particles');
-
-        // Start the ticker for this engine
-        if (typeof createjs !== 'undefined') {
-            this._fsTickerHandler = () => {
-                if (this.fsParticleEngine) this.fsParticleEngine.render();
-            };
-            createjs.Ticker.on("tick", this._fsTickerHandler);
-        }
-    }
-
-    stopFullscreenParticles() {
-        if (this._fsTickerHandler && typeof createjs !== 'undefined') {
-            createjs.Ticker.off("tick", this._fsTickerHandler);
-            this._fsTickerHandler = null;
-        }
-        this.fsParticleEngine = null;
-    }
-
     animate() {
         if (!this.drag.isDragging) {
+            // INVERTED: Added instead of subtracted to match drag direction
             this.viewOffset.x += this.drag.velocityX;
             this.viewOffset.y += this.drag.velocityY;
 
