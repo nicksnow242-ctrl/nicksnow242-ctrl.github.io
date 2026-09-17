@@ -1079,333 +1079,382 @@ var particles;
 <!-- ========================================== -->
 <!-- END CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- ========================================== -->
-<script src="thumbnail.js"></script> 
+<script src="thumbnail.js"></script>
 <!-- ============================================================
      DENSE MOSAIC GALLERY (Justified / Row-based Masonry)
      ============================================================ -->
+     <!-- ============================================================
+          DENSE 2D PACKED MOSAIC GALLERY (Infinite & Virtualized)
+          - Uses a 2D Skyline Bin-Packing algorithm for tight, puzzle-like fitting.
+          - Pulls from global `window.thumbnails` (defined in thumbnail.js).
+          - Infinitely recycles images as you scroll.
+          - Fully virtualized: only renders DOM nodes visible on screen.
+          ============================================================ -->
 
-<div id="mosaic-gallery" aria-label="Image gallery"></div>
+     <div id="mosaic-gallery" aria-label="Infinite mosaic gallery"></div>
 
-<style>
-  #mosaic-gallery {
-    position: relative;
-    margin-top: 110px; /* Shifts gallery below your 110px banner */
-    width: 100%;
-    box-sizing: border-box;
-  }
+     <style>
+       #mosaic-gallery {
+         position: relative;
+         margin-top: 110px; /* Shifts gallery below your 110px banner */
+         width: 100%;
+         box-sizing: border-box;
+       }
 
-  #mosaic-gallery .mg-stage {
-    position: relative;
-    width: 100%;
-  }
+       #mosaic-gallery .mg-stage {
+         position: relative;
+         width: 100%;
+         /* Height is set dynamically by the packing algorithm */
+       }
 
-  #mosaic-gallery .mg-cell {
-    position: absolute;
-    box-sizing: border-box;
-    overflow: hidden;
-    line-height: 0;
-    background: transparent;
-  }
+       #mosaic-gallery .mg-cell {
+         position: absolute;
+         box-sizing: border-box;
+         overflow: hidden;
+         line-height: 0;
+         background: transparent; /* No added background color */
+       }
 
-  #mosaic-gallery .mg-cell img {
-    width: 100%;
-    height: 100%;
-    display: block;
-    opacity: 0;
-    transition: opacity 280ms ease;
-    will-change: opacity;
-  }
+       #mosaic-gallery .mg-cell img {
+         width: 100%;
+         height: 100%;
+         display: block;
+         opacity: 0;
+         transition: opacity 300ms ease;
+         will-change: opacity;
+       }
 
-  #mosaic-gallery .mg-cell img[data-loaded="1"] {
-    opacity: 1;
-  }
+       #mosaic-gallery .mg-cell img[data-loaded="1"] {
+         opacity: 1;
+       }
 
-  #mosaic-gallery .mg-cell:hover img {
-    filter: brightness(1.04);
-    transition: opacity 280ms ease, filter 180ms ease;
-  }
-</style>
+       #mosaic-gallery .mg-cell:hover img {
+         filter: brightness(1.05);
+         transition: opacity 300ms ease, filter 200ms ease;
+       }
+     </style>
 
-<script>
-(function () {
-  'use strict';
+     <script>
+     (function () {
+       'use strict';
 
-  // Helper to parse dimension strings like '12"' or raw numbers
-  function parseDimension(val) {
-    if (typeof val === 'number') return val;
-    if (typeof val === 'string') {
-      var match = val.match(/^([\d.]+)/);
-      if (match) return parseFloat(match[1]);
-    }
-    return 0;
-  }
+       // Helper to parse dimension strings like '12"' or raw numbers
+       function parseDimension(val) {
+         if (typeof val === 'number') return val;
+         if (typeof val === 'string') {
+           var match = val.match(/^([\d.]+)/);
+           if (match) return parseFloat(match[1]);
+         }
+         return 0;
+       }
 
-  function JustifiedGallery(root, opts) {
-    opts = opts || {};
-    this.root = root;
-    this.targetRowHeight = opts.targetRowHeight || 220;
-    this.gap               = (opts.gap != null) ? opts.gap : 6;
-    this.buffer            = opts.buffer || 1000;
-    this.items             = [];
-    this.layout            = [];
-    this.totalHeight       = 0;
-    this.rendered          = new Map();
-    this.stage             = null;
-    this._ticking          = false;
-    this._resizeTimer      = null;
-    this._lastWidth        = 0;
+       function MosaicPacker(root, opts) {
+         opts = opts || {};
+         this.root = root;
+         this.gap = (opts.gap != null) ? opts.gap : 6;
+         this.baseUnit = opts.baseUnit || 40; // Grid slot size for packing
+         this.buffer = opts.buffer || 1000;   // Pixels to pre-pack/render beyond viewport
 
-    this._onScroll = this._onScroll.bind(this);
-    this._onResize = this._onResize.bind(this);
+         this.rawItems = [];
+         this.placedItems = []; // Stores { id, src, alt, x, y, w, h }
+         this.colHeights = [];  // Skyline array for 2D packing
 
-    this._build();
-  }
+         this.rendered = new Map(); // index -> DOM node
+         this.stage = null;
+         this._ticking = false;
+         this._resizeTimer = null;
+         this._nextIndex = 0;
+         this._lastWidth = 0;
+         this._cols = 0;
 
-  JustifiedGallery.prototype._build = function () {
-    this.stage = document.createElement('div');
-    this.stage.className = 'mg-stage';
-    this.root.appendChild(this.stage);
+         this._onScroll = this._onScroll.bind(this);
+         this._onResize = this._onResize.bind(this);
 
-    this._ingestThumbnails();
-    this._reflow();
+         this._build();
+       }
 
-    window.addEventListener('scroll', this._onScroll, { passive: true });
-    window.addEventListener('resize', this._onResize);
-    window.addEventListener('orientationchange', this._onResize);
-  };
+       MosaicPacker.prototype._build = function () {
+         this.stage = document.createElement('div');
+         this.stage.className = 'mg-stage';
+         this.root.appendChild(this.stage);
 
-  JustifiedGallery.prototype._ingestThumbnails = function () {
-    var raw = window.thumbnails || [];
-    var out = [];
+         this._ingestThumbnails();
+         this._resetAndRepack();
 
-    for (var i = 0; i < raw.length; i++) {
-      var t = raw[i];
-      if (!t) continue;
-      var src = t.src || t.url || t.href;
+         window.addEventListener('scroll', this._onScroll, { passive: true });
+         window.addEventListener('resize', this._onResize);
+         window.addEventListener('orientationchange', this._onResize);
+       };
 
-      var w, h;
-      // 1st priority: Hardcoded pixel dimensions
-      if (t.pixelWidth != null && t.pixelHeight != null) {
-        w = Number(t.pixelWidth);
-        h = Number(t.pixelHeight);
-      }
-      // 2nd priority: Fallback to parsing inch strings like '12"'
-      else {
-        w = parseDimension(t.width != null ? t.width : t.w);
-        h = parseDimension(t.height != null ? t.height : (t.length != null ? t.length : t.h));
-      }
+       MosaicPacker.prototype._ingestThumbnails = function () {
+         var raw = window.thumbnails || [];
+         var out = [];
 
-      if (!src || !(w > 0) || !(h > 0)) continue;
+         for (var i = 0; i < raw.length; i++) {
+           var t = raw[i];
+           if (!t) continue;
+           var src = t.src || t.url || t.href;
 
-      out.push({
-        index:  out.length,
-        src:    src,
-        w:      w,
-        h:      h,
-        aspect: w / h,
-        alt:    t.alt || t.title || ''
-      });
-    }
-    this.items = out;
-  };
+           var w, h;
+           if (t.pixelWidth != null && t.pixelHeight != null) {
+             w = Number(t.pixelWidth);
+             h = Number(t.pixelHeight);
+           } else {
+             w = parseDimension(t.width != null ? t.width : t.w);
+             h = parseDimension(t.height != null ? t.height : (t.length != null ? t.length : t.h));
+           }
 
-  JustifiedGallery.prototype._computeLayout = function () {
-    var containerW = this.root.clientWidth;
-    if (containerW <= 0) return;
+           if (!src || !(w > 0) || !(h > 0)) continue;
 
-    var gap     = this.gap;
-    var targetH = this.targetRowHeight;
-    var items   = this.items;
-    var layout  = [];
+           out.push({
+             src: src,
+             w: w,
+             h: h,
+             aspect: w / h,
+             alt: t.alt || t.title || ''
+           });
+         }
+         this.rawItems = out;
+       };
 
-    var row    = [];
-    var rowAsp = 0;
-    var y      = 0;
+       MosaicPacker.prototype._resetAndRepack = function () {
+         var w = this.root.clientWidth;
+         if (w <= 0) return;
+         this._lastWidth = w;
 
-    var flushRow = function (forceFullWidth) {
-      if (row.length === 0) return;
-      var totalGap = (row.length - 1) * gap;
-      var rowH;
+         // Calculate grid columns based on container width
+         var slotSize = this.baseUnit + this.gap;
+         this._cols = Math.floor((w + this.gap) / slotSize);
+         if (this._cols < 1) this._cols = 1;
 
-      if (forceFullWidth) {
-        rowH = (containerW - totalGap) / rowAsp;
-      } else {
-        rowH = targetH; // Last row stays at target height, left-aligned
-      }
+         this.colHeights = new Array(this._cols).fill(0);
+         this.placedItems = [];
+         this._nextIndex = 0;
+         this._clearRendered();
 
-      var x = 0;
-      for (var k = 0; k < row.length; k++) {
-        var it = row[k];
-        var iw = rowH * it.aspect;
-        layout.push({
-          index: it.index,
-          src:   it.src,
-          alt:   it.alt,
-          x:     x,
-          y:     y,
-          w:     iw,
-          h:     rowH
-        });
-        x += iw + gap;
-      }
-      y += rowH + gap;
-      row = [];
-      rowAsp = 0;
-    };
+         // Pack enough items to fill the viewport + buffer
+         var targetHeight = window.innerHeight + this.buffer;
+         this._packToHeight(targetHeight);
 
-    for (var i = 0; i < items.length; i++) {
-      var it = items[i];
-      row.push(it);
-      rowAsp += it.aspect;
+         this.stage.style.height = this._getMaxHeight() + 'px';
+         this._renderVisible();
+       };
 
-      var totalGap = (row.length - 1) * gap;
-      var projH    = (containerW - totalGap) / rowAsp;
+       MosaicPacker.prototype._getMaxHeight = function () {
+         var max = 0;
+         for (var i = 0; i < this.colHeights.length; i++) {
+           if (this.colHeights[i] > max) max = this.colHeights[i];
+         }
+         return max;
+       };
 
-      if (projH <= targetH) {
-        flushRow(true);
-      }
-    }
+       MosaicPacker.prototype._getNextItem = function () {
+         if (this.rawItems.length === 0) return null;
+         // Infinite recycling of the thumbnail array
+         var template = this.rawItems[this._nextIndex % this.rawItems.length];
+         this._nextIndex++;
 
-    flushRow(false); // Flush remaining items without stretching
+         return {
+           id: this._nextIndex,
+           src: template.src,
+           alt: template.alt,
+           aspect: template.aspect
+         };
+       };
 
-    this.layout      = layout;
-    this.totalHeight = y > 0 ? y - gap : 0;
-  };
+       MosaicPacker.prototype._packToHeight = function (targetY) {
+         if (this.rawItems.length === 0) return;
 
-  JustifiedGallery.prototype._reflow = function () {
-    var w = this.root.clientWidth;
-    if (w <= 0) return;
-    this._lastWidth = w;
+         var slotSize = this.baseUnit + this.gap;
+         // Dynamic target area scales with screen width for consistent visual density
+         var targetArea = this.root.clientWidth * 120;
 
-    this._computeLayout();
-    this.stage.style.height = this.totalHeight + 'px';
+         while (this._getMaxHeight() < targetY) {
+           var item = this._getNextItem();
+           if (!item) break;
 
-    this._clearRendered();
-    this._renderVisible();
-  };
+           // Calculate ideal dimensions to match target area while preserving aspect ratio
+           var idealW = Math.sqrt(targetArea * item.aspect);
 
-  JustifiedGallery.prototype._clearRendered = function () {
-    this.rendered.forEach(function (el) { el.remove(); });
-    this.rendered.clear();
-  };
+           // Determine how many grid columns this item should span
+           var colSpan = Math.round(idealW / this.baseUnit);
+           colSpan = Math.max(1, Math.min(this._cols, colSpan)); // Clamp to available columns
 
-  JustifiedGallery.prototype._renderVisible = function () {
-    var scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
-    var vh        = window.innerHeight || document.documentElement.clientHeight || 0;
-    var top       = scrollTop - this.buffer;
-    var bottom    = scrollTop + vh + this.buffer;
+           var actualW = (colSpan * this.baseUnit) + ((colSpan - 1) * this.gap);
+           var actualH = actualW / item.aspect;
 
-    var layout = this.layout;
-    var n      = layout.length;
-    if (n === 0) return;
+           // 2D Skyline Packing: Find the horizontal position (x) that results in the lowest peak
+           var bestX = 0;
+           var minPeak = Infinity;
 
-    // Binary search for start index
-    var lo = 0, hi = n - 1, start = n;
-    while (lo <= hi) {
-      var mid = (lo + hi) >> 1;
-      var it  = layout[mid];
-      if (it.y + it.h < top) lo = mid + 1;
-      else { start = mid; hi = mid - 1; }
-    }
+           for (var x = 0; x <= this._cols - colSpan; x++) {
+             var peak = 0;
+             for (var i = 0; i < colSpan; i++) {
+               if (this.colHeights[x + i] > peak) {
+                 peak = this.colHeights[x + i];
+               }
+             }
+             // Prefer left-most position in case of a tie for visual consistency
+             if (peak < minPeak) {
+               minPeak = peak;
+               bestX = x;
+             }
+           }
 
-    // Binary search for end index
-    lo = 0; hi = n - 1; var end = n;
-    while (lo <= hi) {
-      var mid = (lo + hi) >> 1;
-      if (layout[mid].y > bottom) { end = mid; hi = mid - 1; }
-      else lo = mid + 1;
-    }
+           var px = bestX * slotSize;
+           var py = minPeak;
 
-    // Remove nodes outside visible range
-    var toDelete = [];
-    this.rendered.forEach(function (el, idx) {
-      if (idx < start || idx >= end) toDelete.push(idx);
-    });
-    for (var d = 0; d < toDelete.length; d++) {
-      var el = this.rendered.get(toDelete[d]);
-      if (el) el.remove();
-      this.rendered.delete(toDelete[d]);
-    }
+           this.placedItems.push({
+             id: item.id,
+             src: item.src,
+             alt: item.alt,
+             x: px,
+             y: py,
+             w: actualW,
+             h: actualH
+           });
 
-    // Create nodes inside visible range
-    var frag = document.createDocumentFragment();
-    for (var i = start; i < end; i++) {
-      if (this.rendered.has(i)) continue;
-      var node = this._createCell(layout[i]);
-      frag.appendChild(node);
-      this.rendered.set(i, node);
-    }
-    this.stage.appendChild(frag);
-  };
+           // Update the skyline heights for the columns this item occupies
+           var newHeight = py + actualH + this.gap;
+           for (var i = 0; i < colSpan; i++) {
+             this.colHeights[bestX + i] = newHeight;
+           }
+         }
+       };
 
-  JustifiedGallery.prototype._createCell = function (item) {
-    var cell = document.createElement('div');
-    cell.className = 'mg-cell';
-    cell.style.left   = item.x + 'px';
-    cell.style.top    = item.y + 'px';
-    cell.style.width  = item.w + 'px';
-    cell.style.height = item.h + 'px';
+       MosaicPacker.prototype._clearRendered = function () {
+         this.rendered.forEach(function (el) { el.remove(); });
+         this.rendered.clear();
+       };
 
-    var img = document.createElement('img');
-    img.alt      = item.alt;
-    img.decoding = 'async';
-    img.width    = Math.round(item.w);
-    img.height   = Math.round(item.h);
-    img.loading  = 'lazy';
-    img.src      = item.src;
+       MosaicPacker.prototype._renderVisible = function () {
+         var scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
+         var vh = window.innerHeight || document.documentElement.clientHeight || 0;
+         var top = scrollTop - this.buffer;
+         var bottom = scrollTop + vh + this.buffer;
 
-    img.addEventListener('load',  function () { img.setAttribute('data-loaded', '1'); });
-    img.addEventListener('error', function () { img.setAttribute('data-loaded', '1'); });
+         var items = this.placedItems;
+         var n = items.length;
+         if (n === 0) return;
 
-    cell.appendChild(img);
-    return cell;
-  };
+         // Ensure we have enough items packed to cover the visible area + buffer
+         if (n > 0 && items[n - 1].y < bottom) {
+           this._packToHeight(bottom + this.buffer);
+           this.stage.style.height = this._getMaxHeight() + 'px';
+           // Re-evaluate 'n' and 'items' since _packToHeight may have added more
+           items = this.placedItems;
+           n = items.length;
+         }
 
-  JustifiedGallery.prototype._onScroll = function () {
-    if (this._ticking) return;
-    this._ticking = true;
-    requestAnimationFrame(function () {
-      this._ticking = false;
-      this._renderVisible();
-    }.bind(this));
-  };
+         // Binary search for start index (first item whose bottom >= top)
+         var lo = 0, hi = n - 1, start = n;
+         while (lo <= hi) {
+           var mid = (lo + hi) >> 1;
+           if (items[mid].y + items[mid].h < top) lo = mid + 1;
+           else { start = mid; hi = mid - 1; }
+         }
 
-  JustifiedGallery.prototype._onResize = function () {
-    var self = this;
-    clearTimeout(this._resizeTimer);
-    this._resizeTimer = setTimeout(function () {
-      var w = self.root.clientWidth;
-      if (w <= 0 || w === self._lastWidth) return;
-      self._reflow();
-    }, 120);
-  };
+         // Binary search for end index (first item whose top > bottom)
+         lo = 0; hi = n - 1; var end = n;
+         while (lo <= hi) {
+           var mid = (lo + hi) >> 1;
+           if (items[mid].y > bottom) { end = mid; hi = mid - 1; }
+           else lo = mid + 1;
+         }
 
-  function boot() {
-    var root = document.getElementById('mosaic-gallery');
-    if (!root) return;
+         // Remove DOM nodes that scrolled out of range
+         var toDelete = [];
+         this.rendered.forEach(function (el, idx) {
+           if (idx < start || idx >= end) toDelete.push(idx);
+         });
+         for (var d = 0; d < toDelete.length; d++) {
+           var el = this.rendered.get(toDelete[d]);
+           if (el) el.remove();
+           this.rendered.delete(toDelete[d]);
+         }
 
-    var attempts = 0;
-    var tryInit = function() {
-      if (window.thumbnails && window.thumbnails.length) {
-        new JustifiedGallery(root, {
-          targetRowHeight: 220,
-          gap: 6,
-          buffer: 1200
-        });
-      } else if (attempts++ < 50) {
-        setTimeout(tryInit, 100);
-      }
-    };
-    tryInit();
-  }
+         // Create DOM nodes for newly visible items
+         var frag = document.createDocumentFragment();
+         for (var i = start; i < end; i++) {
+           if (this.rendered.has(i)) continue;
+           var node = this._createCell(items[i]);
+           frag.appendChild(node);
+           this.rendered.set(i, node);
+         }
+         this.stage.appendChild(frag);
+       };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot);
-  } else {
-    boot();
-  }
-})();
-</script>
+       MosaicPacker.prototype._createCell = function (item) {
+         var cell = document.createElement('div');
+         cell.className = 'mg-cell';
+         cell.style.left   = item.x + 'px';
+         cell.style.top    = item.y + 'px';
+         cell.style.width  = item.w + 'px';
+         cell.style.height = item.h + 'px';
+
+         var img = document.createElement('img');
+         img.alt      = item.alt;
+         img.decoding = 'async';
+         // Pre-reserve layout space to prevent shifts
+         img.width    = Math.round(item.w);
+         img.height   = Math.round(item.h);
+         img.loading  = 'lazy';
+         img.src      = item.src;
+
+         img.addEventListener('load',  function () { img.setAttribute('data-loaded', '1'); });
+         img.addEventListener('error', function () { img.setAttribute('data-loaded', '1'); });
+
+         cell.appendChild(img);
+         return cell;
+       };
+
+       MosaicPacker.prototype._onScroll = function () {
+         if (this._ticking) return;
+         this._ticking = true;
+         requestAnimationFrame(function () {
+           this._ticking = false;
+           this._renderVisible();
+         }.bind(this));
+       };
+
+       MosaicPacker.prototype._onResize = function () {
+         var self = this;
+         clearTimeout(this._resizeTimer);
+         this._resizeTimer = setTimeout(function () {
+           var w = self.root.clientWidth;
+           if (w <= 0 || w === self._lastWidth) return;
+           // Note: Responsive 2D packing requires a full recalculation.
+           // We reset and repack from the top to maintain the puzzle-like integrity.
+           self._resetAndRepack();
+         }, 150);
+       };
+
+       function boot() {
+         var root = document.getElementById('mosaic-gallery');
+         if (!root) return;
+
+         var attempts = 0;
+         var tryInit = function() {
+           if (window.thumbnails && window.thumbnails.length) {
+             new MosaicPacker(root, {
+               gap: 6,
+               baseUnit: 40,  // Lower = finer, tighter packing. Higher = larger blocks.
+               buffer: 1200
+             });
+           } else if (attempts++ < 50) {
+             setTimeout(tryInit, 100);
+           }
+         };
+         tryInit();
+       }
+
+       if (document.readyState === 'loading') {
+         document.addEventListener('DOMContentLoaded', boot);
+       } else {
+         boot();
+       }
+     })();
+     </script>
 <!-- ========================================== -->
 <!-- END Justified Infinite Mosaic Gallery -->
 <!-- ========================================== -->
