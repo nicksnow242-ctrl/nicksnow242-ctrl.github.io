@@ -69,7 +69,7 @@ window.thumbnails = [
     },
     {
         id: 5,
-        src: 'Images/Thumbnails/Kayaker.png',
+        src: 'Images/Thumbnails/Kayakertest.png',
         alt: 'A thief came in the night',
         title: 'Kayaker',
         dateCreated: '09-16-26',
