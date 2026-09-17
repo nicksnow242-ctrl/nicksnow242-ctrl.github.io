@@ -1,4 +1,4 @@
-const thumbnails = [
+window.thumbnails = [
     {
         id: 1,
         src: 'Images/Thumbnails/DSC1847.png',
