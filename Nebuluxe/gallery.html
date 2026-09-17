@@ -1085,6 +1085,7 @@ var particles;
      ============================================================ -->
 
 <style>
+/* (All CSS remains exactly the same as your original) */
 .gallery-wrapper {
   position: relative;
   width: 100%;
@@ -1096,289 +1097,98 @@ var particles;
   margin-top: 110px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
 }
-
-.gallery-wrapper * {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
-
+.gallery-wrapper * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 .gallery-wrapper canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-  outline: none;
-  cursor: grab;
-  touch-action: none;
-  user-select: none;
+  display: block; width: 100%; height: 100%; outline: none;
+  cursor: grab; touch-action: none; user-select: none;
 }
-
-.gallery-wrapper canvas:active {
-  cursor: grabbing;
-}
-
+.gallery-wrapper canvas:active { cursor: grabbing; }
 .gallery-wrapper .loading {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: #5C4A32;
-  font-size: 20px;
-  z-index: 1000;
-  background: rgba(255, 253, 245, 0.9);
-  padding: 20px 40px;
-  border-radius: 10px;
-  border: 1px solid rgba(180, 154, 93, 0.4);
-  font-family: 'Share Tech Mono', monospace;
-  pointer-events: none;
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  color: #5C4A32; font-size: 20px; z-index: 1000; background: rgba(255, 253, 245, 0.9);
+  padding: 20px 40px; border-radius: 10px; border: 1px solid rgba(180, 154, 93, 0.4);
+  font-family: 'Share Tech Mono', monospace; pointer-events: none;
 }
-
 .gallery-wrapper .cache {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-  background-color: transparent;
-  z-index: 999;
+  position: absolute; height: 100%; width: 100%; top: 0; left: 0;
+  background-color: transparent; z-index: 999;
 }
-
 .gallery-wrapper .fullscreen-btn {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  width: 44px;
-  height: 44px;
-  background: rgba(255, 253, 245, 0.9);
-  color: #b49a5d;
-  border: 1px solid rgba(180, 154, 93, 0.4);
-  border-radius: 50%;
-  font-size: 20px;
-  cursor: pointer;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
+  position: absolute; bottom: 20px; right: 20px; width: 44px; height: 44px;
+  background: rgba(255, 253, 245, 0.9); color: #b49a5d;
+  border: 1px solid rgba(180, 154, 93, 0.4); border-radius: 50%;
+  font-size: 20px; cursor: pointer; z-index: 1000; display: flex;
+  align-items: center; justify-content: center; backdrop-filter: blur(10px);
   transition: transform 0.2s, box-shadow 0.2s;
 }
-
 .gallery-wrapper .fullscreen-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 15px rgba(180, 154, 93, 0.4);
+  transform: scale(1.1); box-shadow: 0 0 15px rgba(180, 154, 93, 0.4);
 }
-
 .gallery-wrapper .hint {
-  position: absolute;
-  left: 12px;
-  bottom: 12px;
-  z-index: 10;
-  background: rgba(255, 253, 245, 0.9);
-  color: #5C4A32;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(180, 154, 93, 0.3);
-  opacity: 0.9;
-  font-size: 13px;
-  pointer-events: none;
-  user-select: text;
+  position: absolute; left: 12px; bottom: 12px; z-index: 10;
+  background: rgba(255, 253, 245, 0.9); color: #5C4A32; padding: 8px 12px;
+  border-radius: 8px; border: 1px solid rgba(180, 154, 93, 0.3); opacity: 0.9;
+  font-size: 13px; pointer-events: none; user-select: text;
   font-family: 'Share Tech Mono', monospace;
 }
+.gallery-wrapper .hint a { color: #b49a5d; text-decoration: none; pointer-events: auto; font-weight: bold; }
 
-.gallery-wrapper .hint a {
-  color: #b49a5d;
-  text-decoration: none;
-  pointer-events: auto;
-  font-weight: bold;
-}
-
-/* Modal Styles */
 .gallery-modal {
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(6px);
-  z-index: 2000;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(6px); z-index: 2000;
+  display: none; align-items: center; justify-content: center; padding: 20px;
+  opacity: 0; transition: opacity 0.3s ease;
 }
-
-.gallery-modal.is-open {
-  display: flex;
-  opacity: 1;
-}
-
+.gallery-modal.is-open { display: flex; opacity: 1; }
 .gallery-card {
-  background: #FFFDF5;
-  border: 1px solid rgba(180, 154, 93, 0.4);
-  border-radius: 12px;
-  width: 100%;
-  max-width: 500px;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-  position: relative;
-  overflow: hidden;
-  transform: scale(0.95);
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: #FFFDF5; border: 1px solid rgba(180, 154, 93, 0.4); border-radius: 12px;
+  width: 100%; max-width: 500px; max-height: 90vh; display: flex; flex-direction: column;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3); position: relative; overflow: hidden;
+  transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-
-.gallery-modal.is-open .gallery-card {
-  transform: scale(1);
-}
-
+.gallery-modal.is-open .gallery-card { transform: scale(1); }
 .gallery-card-close {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: rgba(255, 253, 245, 0.9);
-  border: 1px solid rgba(180, 154, 93, 0.4);
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  color: #5C4A32;
-  cursor: pointer;
-  z-index: 10;
-  transition: all 0.2s ease;
+  position: absolute; top: 15px; right: 15px; background: rgba(255, 253, 245, 0.9);
+  border: 1px solid rgba(180, 154, 93, 0.4); border-radius: 50%; width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+  color: #5C4A32; cursor: pointer; z-index: 10; transition: all 0.2s ease;
 }
-
-.gallery-card-close:hover {
-  background: #b49a5d;
-  color: #fff;
-}
-
+.gallery-card-close:hover { background: #b49a5d; color: #fff; }
 .gallery-card-image {
-  display: block;
-  max-width: 100%;
-  max-height: 400px;
-  width: auto;
-  height: auto;
-  margin: 0 auto;
-  object-fit: contain;
-  background: #1a1a1a;
+  display: block; max-width: 100%; max-height: 400px; width: auto; height: auto;
+  margin: 0 auto; object-fit: contain; background: #1a1a1a;
   border-bottom: 1px solid rgba(180, 154, 93, 0.2);
 }
-
-.gallery-card-body {
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  flex: 1;
-  overflow: hidden;
-}
-
-.gallery-card-title {
-  font-size: 26px;
-  font-weight: 600;
-  color: #5C4A32;
-  margin: 0;
-  line-height: 1.2;
-}
-
-.gallery-card-meta {
-  font-size: 14px;
-  color: #8A7355;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.gallery-card-meta strong {
-  color: #5C4A32;
-}
-
-.gallery-card-price {
-  font-size: 22px;
-  font-weight: bold;
-  color: #b49a5d;
-  margin-top: 4px;
-}
-
+.gallery-card-body { padding: 24px; display: flex; flex-direction: column; gap: 12px; flex: 1; overflow: hidden; }
+.gallery-card-title { font-size: 26px; font-weight: 600; color: #5C4A32; margin: 0; line-height: 1.2; }
+.gallery-card-meta { font-size: 14px; color: #8A7355; display: flex; flex-direction: column; gap: 6px; }
+.gallery-card-meta strong { color: #5C4A32; }
+.gallery-card-price { font-size: 22px; font-weight: bold; color: #b49a5d; margin-top: 4px; }
 .gallery-card-desc {
-  font-size: 14px;
-  line-height: 1.6;
-  color: #5C4A32;
-  overflow-y: auto;
-  max-height: 150px;
-  padding-right: 10px;
-  border-top: 1px solid rgba(180, 154, 93, 0.2);
-  padding-top: 12px;
-  margin-top: 4px;
+  font-size: 14px; line-height: 1.6; color: #5C4A32; overflow-y: auto; max-height: 150px;
+  padding-right: 10px; border-top: 1px solid rgba(180, 154, 93, 0.2); padding-top: 12px; margin-top: 4px;
 }
-
-.gallery-card-desc::-webkit-scrollbar {
-  width: 6px;
-}
-.gallery-card-desc::-webkit-scrollbar-track {
-  background: transparent;
-}
-.gallery-card-desc::-webkit-scrollbar-thumb {
-  background: rgba(180, 154, 93, 0.4);
-  border-radius: 3px;
-}
-
+.gallery-card-desc::-webkit-scrollbar { width: 6px; }
+.gallery-card-desc::-webkit-scrollbar-track { background: transparent; }
+.gallery-card-desc::-webkit-scrollbar-thumb { background: rgba(180, 154, 93, 0.4); border-radius: 3px; }
 .gallery-card-footer {
-  padding: 20px 24px 24px;
-  border-top: 1px solid rgba(180, 154, 93, 0.2);
+  padding: 20px 24px 24px; border-top: 1px solid rgba(180, 154, 93, 0.2);
   background: rgba(255, 253, 245, 0.95);
 }
-
 .inquire-btn {
-  display: block;
-  width: 100%;
-  padding: 14px;
-  background: #b49a5d;
-  color: #fff;
-  text-align: center;
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 16px;
-  letter-spacing: 0.5px;
-  transition: background 0.2s, transform 0.1s;
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
+  display: block; width: 100%; padding: 14px; background: #b49a5d; color: #fff;
+  text-align: center; text-decoration: none; border-radius: 8px; font-weight: 600;
+  font-size: 16px; letter-spacing: 0.5px; transition: background 0.2s, transform 0.1s;
+  border: none; cursor: pointer; font-family: inherit;
 }
-
-.inquire-btn:hover {
-  background: #9C8561;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(180, 154, 93, 0.3);
-}
-
-.inquire-btn:active {
-  transform: translateY(0);
-}
+.inquire-btn:hover { background: #9C8561; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(180, 154, 93, 0.3); }
+.inquire-btn:active { transform: translateY(0); }
 
 @media (max-width: 768px) {
-  .gallery-wrapper .hint {
-    bottom: 70px;
-    font-size: 11px;
-    padding: 6px 10px;
-  }
-  .gallery-wrapper .fullscreen-btn {
-    bottom: 15px;
-    right: 15px;
-    width: 38px;
-    height: 38px;
-    font-size: 16px;
-  }
-  .gallery-card {
-    max-height: 95vh;
-  }
-  .gallery-card-title {
-    font-size: 22px;
-  }
+  .gallery-wrapper .hint { bottom: 70px; font-size: 11px; padding: 6px 10px; }
+  .gallery-wrapper .fullscreen-btn { bottom: 15px; right: 15px; width: 38px; height: 38px; font-size: 16px; }
+  .gallery-card { max-height: 95vh; }
+  .gallery-card-title { font-size: 22px; }
 }
 </style>
 
@@ -1387,10 +1197,7 @@ var particles;
 <div id="gallery-container" class="gallery-wrapper">
     <div class="cache"></div>
     <div class="loading">Loading... 0%</div>
-
-    <button class="fullscreen-btn" aria-label="Toggle Fullscreen">
-        <i class="fas fa-expand"></i>
-    </button>
+    <button class="fullscreen-btn" aria-label="Toggle Fullscreen"><i class="fas fa-expand"></i></button>
     <div class="hint">Scroll / drag / use - or + to adjust bulge. Click an image for details.</div>
 
     <div id="gallery-modal" class="gallery-modal">
@@ -1404,9 +1211,7 @@ var particles;
                     <div><strong>Availability:</strong> <span id="modal-availability">Checking...</span></div>
                     <div><strong>Size:</strong> <span id="modal-size">0 x 0</span></div>
                 </div>
-                <div id="modal-description" class="gallery-card-desc">
-                    Description goes here.
-                </div>
+                <div id="modal-description" class="gallery-card-desc">Description goes here.</div>
             </div>
             <div class="gallery-card-footer">
                 <a id="modal-inquire-btn" class="inquire-btn" href="#" target="_blank">Inquire about this</a>
@@ -1417,9 +1222,7 @@ var particles;
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        new InfinitePortraitGallery('gallery-container');
-    }, 100);
+    setTimeout(() => { new InfinitePortraitGallery('gallery-container'); }, 100);
 });
 
 class InfinitePortraitGallery {
@@ -1456,7 +1259,9 @@ class InfinitePortraitGallery {
 
         this.resizeCanvas();
         window.addEventListener('resize', () => this.resizeCanvas());
+
         this.init();
+        this.initPicking(); // Initialize the color-picking framebuffer
         this.loadImages();
         this.setupEventListeners();
         this.setupFullscreen();
@@ -1469,7 +1274,15 @@ class InfinitePortraitGallery {
         this.canvas.height = this.container.clientHeight;
         const diagonal = Math.sqrt(Math.pow(this.canvas.width / Math.min(this.canvas.width, this.canvas.height), 2) + Math.pow(this.canvas.height / Math.min(this.canvas.width, this.canvas.height), 2));
         this.adjustedBulgeRadius = Math.max(this.bulgeRadius, diagonal * 0.6 * 1.2);
-        if (this.gl) this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+
+        if (this.gl) {
+            this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+            // Update picking texture size to match new canvas dimensions
+            if (this.pickingTexture) {
+                this.gl.bindTexture(this.gl.TEXTURE_2D, this.pickingTexture);
+                this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.canvas.width, this.canvas.height, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, null);
+            }
+        }
     }
 
     init() {
@@ -1494,9 +1307,9 @@ class InfinitePortraitGallery {
             float dist = length(delta);
             if(dist < uBulgeRadius){
                 float t = dist / uBulgeRadius;
-                // FIXED: Changed 0.5 to 1.0 to prevent NaN artifacts and create a proper hemisphere
+                // FIXED: Changed 0.5 to 1.0 to prevent NaN artifacts and create a proper stable hemisphere
                 float z = sqrt(max(0.0, 1.0 - t * t));
-                if (z < 0.01) z = 0.01; // Prevent division by zero
+                if (z < 0.01) z = 0.01;
                 delta *= 0.35 + uBulgeStrength / z;
                 delta.x /= aspect;
                 normalizedPos = center + delta;
@@ -1509,16 +1322,13 @@ class InfinitePortraitGallery {
             vec2 pos = aPosition * uImageSize;
             pos += uImagePosition;
             pos -= uOffset;
-
             vec2 center = uImagePosition + (uImageSize * 0.5) - uOffset;
             pos -= center;
             float cosR = cos(uRotation);
             float sinR = sin(uRotation);
             pos = vec2(pos.x*cosR - pos.y*sinR, pos.x*sinR + pos.y*cosR);
             pos += center;
-
             pos = applyBulgeEffect(pos);
-
             vec2 clip = pos / uResolution * 2.0 - 1.0;
             gl_Position = vec4(clip, 0.0, 1.0);
             vTexCoord = aTexCoord;
@@ -1565,6 +1375,76 @@ class InfinitePortraitGallery {
         this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
     }
 
+    // Industry-standard WebGL Color Picking setup
+    initPicking() {
+        const vsSource = `
+        attribute vec2 aPosition;
+        uniform vec2 uResolution;
+        uniform vec2 uOffset;
+        uniform float uRotation;
+        uniform vec2 uImagePosition;
+        uniform vec2 uImageSize;
+        uniform float uBulgeStrength;
+        uniform float uBulgeRadius;
+        uniform vec3 uPickColor;
+        varying vec3 vPickColor;
+
+        vec2 applyBulgeEffect(vec2 pos){
+            vec2 normalizedPos = pos / uResolution;
+            vec2 center = vec2(0.5, 0.5);
+            vec2 delta = normalizedPos - center;
+            float aspect = uResolution.x / uResolution.y;
+            delta.x *= aspect;
+            float dist = length(delta);
+            if(dist < uBulgeRadius){
+                float t = dist / uBulgeRadius;
+                float z = sqrt(max(0.0, 1.0 - t * t));
+                if (z < 0.01) z = 0.01;
+                delta *= 0.35 + uBulgeStrength / z;
+                delta.x /= aspect;
+                normalizedPos = center + delta;
+                pos = normalizedPos * uResolution;
+            }
+            return pos;
+        }
+
+        void main(){
+            vec2 pos = aPosition * uImageSize;
+            pos += uImagePosition;
+            pos -= uOffset;
+            vec2 center = uImagePosition + (uImageSize * 0.5) - uOffset;
+            pos -= center;
+            float cosR = cos(uRotation);
+            float sinR = sin(uRotation);
+            pos = vec2(pos.x*cosR - pos.y*sinR, pos.x*sinR + pos.y*cosR);
+            pos += center;
+            pos = applyBulgeEffect(pos);
+            vec2 clip = pos / uResolution * 2.0 - 1.0;
+            gl_Position = vec4(clip, 0.0, 1.0);
+            vPickColor = uPickColor;
+        }`;
+
+        const fsSource = `
+        precision mediump float;
+        varying vec3 vPickColor;
+        void main(){
+            gl_FragColor = vec4(vPickColor, 1.0);
+        }`;
+
+        this.pickingProgram = this.createProgram(vsSource, fsSource);
+
+        this.pickingFB = this.gl.createFramebuffer();
+        this.pickingTexture = this.gl.createTexture();
+        this.gl.bindTexture(this.gl.TEXTURE_2D, this.pickingTexture);
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, 1, 1, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, null);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
+
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.pickingFB);
+        this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT0, this.gl.TEXTURE_2D, this.pickingTexture, 0);
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+    }
+
     async loadImages() {
         const loadingElement = this.container.querySelector('.loading');
         const cacheElement = this.container.querySelector('.cache');
@@ -1573,7 +1453,6 @@ class InfinitePortraitGallery {
         let thumbnailItems = [];
 
         if (typeof window.thumbnails !== 'undefined' && window.thumbnails.length > 0) {
-            // Filter out invalid items first to keep indices perfectly aligned
             const validThumbnails = window.thumbnails.filter(t => t && t.src);
             thumbnailItems = validThumbnails;
             imageSources = validThumbnails.map(t => t.src);
@@ -1582,15 +1461,8 @@ class InfinitePortraitGallery {
         if (imageSources.length === 0) {
             imageSources = this.getDefaultImages();
             thumbnailItems = imageSources.map((src, i) => ({
-                src: src,
-                title: `Artwork ${i + 1}`,
-                suggestedprice: 100,
-                pricemultiplier: 1,
-                inStock: true,
-                remakecustom: false,
-                length: 10,
-                width: 10,
-                description: "Default artwork description."
+                src: src, title: `Artwork ${i + 1}`, suggestedprice: 100, pricemultiplier: 1,
+                inStock: true, remakecustom: false, length: 10, width: 10, description: "Default artwork description."
             }));
         }
 
@@ -1600,29 +1472,18 @@ class InfinitePortraitGallery {
         for (let i = 0; i < imageCount; i++) {
             const img = new Image();
             img.crossOrigin = 'Anonymous';
-            const src = imageSources[i % imageSources.length];
-            img.src = src;
-
+            img.src = imageSources[i % imageSources.length];
             const originalIndex = i % imageSources.length;
 
             const promise = new Promise((resolve) => {
                 img.onload = () => {
-                    let w = img.naturalWidth;
-                    let h = img.naturalHeight;
-                    if (w > h) {
-                        h = (h / w) * this.maxDimension;
-                        w = this.maxDimension;
-                    } else {
-                        w = (w / h) * this.maxDimension;
-                        h = this.maxDimension;
-                    }
+                    let w = img.naturalWidth, h = img.naturalHeight;
+                    if (w > h) { h = (h / w) * this.maxDimension; w = this.maxDimension; }
+                    else { w = (w / h) * this.maxDimension; h = this.maxDimension; }
 
                     this.imageData.push({
-                        img: img,
-                        texture: this.createTexture(img),
-                        width: w,
-                        height: h,
-                        itemData: thumbnailItems[originalIndex] // Store actual item data directly
+                        img: img, texture: this.createTexture(img), width: w, height: h,
+                        itemData: thumbnailItems[originalIndex] // DIRECT BINDING: Immune to external recycling
                     });
                     resolve();
                 };
@@ -1630,10 +1491,7 @@ class InfinitePortraitGallery {
                     img.src = `https://picsum.photos/id/${(i % 100) + 1000}/${this.maxDimension}/${this.maxDimension}`;
                     img.onload = () => {
                         this.imageData.push({
-                            img: img,
-                            texture: this.createTexture(img),
-                            width: this.maxDimension,
-                            height: this.maxDimension,
+                            img: img, texture: this.createTexture(img), width: this.maxDimension, height: this.maxDimension,
                             itemData: thumbnailItems[originalIndex]
                         });
                         resolve();
@@ -1651,7 +1509,6 @@ class InfinitePortraitGallery {
             loaded++;
             if (loadingElement) loadingElement.textContent = `Loading... ${Math.round(loaded / total * 100)}%`;
         }
-
         if (loadingElement) loadingElement.style.display = 'none';
         if (cacheElement) cacheElement.style.display = 'none';
     }
@@ -1675,13 +1532,9 @@ class InfinitePortraitGallery {
 
     getVisibleTiles() {
         const tiles = [];
-        if (this.imageData.length === 0) return tiles; // Guard against early clicks during load
-
+        if (this.imageData.length === 0) return tiles;
         const baseTileW = this.maxDimension + this.gap;
         const baseTileH = this.maxDimension + this.gap;
-
-        const tileW = baseTileW * this.zoom;
-        const tileH = baseTileH * this.zoom;
 
         const visibleLeft = (this.viewOffset.x - this.canvas.width) / this.zoom;
         const visibleRight = (this.viewOffset.x + this.canvas.width * 2) / this.zoom;
@@ -1693,7 +1546,6 @@ class InfinitePortraitGallery {
                 const hash = (x * 7919 + y * 7307) % this.imageData.length;
                 const idx = Math.abs(hash);
                 const data = this.imageData[idx];
-
                 const offsetX = (baseTileW - data.width) / 2;
                 const offsetY = (baseTileH - data.height) / 2;
 
@@ -1703,7 +1555,7 @@ class InfinitePortraitGallery {
                     width: data.width * this.zoom,
                     height: data.height * this.zoom,
                     imageIndex: idx,
-                    itemData: data.itemData // Pass the actual item data directly to the tile
+                    itemData: data.itemData
                 });
             }
         }
@@ -1741,7 +1593,6 @@ class InfinitePortraitGallery {
             this.gl.uniform2f(offsetLoc, this.viewOffset.x, this.viewOffset.y);
             this.gl.uniform2f(imgPosLoc, t.x, t.y);
             this.gl.uniform2f(imgSizeLoc, t.width, t.height);
-
             this.gl.activeTexture(this.gl.TEXTURE0);
             this.gl.bindTexture(this.gl.TEXTURE_2D, this.imageData[t.imageIndex].texture);
             this.gl.uniform1i(samplerLoc, 0);
@@ -1749,88 +1600,81 @@ class InfinitePortraitGallery {
         }
     }
 
-    // Mirrors the GLSL shader's bulge effect to accurately calculate visual center for hit-testing
-    applyBulgeToPos(posX, posY) {
-        const uResolutionX = this.canvas.width;
-        const uResolutionY = this.canvas.height;
-        const uBulgeStrength = this.bulgeStrength;
-        const uBulgeRadius = this.adjustedBulgeRadius;
-
-        let pos = { x: posX, y: posY };
-        let normalizedPos = { x: pos.x / uResolutionX, y: pos.y / uResolutionY };
-        let center = { x: 0.5, y: 0.5 };
-        let delta = { x: normalizedPos.x - center.x, y: normalizedPos.y - center.y };
-        let aspect = uResolutionX / uResolutionY;
-        delta.x *= aspect;
-
-        let dist = Math.sqrt(delta.x * delta.x + delta.y * delta.y);
-
-        if (dist < uBulgeRadius) {
-            let t = dist / uBulgeRadius;
-            let z = Math.sqrt(Math.max(0, 1.0 - t * t));
-            if (z < 0.01) z = 0.01;
-
-            let factor = 0.35 + uBulgeStrength / z;
-            delta.x *= factor;
-            delta.y *= factor;
-
-            delta.x /= aspect;
-            normalizedPos.x = center.x + delta.x;
-            normalizedPos.y = center.y + delta.y;
-
-            pos.x = normalizedPos.x * uResolutionX;
-            pos.y = normalizedPos.y * uResolutionY;
-        }
-        return pos;
-    }
-
     setupEventListeners() {
         const setFocus = () => this.canvas.focus();
         this.canvas.addEventListener('click', setFocus);
         this.canvas.addEventListener('touchstart', setFocus);
 
+        // ROBUST COLOR PICKING HIT-TEST
         this.canvas.addEventListener('click', (e) => {
             if (Math.abs(this.drag.velocityX) > 5 || Math.abs(this.drag.velocityY) > 5) return;
+            if (this.imageData.length === 0 || !this.pickingProgram) return;
 
             const rect = this.canvas.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            const clickY = e.clientY - rect.top;
+            // CRITICAL: Scale click coordinates for High-DPI/Retina displays
+            const scaleX = this.canvas.width / rect.width;
+            const scaleY = this.canvas.height / rect.height;
+            const clickX = Math.floor((e.clientX - rect.left) * scaleX);
+            const clickY = Math.floor((e.clientY - rect.top) * scaleY);
+
+            if (clickX < 0 || clickX >= this.canvas.width || clickY < 0 || clickY >= this.canvas.height) return;
+
+            // 1. Bind offscreen picking framebuffer
+            this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.pickingFB);
+            this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+            this.gl.clearColor(0, 0, 0, 0); // Background is black (ID 0)
+            this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+
+            // 2. Use picking shader
+            this.gl.useProgram(this.pickingProgram);
+            this.gl.disable(this.gl.BLEND); // Disable blending for solid, unblended colors
+
+            const posLoc = this.gl.getAttribLocation(this.pickingProgram, 'aPosition');
+            this.gl.enableVertexAttribArray(posLoc);
+            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer);
+            this.gl.vertexAttribPointer(posLoc, 2, this.gl.FLOAT, false, 0, 0);
+            this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+
+            const offsetLoc = this.gl.getUniformLocation(this.pickingProgram, 'uOffset');
+            const imgPosLoc = this.gl.getUniformLocation(this.pickingProgram, 'uImagePosition');
+            const imgSizeLoc = this.gl.getUniformLocation(this.pickingProgram, 'uImageSize');
+            const pickColorLoc = this.gl.getUniformLocation(this.pickingProgram, 'uPickColor');
+
+            this.gl.uniform2f(this.gl.getUniformLocation(this.pickingProgram, 'uResolution'), this.canvas.width, this.canvas.height);
+            this.gl.uniform1f(this.gl.getUniformLocation(this.pickingProgram, 'uBulgeStrength'), this.bulgeStrength);
+            this.gl.uniform1f(this.gl.getUniformLocation(this.pickingProgram, 'uBulgeRadius'), this.adjustedBulgeRadius);
 
             const tiles = this.getVisibleTiles();
-            let closestTile = null;
-            let closestDistance = Infinity;
-
             for (const t of tiles) {
-                // Unbulged screen position
-                const screenX = t.x - this.viewOffset.x;
-                const screenY = t.y - this.viewOffset.y;
+                // Encode imageIndex into RGB (+1 to avoid 0,0,0 background collision)
+                const id = t.imageIndex + 1;
+                const r = (id >> 16) & 0xFF;
+                const g = (id >> 8) & 0xFF;
+                const b = id & 0xFF;
 
-                // Calculate the bulged center of the tile to match its visual position
-                const centerX_unbulged = screenX + t.width / 2;
-                const centerY_unbulged = screenY + t.height / 2;
-
-                const bulgedCenter = this.applyBulgeToPos(centerX_unbulged, centerY_unbulged);
-                const centerX = bulgedCenter.x;
-                const centerY = bulgedCenter.y;
-
-                // Calculate distance from click to bulged tile center
-                const distance = Math.sqrt(
-                    Math.pow(clickX - centerX, 2) + Math.pow(clickY - centerY, 2)
-                );
-
-                // Add tolerance for bulge distortion and easier clicking
-                const tolerance = Math.max(t.width, t.height) * 0.4;
-
-                if (distance <= tolerance) {
-                    if (distance < closestDistance) {
-                        closestDistance = distance;
-                        closestTile = t;
-                    }
-                }
+                this.gl.uniform2f(offsetLoc, this.viewOffset.x, this.viewOffset.y);
+                this.gl.uniform2f(imgPosLoc, t.x, t.y);
+                this.gl.uniform2f(imgSizeLoc, t.width, t.height);
+                this.gl.uniform3f(pickColorLoc, r / 255.0, g / 255.0, b / 255.0);
+                this.gl.drawElements(this.gl.TRIANGLES, this.indexCount, this.gl.UNSIGNED_SHORT, 0);
             }
 
-            if (closestTile) {
-                this.openModal(closestTile);
+            // 3. Read the 1x1 pixel under the cursor
+            const pixel = new Uint8Array(4);
+            this.gl.readPixels(clickX, this.canvas.height - clickY, 1, 1, this.gl.RGBA, this.gl.UNSIGNED_BYTE, pixel);
+
+            // 4. Restore normal rendering state
+            this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+            this.gl.enable(this.gl.BLEND);
+            this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+
+            // 5. Decode color back to index and open modal
+            const pickedId = (pixel[0] << 16) | (pixel[1] << 8) | pixel[2];
+            if (pickedId > 0) {
+                const imageIndex = pickedId - 1;
+                if (this.imageData[imageIndex] && this.imageData[imageIndex].itemData) {
+                    this.openModal(this.imageData[imageIndex].itemData);
+                }
             }
         });
 
@@ -1848,10 +1692,8 @@ class InfinitePortraitGallery {
             const dy = e.clientY - this.drag.lastY;
             this.drag.velocityX = dx * 0.1 + this.drag.velocityX * 0.5;
             this.drag.velocityY = dy * 0.1 + this.drag.velocityY * 0.5;
-
             this.viewOffset.x -= this.drag.velocityX;
             this.viewOffset.y += this.drag.velocityY;
-
             this.drag.lastX = e.clientX;
             this.drag.lastY = e.clientY;
         });
@@ -1873,10 +1715,8 @@ class InfinitePortraitGallery {
             const dy = e.touches[0].clientY - this.drag.lastY;
             this.drag.velocityX = dx * 0.3 + this.drag.velocityX * 0.7;
             this.drag.velocityY = dy * 0.3 + this.drag.velocityY * 0.7;
-
             this.viewOffset.x += this.drag.velocityX;
             this.viewOffset.y += this.drag.velocityY;
-
             this.drag.lastX = e.touches[0].clientX;
             this.drag.lastY = e.touches[0].clientY;
         }, { passive: false });
@@ -1900,40 +1740,24 @@ class InfinitePortraitGallery {
         });
 
         this.closeModalBtn.addEventListener('click', () => this.closeModal());
-        this.modal.addEventListener('click', (e) => {
-            if (e.target === this.modal) this.closeModal();
-        });
+        this.modal.addEventListener('click', (e) => { if (e.target === this.modal) this.closeModal(); });
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.modal.classList.contains('is-open')) {
-                this.closeModal();
-            }
+            if (e.key === 'Escape' && this.modal.classList.contains('is-open')) this.closeModal();
         });
     }
 
-    openModal(tile) {
-        // Use the directly bound itemData, making it immune to external array recycling/mutation
-        const item = tile.itemData;
+    // Now accepts the data object directly, eliminating external dependency
+    openModal(item) {
         if (!item) return;
-
         const price = (item.pricemultiplier || 1) * (item.suggestedprice || 0);
-
         let availability = item.inStock ? "Currently available" : "Not on hand";
-        if (item.remakecustom) {
-            availability += ", would remake in new colors.";
-        } else {
-            availability += ", will not remake.";
-        }
+        availability += item.remakecustom ? ", would remake in new colors." : ", will not remake.";
 
         const fullSizeSrc = item.fullsizesrc || item.fullSizeSrc || item.src;
-
         const imgEl = document.getElementById('modal-full-image');
         imgEl.src = fullSizeSrc;
         imgEl.alt = item.alt || item.title;
-
-        imgEl.onerror = () => {
-            console.warn(`Failed to load fullsize image: ${fullSizeSrc}. Falling back to thumbnail.`);
-            imgEl.src = item.src;
-        };
+        imgEl.onerror = () => { imgEl.src = item.src; };
 
         document.getElementById('modal-title').textContent = item.title || 'Untitled';
         document.getElementById('modal-price').textContent = `$${price.toFixed(2)}`;
@@ -1957,7 +1781,6 @@ class InfinitePortraitGallery {
         const btn = this.container.querySelector('.fullscreen-btn');
         if (!btn) return;
         const icon = btn.querySelector('i');
-
         btn.addEventListener('click', () => {
             if (!document.fullscreenElement) {
                 this.container.requestFullscreen().catch(err => console.log(`Fullscreen error: ${err.message}`));
@@ -1967,7 +1790,6 @@ class InfinitePortraitGallery {
                 if (icon) icon.className = 'fas fa-expand';
             }
         });
-
         document.addEventListener('fullscreenchange', () => {
             if (icon) icon.className = document.fullscreenElement ? 'fas fa-compress' : 'fas fa-expand';
             setTimeout(() => this.resizeCanvas(), 100);
@@ -1978,7 +1800,6 @@ class InfinitePortraitGallery {
         if (!this.drag.isDragging) {
             this.viewOffset.x += this.drag.velocityX;
             this.viewOffset.y += this.drag.velocityY;
-
             this.drag.velocityX *= this.inertia;
             this.drag.velocityY *= this.inertia;
             if (Math.abs(this.drag.velocityX) < 0.01) this.drag.velocityX = 0;
