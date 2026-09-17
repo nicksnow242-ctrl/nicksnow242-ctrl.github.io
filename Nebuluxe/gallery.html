@@ -1079,53 +1079,38 @@ var particles;
 <!-- ========================================== -->
 <!-- END CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- ========================================== -->
-<!-- ========================================== -->
-<!-- Justified Infinite Mosaic Gallery -->
-<!-- ========================================== -->
+
 <!-- ============================================================
      DENSE MOSAIC GALLERY (Justified / Row-based Masonry)
-     - Reads from global `window.thumbnails` (defined in thumbnail.js)
-     - Expected shape per entry: { src, width, height, alt? }
-       (also accepts: url/href for src, w/h for width/height)
-     - Self-contained: drop this block anywhere in your page.
-     - Banner offset: 110px from top.
      ============================================================ -->
 
 <div id="mosaic-gallery" aria-label="Image gallery"></div>
 
 <style>
-  /* Gallery wrapper — no added background color, shifted below banner */
   #mosaic-gallery {
     position: relative;
-    margin-top: 110px;
+    margin-top: 110px; /* Shifts gallery below your 110px banner */
     width: 100%;
     box-sizing: border-box;
   }
 
-  /* Inner container holds absolutely-positioned thumbnails.
-     Height is set dynamically by JS to preserve scroll space. */
   #mosaic-gallery .mg-stage {
     position: relative;
     width: 100%;
-    /* no background */
   }
 
-  /* Each thumbnail cell */
   #mosaic-gallery .mg-cell {
     position: absolute;
     box-sizing: border-box;
     overflow: hidden;
-    line-height: 0;            /* collapse inline whitespace */
-    background: transparent;   /* no added background */
+    line-height: 0;
+    background: transparent;
   }
 
   #mosaic-gallery .mg-cell img {
     width: 100%;
     height: 100%;
     display: block;
-    /* No object-fit: cover — we never crop.
-       The cell dimensions match the image's natural aspect ratio,
-       so the image fills the cell exactly without distortion. */
     opacity: 0;
     transition: opacity 280ms ease;
     will-change: opacity;
@@ -1135,38 +1120,36 @@ var particles;
     opacity: 1;
   }
 
-  /* Subtle hover lift (optional, purely visual) */
   #mosaic-gallery .mg-cell:hover img {
     filter: brightness(1.04);
     transition: opacity 280ms ease, filter 180ms ease;
   }
-
-  /* Hide native drag icon / broken-image frame if a src fails */
-  #mosaic-gallery .mg-cell img:-moz-ui-invalid { box-shadow: none; }
 </style>
 
 <script>
 (function () {
   'use strict';
 
-  /* ------------------------------------------------------------------
-   * JustifiedGallery
-   * Row-based justified layout (Flickr / Google Photos style).
-   * Each row picks a group of images whose combined aspect ratios
-   * approximately fill the container width, then scales them to a
-   * common row height. The last incomplete row is left-aligned at the
-   * target row height (never stretched) to avoid distortion.
-   * ------------------------------------------------------------------ */
+  // Helper to parse dimension strings like '12"' or raw numbers
+  function parseDimension(val) {
+    if (typeof val === 'number') return val;
+    if (typeof val === 'string') {
+      var match = val.match(/^([\d.]+)/);
+      if (match) return parseFloat(match[1]);
+    }
+    return 0;
+  }
+
   function JustifiedGallery(root, opts) {
     opts = opts || {};
     this.root = root;
     this.targetRowHeight = opts.targetRowHeight || 220;
     this.gap               = (opts.gap != null) ? opts.gap : 6;
-    this.buffer            = opts.buffer || 1000;   // px above/below viewport to pre-render
+    this.buffer            = opts.buffer || 1000;
     this.items             = [];
     this.layout            = [];
     this.totalHeight       = 0;
-    this.rendered          = new Map();              // index -> DOM node
+    this.rendered          = new Map();
     this.stage             = null;
     this._ticking          = false;
     this._resizeTimer      = null;
@@ -1179,7 +1162,6 @@ var particles;
   }
 
   JustifiedGallery.prototype._build = function () {
-    // Stage (absolutely-positioned children live inside)
     this.stage = document.createElement('div');
     this.stage.className = 'mg-stage';
     this.root.appendChild(this.stage);
@@ -1189,111 +1171,66 @@ var particles;
 
     window.addEventListener('scroll', this._onScroll, { passive: true });
     window.addEventListener('resize', this._onResize);
-    // Also reflow on orientation / zoom changes that don't fire resize
     window.addEventListener('orientationchange', this._onResize);
   };
 
-  /* ---------- data ingestion ---------------------------------------- */
   JustifiedGallery.prototype._ingestThumbnails = function () {
-  var raw = window.thumbnails || [];
-  var out = [];
+    var raw = window.thumbnails || [];
+    var out = [];
 
-  for (var i = 0; i < raw.length; i++) {
-    var t = raw[i];
-    if (!t) continue;
-    var src = t.src || t.url || t.href;
+    for (var i = 0; i < raw.length; i++) {
+      var t = raw[i];
+      if (!t) continue;
+      var src = t.src || t.url || t.href;
 
-    // Prefer pixel dimensions, fall back to parsing inch strings
-    var w, h;
-    if (t.pixelWidth && t.pixelHeight) {
-      w = Number(t.pixelWidth);
-      h = Number(t.pixelHeight);
-    } else {
-      // Fallback: parse inch strings like '12"'
-      w = parseDimension(t.width  != null ? t.width  : t.w);
-      h = parseDimension(t.height != null ? t.height : (t.length != null ? t.length : t.h));
+      var w, h;
+      // 1st priority: Hardcoded pixel dimensions
+      if (t.pixelWidth != null && t.pixelHeight != null) {
+        w = Number(t.pixelWidth);
+        h = Number(t.pixelHeight);
+      }
+      // 2nd priority: Fallback to parsing inch strings like '12"'
+      else {
+        w = parseDimension(t.width != null ? t.width : t.w);
+        h = parseDimension(t.height != null ? t.height : (t.length != null ? t.length : t.h));
+      }
+
+      if (!src || !(w > 0) || !(h > 0)) continue;
+
+      out.push({
+        index:  out.length,
+        src:    src,
+        w:      w,
+        h:      h,
+        aspect: w / h,
+        alt:    t.alt || t.title || ''
+      });
     }
+    this.items = out;
+  };
 
-    if (!src || !(w > 0) || !(h > 0)) continue;
-
-    out.push({
-      index: out.length,
-      src:   src,
-      w:     w,
-      h:     h,
-      aspect: w / h,
-      alt:   t.alt || t.title || ''
-    });
-  }
-  this.items = out;
-};
-
-// Helper function (add this before the JustifiedGallery constructor)
-function parseDimension(val) {
-  if (typeof val === 'number') return val;
-  if (typeof val === 'string') {
-    var match = val.match(/^([\d.]+)/);
-    if (match) return parseFloat(match[1]);
-  }
-  return 0;
-}
-
-  // Load each image to get dimensions
-  out.forEach(function(item) {
-    var img = new Image();
-    img.onload = function() {
-      item.w = img.naturalWidth;
-      item.h = img.naturalHeight;
-      item.aspect = img.naturalWidth / img.naturalHeight;
-      item.loaded = true;
-      pending--;
-
-      if (pending === 0) {
-        // All dimensions loaded, filter out any that failed
-        self.items = out.filter(function(it) { return it.loaded && it.w > 0 && it.h > 0; });
-        // Re-index
-        self.items.forEach(function(it, idx) { it.index = idx; });
-        self._reflow();
-      }
-    };
-    img.onerror = function() {
-      pending--;
-      if (pending === 0) {
-        self.items = out.filter(function(it) { return it.loaded && it.w > 0 && it.h > 0; });
-        self.items.forEach(function(it, idx) { it.index = idx; });
-        self._reflow();
-      }
-    };
-    img.src = item.src;
-  });
-
-  // Start with empty items until dimensions are loaded
-  this.items = [];
-};
-  /* ---------- layout algorithm -------------------------------------- */
   JustifiedGallery.prototype._computeLayout = function () {
     var containerW = this.root.clientWidth;
     if (containerW <= 0) return;
 
-    var gap      = this.gap;
-    var targetH  = this.targetRowHeight;
-    var items    = this.items;
-    var layout   = [];
+    var gap     = this.gap;
+    var targetH = this.targetRowHeight;
+    var items   = this.items;
+    var layout  = [];
 
-    var row      = [];
-    var rowAsp   = 0;
-    var y        = 0;
+    var row    = [];
+    var rowAsp = 0;
+    var y      = 0;
 
     var flushRow = function (forceFullWidth) {
       if (row.length === 0) return;
       var totalGap = (row.length - 1) * gap;
       var rowH;
+
       if (forceFullWidth) {
-        // Stretch the row to exactly fill container width
         rowH = (containerW - totalGap) / rowAsp;
       } else {
-        // Last / short row: render at target height, left-aligned
-        rowH = targetH;
+        rowH = targetH; // Last row stays at target height, left-aligned
       }
 
       var x = 0;
@@ -1301,13 +1238,13 @@ function parseDimension(val) {
         var it = row[k];
         var iw = rowH * it.aspect;
         layout.push({
-          index:  it.index,
-          src:    it.src,
-          alt:    it.alt,
-          x:      x,
-          y:      y,
-          w:      iw,
-          h:      rowH
+          index: it.index,
+          src:   it.src,
+          alt:   it.alt,
+          x:     x,
+          y:     y,
+          w:     iw,
+          h:     rowH
         });
         x += iw + gap;
       }
@@ -1329,14 +1266,12 @@ function parseDimension(val) {
       }
     }
 
-    // Flush whatever is left (last row) — do NOT stretch to full width
-    flushRow(false);
+    flushRow(false); // Flush remaining items without stretching
 
     this.layout      = layout;
-    this.totalHeight = y > 0 ? y - gap : 0; // trim trailing gap
+    this.totalHeight = y > 0 ? y - gap : 0;
   };
 
-  /* ---------- rendering / virtualization ---------------------------- */
   JustifiedGallery.prototype._reflow = function () {
     var w = this.root.clientWidth;
     if (w <= 0) return;
@@ -1345,7 +1280,6 @@ function parseDimension(val) {
     this._computeLayout();
     this.stage.style.height = this.totalHeight + 'px';
 
-    // Positions changed — drop everything and re-render visible range
     this._clearRendered();
     this._renderVisible();
   };
@@ -1365,7 +1299,7 @@ function parseDimension(val) {
     var n      = layout.length;
     if (n === 0) return;
 
-    // Binary search: first item whose bottom >= top
+    // Binary search for start index
     var lo = 0, hi = n - 1, start = n;
     while (lo <= hi) {
       var mid = (lo + hi) >> 1;
@@ -1374,7 +1308,7 @@ function parseDimension(val) {
       else { start = mid; hi = mid - 1; }
     }
 
-    // Binary search: first item whose top > bottom  => end is that index
+    // Binary search for end index
     lo = 0; hi = n - 1; var end = n;
     while (lo <= hi) {
       var mid = (lo + hi) >> 1;
@@ -1382,15 +1316,7 @@ function parseDimension(val) {
       else lo = mid + 1;
     }
 
-    // Remove nodes outside [start, end)
-    this.rendered.forEach(function (el, idx) {
-      if (idx < start || idx >= end) {
-        el.remove();
-        // Note: Map allows deletion during iteration in modern engines,
-        // but to be safe we queue deletions.
-      }
-    });
-    // Safe deletion pass
+    // Remove nodes outside visible range
     var toDelete = [];
     this.rendered.forEach(function (el, idx) {
       if (idx < start || idx >= end) toDelete.push(idx);
@@ -1401,7 +1327,7 @@ function parseDimension(val) {
       this.rendered.delete(toDelete[d]);
     }
 
-    // Create nodes inside [start, end)
+    // Create nodes inside visible range
     var frag = document.createDocumentFragment();
     for (var i = start; i < end; i++) {
       if (this.rendered.has(i)) continue;
@@ -1421,16 +1347,12 @@ function parseDimension(val) {
     cell.style.height = item.h + 'px';
 
     var img = document.createElement('img');
-    img.alt        = item.alt;
-    img.decoding   = 'async';
-    // Reserve exact layout space using intrinsic dimensions so the
-    // browser doesn't shift anything when the file finally loads.
-    img.width      = Math.round(item.w);
-    img.height     = Math.round(item.h);
-    // Native lazy-load as a second line of defense (virtualization
-    // already keeps far-off images out of the DOM).
-    img.loading    = 'lazy';
-    img.src        = item.src;
+    img.alt      = item.alt;
+    img.decoding = 'async';
+    img.width    = Math.round(item.w);
+    img.height   = Math.round(item.h);
+    img.loading  = 'lazy';
+    img.src      = item.src;
 
     img.addEventListener('load',  function () { img.setAttribute('data-loaded', '1'); });
     img.addEventListener('error', function () { img.setAttribute('data-loaded', '1'); });
@@ -1439,7 +1361,6 @@ function parseDimension(val) {
     return cell;
   };
 
-  /* ---------- events ------------------------------------------------ */
   JustifiedGallery.prototype._onScroll = function () {
     if (this._ticking) return;
     this._ticking = true;
@@ -1459,25 +1380,24 @@ function parseDimension(val) {
     }, 120);
   };
 
-  /* ---------- bootstrap --------------------------------------------- */
   function boot() {
-  var root = document.getElementById('mosaic-gallery');
-  if (!root) return;
+    var root = document.getElementById('mosaic-gallery');
+    if (!root) return;
 
-  var attempts = 0;
-  var tryInit = function() {
-    if (window.thumbnails && window.thumbnails.length) {
-      var gallery = new JustifiedGallery(root, {
-        targetRowHeight: 220,
-        gap: 6,
-        buffer: 1200
-      });
-    } else if (attempts++ < 50) {
-      setTimeout(tryInit, 100);
-    }
-  };
-  tryInit();
-}
+    var attempts = 0;
+    var tryInit = function() {
+      if (window.thumbnails && window.thumbnails.length) {
+        new JustifiedGallery(root, {
+          targetRowHeight: 220,
+          gap: 6,
+          buffer: 1200
+        });
+      } else if (attempts++ < 50) {
+        setTimeout(tryInit, 100);
+      }
+    };
+    tryInit();
+  }
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);
