@@ -1083,14 +1083,8 @@ var particles;
 <!-- ============================================================
       GALLERY SECTION
      ============================================================ -->
+
 <style>
-<!-- ============================================================
-      GALLERY SECTION
-     ============================================================ -->
-<style>
-/* ========================================== */
-/* INFINITE WEBGL GALLERY STYLES (SCOPED) */
-/* ========================================== */
 .gallery-wrapper {
   position: relative;
   width: 100%;
@@ -1110,6 +1104,8 @@ var particles;
 
 .gallery-wrapper canvas {
   display: block;
+  width: 100%;
+  height: 100%;
   outline: none;
   cursor: grab;
   touch-action: none;
@@ -1195,9 +1191,7 @@ var particles;
   font-weight: bold;
 }
 
-/* ========================================== */
-/* MODAL / CARD STYLES */
-/* ========================================== */
+/* Modal Styles */
 .gallery-modal {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
@@ -1436,6 +1430,8 @@ class InfinitePortraitGallery {
         this.canvas = document.createElement('canvas');
         this.canvas.setAttribute('tabindex', '0');
         this.canvas.style.outline = 'none';
+        this.canvas.style.width = '100%';
+        this.canvas.style.height = '100%';
         this.container.appendChild(this.canvas);
 
         this.gl = this.canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false });
@@ -1458,23 +1454,8 @@ class InfinitePortraitGallery {
         this.modal = this.container.querySelector('#gallery-modal');
         this.closeModalBtn = this.container.querySelector('#modal-close-btn');
 
-        // Robust initialization sequence
-        const initResize = () => this.resizeCanvas();
-
-        initResize();
-        requestAnimationFrame(initResize);
-        setTimeout(initResize, 50);
-        setTimeout(initResize, 150);
-        setTimeout(initResize, 300);
-        window.addEventListener('load', initResize);
-
-        if (window.ResizeObserver) {
-            this.resizeObserver = new ResizeObserver(initResize);
-            this.resizeObserver.observe(this.container);
-        } else {
-            window.addEventListener('resize', initResize);
-        }
-
+        this.resizeCanvas();
+        window.addEventListener('resize', () => this.resizeCanvas());
         this.init();
         this.loadImages();
         this.setupEventListeners();
@@ -1484,23 +1465,11 @@ class InfinitePortraitGallery {
 
     resizeCanvas() {
         if (!this.container) return;
-
-        const width = this.container.clientWidth;
-        const height = this.container.clientHeight;
-
-        if (width <= 0 || height <= 0) return;
-
-        this.canvas.width = width;
-        this.canvas.height = height;
-
-        // Explicitly set CSS dimensions to match internal resolution
-        this.canvas.style.width = width + 'px';
-        this.canvas.style.height = height + 'px';
-
-        const diagonal = Math.sqrt(Math.pow(width / Math.min(width, height), 2) + Math.pow(height / Math.min(width, height), 2));
+        this.canvas.width = this.container.clientWidth;
+        this.canvas.height = this.container.clientHeight;
+        const diagonal = Math.sqrt(Math.pow(this.canvas.width / Math.min(this.canvas.width, this.canvas.height), 2) + Math.pow(this.canvas.height / Math.min(this.canvas.width, this.canvas.height), 2));
         this.adjustedBulgeRadius = Math.max(this.bulgeRadius, diagonal * 0.6 * 1.2);
-
-        if (this.gl) this.gl.viewport(0, 0, width, height);
+        if (this.gl) this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
     }
 
     init() {
@@ -1758,18 +1727,12 @@ class InfinitePortraitGallery {
         this.canvas.addEventListener('click', setFocus);
         this.canvas.addEventListener('touchstart', setFocus);
 
-        // Hit testing with proper coordinate scaling
         this.canvas.addEventListener('click', (e) => {
             if (Math.abs(this.drag.velocityX) > 5 || Math.abs(this.drag.velocityY) > 5) return;
 
             const rect = this.canvas.getBoundingClientRect();
-
-            // Convert click coordinates from CSS pixels to canvas pixels
-            const scaleX = this.canvas.width / rect.width;
-            const scaleY = this.canvas.height / rect.height;
-
-            const clickX = (e.clientX - rect.left) * scaleX;
-            const clickY = (e.clientY - rect.top) * scaleY;
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
 
             const tiles = this.getVisibleTiles();
             for (const t of tiles) {
