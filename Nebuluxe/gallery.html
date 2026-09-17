@@ -1494,7 +1494,9 @@ class InfinitePortraitGallery {
             float dist = length(delta);
             if(dist < uBulgeRadius){
                 float t = dist / uBulgeRadius;
-                float z = sqrt(0.5 - t * t);
+                // FIXED: Changed 0.5 to 1.0 to prevent NaN artifacts and create a proper hemisphere
+                float z = sqrt(max(0.0, 1.0 - t * t));
+                if (z < 0.01) z = 0.01; // Prevent division by zero
                 delta *= 0.35 + uBulgeStrength / z;
                 delta.x /= aspect;
                 normalizedPos = center + delta;
@@ -1568,10 +1570,28 @@ class InfinitePortraitGallery {
         const cacheElement = this.container.querySelector('.cache');
 
         let imageSources = [];
+        let thumbnailItems = [];
+
         if (typeof window.thumbnails !== 'undefined' && window.thumbnails.length > 0) {
-            imageSources = window.thumbnails.map(t => t.src).filter(Boolean);
-        } else {
+            // Filter out invalid items first to keep indices perfectly aligned
+            const validThumbnails = window.thumbnails.filter(t => t && t.src);
+            thumbnailItems = validThumbnails;
+            imageSources = validThumbnails.map(t => t.src);
+        }
+
+        if (imageSources.length === 0) {
             imageSources = this.getDefaultImages();
+            thumbnailItems = imageSources.map((src, i) => ({
+                src: src,
+                title: `Artwork ${i + 1}`,
+                suggestedprice: 100,
+                pricemultiplier: 1,
+                inStock: true,
+                remakecustom: false,
+                length: 10,
+                width: 10,
+                description: "Default artwork description."
+            }));
         }
 
         const imageCount = Math.max(50, imageSources.length);
@@ -1583,7 +1603,6 @@ class InfinitePortraitGallery {
             const src = imageSources[i % imageSources.length];
             img.src = src;
 
-            // Store the original thumbnail index
             const originalIndex = i % imageSources.length;
 
             const promise = new Promise((resolve) => {
@@ -1603,7 +1622,7 @@ class InfinitePortraitGallery {
                         texture: this.createTexture(img),
                         width: w,
                         height: h,
-                        thumbnailIndex: originalIndex // Store original index
+                        itemData: thumbnailItems[originalIndex] // Store actual item data directly
                     });
                     resolve();
                 };
@@ -1615,7 +1634,7 @@ class InfinitePortraitGallery {
                             texture: this.createTexture(img),
                             width: this.maxDimension,
                             height: this.maxDimension,
-                            thumbnailIndex: originalIndex // Store original index
+                            itemData: thumbnailItems[originalIndex]
                         });
                         resolve();
                     };
@@ -1656,6 +1675,8 @@ class InfinitePortraitGallery {
 
     getVisibleTiles() {
         const tiles = [];
+        if (this.imageData.length === 0) return tiles; // Guard against early clicks during load
+
         const baseTileW = this.maxDimension + this.gap;
         const baseTileH = this.maxDimension + this.gap;
 
@@ -1682,7 +1703,7 @@ class InfinitePortraitGallery {
                     width: data.width * this.zoom,
                     height: data.height * this.zoom,
                     imageIndex: idx,
-                    thumbnailIndex: data.thumbnailIndex // Pass original thumbnail index
+                    itemData: data.itemData // Pass the actual item data directly to the tile
                 });
             }
         }
@@ -1728,12 +1749,46 @@ class InfinitePortraitGallery {
         }
     }
 
+    // Mirrors the GLSL shader's bulge effect to accurately calculate visual center for hit-testing
+    applyBulgeToPos(posX, posY) {
+        const uResolutionX = this.canvas.width;
+        const uResolutionY = this.canvas.height;
+        const uBulgeStrength = this.bulgeStrength;
+        const uBulgeRadius = this.adjustedBulgeRadius;
+
+        let pos = { x: posX, y: posY };
+        let normalizedPos = { x: pos.x / uResolutionX, y: pos.y / uResolutionY };
+        let center = { x: 0.5, y: 0.5 };
+        let delta = { x: normalizedPos.x - center.x, y: normalizedPos.y - center.y };
+        let aspect = uResolutionX / uResolutionY;
+        delta.x *= aspect;
+
+        let dist = Math.sqrt(delta.x * delta.x + delta.y * delta.y);
+
+        if (dist < uBulgeRadius) {
+            let t = dist / uBulgeRadius;
+            let z = Math.sqrt(Math.max(0, 1.0 - t * t));
+            if (z < 0.01) z = 0.01;
+
+            let factor = 0.35 + uBulgeStrength / z;
+            delta.x *= factor;
+            delta.y *= factor;
+
+            delta.x /= aspect;
+            normalizedPos.x = center.x + delta.x;
+            normalizedPos.y = center.y + delta.y;
+
+            pos.x = normalizedPos.x * uResolutionX;
+            pos.y = normalizedPos.y * uResolutionY;
+        }
+        return pos;
+    }
+
     setupEventListeners() {
         const setFocus = () => this.canvas.focus();
         this.canvas.addEventListener('click', setFocus);
         this.canvas.addEventListener('touchstart', setFocus);
 
-        // Improved hit testing with tolerance for bulge distortion
         this.canvas.addEventListener('click', (e) => {
             if (Math.abs(this.drag.velocityX) > 5 || Math.abs(this.drag.velocityY) > 5) return;
 
@@ -1746,23 +1801,27 @@ class InfinitePortraitGallery {
             let closestDistance = Infinity;
 
             for (const t of tiles) {
+                // Unbulged screen position
                 const screenX = t.x - this.viewOffset.x;
                 const screenY = t.y - this.viewOffset.y;
 
-                // Add tolerance for bulge distortion (20% extra space around each tile)
-                const tolerance = Math.max(t.width, t.height) * 0.2;
+                // Calculate the bulged center of the tile to match its visual position
+                const centerX_unbulged = screenX + t.width / 2;
+                const centerY_unbulged = screenY + t.height / 2;
 
-                if (clickX >= screenX - tolerance && clickX <= screenX + t.width + tolerance &&
-                    clickY >= screenY - tolerance && clickY <= screenY + t.height + tolerance) {
+                const bulgedCenter = this.applyBulgeToPos(centerX_unbulged, centerY_unbulged);
+                const centerX = bulgedCenter.x;
+                const centerY = bulgedCenter.y;
 
-                    // Calculate distance from click to tile center
-                    const centerX = screenX + t.width / 2;
-                    const centerY = screenY + t.height / 2;
-                    const distance = Math.sqrt(
-                        Math.pow(clickX - centerX, 2) + Math.pow(clickY - centerY, 2)
-                    );
+                // Calculate distance from click to bulged tile center
+                const distance = Math.sqrt(
+                    Math.pow(clickX - centerX, 2) + Math.pow(clickY - centerY, 2)
+                );
 
-                    // Keep track of the closest tile
+                // Add tolerance for bulge distortion and easier clicking
+                const tolerance = Math.max(t.width, t.height) * 0.4;
+
+                if (distance <= tolerance) {
                     if (distance < closestDistance) {
                         closestDistance = distance;
                         closestTile = t;
@@ -1770,9 +1829,8 @@ class InfinitePortraitGallery {
                 }
             }
 
-            // Open the closest matching tile using thumbnailIndex
             if (closestTile) {
-                this.openModal(closestTile.thumbnailIndex);
+                this.openModal(closestTile);
             }
         });
 
@@ -1852,8 +1910,9 @@ class InfinitePortraitGallery {
         });
     }
 
-    openModal(index) {
-        const item = window.thumbnails[index] || window.thumbnails[0];
+    openModal(tile) {
+        // Use the directly bound itemData, making it immune to external array recycling/mutation
+        const item = tile.itemData;
         if (!item) return;
 
         const price = (item.pricemultiplier || 1) * (item.suggestedprice || 0);
