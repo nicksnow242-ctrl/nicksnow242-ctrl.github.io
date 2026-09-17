@@ -1081,382 +1081,539 @@ var particles;
 <!-- ========================================== -->
 <script src="thumbnail.js"></script>
 <!-- ============================================================
-     DENSE MOSAIC GALLERY (Justified / Row-based Masonry)
+      GALLERY SECTION
      ============================================================ -->
-     <!-- ============================================================
-          DENSE 2D PACKED MOSAIC GALLERY (Infinite & Virtualized)
-          - Uses a 2D Skyline Bin-Packing algorithm for tight, puzzle-like fitting.
-          - Pulls from global `window.thumbnails` (defined in thumbnail.js).
-          - Infinitely recycles images as you scroll.
-          - Fully virtualized: only renders DOM nodes visible on screen.
-          ============================================================ -->
+<style>
+/* ========================================== */
+/* INFINITE WEBGL GALLERY STYLES (SCOPED) */
+/* ========================================== */
+.gallery-wrapper {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 110px); /* Accounts for your 110px fixed top banner */
+  min-height: 500px;
+  overflow: hidden;
+  background: #000;
+  touch-action: none;
+  margin-top: 110px; /* Pushes content below the fixed top banner */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
 
-     <div id="mosaic-gallery" aria-label="Infinite mosaic gallery"></div>
+.gallery-wrapper * {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
 
-     <style>
-       #mosaic-gallery {
-         position: relative;
-         margin-top: 110px; /* Shifts gallery below your 110px banner */
-         width: 100%;
-         box-sizing: border-box;
-       }
+.gallery-wrapper canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
 
-       #mosaic-gallery .mg-stage {
-         position: relative;
-         width: 100%;
-         /* Height is set dynamically by the packing algorithm */
-       }
+.gallery-wrapper canvas:active {
+  cursor: grabbing;
+}
 
-       #mosaic-gallery .mg-cell {
-         position: absolute;
-         box-sizing: border-box;
-         overflow: hidden;
-         line-height: 0;
-         background: transparent; /* No added background color */
-       }
+.gallery-wrapper .loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 20px;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 20px 40px;
+  border-radius: 10px;
+  font-family: monospace;
+  pointer-events: none;
+}
 
-       #mosaic-gallery .mg-cell img {
-         width: 100%;
-         height: 100%;
-         display: block;
-         opacity: 0;
-         transition: opacity 300ms ease;
-         will-change: opacity;
-       }
+.gallery-wrapper .cache {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background-color: #000;
+  z-index: 999;
+}
 
-       #mosaic-gallery .mg-cell img[data-loaded="1"] {
-         opacity: 1;
-       }
+.gallery-wrapper .fullscreen-btn {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  transition: transform 0.2s;
+}
 
-       #mosaic-gallery .mg-cell:hover img {
-         filter: brightness(1.05);
-         transition: opacity 300ms ease, filter 200ms ease;
-       }
-     </style>
+.gallery-wrapper .fullscreen-btn:hover {
+  transform: scale(1.1);
+}
 
-     <script>
-     (function () {
-       'use strict';
+.gallery-wrapper .hint {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 8px;
+  border-radius: 8px;
+  opacity: 0.85;
+  font-size: 13px;
+  color: #fff;
+  pointer-events: none;
+  user-select: text;
+}
 
-       // Helper to parse dimension strings like '12"' or raw numbers
-       function parseDimension(val) {
-         if (typeof val === 'number') return val;
-         if (typeof val === 'string') {
-           var match = val.match(/^([\d.]+)/);
-           if (match) return parseFloat(match[1]);
-         }
-         return 0;
-       }
+.gallery-wrapper .hint a {
+  color: tomato;
+  text-decoration: none;
+  pointer-events: auto;
+}
 
-       function MosaicPacker(root, opts) {
-         opts = opts || {};
-         this.root = root;
-         this.gap = (opts.gap != null) ? opts.gap : 6;
-         this.baseUnit = opts.baseUnit || 40; // Grid slot size for packing
-         this.buffer = opts.buffer || 1000;   // Pixels to pre-pack/render beyond viewport
+.gallery-wrapper .copy {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #000;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  z-index: 100;
+  pointer-events: none;
+}
 
-         this.rawItems = [];
-         this.placedItems = []; // Stores { id, src, alt, x, y, w, h }
-         this.colHeights = [];  // Skyline array for 2D packing
+@media (max-width: 768px) {
+  .gallery-wrapper .hint {
+    bottom: 70px;
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+  .gallery-wrapper .fullscreen-btn {
+    bottom: 15px;
+    right: 15px;
+    width: 38px;
+    height: 38px;
+    font-size: 16px;
+  }
+}
+</style>
 
-         this.rendered = new Map(); // index -> DOM node
-         this.stage = null;
-         this._ticking = false;
-         this._resizeTimer = null;
-         this._nextIndex = 0;
-         this._lastWidth = 0;
-         this._cols = 0;
+<!-- Font Awesome for fullscreen icon (if not already included in your head) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-         this._onScroll = this._onScroll.bind(this);
-         this._onResize = this._onResize.bind(this);
+<div id="gallery-container" class="gallery-wrapper">
+    <div class="cache"></div>
+    <div class="loading">Loading... 0%</div>
 
-         this._build();
-       }
+    <button class="fullscreen-btn" aria-label="Toggle Fullscreen">
+        <i class="fas fa-expand"></i>
+    </button>
+    <div class="hint">Scroll / drag / use - or + to adjust bulge</div>
+    <div class="copy">&Toc</div>
+</div>
 
-       MosaicPacker.prototype._build = function () {
-         this.stage = document.createElement('div');
-         this.stage.className = 'mg-stage';
-         this.root.appendChild(this.stage);
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Brief delay ensures thumbnail.js has fully populated window.thumbnails
+    setTimeout(() => {
+        new InfinitePortraitGallery('gallery-container');
+    }, 100);
+});
 
-         this._ingestThumbnails();
-         this._resetAndRepack();
+class InfinitePortraitGallery {
+    constructor(containerId) {
+        this.container = document.getElementById(containerId);
+        if (!this.container) return;
 
-         window.addEventListener('scroll', this._onScroll, { passive: true });
-         window.addEventListener('resize', this._onResize);
-         window.addEventListener('orientationchange', this._onResize);
-       };
+        this.canvas = document.createElement('canvas');
+        this.canvas.setAttribute('tabindex', '0');
+        this.canvas.style.outline = 'none';
+        this.canvas.style.width = '100%';
+        this.canvas.style.height = '100%';
+        this.container.appendChild(this.canvas);
 
-       MosaicPacker.prototype._ingestThumbnails = function () {
-         var raw = window.thumbnails || [];
-         var out = [];
+        this.gl = this.canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false });
+        if (!this.gl) {
+            this.container.innerHTML = '<div style="color:white; padding:20px; text-align:center;">WebGL is not supported on this browser.</div>';
+            return;
+        }
 
-         for (var i = 0; i < raw.length; i++) {
-           var t = raw[i];
-           if (!t) continue;
-           var src = t.src || t.url || t.href;
+        this.images = [];
+        this.textures = [];
+        this.imageWidth = 180;
+        this.imageHeight = 180;
+        this.gap = 25;
+        this.viewOffset = { x: 0, y: 0 };
+        this.drag = { isDragging: false, lastX: 0, lastY: 0, velocityX: 0, velocityY: 0 };
+        this.inertia = 0.95;
+        this.bulgeStrength = 0.4;
+        this.bulgeRadius = 1.5;
+        this.adjustedBulgeRadius = this.bulgeRadius;
 
-           var w, h;
-           if (t.pixelWidth != null && t.pixelHeight != null) {
-             w = Number(t.pixelWidth);
-             h = Number(t.pixelHeight);
-           } else {
-             w = parseDimension(t.width != null ? t.width : t.w);
-             h = parseDimension(t.height != null ? t.height : (t.length != null ? t.length : t.h));
-           }
+        this.resizeCanvas();
+        window.addEventListener('resize', () => this.resizeCanvas());
+        this.init();
+        this.loadPortraitImages();
+        this.setupEventListeners();
+        this.setupFullscreen();
+        this.animate();
+    }
 
-           if (!src || !(w > 0) || !(h > 0)) continue;
+    resizeCanvas() {
+        if (!this.container) return;
+        this.canvas.width = this.container.clientWidth;
+        this.canvas.height = this.container.clientHeight;
+        const diagonal = Math.sqrt(Math.pow(this.canvas.width / Math.min(this.canvas.width, this.canvas.height), 2) + Math.pow(this.canvas.height / Math.min(this.canvas.width, this.canvas.height), 2));
+        this.adjustedBulgeRadius = Math.max(this.bulgeRadius, diagonal * 0.6 * 1.2);
+        if (this.gl) this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+    }
 
-           out.push({
-             src: src,
-             w: w,
-             h: h,
-             aspect: w / h,
-             alt: t.alt || t.title || ''
-           });
-         }
-         this.rawItems = out;
-       };
+    init() {
+        const vsSource = `
+        attribute vec2 aPosition;
+        attribute vec2 aTexCoord;
+        varying vec2 vTexCoord;
+        uniform vec2 uResolution;
+        uniform vec2 uOffset;
+        uniform float uRotation;
+        uniform vec2 uImagePosition;
+        uniform float uBulgeStrength;
+        uniform float uBulgeRadius;
+        vec2 applyBulgeEffect(vec2 pos){
+            vec2 normalizedPos = pos / uResolution;
+            vec2 center = vec2(0.5, 0.5);
+            vec2 delta = normalizedPos - center;
+            float aspect = uResolution.x / uResolution.y;
+            delta.x *= aspect;
+            float dist = length(delta);
+            if(dist < uBulgeRadius){
+                float t = dist / uBulgeRadius;
+                float z = sqrt(0.5 - t * t);
+                delta *= 0.35 + uBulgeStrength / z;
+                delta.x /= aspect;
+                normalizedPos = center + delta;
+                pos = normalizedPos * uResolution;
+            }
+            return pos;
+        }
+        void main(){
+            vec2 pos = aPosition * vec2(${this.imageWidth}, ${this.imageHeight});
+            pos += uImagePosition;
+            pos -= uOffset;
+            vec2 center = uImagePosition + vec2(${this.imageWidth/2.0}, ${this.imageHeight/2.0}) - uOffset;
+            pos -= center;
+            float cosR = cos(uRotation);
+            float sinR = sin(uRotation);
+            pos = vec2(pos.x*cosR - pos.y*sinR, pos.x*sinR + pos.y*cosR);
+            pos += center;
+            pos = applyBulgeEffect(pos);
+            vec2 clip = pos / uResolution * 2.0 - 1.0;
+            gl_Position = vec4(clip, 0.0, 1.0);
+            vTexCoord = aTexCoord;
+        }`;
 
-       MosaicPacker.prototype._resetAndRepack = function () {
-         var w = this.root.clientWidth;
-         if (w <= 0) return;
-         this._lastWidth = w;
+        const fsSource = `
+        precision mediump float;
+        varying vec2 vTexCoord;
+        uniform sampler2D uSampler;
+        void main(){
+            vec2 uv = vec2(vTexCoord.x, 1.0 - vTexCoord.y);
+            vec4 color = texture2D(uSampler, uv);
+            if(color.a < 0.01) discard;
+            gl_FragColor = color;
+        }`;
 
-         // Calculate grid columns based on container width
-         var slotSize = this.baseUnit + this.gap;
-         this._cols = Math.floor((w + this.gap) / slotSize);
-         if (this._cols < 1) this._cols = 1;
+        this.program = this.createProgram(vsSource, fsSource);
+        const SUBDIV = 32;
+        const positions = [], texCoords = [], indices = [];
+        for (let y = 0; y <= SUBDIV; y++) {
+            for (let x = 0; x <= SUBDIV; x++) {
+                positions.push(x / SUBDIV, y / SUBDIV);
+                texCoords.push(x / SUBDIV, y / SUBDIV);
+            }
+        }
+        for (let y = 0; y < SUBDIV; y++) {
+            for (let x = 0; x < SUBDIV; x++) {
+                const i = y * (SUBDIV + 1) + x;
+                indices.push(i, i + 1, i + SUBDIV + 1);
+                indices.push(i + 1, i + SUBDIV + 2, i + SUBDIV + 1);
+            }
+        }
+        this.indexCount = indices.length;
+        this.positionBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(positions), this.gl.STATIC_DRAW);
+        this.texCoordBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.texCoordBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(texCoords), this.gl.STATIC_DRAW);
+        this.indexBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+        this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), this.gl.STATIC_DRAW);
+        this.gl.enable(this.gl.BLEND);
+        this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
+    }
 
-         this.colHeights = new Array(this._cols).fill(0);
-         this.placedItems = [];
-         this._nextIndex = 0;
-         this._clearRendered();
+    async loadPortraitImages() {
+        const loadingElement = this.container.querySelector('.loading');
+        const cacheElement = this.container.querySelector('.cache');
 
-         // Pack enough items to fill the viewport + buffer
-         var targetHeight = window.innerHeight + this.buffer;
-         this._packToHeight(targetHeight);
+        let imageSources = [];
+        // Automatically read from your thumbnail.js file
+        if (typeof window.thumbnails !== 'undefined' && window.thumbnails.length > 0) {
+            imageSources = window.thumbnails.map(t => t.src).filter(Boolean);
+        } else {
+            imageSources = this.getDefaultImages();
+        }
 
-         this.stage.style.height = this._getMaxHeight() + 'px';
-         this._renderVisible();
-       };
+        const imageCount = Math.max(50, imageSources.length);
+        const loadPromises = [];
 
-       MosaicPacker.prototype._getMaxHeight = function () {
-         var max = 0;
-         for (var i = 0; i < this.colHeights.length; i++) {
-           if (this.colHeights[i] > max) max = this.colHeights[i];
-         }
-         return max;
-       };
+        for (let i = 0; i < imageCount; i++) {
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            const src = imageSources[i % imageSources.length];
+            img.src = src;
 
-       MosaicPacker.prototype._getNextItem = function () {
-         if (this.rawItems.length === 0) return null;
-         // Infinite recycling of the thumbnail array
-         var template = this.rawItems[this._nextIndex % this.rawItems.length];
-         this._nextIndex++;
+            const promise = new Promise((resolve) => {
+                img.onload = () => {
+                    this.images.push(img);
+                    this.textures.push(this.createTexture(img));
+                    resolve();
+                };
+                img.onerror = () => {
+                    // Fallback to placeholder if local path fails (e.g., no local server running)
+                    img.src = `https://picsum.photos/id/${(i % 100) + 1000}/${this.imageWidth}/${this.imageHeight}`;
+                    img.onload = () => {
+                        this.images.push(img);
+                        this.textures.push(this.createTexture(img));
+                        resolve();
+                    };
+                    img.onerror = resolve;
+                };
+            });
+            loadPromises.push(promise);
+        }
 
-         return {
-           id: this._nextIndex,
-           src: template.src,
-           alt: template.alt,
-           aspect: template.aspect
-         };
-       };
+        let loaded = 0;
+        const total = loadPromises.length;
+        for (const promise of loadPromises) {
+            await promise;
+            loaded++;
+            if (loadingElement) loadingElement.textContent = `Loading... ${Math.round(loaded / total * 100)}%`;
+        }
 
-       MosaicPacker.prototype._packToHeight = function (targetY) {
-         if (this.rawItems.length === 0) return;
+        if (loadingElement) loadingElement.style.display = 'none';
+        if (cacheElement) cacheElement.style.display = 'none';
+    }
 
-         var slotSize = this.baseUnit + this.gap;
-         // Dynamic target area scales with screen width for consistent visual density
-         var targetArea = this.root.clientWidth * 120;
+    getDefaultImages() {
+        return [1011, 1015, 1018, 1020, 1023].map(id => `https://picsum.photos/id/${id}/${this.imageWidth}/${this.imageHeight}`);
+    }
 
-         while (this._getMaxHeight() < targetY) {
-           var item = this._getNextItem();
-           if (!item) break;
+    createTexture(img) {
+        const tex = this.gl.createTexture();
+        this.gl.bindTexture(this.gl.TEXTURE_2D, tex);
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, img);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
+        return tex;
+    }
 
-           // Calculate ideal dimensions to match target area while preserving aspect ratio
-           var idealW = Math.sqrt(targetArea * item.aspect);
+    getVisibleTiles() {
+        const tiles = [];
+        const tileW = this.imageWidth + this.gap;
+        const tileH = this.imageHeight + this.gap;
+        const visibleLeft = this.viewOffset.x - this.canvas.width;
+        const visibleRight = this.viewOffset.x + this.canvas.width * 2;
+        const visibleTop = this.viewOffset.y - this.canvas.height;
+        const visibleBottom = this.viewOffset.y + this.canvas.height * 2;
 
-           // Determine how many grid columns this item should span
-           var colSpan = Math.round(idealW / this.baseUnit);
-           colSpan = Math.max(1, Math.min(this._cols, colSpan)); // Clamp to available columns
+        for (let y = Math.floor(visibleTop / tileH) - 1; y <= Math.ceil(visibleBottom / tileH) + 1; y++) {
+            for (let x = Math.floor(visibleLeft / tileW) - 1; x <= Math.ceil(visibleRight / tileW) + 1; x++) {
+                const hash = (x * 7919 + y * 7307) % this.images.length;
+                tiles.push({ x: x * tileW, y: y * tileH, imageIndex: Math.abs(hash) });
+            }
+        }
+        return tiles;
+    }
 
-           var actualW = (colSpan * this.baseUnit) + ((colSpan - 1) * this.gap);
-           var actualH = actualW / item.aspect;
+    render() {
+        if (!this.program || this.images.length === 0) return;
+        this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+        this.gl.clearColor(0, 0, 0, 0);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+        this.gl.useProgram(this.program);
 
-           // 2D Skyline Packing: Find the horizontal position (x) that results in the lowest peak
-           var bestX = 0;
-           var minPeak = Infinity;
+        const posLoc = this.gl.getAttribLocation(this.program, 'aPosition');
+        this.gl.enableVertexAttribArray(posLoc);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer);
+        this.gl.vertexAttribPointer(posLoc, 2, this.gl.FLOAT, false, 0, 0);
 
-           for (var x = 0; x <= this._cols - colSpan; x++) {
-             var peak = 0;
-             for (var i = 0; i < colSpan; i++) {
-               if (this.colHeights[x + i] > peak) {
-                 peak = this.colHeights[x + i];
-               }
-             }
-             // Prefer left-most position in case of a tie for visual consistency
-             if (peak < minPeak) {
-               minPeak = peak;
-               bestX = x;
-             }
-           }
+        const texLoc = this.gl.getAttribLocation(this.program, 'aTexCoord');
+        this.gl.enableVertexAttribArray(texLoc);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.texCoordBuffer);
+        this.gl.vertexAttribPointer(texLoc, 2, this.gl.FLOAT, false, 0, 0);
 
-           var px = bestX * slotSize;
-           var py = minPeak;
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+        this.gl.uniform2f(this.gl.getUniformLocation(this.program, 'uResolution'), this.canvas.width, this.canvas.height);
+        this.gl.uniform1f(this.gl.getUniformLocation(this.program, 'uBulgeStrength'), this.bulgeStrength);
+        this.gl.uniform1f(this.gl.getUniformLocation(this.program, 'uBulgeRadius'), this.adjustedBulgeRadius);
 
-           this.placedItems.push({
-             id: item.id,
-             src: item.src,
-             alt: item.alt,
-             x: px,
-             y: py,
-             w: actualW,
-             h: actualH
-           });
+        for (const t of this.getVisibleTiles()) {
+            this.gl.uniform2f(this.gl.getUniformLocation(this.program, 'uOffset'), this.viewOffset.x, this.viewOffset.y);
+            this.gl.uniform2f(this.gl.getUniformLocation(this.program, 'uImagePosition'), t.x, t.y);
+            this.gl.activeTexture(this.gl.TEXTURE0);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, this.textures[t.imageIndex]);
+            this.gl.uniform1i(this.gl.getUniformLocation(this.program, 'uSampler'), 0);
+            this.gl.drawElements(this.gl.TRIANGLES, this.indexCount, this.gl.UNSIGNED_SHORT, 0);
+        }
+    }
 
-           // Update the skyline heights for the columns this item occupies
-           var newHeight = py + actualH + this.gap;
-           for (var i = 0; i < colSpan; i++) {
-             this.colHeights[bestX + i] = newHeight;
-           }
-         }
-       };
+    setupEventListeners() {
+        const setFocus = () => this.canvas.focus();
+        this.canvas.addEventListener('click', setFocus);
+        this.canvas.addEventListener('touchstart', setFocus);
 
-       MosaicPacker.prototype._clearRendered = function () {
-         this.rendered.forEach(function (el) { el.remove(); });
-         this.rendered.clear();
-       };
+        this.canvas.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            this.drag.isDragging = true;
+            this.drag.lastX = e.clientX;
+            this.drag.lastY = e.clientY;
+            this.canvas.style.cursor = 'grabbing';
+        });
 
-       MosaicPacker.prototype._renderVisible = function () {
-         var scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
-         var vh = window.innerHeight || document.documentElement.clientHeight || 0;
-         var top = scrollTop - this.buffer;
-         var bottom = scrollTop + vh + this.buffer;
+        window.addEventListener('mousemove', (e) => {
+            if (!this.drag.isDragging) return;
+            const dx = e.clientX - this.drag.lastX;
+            const dy = e.clientY - this.drag.lastY;
+            this.drag.velocityX = dx * 0.3 + this.drag.velocityX * 0.7;
+            this.drag.velocityY = dy * 0.3 + this.drag.velocityY * 0.7;
+            this.viewOffset.x -= this.drag.velocityX;
+            this.viewOffset.y -= this.drag.velocityY;
+            this.drag.lastX = e.clientX;
+            this.drag.lastY = e.clientY;
+        });
 
-         var items = this.placedItems;
-         var n = items.length;
-         if (n === 0) return;
+        window.addEventListener('mouseup', () => {
+            this.drag.isDragging = false;
+            this.canvas.style.cursor = 'grab';
+        });
 
-         // Ensure we have enough items packed to cover the visible area + buffer
-         if (n > 0 && items[n - 1].y < bottom) {
-           this._packToHeight(bottom + this.buffer);
-           this.stage.style.height = this._getMaxHeight() + 'px';
-           // Re-evaluate 'n' and 'items' since _packToHeight may have added more
-           items = this.placedItems;
-           n = items.length;
-         }
+        this.canvas.addEventListener('touchstart', (e) => {
+            this.drag.isDragging = true;
+            this.drag.lastX = e.touches[0].clientX;
+            this.drag.lastY = e.touches[0].clientY;
+        }, { passive: false });
 
-         // Binary search for start index (first item whose bottom >= top)
-         var lo = 0, hi = n - 1, start = n;
-         while (lo <= hi) {
-           var mid = (lo + hi) >> 1;
-           if (items[mid].y + items[mid].h < top) lo = mid + 1;
-           else { start = mid; hi = mid - 1; }
-         }
+        window.addEventListener('touchmove', (e) => {
+            if (!this.drag.isDragging) return;
+            const dx = e.touches[0].clientX - this.drag.lastX;
+            const dy = e.touches[0].clientY - this.drag.lastY;
+            this.drag.velocityX = dx * 0.3 + this.drag.velocityX * 0.7;
+            this.drag.velocityY = dy * 0.3 + this.drag.velocityY * 0.7;
+            this.viewOffset.x -= this.drag.velocityX;
+            this.viewOffset.y -= this.drag.velocityY;
+            this.drag.lastX = e.touches[0].clientX;
+            this.drag.lastY = e.touches[0].clientY;
+        }, { passive: false });
 
-         // Binary search for end index (first item whose top > bottom)
-         lo = 0; hi = n - 1; var end = n;
-         while (lo <= hi) {
-           var mid = (lo + hi) >> 1;
-           if (items[mid].y > bottom) { end = mid; hi = mid - 1; }
-           else lo = mid + 1;
-         }
+        window.addEventListener('touchend', () => { this.drag.isDragging = false; });
 
-         // Remove DOM nodes that scrolled out of range
-         var toDelete = [];
-         this.rendered.forEach(function (el, idx) {
-           if (idx < start || idx >= end) toDelete.push(idx);
-         });
-         for (var d = 0; d < toDelete.length; d++) {
-           var el = this.rendered.get(toDelete[d]);
-           if (el) el.remove();
-           this.rendered.delete(toDelete[d]);
-         }
+        this.canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            this.drag.velocityX += e.deltaX * 0.5;
+            this.drag.velocityY += e.deltaY * 0.5;
+        }, { passive: false });
 
-         // Create DOM nodes for newly visible items
-         var frag = document.createDocumentFragment();
-         for (var i = start; i < end; i++) {
-           if (this.rendered.has(i)) continue;
-           var node = this._createCell(items[i]);
-           frag.appendChild(node);
-           this.rendered.set(i, node);
-         }
-         this.stage.appendChild(frag);
-       };
+        this.canvas.addEventListener('keydown', (e) => {
+            switch (e.key) {
+                case '+': case '=': this.bulgeStrength = Math.min(1.5, this.bulgeStrength + 0.05); break;
+                case '-': case '_': this.bulgeStrength = Math.max(0, this.bulgeStrength - 0.05); break;
+                case '[': this.bulgeRadius = Math.max(0.5, this.bulgeRadius - 0.05); this.resizeCanvas(); break;
+                case ']': this.bulgeRadius = Math.min(3, this.bulgeRadius + 0.05); this.resizeCanvas(); break;
+                case 'r': case 'R': this.bulgeStrength = 0.6; this.bulgeRadius = 1.5; this.resizeCanvas(); break;
+            }
+        });
+    }
 
-       MosaicPacker.prototype._createCell = function (item) {
-         var cell = document.createElement('div');
-         cell.className = 'mg-cell';
-         cell.style.left   = item.x + 'px';
-         cell.style.top    = item.y + 'px';
-         cell.style.width  = item.w + 'px';
-         cell.style.height = item.h + 'px';
+    setupFullscreen() {
+        const btn = this.container.querySelector('.fullscreen-btn');
+        if (!btn) return;
+        const icon = btn.querySelector('i');
 
-         var img = document.createElement('img');
-         img.alt      = item.alt;
-         img.decoding = 'async';
-         // Pre-reserve layout space to prevent shifts
-         img.width    = Math.round(item.w);
-         img.height   = Math.round(item.h);
-         img.loading  = 'lazy';
-         img.src      = item.src;
+        btn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                this.container.requestFullscreen().catch(err => console.log(`Fullscreen error: ${err.message}`));
+                if (icon) icon.className = 'fas fa-compress';
+            } else {
+                document.exitFullscreen();
+                if (icon) icon.className = 'fas fa-expand';
+            }
+        });
 
-         img.addEventListener('load',  function () { img.setAttribute('data-loaded', '1'); });
-         img.addEventListener('error', function () { img.setAttribute('data-loaded', '1'); });
+        document.addEventListener('fullscreenchange', () => {
+            if (icon) icon.className = document.fullscreenElement ? 'fas fa-compress' : 'fas fa-expand';
+            setTimeout(() => this.resizeCanvas(), 100);
+        });
+    }
 
-         cell.appendChild(img);
-         return cell;
-       };
+    animate() {
+        if (!this.drag.isDragging) {
+            this.viewOffset.x -= this.drag.velocityX;
+            this.viewOffset.y -= this.drag.velocityY;
+            this.drag.velocityX *= this.inertia;
+            this.drag.velocityY *= this.inertia;
+            if (Math.abs(this.drag.velocityX) < 0.01) this.drag.velocityX = 0;
+            if (Math.abs(this.drag.velocityY) < 0.01) this.drag.velocityY = 0;
+        }
+        this.render();
+        requestAnimationFrame(() => this.animate());
+    }
 
-       MosaicPacker.prototype._onScroll = function () {
-         if (this._ticking) return;
-         this._ticking = true;
-         requestAnimationFrame(function () {
-           this._ticking = false;
-           this._renderVisible();
-         }.bind(this));
-       };
+    createProgram(vs, fs) {
+        const prog = this.gl.createProgram();
+        this.gl.attachShader(prog, this.loadShader(this.gl.VERTEX_SHADER, vs));
+        this.gl.attachShader(prog, this.loadShader(this.gl.FRAGMENT_SHADER, fs));
+        this.gl.linkProgram(prog);
+        return this.gl.getProgramParameter(prog, this.gl.LINK_STATUS) ? prog : null;
+    }
 
-       MosaicPacker.prototype._onResize = function () {
-         var self = this;
-         clearTimeout(this._resizeTimer);
-         this._resizeTimer = setTimeout(function () {
-           var w = self.root.clientWidth;
-           if (w <= 0 || w === self._lastWidth) return;
-           // Note: Responsive 2D packing requires a full recalculation.
-           // We reset and repack from the top to maintain the puzzle-like integrity.
-           self._resetAndRepack();
-         }, 150);
-       };
-
-       function boot() {
-         var root = document.getElementById('mosaic-gallery');
-         if (!root) return;
-
-         var attempts = 0;
-         var tryInit = function() {
-           if (window.thumbnails && window.thumbnails.length) {
-             new MosaicPacker(root, {
-               gap: 6,
-               baseUnit: 40,  // Lower = finer, tighter packing. Higher = larger blocks.
-               buffer: 1200
-             });
-           } else if (attempts++ < 50) {
-             setTimeout(tryInit, 100);
-           }
-         };
-         tryInit();
-       }
-
-       if (document.readyState === 'loading') {
-         document.addEventListener('DOMContentLoaded', boot);
-       } else {
-         boot();
-       }
-     })();
-     </script>
-<!-- ========================================== -->
-<!-- END Justified Infinite Mosaic Gallery -->
-<!-- ========================================== -->
+    loadShader(type, source) {
+        const shader = this.gl.createShader(type);
+        this.gl.shaderSource(shader, source);
+        this.gl.compileShader(shader);
+        if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
+            console.error('Shader error:', this.gl.getShaderInfoLog(shader));
+            this.gl.deleteShader(shader);
+            return null;
+        }
+        return shader;
+    }
+}
+</script>
+<!-- ============================================================
+      END GALLERY SECTION
+     ============================================================ -->
 </body>
 </html>
