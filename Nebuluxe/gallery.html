@@ -1093,7 +1093,7 @@ var particles;
   height: calc(100vh - 110px); /* Accounts for your 110px fixed top banner */
   min-height: 500px;
   overflow: hidden;
-  background: #000;
+  background: transparent; /* Changed from #000 to transparent */
   touch-action: none;
   margin-top: 110px; /* Pushes content below the fixed top banner */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
@@ -1123,13 +1123,14 @@ var particles;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #fff;
+  color: #5C4A32; /* Changed to match your page's text color */
   font-size: 20px;
   z-index: 1000;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(255, 253, 245, 0.9); /* Changed to match your page's light theme */
   padding: 20px 40px;
   border-radius: 10px;
-  font-family: monospace;
+  border: 1px solid rgba(180, 154, 93, 0.4);
+  font-family: 'Share Tech Mono', monospace;
   pointer-events: none;
 }
 
@@ -1139,7 +1140,7 @@ var particles;
   width: 100%;
   top: 0;
   left: 0;
-  background-color: #000;
+  background-color: transparent; /* Changed from #000 to transparent */
   z-index: 999;
 }
 
@@ -1149,9 +1150,9 @@ var particles;
   right: 20px;
   width: 44px;
   height: 44px;
-  background: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  border: none;
+  background: rgba(255, 253, 245, 0.9);
+  color: #b49a5d;
+  border: 1px solid rgba(180, 154, 93, 0.4);
   border-radius: 50%;
   font-size: 20px;
   cursor: pointer;
@@ -1160,11 +1161,12 @@ var particles;
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(10px);
-  transition: transform 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .gallery-wrapper .fullscreen-btn:hover {
   transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(180, 154, 93, 0.4);
 }
 
 .gallery-wrapper .hint {
@@ -1172,33 +1174,38 @@ var particles;
   left: 12px;
   bottom: 12px;
   z-index: 10;
-  background: rgba(0, 0, 0, 0.8);
-  padding: 8px;
+  background: rgba(255, 253, 245, 0.9);
+  color: #5C4A32;
+  padding: 8px 12px;
   border-radius: 8px;
-  opacity: 0.85;
+  border: 1px solid rgba(180, 154, 93, 0.3);
+  opacity: 0.9;
   font-size: 13px;
-  color: #fff;
   pointer-events: none;
   user-select: text;
+  font-family: 'Share Tech Mono', monospace;
 }
 
 .gallery-wrapper .hint a {
-  color: tomato;
+  color: #b49a5d;
   text-decoration: none;
   pointer-events: auto;
+  font-weight: bold;
 }
 
 .gallery-wrapper .copy {
   position: absolute;
   top: 20px;
   left: 20px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #000;
+  background: rgba(255, 253, 245, 0.9);
+  color: #5C4A32;
   padding: 10px;
   border-radius: 5px;
+  border: 1px solid rgba(180, 154, 93, 0.3);
   font-size: 12px;
   z-index: 100;
   pointer-events: none;
+  font-family: 'Share Tech Mono', monospace;
 }
 
 @media (max-width: 768px) {
@@ -1253,15 +1260,13 @@ class InfinitePortraitGallery {
 
         this.gl = this.canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false });
         if (!this.gl) {
-            this.container.innerHTML = '<div style="color:white; padding:20px; text-align:center;">WebGL is not supported on this browser.</div>';
+            this.container.innerHTML = '<div style="color:#5C4A32; padding:20px; text-align:center; font-family: monospace;">WebGL is not supported on this browser.</div>';
             return;
         }
 
-        this.images = [];
-        this.textures = [];
-        this.imageWidth = 180;
-        this.imageHeight = 180;
-        this.gap = 25;
+        this.imageData = []; // Stores { img, texture, width, height }
+        this.maxDimension = 200; // Max width or height, aspect ratio will be preserved
+        this.gap = 30;
         this.viewOffset = { x: 0, y: 0 };
         this.drag = { isDragging: false, lastX: 0, lastY: 0, velocityX: 0, velocityY: 0 };
         this.inertia = 0.95;
@@ -1272,7 +1277,7 @@ class InfinitePortraitGallery {
         this.resizeCanvas();
         window.addEventListener('resize', () => this.resizeCanvas());
         this.init();
-        this.loadPortraitImages();
+        this.loadImages();
         this.setupEventListeners();
         this.setupFullscreen();
         this.animate();
@@ -1288,6 +1293,7 @@ class InfinitePortraitGallery {
     }
 
     init() {
+        // Updated shader to use dynamic uImageSize instead of hardcoded dimensions
         const vsSource = `
         attribute vec2 aPosition;
         attribute vec2 aTexCoord;
@@ -1296,8 +1302,10 @@ class InfinitePortraitGallery {
         uniform vec2 uOffset;
         uniform float uRotation;
         uniform vec2 uImagePosition;
+        uniform vec2 uImageSize;
         uniform float uBulgeStrength;
         uniform float uBulgeRadius;
+
         vec2 applyBulgeEffect(vec2 pos){
             vec2 normalizedPos = pos / uResolution;
             vec2 center = vec2(0.5, 0.5);
@@ -1315,17 +1323,21 @@ class InfinitePortraitGallery {
             }
             return pos;
         }
+
         void main(){
-            vec2 pos = aPosition * vec2(${this.imageWidth}, ${this.imageHeight});
+            vec2 pos = aPosition * uImageSize;
             pos += uImagePosition;
             pos -= uOffset;
-            vec2 center = uImagePosition + vec2(${this.imageWidth/2.0}, ${this.imageHeight/2.0}) - uOffset;
+
+            vec2 center = uImagePosition + (uImageSize * 0.5) - uOffset;
             pos -= center;
             float cosR = cos(uRotation);
             float sinR = sin(uRotation);
             pos = vec2(pos.x*cosR - pos.y*sinR, pos.x*sinR + pos.y*cosR);
             pos += center;
+
             pos = applyBulgeEffect(pos);
+
             vec2 clip = pos / uResolution * 2.0 - 1.0;
             gl_Position = vec4(clip, 0.0, 1.0);
             vTexCoord = aTexCoord;
@@ -1372,12 +1384,11 @@ class InfinitePortraitGallery {
         this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
     }
 
-    async loadPortraitImages() {
+    async loadImages() {
         const loadingElement = this.container.querySelector('.loading');
         const cacheElement = this.container.querySelector('.cache');
 
         let imageSources = [];
-        // Automatically read from your thumbnail.js file
         if (typeof window.thumbnails !== 'undefined' && window.thumbnails.length > 0) {
             imageSources = window.thumbnails.map(t => t.src).filter(Boolean);
         } else {
@@ -1395,16 +1406,35 @@ class InfinitePortraitGallery {
 
             const promise = new Promise((resolve) => {
                 img.onload = () => {
-                    this.images.push(img);
-                    this.textures.push(this.createTexture(img));
+                    // Calculate aspect-ratio-preserving dimensions
+                    let w = img.naturalWidth;
+                    let h = img.naturalHeight;
+                    if (w > h) {
+                        h = (h / w) * this.maxDimension;
+                        w = this.maxDimension;
+                    } else {
+                        w = (w / h) * this.maxDimension;
+                        h = this.maxDimension;
+                    }
+
+                    this.imageData.push({
+                        img: img,
+                        texture: this.createTexture(img),
+                        width: w,
+                        height: h
+                    });
                     resolve();
                 };
                 img.onerror = () => {
-                    // Fallback to placeholder if local path fails (e.g., no local server running)
-                    img.src = `https://picsum.photos/id/${(i % 100) + 1000}/${this.imageWidth}/${this.imageHeight}`;
+                    // Fallback to placeholder if local path fails
+                    img.src = `https://picsum.photos/id/${(i % 100) + 1000}/${this.maxDimension}/${this.maxDimension}`;
                     img.onload = () => {
-                        this.images.push(img);
-                        this.textures.push(this.createTexture(img));
+                        this.imageData.push({
+                            img: img,
+                            texture: this.createTexture(img),
+                            width: this.maxDimension,
+                            height: this.maxDimension
+                        });
                         resolve();
                     };
                     img.onerror = resolve;
@@ -1426,7 +1456,9 @@ class InfinitePortraitGallery {
     }
 
     getDefaultImages() {
-        return [1011, 1015, 1018, 1020, 1023].map(id => `https://picsum.photos/id/${id}/${this.imageWidth}/${this.imageHeight}`);
+        return [1011, 1015, 1018, 1020, 1023, 1025, 1029, 1031, 1033, 1035].map(id =>
+            `https://picsum.photos/id/${id}/${this.maxDimension}/${this.maxDimension}`
+        );
     }
 
     createTexture(img) {
@@ -1442,8 +1474,8 @@ class InfinitePortraitGallery {
 
     getVisibleTiles() {
         const tiles = [];
-        const tileW = this.imageWidth + this.gap;
-        const tileH = this.imageHeight + this.gap;
+        const tileW = this.maxDimension + this.gap;
+        const tileH = this.maxDimension + this.gap;
         const visibleLeft = this.viewOffset.x - this.canvas.width;
         const visibleRight = this.viewOffset.x + this.canvas.width * 2;
         const visibleTop = this.viewOffset.y - this.canvas.height;
@@ -1451,17 +1483,30 @@ class InfinitePortraitGallery {
 
         for (let y = Math.floor(visibleTop / tileH) - 1; y <= Math.ceil(visibleBottom / tileH) + 1; y++) {
             for (let x = Math.floor(visibleLeft / tileW) - 1; x <= Math.ceil(visibleRight / tileW) + 1; x++) {
-                const hash = (x * 7919 + y * 7307) % this.images.length;
-                tiles.push({ x: x * tileW, y: y * tileH, imageIndex: Math.abs(hash) });
+                const hash = (x * 7919 + y * 7307) % this.imageData.length;
+                const idx = Math.abs(hash);
+                const data = this.imageData[idx];
+
+                // Center the image within its grid cell to respect aspect ratio
+                const offsetX = (tileW - data.width) / 2;
+                const offsetY = (tileH - data.height) / 2;
+
+                tiles.push({
+                    x: x * tileW + offsetX,
+                    y: y * tileH + offsetY,
+                    width: data.width,
+                    height: data.height,
+                    imageIndex: idx
+                });
             }
         }
         return tiles;
     }
 
     render() {
-        if (!this.program || this.images.length === 0) return;
+        if (!this.program || this.imageData.length === 0) return;
         this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-        this.gl.clearColor(0, 0, 0, 0);
+        this.gl.clearColor(0, 0, 0, 0); // Fully transparent clear
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
         this.gl.useProgram(this.program);
 
@@ -1480,12 +1525,19 @@ class InfinitePortraitGallery {
         this.gl.uniform1f(this.gl.getUniformLocation(this.program, 'uBulgeStrength'), this.bulgeStrength);
         this.gl.uniform1f(this.gl.getUniformLocation(this.program, 'uBulgeRadius'), this.adjustedBulgeRadius);
 
+        const offsetLoc = this.gl.getUniformLocation(this.program, 'uOffset');
+        const imgPosLoc = this.gl.getUniformLocation(this.program, 'uImagePosition');
+        const imgSizeLoc = this.gl.getUniformLocation(this.program, 'uImageSize');
+        const samplerLoc = this.gl.getUniformLocation(this.program, 'uSampler');
+
         for (const t of this.getVisibleTiles()) {
-            this.gl.uniform2f(this.gl.getUniformLocation(this.program, 'uOffset'), this.viewOffset.x, this.viewOffset.y);
-            this.gl.uniform2f(this.gl.getUniformLocation(this.program, 'uImagePosition'), t.x, t.y);
+            this.gl.uniform2f(offsetLoc, this.viewOffset.x, this.viewOffset.y);
+            this.gl.uniform2f(imgPosLoc, t.x, t.y);
+            this.gl.uniform2f(imgSizeLoc, t.width, t.height); // Pass dynamic size
+
             this.gl.activeTexture(this.gl.TEXTURE0);
-            this.gl.bindTexture(this.gl.TEXTURE_2D, this.textures[t.imageIndex]);
-            this.gl.uniform1i(this.gl.getUniformLocation(this.program, 'uSampler'), 0);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, this.imageData[t.imageIndex].texture);
+            this.gl.uniform1i(samplerLoc, 0);
             this.gl.drawElements(this.gl.TRIANGLES, this.indexCount, this.gl.UNSIGNED_SHORT, 0);
         }
     }
