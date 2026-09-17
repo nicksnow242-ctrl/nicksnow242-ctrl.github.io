@@ -2,6 +2,7 @@ window.thumbnails = [
     {
         id: 1,
         src: 'Images/Thumbnails/DSC1847.png',
+        fullsizesrc:'Images/Images/Fullsize/DSC1847.jpg',
         alt: 'A thief came in the night',
         title: 'Western Wind',
         dateCreated: '01-03-23',
@@ -19,6 +20,7 @@ window.thumbnails = [
     {
         id: 2,
         src: 'Images/Thumbnails/DSC1930.png',
+        fullsizesrc:'Images/Images/Fullsize/DSC1930.jpg',
         alt: 'A thief came in the night',
         title: 'Divergence',
         dateCreated: '01-01-23',
@@ -36,6 +38,7 @@ window.thumbnails = [
     {
         id: 3,
         src: 'Images/Thumbnails/DSC1942.png',
+        fullsizesrc:'Images/Images/Fullsize/DSC1942.jpg',
         alt: 'A thief came in the night',
         title: 'Liminal Fountain',
         dateCreated: '01-01-23',
@@ -53,6 +56,7 @@ window.thumbnails = [
     {
         id: 4,
         src: 'Images/Thumbnails/DSC1943.png',
+        fullsizesrc:'Images/Images/Fullsize/DSC1943.jpg',
         alt: 'A thief came in the night',
         title: 'Liminal Fountain',
         dateCreated: '01-01-23',
@@ -70,6 +74,7 @@ window.thumbnails = [
     {
         id: 5,
         src: 'Images/Thumbnails/Kayakertest.png',
+        fullsizesrc:'Images/Images/Fullsize/DSC1948.jpg',
         alt: 'A thief came in the night',
         title: 'Kayaker',
         dateCreated: '09-16-26',
