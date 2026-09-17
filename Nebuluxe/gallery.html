@@ -1723,29 +1723,54 @@ class InfinitePortraitGallery {
     }
 
     setupEventListeners() {
-        const setFocus = () => this.canvas.focus();
-        this.canvas.addEventListener('click', setFocus);
-        this.canvas.addEventListener('touchstart', setFocus);
+    const setFocus = () => this.canvas.focus();
+    this.canvas.addEventListener('click', setFocus);
+    this.canvas.addEventListener('touchstart', setFocus);
 
-        this.canvas.addEventListener('click', (e) => {
-            if (Math.abs(this.drag.velocityX) > 5 || Math.abs(this.drag.velocityY) > 5) return;
+    // Improved hit testing with tolerance for bulge distortion
+    this.canvas.addEventListener('click', (e) => {
+        if (Math.abs(this.drag.velocityX) > 5 || Math.abs(this.drag.velocityY) > 5) return;
 
-            const rect = this.canvas.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            const clickY = e.clientY - rect.top;
+        const rect = this.canvas.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const clickY = e.clientY - rect.top;
 
-            const tiles = this.getVisibleTiles();
-            for (const t of tiles) {
-                const screenX = t.x - this.viewOffset.x;
-                const screenY = t.y - this.viewOffset.y;
+        const tiles = this.getVisibleTiles();
+        let closestTile = null;
+        let closestDistance = Infinity;
 
-                if (clickX >= screenX && clickX <= screenX + t.width &&
-                    clickY >= screenY && clickY <= screenY + t.height) {
-                    this.openModal(t.imageIndex);
-                    break;
+        for (const t of tiles) {
+            const screenX = t.x - this.viewOffset.x;
+            const screenY = t.y - this.viewOffset.y;
+
+            // Add tolerance for bulge distortion (20% extra space around each tile)
+            const tolerance = Math.max(t.width, t.height) * 0.2;
+
+            if (clickX >= screenX - tolerance && clickX <= screenX + t.width + tolerance &&
+                clickY >= screenY - tolerance && clickY <= screenY + t.height + tolerance) {
+
+                // Calculate distance from click to tile center
+                const centerX = screenX + t.width / 2;
+                const centerY = screenY + t.height / 2;
+                const distance = Math.sqrt(
+                    Math.pow(clickX - centerX, 2) + Math.pow(clickY - centerY, 2)
+                );
+
+                // Keep track of the closest tile
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closestTile = t;
                 }
             }
-        });
+        }
+
+        // Open the closest matching tile
+        if (closestTile) {
+            this.openModal(closestTile.imageIndex);
+        }
+    });
+
+    // ... rest of the setupEventListeners method remains the same
 
         this.canvas.addEventListener('mousedown', (e) => {
             e.preventDefault();
