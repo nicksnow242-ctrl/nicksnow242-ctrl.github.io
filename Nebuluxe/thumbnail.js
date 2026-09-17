@@ -66,5 +66,22 @@ window.thumbnails = [
         suggestedprice: 80,
         description: 'loren ipsum',
         type: 'normal'
+    },
+    {
+        id: 5,
+        src: 'Images/Thumbnails/Kayaker.png',
+        alt: 'A thief came in the night',
+        title: 'Kayaker',
+        dateCreated: '09-16-26',
+        inStock: true,
+        length: '8"',
+        width: '5"',
+        retired: false,
+        remakecustom: true,
+        pricemultiplier: 1,
+        featured: false,
+        suggestedprice: 60,
+        description: 'loren ipsum',
+        type: 'normal'
     }
 ];
