@@ -1548,8 +1548,8 @@ class InfinitePortraitGallery {
             if (!this.drag.isDragging) return;
             const dx = e.clientX - this.drag.lastX;
             const dy = e.clientY - this.drag.lastY;
-            this.drag.velocityX = dx * 0.3 + this.drag.velocityX * 0.7;
-            this.drag.velocityY = dy * 0.3 + this.drag.velocityY * 0.7;
+            this.drag.velocityX = dx * 0.15 + this.drag.velocityX * 0.7;
+            this.drag.velocityY = dy * 0.15 + this.drag.velocityY * 0.7;
 
             // INVERTED: Added instead of subtracted
             this.viewOffset.x -= this.drag.velocityX;
