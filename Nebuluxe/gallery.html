@@ -1193,20 +1193,7 @@ var particles;
   font-weight: bold;
 }
 
-.gallery-wrapper .copy {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  background: rgba(255, 253, 245, 0.9);
-  color: #5C4A32;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid rgba(180, 154, 93, 0.3);
-  font-size: 12px;
-  z-index: 100;
-  pointer-events: none;
-  font-family: 'Share Tech Mono', monospace;
-}
+
 
 @media (max-width: 768px) {
   .gallery-wrapper .hint {
@@ -1235,7 +1222,6 @@ var particles;
         <i class="fas fa-expand"></i>
     </button>
     <div class="hint">Scroll / drag / use - or + to adjust bulge</div>
-    <div class="copy">&Toc</div>
 </div>
 
 <script>
@@ -1266,11 +1252,11 @@ class InfinitePortraitGallery {
         this.imageData = [];
         this.maxDimension = 150; // Changed to 150px
         this.zoom = 1.6;         // Added zoom factor for a "zoomed in" initial state
-        this.gap = 30;
+        this.gap = 10;
         this.viewOffset = { x: 0, y: 0 };
         this.drag = { isDragging: false, lastX: 0, lastY: 0, velocityX: 0, velocityY: 0 };
         this.inertia = 0.95;
-        this.bulgeStrength = 0.2;
+        this.bulgeStrength = 0.8;
         this.bulgeRadius = 1.5;
         this.adjustedBulgeRadius = this.bulgeRadius;
 
