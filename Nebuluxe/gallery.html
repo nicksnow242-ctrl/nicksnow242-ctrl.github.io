@@ -1084,10 +1084,9 @@ var particles;
       GALLERY SECTION
      ============================================================ -->
 <style>
-/* ========================================== */
-/* INFINITE WEBGL GALLERY STYLES (SCOPED) */
-/* ========================================== */
-
+<!-- ============================================================
+      GALLERY SECTION
+     ============================================================ -->
 <style>
 /* ========================================== */
 /* INFINITE WEBGL GALLERY STYLES (SCOPED) */
@@ -1111,8 +1110,6 @@ var particles;
 
 .gallery-wrapper canvas {
   display: block;
-  width: 100%;
-  height: 100%;
   outline: none;
   cursor: grab;
   touch-action: none;
@@ -1264,7 +1261,6 @@ var particles;
   color: #fff;
 }
 
-/* Fixed image display to preserve aspect ratio */
 .gallery-card-image {
   display: block;
   max-width: 100%;
@@ -1392,7 +1388,6 @@ var particles;
 }
 </style>
 
-<!-- Font Awesome for fullscreen icon -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <div id="gallery-container" class="gallery-wrapper">
@@ -1404,7 +1399,6 @@ var particles;
     </button>
     <div class="hint">Scroll / drag / use - or + to adjust bulge. Click an image for details.</div>
 
-    <!-- Modal Card Structure -->
     <div id="gallery-modal" class="gallery-modal">
         <div class="gallery-card">
             <button class="gallery-card-close" id="modal-close-btn" aria-label="Close">&times;</button>
@@ -1442,8 +1436,6 @@ class InfinitePortraitGallery {
         this.canvas = document.createElement('canvas');
         this.canvas.setAttribute('tabindex', '0');
         this.canvas.style.outline = 'none';
-        this.canvas.style.width = '100%';
-        this.canvas.style.height = '100%';
         this.container.appendChild(this.canvas);
 
         this.gl = this.canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false });
@@ -1466,20 +1458,21 @@ class InfinitePortraitGallery {
         this.modal = this.container.querySelector('#gallery-modal');
         this.closeModalBtn = this.container.querySelector('#modal-close-btn');
 
-        // Initial resize
-        this.resizeCanvas();
+        // Robust initialization sequence
+        const initResize = () => this.resizeCanvas();
 
-        // Fallback timeout to ensure layout has fully settled before sizing
-        setTimeout(() => this.resizeCanvas(), 150);
+        initResize();
+        requestAnimationFrame(initResize);
+        setTimeout(initResize, 50);
+        setTimeout(initResize, 150);
+        setTimeout(initResize, 300);
+        window.addEventListener('load', initResize);
 
-        // Use ResizeObserver to automatically fix canvas size if container dimensions change
         if (window.ResizeObserver) {
-            this.resizeObserver = new ResizeObserver(() => {
-                this.resizeCanvas();
-            });
+            this.resizeObserver = new ResizeObserver(initResize);
             this.resizeObserver.observe(this.container);
         } else {
-            window.addEventListener('resize', () => this.resizeCanvas());
+            window.addEventListener('resize', initResize);
         }
 
         this.init();
@@ -1491,11 +1484,23 @@ class InfinitePortraitGallery {
 
     resizeCanvas() {
         if (!this.container) return;
-        this.canvas.width = this.container.clientWidth;
-        this.canvas.height = this.container.clientHeight;
-        const diagonal = Math.sqrt(Math.pow(this.canvas.width / Math.min(this.canvas.width, this.canvas.height), 2) + Math.pow(this.canvas.height / Math.min(this.canvas.width, this.canvas.height), 2));
+
+        const width = this.container.clientWidth;
+        const height = this.container.clientHeight;
+
+        if (width <= 0 || height <= 0) return;
+
+        this.canvas.width = width;
+        this.canvas.height = height;
+
+        // Explicitly set CSS dimensions to match internal resolution
+        this.canvas.style.width = width + 'px';
+        this.canvas.style.height = height + 'px';
+
+        const diagonal = Math.sqrt(Math.pow(width / Math.min(width, height), 2) + Math.pow(height / Math.min(width, height), 2));
         this.adjustedBulgeRadius = Math.max(this.bulgeRadius, diagonal * 0.6 * 1.2);
-        if (this.gl) this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+
+        if (this.gl) this.gl.viewport(0, 0, width, height);
     }
 
     init() {
@@ -1753,14 +1758,18 @@ class InfinitePortraitGallery {
         this.canvas.addEventListener('click', setFocus);
         this.canvas.addEventListener('touchstart', setFocus);
 
-        // --- HIT TESTING FOR MODAL ---
+        // Hit testing with proper coordinate scaling
         this.canvas.addEventListener('click', (e) => {
-            // Prevent opening modal if the user was actively dragging
             if (Math.abs(this.drag.velocityX) > 5 || Math.abs(this.drag.velocityY) > 5) return;
 
             const rect = this.canvas.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            const clickY = e.clientY - rect.top;
+
+            // Convert click coordinates from CSS pixels to canvas pixels
+            const scaleX = this.canvas.width / rect.width;
+            const scaleY = this.canvas.height / rect.height;
+
+            const clickX = (e.clientX - rect.left) * scaleX;
+            const clickY = (e.clientY - rect.top) * scaleY;
 
             const tiles = this.getVisibleTiles();
             for (const t of tiles) {
@@ -1840,7 +1849,6 @@ class InfinitePortraitGallery {
             }
         });
 
-        // Modal close listeners
         this.closeModalBtn.addEventListener('click', () => this.closeModal());
         this.modal.addEventListener('click', (e) => {
             if (e.target === this.modal) this.closeModal();
@@ -1865,14 +1873,12 @@ class InfinitePortraitGallery {
             availability += ", will not remake.";
         }
 
-        // Check multiple capitalizations just in case
         const fullSizeSrc = item.fullsizesrc || item.fullSizeSrc || item.src;
 
         const imgEl = document.getElementById('modal-full-image');
         imgEl.src = fullSizeSrc;
         imgEl.alt = item.alt || item.title;
 
-        // Fallback if fullsize image fails to load (e.g., path typo or missing file)
         imgEl.onerror = () => {
             console.warn(`Failed to load fullsize image: ${fullSizeSrc}. Falling back to thumbnail.`);
             imgEl.src = item.src;
@@ -1884,7 +1890,6 @@ class InfinitePortraitGallery {
         document.getElementById('modal-size').textContent = `${item.length || '?'} x ${item.width || '?'}`;
         document.getElementById('modal-description').textContent = item.description || 'No description available.';
 
-        // REPLACE 'your-email@example.com' with your actual email address
         const email = "your-email@example.com";
         const subject = encodeURIComponent(`Inquiry about: ${item.title}`);
         const body = encodeURIComponent(`Hello,\n\nI am interested in learning more about "${item.title}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`);
