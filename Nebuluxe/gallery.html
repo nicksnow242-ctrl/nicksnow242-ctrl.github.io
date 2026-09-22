@@ -2211,8 +2211,8 @@ class InfinitePortraitGallery {
             const dx = e.clientX - this.drag.lastX;
             const dy = e.clientY - this.drag.lastY;
             this.drag.dragDistance += Math.sqrt(dx * dx + dy * dy);
-            this.drag.velocityX = dx * 0.1 + this.drag.velocityX * 0.5;
-            this.drag.velocityY = dy * 0.1 + this.drag.velocityY * 0.5;
+            this.drag.velocityX = dx * 0.4 + this.drag.velocityX * 0.5;
+            this.drag.velocityY = dy * 0.4 + this.drag.velocityY * 0.5;
             this.viewOffset.x -= this.drag.velocityX;
             this.viewOffset.y += this.drag.velocityY;
             this.drag.lastX = e.clientX;
