@@ -1356,13 +1356,12 @@ var particles;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Frosted glass effect matching your theme */
-  background: rgba(255, 253, 245, 0.65);
+  background: rgba(255, 253, 245, 0.25); /* Increased transparency */
   backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px); /* Safari support */
+  -webkit-backdrop-filter: blur(15px);
   padding: 20px;
   min-width: 0;
-  border-right: 1px solid rgba(180, 154, 93, 0.2); /* Subtle separator */
+  border-right: 1px solid rgba(180, 154, 93, 0.2);
 }
 
 .gallery-card-image {
@@ -1528,12 +1527,12 @@ var particles;
     overflow-y: auto;
   }
   .gallery-card-image-container {
-      flex: none;
-      max-height: 40vh;
-      padding: 12px;
-      border-right: none; /* Remove side border on mobile */
-      border-bottom: 1px solid rgba(180, 154, 93, 0.2); /* Add bottom border instead */
-    }
+     flex: none;
+     max-height: 40vh;
+     padding: 12px;
+     border-right: none;
+     border-bottom: 1px solid rgba(180, 154, 93, 0.2);
+   }
   .gallery-card-image {
     max-height: 35vh;
   }
