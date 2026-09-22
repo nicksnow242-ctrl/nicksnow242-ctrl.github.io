@@ -1449,7 +1449,7 @@ class InfinitePortraitGallery {
         this.drag = { isDragging: false, lastX: 0, lastY: 0, velocityX: 0, velocityY: 0, dragDistance: 0 };
 
         this.inertia = 0.75;
-        this.bulgeStrength = 0.2;
+        this.bulgeStrength = 0.1; // DECREASED: Reduced from 0.2 to 0.1 for a subtler effect
         this.bulgeRadius = 1.5;
         this.adjustedBulgeRadius = this.bulgeRadius;
 
@@ -1735,18 +1735,23 @@ class InfinitePortraitGallery {
         this.canvas.addEventListener('click', setFocus);
         this.canvas.addEventListener('touchstart', setFocus);
 
-        // Robust hit testing with drag distance tracking
+        // Bulletproof hit testing with CSS-to-Canvas coordinate scaling
         this.canvas.addEventListener('click', (e) => {
-            // If the user moved the mouse more than 15 pixels, it was a drag, not a click
-            if (this.drag.dragDistance > 15) {
+            // If the user moved the mouse more than 5 pixels, it was a drag, not a click
+            if (this.drag.dragDistance > 5) {
                 this.drag.dragDistance = 0;
                 return;
             }
             this.drag.dragDistance = 0;
 
             const rect = this.canvas.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            const clickY = e.clientY - rect.top;
+
+            // CRITICAL FIX: Scale CSS click coordinates to match internal Canvas resolution
+            const scaleX = this.canvas.width / rect.width;
+            const scaleY = this.canvas.height / rect.height;
+
+            const clickX = (e.clientX - rect.left) * scaleX;
+            const clickY = (e.clientY - rect.top) * scaleY;
 
             const tiles = this.getVisibleTiles();
             let closestTile = null;
@@ -1756,10 +1761,9 @@ class InfinitePortraitGallery {
                 const screenX = t.x - this.viewOffset.x;
                 const screenY = t.y - this.viewOffset.y;
 
-                // Strict bounds check with a tiny 5px tolerance for sub-pixel rendering
-                const tolerance = 5;
-                if (clickX >= screenX - tolerance && clickX <= screenX + t.width + tolerance &&
-                    clickY >= screenY - tolerance && clickY <= screenY + t.height + tolerance) {
+                // Strict bounds check (no arbitrary tolerance needed anymore)
+                if (clickX >= screenX && clickX <= screenX + t.width &&
+                    clickY >= screenY && clickY <= screenY + t.height) {
 
                     const centerX = screenX + t.width / 2;
                     const centerY = screenY + t.height / 2;
@@ -1850,7 +1854,7 @@ class InfinitePortraitGallery {
                 case '-': case '_': this.bulgeStrength = Math.max(0, this.bulgeStrength - 0.05); break;
                 case '[': this.bulgeRadius = Math.max(0.5, this.bulgeRadius - 0.05); this.resizeCanvas(); break;
                 case ']': this.bulgeRadius = Math.min(3, this.bulgeRadius + 0.05); this.resizeCanvas(); break;
-                case 'r': case 'R': this.bulgeStrength = 0.3; this.bulgeRadius = 1.5; this.resizeCanvas(); break;
+                case 'r': case 'R': this.bulgeStrength = 0.1; this.bulgeRadius = 1.5; this.resizeCanvas(); break; // Reset to 0.1
             }
         });
 
