@@ -1445,11 +1445,11 @@ class InfinitePortraitGallery {
         this.gap = 15;
         this.viewOffset = { x: 0, y: 0 };
 
-        // Added dragDistance to accurately distinguish between clicks and drags
+        // Track drag distance to differentiate clicks from drags
         this.drag = { isDragging: false, lastX: 0, lastY: 0, velocityX: 0, velocityY: 0, dragDistance: 0 };
 
         this.inertia = 0.75;
-        this.bulgeStrength = 0.3; // DECREASED: Reduced from 0.2 to 0.1 for a subtler effect
+        this.bulgeStrength = 0.3; // SET TO 0.3 AS REQUESTED
         this.bulgeRadius = 1.5;
         this.adjustedBulgeRadius = this.bulgeRadius;
 
@@ -1569,24 +1569,35 @@ class InfinitePortraitGallery {
         const loadingElement = this.container.querySelector('.loading');
         const cacheElement = this.container.querySelector('.cache');
 
-        let imageSources = [];
-        if (typeof window.thumbnails !== 'undefined' && window.thumbnails.length > 0) {
-            imageSources = window.thumbnails.map(t => t.src).filter(Boolean);
+        // Safely check for window.thumbnails
+        let sourceItems = [];
+        if (typeof window.thumbnails !== 'undefined' && Array.isArray(window.thumbnails) && window.thumbnails.length > 0) {
+            sourceItems = window.thumbnails;
         } else {
-            imageSources = this.getDefaultImages();
+            console.warn("window.thumbnails not found or empty. Using fallback placeholder data.");
+            sourceItems = [1011, 1015, 1018, 1020, 1023].map(id => ({
+                title: `Artwork ${id}`,
+                src: `https://picsum.photos/id/${id}/200/200`,
+                fullsizesrc: `https://picsum.photos/id/${id}/800/800`,
+                suggestedprice: 100,
+                inStock: true,
+                remakecustom: false,
+                length: '12"',
+                width: '12"',
+                description: 'Placeholder description for testing.'
+            }));
         }
 
-        const imageCount = Math.max(50, imageSources.length);
+        const imageCount = Math.max(50, sourceItems.length);
         const loadPromises = [];
 
         for (let i = 0; i < imageCount; i++) {
+            // Get the actual data object for this image
+            const item = sourceItems[i % sourceItems.length];
+
             const img = new Image();
             img.crossOrigin = 'Anonymous';
-            const src = imageSources[i % imageSources.length];
-            img.src = src;
-
-            // Store the original thumbnail index (0, 1, 2, 3, etc.)
-            const originalIndex = i % imageSources.length;
+            img.src = item.src;
 
             const promise = new Promise((resolve) => {
                 img.onload = () => {
@@ -1600,12 +1611,13 @@ class InfinitePortraitGallery {
                         h = this.maxDimension;
                     }
 
+                    // CRITICAL FIX: Store the actual data object reference, not just an index
                     this.imageData.push({
                         img: img,
                         texture: this.createTexture(img),
                         width: w,
                         height: h,
-                        thumbnailIndex: originalIndex // Crucial: maps back to window.thumbnails
+                        thumbnailItem: item
                     });
                     resolve();
                 };
@@ -1617,7 +1629,7 @@ class InfinitePortraitGallery {
                             texture: this.createTexture(img),
                             width: this.maxDimension,
                             height: this.maxDimension,
-                            thumbnailIndex: originalIndex
+                            thumbnailItem: item
                         });
                         resolve();
                     };
@@ -1637,12 +1649,6 @@ class InfinitePortraitGallery {
 
         if (loadingElement) loadingElement.style.display = 'none';
         if (cacheElement) cacheElement.style.display = 'none';
-    }
-
-    getDefaultImages() {
-        return [1011, 1015, 1018, 1020, 1023, 1025, 1029, 1031, 1033, 1035].map(id =>
-            `https://picsum.photos/id/${id}/${this.maxDimension}/${this.maxDimension}`
-        );
     }
 
     createTexture(img) {
@@ -1684,7 +1690,7 @@ class InfinitePortraitGallery {
                     width: data.width * this.zoom,
                     height: data.height * this.zoom,
                     imageIndex: idx,
-                    thumbnailIndex: data.thumbnailIndex // Pass original thumbnail index to the tile
+                    thumbnailItem: data.thumbnailItem // PASS THE ACTUAL OBJECT FORWARD
                 });
             }
         }
@@ -1735,18 +1741,21 @@ class InfinitePortraitGallery {
         this.canvas.addEventListener('click', setFocus);
         this.canvas.addEventListener('touchstart', setFocus);
 
-        // Bulletproof hit testing with CSS-to-Canvas coordinate scaling
+        // Bulletproof hit testing
         this.canvas.addEventListener('click', (e) => {
-            // If the user moved the mouse more than 5 pixels, it was a drag, not a click
-            if (this.drag.dragDistance > 5) {
+            // Ignore if it was a drag movement (threshold of 10px)
+            if (this.drag.dragDistance > 10) {
                 this.drag.dragDistance = 0;
                 return;
             }
             this.drag.dragDistance = 0;
 
+            // Prevent execution if canvas isn't sized yet
+            if (this.canvas.width === 0 || this.canvas.height === 0) return;
+
             const rect = this.canvas.getBoundingClientRect();
 
-            // CRITICAL FIX: Scale CSS click coordinates to match internal Canvas resolution
+            // CRITICAL: Scale CSS click coordinates to match internal Canvas resolution
             const scaleX = this.canvas.width / rect.width;
             const scaleY = this.canvas.height / rect.height;
 
@@ -1761,7 +1770,7 @@ class InfinitePortraitGallery {
                 const screenX = t.x - this.viewOffset.x;
                 const screenY = t.y - this.viewOffset.y;
 
-                // Strict bounds check (no arbitrary tolerance needed anymore)
+                // Strict bounds check against the rendered tile dimensions
                 if (clickX >= screenX && clickX <= screenX + t.width &&
                     clickY >= screenY && clickY <= screenY + t.height) {
 
@@ -1778,9 +1787,9 @@ class InfinitePortraitGallery {
                 }
             }
 
-            // Open the modal using the guaranteed-correct thumbnailIndex
-            if (closestTile) {
-                this.openModal(closestTile.thumbnailIndex);
+            // Open modal using the guaranteed-correct object reference
+            if (closestTile && closestTile.thumbnailItem) {
+                this.openModal(closestTile.thumbnailItem);
             }
         });
 
@@ -1854,7 +1863,11 @@ class InfinitePortraitGallery {
                 case '-': case '_': this.bulgeStrength = Math.max(0, this.bulgeStrength - 0.05); break;
                 case '[': this.bulgeRadius = Math.max(0.5, this.bulgeRadius - 0.05); this.resizeCanvas(); break;
                 case ']': this.bulgeRadius = Math.min(3, this.bulgeRadius + 0.05); this.resizeCanvas(); break;
-                case 'r': case 'R': this.bulgeStrength = 0.1; this.bulgeRadius = 1.5; this.resizeCanvas(); break; // Reset to 0.1
+                case 'r': case 'R':
+                    this.bulgeStrength = 0.3; // Reset to 0.3
+                    this.bulgeRadius = 1.5;
+                    this.resizeCanvas();
+                    break;
             }
         });
 
@@ -1869,9 +1882,8 @@ class InfinitePortraitGallery {
         });
     }
 
-    openModal(index) {
-        // index is now guaranteed to be 0, 1, 2, or 3 (matching window.thumbnails exactly)
-        const item = window.thumbnails[index] || window.thumbnails[0];
+    // Now accepts the actual data object directly, eliminating index math entirely
+    openModal(item) {
         if (!item) return;
 
         const price = (item.pricemultiplier || 1) * (item.suggestedprice || 0);
