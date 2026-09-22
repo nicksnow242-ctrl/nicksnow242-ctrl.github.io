@@ -1139,7 +1139,52 @@ var particles;
   left: 0;
   background-color: transparent;
   z-index: 999;
-  pointer-events: none; /* Added to ensure cache layer never blocks clicks */
+  pointer-events: none;
+}
+
+/* Zoom Controls (Pill Shaped) */
+.gallery-wrapper .zoom-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 76px; /* Positioned to the left of the fullscreen button */
+  display: flex;
+  background: rgba(255, 253, 245, 0.9);
+  border: 1px solid rgba(180, 154, 93, 0.4);
+  border-radius: 22px;
+  overflow: hidden;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.gallery-wrapper .zoom-btn {
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  color: #b49a5d;
+  border: none;
+  border-right: 1px solid rgba(180, 154, 93, 0.4);
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+  font-family: inherit;
+}
+
+.gallery-wrapper .zoom-btn:last-child {
+  border-right: none;
+}
+
+.gallery-wrapper .zoom-btn:hover {
+  background: rgba(180, 154, 93, 0.1);
+  color: #5C4A32;
+}
+
+.gallery-wrapper .zoom-btn:active {
+  background: rgba(180, 154, 93, 0.2);
 }
 
 .gallery-wrapper .fullscreen-btn {
@@ -1373,6 +1418,15 @@ var particles;
     height: 38px;
     font-size: 16px;
   }
+  .gallery-wrapper .zoom-controls {
+    bottom: 15px;
+    right: 65px; /* Adjusted for smaller fullscreen button */
+  }
+  .gallery-wrapper .zoom-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 20px;
+  }
   .gallery-card {
     max-height: 95vh;
   }
@@ -1388,10 +1442,18 @@ var particles;
     <div class="cache"></div>
     <div class="loading">Loading... 0%</div>
 
+    <!-- Updated Hint -->
+    <div class="hint">Scroll / Drag / + or -</div>
+
+    <!-- New Zoom Controls -->
+    <div class="zoom-controls">
+        <button class="zoom-btn" id="zoom-in-btn" aria-label="Zoom In">+</button>
+        <button class="zoom-btn" id="zoom-out-btn" aria-label="Zoom Out">-</button>
+    </div>
+
     <button class="fullscreen-btn" aria-label="Toggle Fullscreen">
         <i class="fas fa-expand"></i>
     </button>
-    <div class="hint">Scroll / drag / use - or + to adjust bulge. Click an image for details.</div>
 
     <div id="gallery-modal" class="gallery-modal">
         <div class="gallery-card">
@@ -1442,7 +1504,7 @@ class InfinitePortraitGallery {
 
         this.imageData = [];
         this.maxDimension = 100;
-        this.zoom = 1.5;
+        this.zoom = 1.5; // Default zoom level
         this.gap = 15;
         this.viewOffset = { x: 0, y: 0 };
 
@@ -1487,8 +1549,6 @@ class InfinitePortraitGallery {
         );
 
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
-
-        // CRITICAL FIX: Allocate the texture storage immediately so the FBO is complete
         this.resizePickingFramebuffer();
     }
 
@@ -1907,7 +1967,6 @@ class InfinitePortraitGallery {
             const scaleX = this.canvas.width / rect.width;
             const scaleY = this.canvas.height / rect.height;
 
-            // CRITICAL FIX: Clamp coordinates to avoid out-of-bounds WebGL readPixels errors
             const clickX = Math.max(0, Math.min(this.canvas.width - 1, Math.floor((e.clientX - rect.left) * scaleX)));
             const clickY = Math.max(0, Math.min(this.canvas.height - 1, Math.floor(this.canvas.height - (e.clientY - rect.top) * scaleY)));
 
@@ -1968,7 +2027,6 @@ class InfinitePortraitGallery {
             this.drag.velocityX = dx * 0.3 + this.drag.velocityX * 0.7;
             this.drag.velocityY = dy * 0.3 + this.drag.velocityY * 0.7;
 
-            // Fixed inverted X-axis direction to match mouse behavior
             this.viewOffset.x -= this.drag.velocityX;
             this.viewOffset.y += this.drag.velocityY;
 
@@ -1997,6 +2055,21 @@ class InfinitePortraitGallery {
                     break;
             }
         });
+
+        // NEW: Zoom Controls Event Listeners
+        const zoomInBtn = this.container.querySelector('#zoom-in-btn');
+        const zoomOutBtn = this.container.querySelector('#zoom-out-btn');
+
+        if (zoomInBtn) {
+            zoomInBtn.addEventListener('click', () => {
+                this.zoom = Math.min(3.0, this.zoom + 0.1);
+            });
+        }
+        if (zoomOutBtn) {
+            zoomOutBtn.addEventListener('click', () => {
+                this.zoom = Math.max(0.5, this.zoom - 0.1);
+            });
+        }
 
         this.closeModalBtn.addEventListener('click', () => this.closeModal());
         this.modal.addEventListener('click', (e) => {
