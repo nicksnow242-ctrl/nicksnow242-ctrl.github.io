@@ -3,7 +3,7 @@ window.thumbnails = [
         id: 1,
         src: 'Images/Thumbnails/DSC1847.png',
         fullsizesrc:'Images/Images/Fullsize/DSC1847.jpg',
-        fullsizesrc2:'Images/Images/Fullsize/DSC1944.jpg'
+        fullsizesrc2:'Images/Images/Fullsize/DSC1944.jpg',
         alt: 'A thief came in the night',
         title: 'Western Wind',
         dateCreated: '01-03-23',
