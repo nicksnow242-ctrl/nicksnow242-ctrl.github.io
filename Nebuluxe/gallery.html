@@ -1465,13 +1465,71 @@ class InfinitePortraitGallery {
         this.animate();
     }
 
+    setupPickingFramebuffer() {
+        if (!this.gl) return;
+
+        // Color texture that stores the ID of the tile occupying each pixel.
+        this.pickingTexture = this.gl.createTexture();
+        this.gl.bindTexture(this.gl.TEXTURE_2D, this.pickingTexture);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
+
+        this.pickingFramebuffer = this.gl.createFramebuffer();
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.pickingFramebuffer);
+
+        this.gl.framebufferTexture2D(
+            this.gl.FRAMEBUFFER,
+            this.gl.COLOR_ATTACHMENT0,
+            this.gl.TEXTURE_2D,
+            this.pickingTexture,
+            0
+        );
+
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+    }
+
+    resizePickingFramebuffer() {
+        if (!this.gl || !this.pickingTexture || !this.pickingFramebuffer) return;
+
+        this.gl.bindTexture(this.gl.TEXTURE_2D, this.pickingTexture);
+
+        this.gl.texImage2D(
+            this.gl.TEXTURE_2D,
+            0,
+            this.gl.RGBA,
+            this.canvas.width,
+            this.canvas.height,
+            0,
+            this.gl.RGBA,
+            this.gl.UNSIGNED_BYTE,
+            null
+        );
+
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.pickingFramebuffer);
+
+        this.gl.framebufferTexture2D(
+            this.gl.FRAMEBUFFER,
+            this.gl.COLOR_ATTACHMENT0,
+            this.gl.TEXTURE_2D,
+            this.pickingTexture,
+            0
+        );
+
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+    }
+
     resizeCanvas() {
         if (!this.container) return;
         this.canvas.width = this.container.clientWidth;
         this.canvas.height = this.container.clientHeight;
         const diagonal = Math.sqrt(Math.pow(this.canvas.width / Math.min(this.canvas.width, this.canvas.height), 2) + Math.pow(this.canvas.height / Math.min(this.canvas.width, this.canvas.height), 2));
         this.adjustedBulgeRadius = Math.max(this.bulgeRadius, diagonal * 0.6 * 1.2);
-        if (this.gl) this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+        if (this.gl) {
+            this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+            this.resizePickingFramebuffer();
+        }
     }
 
     init() {
@@ -1536,6 +1594,32 @@ class InfinitePortraitGallery {
         }`;
 
         this.program = this.createProgram(vsSource, fsSource);
+
+        // Picking program:
+        // It uses the EXACT SAME vertex shader as the visible gallery,
+        // so the picking geometry is identical to what is drawn on screen.
+        // The fragment shader preserves transparent pixels and replaces
+        // the artwork color with a unique tile ID.
+        const pickingFsSource = `
+        precision mediump float;
+        varying vec2 vTexCoord;
+        uniform sampler2D uSampler;
+        uniform vec4 uPickColor;
+
+        void main(){
+            vec2 uv = vec2(vTexCoord.x, 1.0 - vTexCoord.y);
+            vec4 color = texture2D(uSampler, uv);
+
+            if(color.a < 0.01) discard;
+
+            gl_FragColor = uPickColor;
+        }`;
+
+        this.pickingProgram = this.createProgram(vsSource, pickingFsSource);
+
+        // Off-screen framebuffer used for pixel-perfect tile picking.
+        this.setupPickingFramebuffer();
+
         const SUBDIV = 32;
         const positions = [], texCoords = [], indices = [];
         for (let y = 0; y <= SUBDIV; y++) {
@@ -1736,145 +1820,220 @@ class InfinitePortraitGallery {
         }
     }
 
-    // Apply the same bulge transformation used by the WebGL vertex shader.
-    applyBulgeToPoint(x, y) {
-        const resolutionX = this.canvas.width;
-        const resolutionY = this.canvas.height;
+    // Render the exact visible scene into an off-screen color buffer.
+    // Each tile gets a unique RGB ID. Because tiles are drawn in the same
+    // order as the normal render, the topmost visible tile wins when tiles
+    // overlap.
+    pickTileAt(x, y) {
+        const gl = this.gl;
 
-        let normalizedX = x / resolutionX;
-        let normalizedY = y / resolutionY;
+        if (
+            !this.pickingProgram ||
+            !this.pickingFramebuffer ||
+            this.imageData.length === 0
+        ) {
+            return -1;
+        }
 
-        const centerX = 0.5;
-        const centerY = 0.5;
+        const tiles = this.getVisibleTiles();
 
-        let deltaX = normalizedX - centerX;
-        let deltaY = normalizedY - centerY;
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.pickingFramebuffer);
+        gl.viewport(0, 0, this.canvas.width, this.canvas.height);
 
-        const aspect = resolutionX / resolutionY;
+        // No blending: the last drawn tile completely owns the pixel.
+        gl.disable(gl.BLEND);
 
-        deltaX *= aspect;
+        gl.clearColor(0, 0, 0, 0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
 
-        const dist = Math.sqrt(
-            deltaX * deltaX +
-            deltaY * deltaY
+        gl.useProgram(this.pickingProgram);
+
+        const posLoc = gl.getAttribLocation(
+            this.pickingProgram,
+            'aPosition'
         );
 
-        if (dist < this.adjustedBulgeRadius) {
-            const t = dist / this.adjustedBulgeRadius;
+        const texLoc = gl.getAttribLocation(
+            this.pickingProgram,
+            'aTexCoord'
+        );
 
-            // Match the shader while preventing sqrt() from receiving
-            // a negative value.
-            const z = Math.sqrt(
-                Math.max(0.0001, 0.5 - t * t)
+        gl.enableVertexAttribArray(posLoc);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
+        gl.vertexAttribPointer(
+            posLoc,
+            2,
+            gl.FLOAT,
+            false,
+            0,
+            0
+        );
+
+        gl.enableVertexAttribArray(texLoc);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
+        gl.vertexAttribPointer(
+            texLoc,
+            2,
+            gl.FLOAT,
+            false,
+            0,
+            0
+        );
+
+        gl.bindBuffer(
+            gl.ELEMENT_ARRAY_BUFFER,
+            this.indexBuffer
+        );
+
+        const offsetLoc = gl.getUniformLocation(
+            this.pickingProgram,
+            'uOffset'
+        );
+
+        const imgPosLoc = gl.getUniformLocation(
+            this.pickingProgram,
+            'uImagePosition'
+        );
+
+        const imgSizeLoc = gl.getUniformLocation(
+            this.pickingProgram,
+            'uImageSize'
+        );
+
+        const rotationLoc = gl.getUniformLocation(
+            this.pickingProgram,
+            'uRotation'
+        );
+
+        const resolutionLoc = gl.getUniformLocation(
+            this.pickingProgram,
+            'uResolution'
+        );
+
+        const bulgeStrengthLoc = gl.getUniformLocation(
+            this.pickingProgram,
+            'uBulgeStrength'
+        );
+
+        const bulgeRadiusLoc = gl.getUniformLocation(
+            this.pickingProgram,
+            'uBulgeRadius'
+        );
+
+        const samplerLoc = gl.getUniformLocation(
+            this.pickingProgram,
+            'uSampler'
+        );
+
+        const pickColorLoc = gl.getUniformLocation(
+            this.pickingProgram,
+            'uPickColor'
+        );
+
+        gl.uniform2f(
+            resolutionLoc,
+            this.canvas.width,
+            this.canvas.height
+        );
+
+        gl.uniform1f(
+            bulgeStrengthLoc,
+            this.bulgeStrength
+        );
+
+        gl.uniform1f(
+            bulgeRadiusLoc,
+            this.adjustedBulgeRadius
+        );
+
+        gl.uniform1i(samplerLoc, 0);
+
+        for (let i = 0; i < tiles.length; i++) {
+            const tile = tiles[i];
+
+            gl.uniform2f(
+                offsetLoc,
+                this.viewOffset.x,
+                this.viewOffset.y
             );
 
-            const scale =
-                0.35 +
-                this.bulgeStrength / z;
+            gl.uniform2f(
+                imgPosLoc,
+                tile.x,
+                tile.y
+            );
 
-            deltaX *= scale;
-            deltaY *= scale;
+            gl.uniform2f(
+                imgSizeLoc,
+                tile.width,
+                tile.height
+            );
 
-            deltaX /= aspect;
+            // getVisibleTiles() currently does not rotate tiles, but
+            // explicitly set it to zero so the picking program has the
+            // same uniform value as the visible renderer.
+            gl.uniform1f(rotationLoc, 0);
 
-            normalizedX = centerX + deltaX;
-            normalizedY = centerY + deltaY;
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(
+                gl.TEXTURE_2D,
+                this.imageData[tile.imageIndex].texture
+            );
 
-            x = normalizedX * resolutionX;
-            y = normalizedY * resolutionY;
-        }
+            // Tile IDs start at 1. Zero means "nothing clicked".
+            const id = i + 1;
 
-        return { x, y };
-    }
+            const r = (id & 0xFF) / 255;
+            const g = ((id >> 8) & 0xFF) / 255;
+            const b = ((id >> 16) & 0xFF) / 255;
 
-    // Build a polygon around the actual visually warped tile.
-    // Sampling the edges makes the hit area follow the curved bulge.
-    getWarpedTilePolygon(tile) {
-        const points = [];
-        const segments = 12;
+            gl.uniform4f(
+                pickColorLoc,
+                r,
+                g,
+                b,
+                1
+            );
 
-        const left = tile.x - this.viewOffset.x;
-        const top = tile.y - this.viewOffset.y;
-        const right = left + tile.width;
-        const bottom = top + tile.height;
-
-        // Top edge.
-        for (let i = 0; i <= segments; i++) {
-            const t = i / segments;
-            points.push(
-                this.applyBulgeToPoint(
-                    left + (right - left) * t,
-                    top
-                )
+            gl.drawElements(
+                gl.TRIANGLES,
+                this.indexCount,
+                gl.UNSIGNED_SHORT,
+                0
             );
         }
 
-        // Right edge.
-        for (let i = 1; i <= segments; i++) {
-            const t = i / segments;
-            points.push(
-                this.applyBulgeToPoint(
-                    right,
-                    top + (bottom - top) * t
-                )
-            );
+        const pixel = new Uint8Array(4);
+
+        gl.readPixels(
+            x,
+            y,
+            1,
+            1,
+            gl.RGBA,
+            gl.UNSIGNED_BYTE,
+            pixel
+        );
+
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+        // Restore the normal renderer's state.
+        gl.enable(gl.BLEND);
+        gl.blendFunc(
+            gl.SRC_ALPHA,
+            gl.ONE_MINUS_SRC_ALPHA
+        );
+
+        const id =
+            pixel[0] +
+            (pixel[1] << 8) +
+            (pixel[2] << 16);
+
+        if (id === 0 || id > tiles.length) {
+            return -1;
         }
 
-        // Bottom edge.
-        for (let i = 1; i <= segments; i++) {
-            const t = i / segments;
-            points.push(
-                this.applyBulgeToPoint(
-                    right - (right - left) * t,
-                    bottom
-                )
-            );
-        }
-
-        // Left edge.
-        for (let i = 1; i < segments; i++) {
-            const t = i / segments;
-            points.push(
-                this.applyBulgeToPoint(
-                    left,
-                    bottom - (bottom - top) * t
-                )
-            );
-        }
-
-        return points;
-    }
-
-    // Standard point-in-polygon test.
-    pointInPolygon(x, y, polygon) {
-        let inside = false;
-
-        for (
-            let i = 0, j = polygon.length - 1;
-            i < polygon.length;
-            j = i++
-        ) {
-            const xi = polygon[i].x;
-            const yi = polygon[i].y;
-            const xj = polygon[j].x;
-            const yj = polygon[j].y;
-
-            const intersects =
-                ((yi > y) !== (yj > y)) &&
-                (
-                    x <
-                    (xj - xi) *
-                    (y - yi) /
-                    (yj - yi) +
-                    xi
-                );
-
-            if (intersects) {
-                inside = !inside;
-            }
-        }
-
-        return inside;
+        return id - 1;
     }
 
     setupEventListeners() {
@@ -1882,7 +2041,12 @@ class InfinitePortraitGallery {
         this.canvas.addEventListener('click', setFocus);
         this.canvas.addEventListener('touchstart', setFocus);
 
-        // Hit testing that matches the actual WebGL-bulged image geometry.
+        // Pixel-perfect hit testing.
+        //
+        // Do NOT try to reconstruct the bulge mathematically in JavaScript.
+        // The gallery is rendered by WebGL, so the most reliable way to know
+        // which image was clicked is to render the same geometry to an
+        // off-screen ID buffer and read the clicked pixel.
         this.canvas.addEventListener('click', (e) => {
             // Ignore clicks that were actually drags.
             if (this.drag.dragDistance > 10) {
@@ -1892,57 +2056,38 @@ class InfinitePortraitGallery {
 
             this.drag.dragDistance = 0;
 
-            if (this.canvas.width === 0 || this.canvas.height === 0) {
+            if (
+                this.canvas.width === 0 ||
+                this.canvas.height === 0 ||
+                !this.pickingFramebuffer
+            ) {
                 return;
             }
 
             const rect = this.canvas.getBoundingClientRect();
 
-            // Convert CSS/browser coordinates to the internal canvas resolution.
             const scaleX = this.canvas.width / rect.width;
             const scaleY = this.canvas.height / rect.height;
 
-            const clickX = (e.clientX - rect.left) * scaleX;
-            const clickY = (e.clientY - rect.top) * scaleY;
+            const clickX = Math.floor(
+                (e.clientX - rect.left) * scaleX
+            );
+
+            // WebGL readPixels starts at the bottom-left.
+            const clickY = Math.floor(
+                this.canvas.height -
+                (e.clientY - rect.top) * scaleY
+            );
+
+            const tileIndex = this.pickTileAt(clickX, clickY);
+
+            if (tileIndex === -1) return;
 
             const tiles = this.getVisibleTiles();
+            const tile = tiles[tileIndex];
 
-            let closestTile = null;
-            let closestDistance = Infinity;
-
-            for (const tile of tiles) {
-                const polygon = this.getWarpedTilePolygon(tile);
-
-                if (!this.pointInPolygon(clickX, clickY, polygon)) {
-                    continue;
-                }
-
-                // Use the center of the actual warped polygon.
-                let centerX = 0;
-                let centerY = 0;
-
-                for (const point of polygon) {
-                    centerX += point.x;
-                    centerY += point.y;
-                }
-
-                centerX /= polygon.length;
-                centerY /= polygon.length;
-
-                const distance = Math.hypot(
-                    clickX - centerX,
-                    clickY - centerY
-                );
-
-                if (distance < closestDistance) {
-                    closestDistance = distance;
-                    closestTile = tile;
-                }
-            }
-
-            // The tile carries the exact source object used to render it.
-            if (closestTile && closestTile.thumbnailItem) {
-                this.openModal(closestTile.thumbnailItem);
+            if (tile && tile.thumbnailItem) {
+                this.openModal(tile.thumbnailItem);
             }
         });
 
