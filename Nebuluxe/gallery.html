@@ -1083,541 +1083,678 @@ var particles;
 <!-- ============================================================
       GALLERY SECTION
      ============================================================ -->
-     <script>
-     document.addEventListener('DOMContentLoaded', () => {
-         setTimeout(() => {
-             new InfinitePortraitGallery('gallery-container');
-         }, 100);
-     });
-
-     class InfinitePortraitGallery {
-         constructor(containerId) {
-             this.container = document.getElementById(containerId);
-             if (!this.container) return;
-
-             this.canvas = document.createElement('canvas');
-             this.canvas.setAttribute('tabindex', '0');
-             this.canvas.style.outline = 'none';
-             this.canvas.style.width = '100%';
-             this.canvas.style.height = '100%';
-             this.container.appendChild(this.canvas);
-
-             this.gl = this.canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false });
-             if (!this.gl) {
-                 this.container.innerHTML = '<div style="color:#5C4A32; padding:20px; text-align:center; font-family: monospace;">WebGL is not supported on this browser.</div>';
-                 return;
-             }
-
-             this.imageData = [];
-             this.maxDimension = 100;
-             this.zoom = 0.9;
-             this.gap = 15;
-             this.viewOffset = { x: 0, y: 0 };
-             this.drag = { isDragging: false, lastX: 0, lastY: 0, velocityX: 0, velocityY: 0 };
-             this.inertia = 0.75;
-             this.bulgeStrength = 0.2;
-             this.bulgeRadius = 1.5;
-             this.adjustedBulgeRadius = this.bulgeRadius;
-
-             this.modal = this.container.querySelector('#gallery-modal');
-             this.closeModalBtn = this.container.querySelector('#modal-close-btn');
-
-             this.resizeCanvas();
-             window.addEventListener('resize', () => this.resizeCanvas());
-             this.init();
-             this.loadImages();
-             this.setupEventListeners();
-             this.setupFullscreen();
-             this.animate();
-         }
-
-         resizeCanvas() {
-             if (!this.container) return;
-             this.canvas.width = this.container.clientWidth;
-             this.canvas.height = this.container.clientHeight;
-             const diagonal = Math.sqrt(Math.pow(this.canvas.width / Math.min(this.canvas.width, this.canvas.height), 2) + Math.pow(this.canvas.height / Math.min(this.canvas.width, this.canvas.height), 2));
-             this.adjustedBulgeRadius = Math.max(this.bulgeRadius, diagonal * 0.6 * 1.2);
-             if (this.gl) this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-         }
-
-         init() {
-             const vsSource = `
-             attribute vec2 aPosition;
-             attribute vec2 aTexCoord;
-             varying vec2 vTexCoord;
-             uniform vec2 uResolution;
-             uniform vec2 uOffset;
-             uniform float uRotation;
-             uniform vec2 uImagePosition;
-             uniform vec2 uImageSize;
-             uniform float uBulgeStrength;
-             uniform float uBulgeRadius;
-
-             vec2 applyBulgeEffect(vec2 pos){
-                 vec2 normalizedPos = pos / uResolution;
-                 vec2 center = vec2(0.5, 0.5);
-                 vec2 delta = normalizedPos - center;
-                 float aspect = uResolution.x / uResolution.y;
-                 delta.x *= aspect;
-                 float dist = length(delta);
-                 if(dist < uBulgeRadius){
-                     float t = dist / uBulgeRadius;
-                     float z = sqrt(0.5 - t * t);
-                     delta *= 0.35 + uBulgeStrength / z;
-                     delta.x /= aspect;
-                     normalizedPos = center + delta;
-                     pos = normalizedPos * uResolution;
-                 }
-                 return pos;
-             }
-
-             void main(){
-                 vec2 pos = aPosition * uImageSize;
-                 pos += uImagePosition;
-                 pos -= uOffset;
-
-                 vec2 center = uImagePosition + (uImageSize * 0.5) - uOffset;
-                 pos -= center;
-                 float cosR = cos(uRotation);
-                 float sinR = sin(uRotation);
-                 pos = vec2(pos.x*cosR - pos.y*sinR, pos.x*sinR + pos.y*cosR);
-                 pos += center;
-
-                 pos = applyBulgeEffect(pos);
-
-                 vec2 clip = pos / uResolution * 2.0 - 1.0;
-                 gl_Position = vec4(clip, 0.0, 1.0);
-                 vTexCoord = aTexCoord;
-             }`;
-
-             const fsSource = `
-             precision mediump float;
-             varying vec2 vTexCoord;
-             uniform sampler2D uSampler;
-             void main(){
-                 vec2 uv = vec2(vTexCoord.x, 1.0 - vTexCoord.y);
-                 vec4 color = texture2D(uSampler, uv);
-                 if(color.a < 0.01) discard;
-                 gl_FragColor = color;
-             }`;
-
-             this.program = this.createProgram(vsSource, fsSource);
-             const SUBDIV = 32;
-             const positions = [], texCoords = [], indices = [];
-             for (let y = 0; y <= SUBDIV; y++) {
-                 for (let x = 0; x <= SUBDIV; x++) {
-                     positions.push(x / SUBDIV, y / SUBDIV);
-                     texCoords.push(x / SUBDIV, y / SUBDIV);
-                 }
-             }
-             for (let y = 0; y < SUBDIV; y++) {
-                 for (let x = 0; x < SUBDIV; x++) {
-                     const i = y * (SUBDIV + 1) + x;
-                     indices.push(i, i + 1, i + SUBDIV + 1);
-                     indices.push(i + 1, i + SUBDIV + 2, i + SUBDIV + 1);
-                 }
-             }
-             this.indexCount = indices.length;
-             this.positionBuffer = this.gl.createBuffer();
-             this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer);
-             this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(positions), this.gl.STATIC_DRAW);
-             this.texCoordBuffer = this.gl.createBuffer();
-             this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.texCoordBuffer);
-             this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(texCoords), this.gl.STATIC_DRAW);
-             this.indexBuffer = this.gl.createBuffer();
-             this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-             this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), this.gl.STATIC_DRAW);
-             this.gl.enable(this.gl.BLEND);
-             this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
-         }
-
-         async loadImages() {
-             const loadingElement = this.container.querySelector('.loading');
-             const cacheElement = this.container.querySelector('.cache');
-
-             let imageSources = [];
-             if (typeof window.thumbnails !== 'undefined' && window.thumbnails.length > 0) {
-                 imageSources = window.thumbnails.map(t => t.src).filter(Boolean);
-             } else {
-                 imageSources = this.getDefaultImages();
-             }
-
-             const imageCount = Math.max(50, imageSources.length);
-             const loadPromises = [];
-
-             for (let i = 0; i < imageCount; i++) {
-                 const img = new Image();
-                 img.crossOrigin = 'Anonymous';
-                 const src = imageSources[i % imageSources.length];
-                 img.src = src;
-
-                 // Store the original thumbnail index
-                 const originalIndex = i % imageSources.length;
-
-                 const promise = new Promise((resolve) => {
-                     img.onload = () => {
-                         let w = img.naturalWidth;
-                         let h = img.naturalHeight;
-                         if (w > h) {
-                             h = (h / w) * this.maxDimension;
-                             w = this.maxDimension;
-                         } else {
-                             w = (w / h) * this.maxDimension;
-                             h = this.maxDimension;
-                         }
-
-                         this.imageData.push({
-                             img: img,
-                             texture: this.createTexture(img),
-                             width: w,
-                             height: h,
-                             thumbnailIndex: originalIndex // Store original index
-                         });
-                         resolve();
-                     };
-                     img.onerror = () => {
-                         img.src = `https://picsum.photos/id/${(i % 100) + 1000}/${this.maxDimension}/${this.maxDimension}`;
-                         img.onload = () => {
-                             this.imageData.push({
-                                 img: img,
-                                 texture: this.createTexture(img),
-                                 width: this.maxDimension,
-                                 height: this.maxDimension,
-                                 thumbnailIndex: originalIndex // Store original index
-                             });
-                             resolve();
-                         };
-                         img.onerror = resolve;
-                     };
-                 });
-                 loadPromises.push(promise);
-             }
-
-             let loaded = 0;
-             const total = loadPromises.length;
-             for (const promise of loadPromises) {
-                 await promise;
-                 loaded++;
-                 if (loadingElement) loadingElement.textContent = `Loading... ${Math.round(loaded / total * 100)}%`;
-             }
-
-             if (loadingElement) loadingElement.style.display = 'none';
-             if (cacheElement) cacheElement.style.display = 'none';
-         }
-
-         getDefaultImages() {
-             return [1011, 1015, 1018, 1020, 1023, 1025, 1029, 1031, 1033, 1035].map(id =>
-                 `https://picsum.photos/id/${id}/${this.maxDimension}/${this.maxDimension}`
-             );
-         }
-
-         createTexture(img) {
-             const tex = this.gl.createTexture();
-             this.gl.bindTexture(this.gl.TEXTURE_2D, tex);
-             this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, img);
-             this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
-             this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
-             this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
-             this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
-             return tex;
-         }
-
-         getVisibleTiles() {
-             const tiles = [];
-             const baseTileW = this.maxDimension + this.gap;
-             const baseTileH = this.maxDimension + this.gap;
-
-             const tileW = baseTileW * this.zoom;
-             const tileH = baseTileH * this.zoom;
-
-             const visibleLeft = (this.viewOffset.x - this.canvas.width) / this.zoom;
-             const visibleRight = (this.viewOffset.x + this.canvas.width * 2) / this.zoom;
-             const visibleTop = (this.viewOffset.y - this.canvas.height) / this.zoom;
-             const visibleBottom = (this.viewOffset.y + this.canvas.height * 2) / this.zoom;
-
-             for (let y = Math.floor(visibleTop / baseTileH) - 1; y <= Math.ceil(visibleBottom / baseTileH) + 1; y++) {
-                 for (let x = Math.floor(visibleLeft / baseTileW) - 1; x <= Math.ceil(visibleRight / baseTileW) + 1; x++) {
-                     const hash = (x * 7919 + y * 7307) % this.imageData.length;
-                     const idx = Math.abs(hash);
-                     const data = this.imageData[idx];
-
-                     const offsetX = (baseTileW - data.width) / 2;
-                     const offsetY = (baseTileH - data.height) / 2;
-
-                     tiles.push({
-                         x: (x * baseTileW + offsetX) * this.zoom,
-                         y: (y * baseTileH + offsetY) * this.zoom,
-                         width: data.width * this.zoom,
-                         height: data.height * this.zoom,
-                         imageIndex: idx,
-                         thumbnailIndex: data.thumbnailIndex // Pass original thumbnail index
-                     });
-                 }
-             }
-             return tiles;
-         }
-
-         render() {
-             if (!this.program || this.imageData.length === 0) return;
-             this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-             this.gl.clearColor(0, 0, 0, 0);
-             this.gl.clear(this.gl.COLOR_BUFFER_BIT);
-             this.gl.useProgram(this.program);
-
-             const posLoc = this.gl.getAttribLocation(this.program, 'aPosition');
-             this.gl.enableVertexAttribArray(posLoc);
-             this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer);
-             this.gl.vertexAttribPointer(posLoc, 2, this.gl.FLOAT, false, 0, 0);
-
-             const texLoc = this.gl.getAttribLocation(this.program, 'aTexCoord');
-             this.gl.enableVertexAttribArray(texLoc);
-             this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.texCoordBuffer);
-             this.gl.vertexAttribPointer(texLoc, 2, this.gl.FLOAT, false, 0, 0);
-
-             this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-             this.gl.uniform2f(this.gl.getUniformLocation(this.program, 'uResolution'), this.canvas.width, this.canvas.height);
-             this.gl.uniform1f(this.gl.getUniformLocation(this.program, 'uBulgeStrength'), this.bulgeStrength);
-             this.gl.uniform1f(this.gl.getUniformLocation(this.program, 'uBulgeRadius'), this.adjustedBulgeRadius);
-
-             const offsetLoc = this.gl.getUniformLocation(this.program, 'uOffset');
-             const imgPosLoc = this.gl.getUniformLocation(this.program, 'uImagePosition');
-             const imgSizeLoc = this.gl.getUniformLocation(this.program, 'uImageSize');
-             const samplerLoc = this.gl.getUniformLocation(this.program, 'uSampler');
-
-             for (const t of this.getVisibleTiles()) {
-                 this.gl.uniform2f(offsetLoc, this.viewOffset.x, this.viewOffset.y);
-                 this.gl.uniform2f(imgPosLoc, t.x, t.y);
-                 this.gl.uniform2f(imgSizeLoc, t.width, t.height);
-
-                 this.gl.activeTexture(this.gl.TEXTURE0);
-                 this.gl.bindTexture(this.gl.TEXTURE_2D, this.imageData[t.imageIndex].texture);
-                 this.gl.uniform1i(samplerLoc, 0);
-                 this.gl.drawElements(this.gl.TRIANGLES, this.indexCount, this.gl.UNSIGNED_SHORT, 0);
-             }
-         }
-
-         setupEventListeners() {
-             const setFocus = () => this.canvas.focus();
-             this.canvas.addEventListener('click', setFocus);
-             this.canvas.addEventListener('touchstart', setFocus);
-
-             // Improved hit testing with tolerance for bulge distortion
-             this.canvas.addEventListener('click', (e) => {
-                 if (Math.abs(this.drag.velocityX) > 5 || Math.abs(this.drag.velocityY) > 5) return;
-
-                 const rect = this.canvas.getBoundingClientRect();
-                 const clickX = e.clientX - rect.left;
-                 const clickY = e.clientY - rect.top;
-
-                 const tiles = this.getVisibleTiles();
-                 let closestTile = null;
-                 let closestDistance = Infinity;
-
-                 for (const t of tiles) {
-                     const screenX = t.x - this.viewOffset.x;
-                     const screenY = t.y - this.viewOffset.y;
-
-                     // Add tolerance for bulge distortion (20% extra space around each tile)
-                     const tolerance = Math.max(t.width, t.height) * 0.2;
-
-                     if (clickX >= screenX - tolerance && clickX <= screenX + t.width + tolerance &&
-                         clickY >= screenY - tolerance && clickY <= screenY + t.height + tolerance) {
-
-                         // Calculate distance from click to tile center
-                         const centerX = screenX + t.width / 2;
-                         const centerY = screenY + t.height / 2;
-                         const distance = Math.sqrt(
-                             Math.pow(clickX - centerX, 2) + Math.pow(clickY - centerY, 2)
-                         );
-
-                         // Keep track of the closest tile
-                         if (distance < closestDistance) {
-                             closestDistance = distance;
-                             closestTile = t;
-                         }
-                     }
-                 }
-
-                 // Open the closest matching tile using thumbnailIndex
-                 if (closestTile) {
-                     this.openModal(closestTile.thumbnailIndex);
-                 }
-             });
-
-             this.canvas.addEventListener('mousedown', (e) => {
-                 e.preventDefault();
-                 this.drag.isDragging = true;
-                 this.drag.lastX = e.clientX;
-                 this.drag.lastY = e.clientY;
-                 this.canvas.style.cursor = 'grabbing';
-             });
-
-             window.addEventListener('mousemove', (e) => {
-                 if (!this.drag.isDragging) return;
-                 const dx = e.clientX - this.drag.lastX;
-                 const dy = e.clientY - this.drag.lastY;
-                 this.drag.velocityX = dx * 0.1 + this.drag.velocityX * 0.5;
-                 this.drag.velocityY = dy * 0.1 + this.drag.velocityY * 0.5;
-
-                 this.viewOffset.x -= this.drag.velocityX;
-                 this.viewOffset.y += this.drag.velocityY;
-
-                 this.drag.lastX = e.clientX;
-                 this.drag.lastY = e.clientY;
-             });
-
-             window.addEventListener('mouseup', () => {
-                 this.drag.isDragging = false;
-                 this.canvas.style.cursor = 'grab';
-             });
-
-             this.canvas.addEventListener('touchstart', (e) => {
-                 this.drag.isDragging = true;
-                 this.drag.lastX = e.touches[0].clientX;
-                 this.drag.lastY = e.touches[0].clientY;
-             }, { passive: false });
-
-             window.addEventListener('touchmove', (e) => {
-                 if (!this.drag.isDragging) return;
-                 const dx = e.touches[0].clientX - this.drag.lastX;
-                 const dy = e.touches[0].clientY - this.drag.lastY;
-                 this.drag.velocityX = dx * 0.3 + this.drag.velocityX * 0.7;
-                 this.drag.velocityY = dy * 0.3 + this.drag.velocityY * 0.7;
-
-                 this.viewOffset.x += this.drag.velocityX;
-                 this.viewOffset.y += this.drag.velocityY;
-
-                 this.drag.lastX = e.touches[0].clientX;
-                 this.drag.lastY = e.touches[0].clientY;
-             }, { passive: false });
-
-             window.addEventListener('touchend', () => { this.drag.isDragging = false; });
-
-             this.canvas.addEventListener('wheel', (e) => {
-                 e.preventDefault();
-                 this.drag.velocityX -= e.deltaX * 0.25;
-                 this.drag.velocityY -= e.deltaY * 0.25;
-             }, { passive: false });
-
-             this.canvas.addEventListener('keydown', (e) => {
-                 switch (e.key) {
-                     case '+': case '=': this.bulgeStrength = Math.min(1.5, this.bulgeStrength + 0.05); break;
-                     case '-': case '_': this.bulgeStrength = Math.max(0, this.bulgeStrength - 0.05); break;
-                     case '[': this.bulgeRadius = Math.max(0.5, this.bulgeRadius - 0.05); this.resizeCanvas(); break;
-                     case ']': this.bulgeRadius = Math.min(3, this.bulgeRadius + 0.05); this.resizeCanvas(); break;
-                     case 'r': case 'R': this.bulgeStrength = 0.3; this.bulgeRadius = 1.5; this.resizeCanvas(); break;
-                 }
-             });
-
-             this.closeModalBtn.addEventListener('click', () => this.closeModal());
-             this.modal.addEventListener('click', (e) => {
-                 if (e.target === this.modal) this.closeModal();
-             });
-             document.addEventListener('keydown', (e) => {
-                 if (e.key === 'Escape' && this.modal.classList.contains('is-open')) {
-                     this.closeModal();
-                 }
-             });
-         }
-
-         openModal(index) {
-             const item = window.thumbnails[index] || window.thumbnails[0];
-             if (!item) return;
-
-             const price = (item.pricemultiplier || 1) * (item.suggestedprice || 0);
-
-             let availability = item.inStock ? "Currently available" : "Not on hand";
-             if (item.remakecustom) {
-                 availability += ", would remake in new colors.";
-             } else {
-                 availability += ", will not remake.";
-             }
-
-             const fullSizeSrc = item.fullsizesrc || item.fullSizeSrc || item.src;
-
-             const imgEl = document.getElementById('modal-full-image');
-             imgEl.src = fullSizeSrc;
-             imgEl.alt = item.alt || item.title;
-
-             imgEl.onerror = () => {
-                 console.warn(`Failed to load fullsize image: ${fullSizeSrc}. Falling back to thumbnail.`);
-                 imgEl.src = item.src;
-             };
-
-             document.getElementById('modal-title').textContent = item.title || 'Untitled';
-             document.getElementById('modal-price').textContent = `$${price.toFixed(2)}`;
-             document.getElementById('modal-availability').textContent = availability;
-             document.getElementById('modal-size').textContent = `${item.length || '?'} x ${item.width || '?'}`;
-             document.getElementById('modal-description').textContent = item.description || 'No description available.';
-
-             const email = "your-email@example.com";
-             const subject = encodeURIComponent(`Inquiry about: ${item.title}`);
-             const body = encodeURIComponent(`Hello,\n\nI am interested in learning more about "${item.title}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`);
-             document.getElementById('modal-inquire-btn').href = `mailto:${email}?subject=${subject}&body=${body}`;
-
-             this.modal.classList.add('is-open');
-         }
-
-         closeModal() {
-             this.modal.classList.remove('is-open');
-         }
-
-         setupFullscreen() {
-             const btn = this.container.querySelector('.fullscreen-btn');
-             if (!btn) return;
-             const icon = btn.querySelector('i');
-
-             btn.addEventListener('click', () => {
-                 if (!document.fullscreenElement) {
-                     this.container.requestFullscreen().catch(err => console.log(`Fullscreen error: ${err.message}`));
-                     if (icon) icon.className = 'fas fa-compress';
-                 } else {
-                     document.exitFullscreen();
-                     if (icon) icon.className = 'fas fa-expand';
-                 }
-             });
-
-             document.addEventListener('fullscreenchange', () => {
-                 if (icon) icon.className = document.fullscreenElement ? 'fas fa-compress' : 'fas fa-expand';
-                 setTimeout(() => this.resizeCanvas(), 100);
-             });
-         }
-
-         animate() {
-             if (!this.drag.isDragging) {
-                 this.viewOffset.x += this.drag.velocityX;
-                 this.viewOffset.y += this.drag.velocityY;
-
-                 this.drag.velocityX *= this.inertia;
-                 this.drag.velocityY *= this.inertia;
-                 if (Math.abs(this.drag.velocityX) < 0.01) this.drag.velocityX = 0;
-                 if (Math.abs(this.drag.velocityY) < 0.01) this.drag.velocityY = 0;
-             }
-             this.render();
-             requestAnimationFrame(() => this.animate());
-         }
-
-         createProgram(vs, fs) {
-             const prog = this.gl.createProgram();
-             this.gl.attachShader(prog, this.loadShader(this.gl.VERTEX_SHADER, vs));
-             this.gl.attachShader(prog, this.loadShader(this.gl.FRAGMENT_SHADER, fs));
-             this.gl.linkProgram(prog);
-             return this.gl.getProgramParameter(prog, this.gl.LINK_STATUS) ? prog : null;
-         }
-
-         loadShader(type, source) {
-             const shader = this.gl.createShader(type);
-             this.gl.shaderSource(shader, source);
-             this.gl.compileShader(shader);
-             if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
-                 console.error('Shader error:', this.gl.getShaderInfoLog(shader));
-                 this.gl.deleteShader(shader);
-                 return null;
-             }
-             return shader;
-         }
-     }
-     </script>
+
+<style>
+/* (All CSS remains exactly the same as your original) */
+.gallery-wrapper {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 110px);
+  min-height: 500px;
+  overflow: hidden;
+  background: transparent;
+  touch-action: none;
+  margin-top: 110px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+.gallery-wrapper * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+.gallery-wrapper canvas {
+  display: block; width: 100%; height: 100%; outline: none;
+  cursor: grab; touch-action: none; user-select: none;
+}
+.gallery-wrapper canvas:active { cursor: grabbing; }
+.gallery-wrapper .loading {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  color: #5C4A32; font-size: 20px; z-index: 1000; background: rgba(255, 253, 245, 0.9);
+  padding: 20px 40px; border-radius: 10px; border: 1px solid rgba(180, 154, 93, 0.4);
+  font-family: 'Share Tech Mono', monospace; pointer-events: none;
+}
+.gallery-wrapper .cache {
+  position: absolute; height: 100%; width: 100%; top: 0; left: 0;
+  background-color: transparent; z-index: 999;
+}
+.gallery-wrapper .fullscreen-btn {
+  position: absolute; bottom: 20px; right: 20px; width: 44px; height: 44px;
+  background: rgba(255, 253, 245, 0.9); color: #b49a5d;
+  border: 1px solid rgba(180, 154, 93, 0.4); border-radius: 50%;
+  font-size: 20px; cursor: pointer; z-index: 1000; display: flex;
+  align-items: center; justify-content: center; backdrop-filter: blur(10px);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.gallery-wrapper .fullscreen-btn:hover {
+  transform: scale(1.1); box-shadow: 0 0 15px rgba(180, 154, 93, 0.4);
+}
+.gallery-wrapper .hint {
+  position: absolute; left: 12px; bottom: 12px; z-index: 10;
+  background: rgba(255, 253, 245, 0.9); color: #5C4A32; padding: 8px 12px;
+  border-radius: 8px; border: 1px solid rgba(180, 154, 93, 0.3); opacity: 0.9;
+  font-size: 13px; pointer-events: none; user-select: text;
+  font-family: 'Share Tech Mono', monospace;
+}
+.gallery-wrapper .hint a { color: #b49a5d; text-decoration: none; pointer-events: auto; font-weight: bold; }
+
+.gallery-modal {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(6px); z-index: 2000;
+  display: none; align-items: center; justify-content: center; padding: 20px;
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.gallery-modal.is-open { display: flex; opacity: 1; }
+.gallery-card {
+  background: #FFFDF5; border: 1px solid rgba(180, 154, 93, 0.4); border-radius: 12px;
+  width: 100%; max-width: 500px; max-height: 90vh; display: flex; flex-direction: column;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3); position: relative; overflow: hidden;
+  transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.gallery-modal.is-open .gallery-card { transform: scale(1); }
+.gallery-card-close {
+  position: absolute; top: 15px; right: 15px; background: rgba(255, 253, 245, 0.9);
+  border: 1px solid rgba(180, 154, 93, 0.4); border-radius: 50%; width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+  color: #5C4A32; cursor: pointer; z-index: 10; transition: all 0.2s ease;
+}
+.gallery-card-close:hover { background: #b49a5d; color: #fff; }
+.gallery-card-image {
+  display: block; max-width: 100%; max-height: 400px; width: auto; height: auto;
+  margin: 0 auto; object-fit: contain; background: #1a1a1a;
+  border-bottom: 1px solid rgba(180, 154, 93, 0.2);
+}
+.gallery-card-body { padding: 24px; display: flex; flex-direction: column; gap: 12px; flex: 1; overflow: hidden; }
+.gallery-card-title { font-size: 26px; font-weight: 600; color: #5C4A32; margin: 0; line-height: 1.2; }
+.gallery-card-meta { font-size: 14px; color: #8A7355; display: flex; flex-direction: column; gap: 6px; }
+.gallery-card-meta strong { color: #5C4A32; }
+.gallery-card-price { font-size: 22px; font-weight: bold; color: #b49a5d; margin-top: 4px; }
+.gallery-card-desc {
+  font-size: 14px; line-height: 1.6; color: #5C4A32; overflow-y: auto; max-height: 150px;
+  padding-right: 10px; border-top: 1px solid rgba(180, 154, 93, 0.2); padding-top: 12px; margin-top: 4px;
+}
+.gallery-card-desc::-webkit-scrollbar { width: 6px; }
+.gallery-card-desc::-webkit-scrollbar-track { background: transparent; }
+.gallery-card-desc::-webkit-scrollbar-thumb { background: rgba(180, 154, 93, 0.4); border-radius: 3px; }
+.gallery-card-footer {
+  padding: 20px 24px 24px; border-top: 1px solid rgba(180, 154, 93, 0.2);
+  background: rgba(255, 253, 245, 0.95);
+}
+.inquire-btn {
+  display: block; width: 100%; padding: 14px; background: #b49a5d; color: #fff;
+  text-align: center; text-decoration: none; border-radius: 8px; font-weight: 600;
+  font-size: 16px; letter-spacing: 0.5px; transition: background 0.2s, transform 0.1s;
+  border: none; cursor: pointer; font-family: inherit;
+}
+.inquire-btn:hover { background: #9C8561; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(180, 154, 93, 0.3); }
+.inquire-btn:active { transform: translateY(0); }
+
+@media (max-width: 768px) {
+  .gallery-wrapper .hint { bottom: 70px; font-size: 11px; padding: 6px 10px; }
+  .gallery-wrapper .fullscreen-btn { bottom: 15px; right: 15px; width: 38px; height: 38px; font-size: 16px; }
+  .gallery-card { max-height: 95vh; }
+  .gallery-card-title { font-size: 22px; }
+}
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div id="gallery-container" class="gallery-wrapper">
+    <div class="cache"></div>
+    <div class="loading">Loading... 0%</div>
+    <button class="fullscreen-btn" aria-label="Toggle Fullscreen"><i class="fas fa-expand"></i></button>
+    <div class="hint">Scroll / drag / use - or + to adjust bulge. Click an image for details.</div>
+
+    <div id="gallery-modal" class="gallery-modal">
+        <div class="gallery-card">
+            <button class="gallery-card-close" id="modal-close-btn" aria-label="Close">&times;</button>
+            <img id="modal-full-image" class="gallery-card-image" src="" alt="Full size artwork">
+            <div class="gallery-card-body">
+                <h2 id="modal-title" class="gallery-card-title">Artwork Title</h2>
+                <div class="gallery-card-meta">
+                    <div id="modal-price" class="gallery-card-price">$0.00</div>
+                    <div><strong>Availability:</strong> <span id="modal-availability">Checking...</span></div>
+                    <div><strong>Size:</strong> <span id="modal-size">0 x 0</span></div>
+                </div>
+                <div id="modal-description" class="gallery-card-desc">Description goes here.</div>
+            </div>
+            <div class="gallery-card-footer">
+                <a id="modal-inquire-btn" class="inquire-btn" href="#" target="_blank">Inquire about this</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        new InfinitePortraitGallery('gallery-container');
+    }, 100);
+});
+
+class InfinitePortraitGallery {
+    constructor(containerId) {
+        this.container = document.getElementById(containerId);
+        if (!this.container) return;
+
+        this.canvas = document.createElement('canvas');
+        this.canvas.setAttribute('tabindex', '0');
+        this.canvas.style.outline = 'none';
+        this.canvas.style.width = '100%';
+        this.canvas.style.height = '100%';
+        this.container.appendChild(this.canvas);
+
+        this.gl = this.canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false });
+        if (!this.gl) {
+            this.container.innerHTML = '<div style="color:#5C4A32; padding:20px; text-align:center; font-family: monospace;">WebGL is not supported on this browser.</div>';
+            return;
+        }
+
+        this.imageData = [];
+        this.maxDimension = 100;
+        this.zoom = 0.9;
+        this.gap = 15;
+        this.viewOffset = { x: 0, y: 0 };
+        this.drag = { isDragging: false, lastX: 0, lastY: 0, velocityX: 0, velocityY: 0 };
+        this.inertia = 0.75;
+        this.bulgeStrength = 0.2;
+        this.bulgeRadius = 1.5;
+        this.adjustedBulgeRadius = this.bulgeRadius;
+
+        this.modal = this.container.querySelector('#gallery-modal');
+        this.closeModalBtn = this.container.querySelector('#modal-close-btn');
+
+        this.resizeCanvas();
+        window.addEventListener('resize', () => this.resizeCanvas());
+        this.init();
+        this.loadImages();
+        this.setupEventListeners();
+        this.setupFullscreen();
+        this.animate();
+    }
+
+    resizeCanvas() {
+        if (!this.container) return;
+        this.canvas.width = this.container.clientWidth;
+        this.canvas.height = this.container.clientHeight;
+        const diagonal = Math.sqrt(Math.pow(this.canvas.width / Math.min(this.canvas.width, this.canvas.height), 2) + Math.pow(this.canvas.height / Math.min(this.canvas.width, this.canvas.height), 2));
+        this.adjustedBulgeRadius = Math.max(this.bulgeRadius, diagonal * 0.6 * 1.2);
+        if (this.gl) this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    init() {
+        const vsSource = `
+        attribute vec2 aPosition;
+        attribute vec2 aTexCoord;
+        varying vec2 vTexCoord;
+        uniform vec2 uResolution;
+        uniform vec2 uOffset;
+        uniform float uRotation;
+        uniform vec2 uImagePosition;
+        uniform vec2 uImageSize;
+        uniform float uBulgeStrength;
+        uniform float uBulgeRadius;
+
+        vec2 applyBulgeEffect(vec2 pos){
+            vec2 normalizedPos = pos / uResolution;
+            vec2 center = vec2(0.5, 0.5);
+            vec2 delta = normalizedPos - center;
+            float aspect = uResolution.x / uResolution.y;
+            delta.x *= aspect;
+            float dist = length(delta);
+            if(dist < uBulgeRadius){
+                float t = dist / uBulgeRadius;
+                float z = sqrt(0.5 - t * t);
+                delta *= 0.35 + uBulgeStrength / z;
+                delta.x /= aspect;
+                normalizedPos = center + delta;
+                pos = normalizedPos * uResolution;
+            }
+            return pos;
+        }
+
+        void main(){
+            vec2 pos = aPosition * uImageSize;
+            pos += uImagePosition;
+            pos -= uOffset;
+
+            vec2 center = uImagePosition + (uImageSize * 0.5) - uOffset;
+            pos -= center;
+            float cosR = cos(uRotation);
+            float sinR = sin(uRotation);
+            pos = vec2(pos.x*cosR - pos.y*sinR, pos.x*sinR + pos.y*cosR);
+            pos += center;
+
+            pos = applyBulgeEffect(pos);
+
+            vec2 clip = pos / uResolution * 2.0 - 1.0;
+            gl_Position = vec4(clip, 0.0, 1.0);
+            vTexCoord = aTexCoord;
+        }`;
+
+        const fsSource = `
+        precision mediump float;
+        varying vec2 vTexCoord;
+        uniform sampler2D uSampler;
+        void main(){
+            vec2 uv = vec2(vTexCoord.x, 1.0 - vTexCoord.y);
+            vec4 color = texture2D(uSampler, uv);
+            if(color.a < 0.01) discard;
+            gl_FragColor = color;
+        }`;
+
+        this.program = this.createProgram(vsSource, fsSource);
+        const SUBDIV = 32;
+        const positions = [], texCoords = [], indices = [];
+        for (let y = 0; y <= SUBDIV; y++) {
+            for (let x = 0; x <= SUBDIV; x++) {
+                positions.push(x / SUBDIV, y / SUBDIV);
+                texCoords.push(x / SUBDIV, y / SUBDIV);
+            }
+        }
+        for (let y = 0; y < SUBDIV; y++) {
+            for (let x = 0; x < SUBDIV; x++) {
+                const i = y * (SUBDIV + 1) + x;
+                indices.push(i, i + 1, i + SUBDIV + 1);
+                indices.push(i + 1, i + SUBDIV + 2, i + SUBDIV + 1);
+            }
+        }
+        this.indexCount = indices.length;
+        this.positionBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(positions), this.gl.STATIC_DRAW);
+        this.texCoordBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.texCoordBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(texCoords), this.gl.STATIC_DRAW);
+        this.indexBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+        this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), this.gl.STATIC_DRAW);
+        this.gl.enable(this.gl.BLEND);
+        this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
+    }
+
+    async loadImages() {
+        const loadingElement = this.container.querySelector('.loading');
+        const cacheElement = this.container.querySelector('.cache');
+
+        let imageSources = [];
+        if (typeof window.thumbnails !== 'undefined' && window.thumbnails.length > 0) {
+            imageSources = window.thumbnails.map(t => t.src).filter(Boolean);
+        } else {
+            imageSources = this.getDefaultImages();
+        }
+
+        const imageCount = Math.max(50, imageSources.length);
+        const loadPromises = [];
+
+        for (let i = 0; i < imageCount; i++) {
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            const src = imageSources[i % imageSources.length];
+            img.src = src;
+
+            // Store the original thumbnail index
+            const originalIndex = i % imageSources.length;
+
+            const promise = new Promise((resolve) => {
+                img.onload = () => {
+                    let w = img.naturalWidth;
+                    let h = img.naturalHeight;
+                    if (w > h) {
+                        h = (h / w) * this.maxDimension;
+                        w = this.maxDimension;
+                    } else {
+                        w = (w / h) * this.maxDimension;
+                        h = this.maxDimension;
+                    }
+
+                    this.imageData.push({
+                        img: img,
+                        texture: this.createTexture(img),
+                        width: w,
+                        height: h,
+                        thumbnailIndex: originalIndex // Store original index
+                    });
+                    resolve();
+                };
+                img.onerror = () => {
+                    img.src = `https://picsum.photos/id/${(i % 100) + 1000}/${this.maxDimension}/${this.maxDimension}`;
+                    img.onload = () => {
+                        this.imageData.push({
+                            img: img,
+                            texture: this.createTexture(img),
+                            width: this.maxDimension,
+                            height: this.maxDimension,
+                            thumbnailIndex: originalIndex // Store original index
+                        });
+                        resolve();
+                    };
+                    img.onerror = resolve;
+                };
+            });
+            loadPromises.push(promise);
+        }
+
+        let loaded = 0;
+        const total = loadPromises.length;
+        for (const promise of loadPromises) {
+            await promise;
+            loaded++;
+            if (loadingElement) loadingElement.textContent = `Loading... ${Math.round(loaded / total * 100)}%`;
+        }
+
+        if (loadingElement) loadingElement.style.display = 'none';
+        if (cacheElement) cacheElement.style.display = 'none';
+    }
+
+    getDefaultImages() {
+        return [1011, 1015, 1018, 1020, 1023, 1025, 1029, 1031, 1033, 1035].map(id =>
+            `https://picsum.photos/id/${id}/${this.maxDimension}/${this.maxDimension}`
+        );
+    }
+
+    createTexture(img) {
+        const tex = this.gl.createTexture();
+        this.gl.bindTexture(this.gl.TEXTURE_2D, tex);
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, img);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
+        return tex;
+    }
+
+    getVisibleTiles() {
+        const tiles = [];
+        const baseTileW = this.maxDimension + this.gap;
+        const baseTileH = this.maxDimension + this.gap;
+
+        const tileW = baseTileW * this.zoom;
+        const tileH = baseTileH * this.zoom;
+
+        const visibleLeft = (this.viewOffset.x - this.canvas.width) / this.zoom;
+        const visibleRight = (this.viewOffset.x + this.canvas.width * 2) / this.zoom;
+        const visibleTop = (this.viewOffset.y - this.canvas.height) / this.zoom;
+        const visibleBottom = (this.viewOffset.y + this.canvas.height * 2) / this.zoom;
+
+        for (let y = Math.floor(visibleTop / baseTileH) - 1; y <= Math.ceil(visibleBottom / baseTileH) + 1; y++) {
+            for (let x = Math.floor(visibleLeft / baseTileW) - 1; x <= Math.ceil(visibleRight / baseTileW) + 1; x++) {
+                const hash = (x * 7919 + y * 7307) % this.imageData.length;
+                const idx = Math.abs(hash);
+                const data = this.imageData[idx];
+
+                const offsetX = (baseTileW - data.width) / 2;
+                const offsetY = (baseTileH - data.height) / 2;
+
+                tiles.push({
+                    x: (x * baseTileW + offsetX) * this.zoom,
+                    y: (y * baseTileH + offsetY) * this.zoom,
+                    width: data.width * this.zoom,
+                    height: data.height * this.zoom,
+                    imageIndex: idx,
+                    thumbnailIndex: data.thumbnailIndex // Pass original thumbnail index
+                });
+            }
+        }
+        return tiles;
+    }
+
+    render() {
+        if (!this.program || this.imageData.length === 0) return;
+        this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+        this.gl.clearColor(0, 0, 0, 0);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+        this.gl.useProgram(this.program);
+
+        const posLoc = this.gl.getAttribLocation(this.program, 'aPosition');
+        this.gl.enableVertexAttribArray(posLoc);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer);
+        this.gl.vertexAttribPointer(posLoc, 2, this.gl.FLOAT, false, 0, 0);
+
+        const texLoc = this.gl.getAttribLocation(this.program, 'aTexCoord');
+        this.gl.enableVertexAttribArray(texLoc);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.texCoordBuffer);
+        this.gl.vertexAttribPointer(texLoc, 2, this.gl.FLOAT, false, 0, 0);
+
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+        this.gl.uniform2f(this.gl.getUniformLocation(this.program, 'uResolution'), this.canvas.width, this.canvas.height);
+        this.gl.uniform1f(this.gl.getUniformLocation(this.program, 'uBulgeStrength'), this.bulgeStrength);
+        this.gl.uniform1f(this.gl.getUniformLocation(this.program, 'uBulgeRadius'), this.adjustedBulgeRadius);
+
+        const offsetLoc = this.gl.getUniformLocation(this.program, 'uOffset');
+        const imgPosLoc = this.gl.getUniformLocation(this.program, 'uImagePosition');
+        const imgSizeLoc = this.gl.getUniformLocation(this.program, 'uImageSize');
+        const samplerLoc = this.gl.getUniformLocation(this.program, 'uSampler');
+
+        for (const t of this.getVisibleTiles()) {
+            this.gl.uniform2f(offsetLoc, this.viewOffset.x, this.viewOffset.y);
+            this.gl.uniform2f(imgPosLoc, t.x, t.y);
+            this.gl.uniform2f(imgSizeLoc, t.width, t.height);
+
+            this.gl.activeTexture(this.gl.TEXTURE0);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, this.imageData[t.imageIndex].texture);
+            this.gl.uniform1i(samplerLoc, 0);
+            this.gl.drawElements(this.gl.TRIANGLES, this.indexCount, this.gl.UNSIGNED_SHORT, 0);
+        }
+    }
+
+    setupEventListeners() {
+        const setFocus = () => this.canvas.focus();
+        this.canvas.addEventListener('click', setFocus);
+        this.canvas.addEventListener('touchstart', setFocus);
+
+        // Improved hit testing with tolerance for bulge distortion
+        this.canvas.addEventListener('click', (e) => {
+            if (Math.abs(this.drag.velocityX) > 5 || Math.abs(this.drag.velocityY) > 5) return;
+
+            const rect = this.canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+
+            const tiles = this.getVisibleTiles();
+            let closestTile = null;
+            let closestDistance = Infinity;
+
+            for (const t of tiles) {
+                const screenX = t.x - this.viewOffset.x;
+                const screenY = t.y - this.viewOffset.y;
+
+                // Add tolerance for bulge distortion (20% extra space around each tile)
+                const tolerance = Math.max(t.width, t.height) * 0.2;
+
+                if (clickX >= screenX - tolerance && clickX <= screenX + t.width + tolerance &&
+                    clickY >= screenY - tolerance && clickY <= screenY + t.height + tolerance) {
+
+                    // Calculate distance from click to tile center
+                    const centerX = screenX + t.width / 2;
+                    const centerY = screenY + t.height / 2;
+                    const distance = Math.sqrt(
+                        Math.pow(clickX - centerX, 2) + Math.pow(clickY - centerY, 2)
+                    );
+
+                    // Keep track of the closest tile
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                        closestTile = t;
+                    }
+                }
+            }
+
+            // Open the closest matching tile using thumbnailIndex
+            if (closestTile) {
+                this.openModal(closestTile.thumbnailIndex);
+            }
+        });
+
+        this.canvas.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            this.drag.isDragging = true;
+            this.drag.lastX = e.clientX;
+            this.drag.lastY = e.clientY;
+            this.canvas.style.cursor = 'grabbing';
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!this.drag.isDragging) return;
+            const dx = e.clientX - this.drag.lastX;
+            const dy = e.clientY - this.drag.lastY;
+            this.drag.velocityX = dx * 0.1 + this.drag.velocityX * 0.5;
+            this.drag.velocityY = dy * 0.1 + this.drag.velocityY * 0.5;
+
+            this.viewOffset.x -= this.drag.velocityX;
+            this.viewOffset.y += this.drag.velocityY;
+
+            this.drag.lastX = e.clientX;
+            this.drag.lastY = e.clientY;
+        });
+
+        window.addEventListener('mouseup', () => {
+            this.drag.isDragging = false;
+            this.canvas.style.cursor = 'grab';
+        });
+
+        this.canvas.addEventListener('touchstart', (e) => {
+            this.drag.isDragging = true;
+            this.drag.lastX = e.touches[0].clientX;
+            this.drag.lastY = e.touches[0].clientY;
+        }, { passive: false });
+
+        window.addEventListener('touchmove', (e) => {
+            if (!this.drag.isDragging) return;
+            const dx = e.touches[0].clientX - this.drag.lastX;
+            const dy = e.touches[0].clientY - this.drag.lastY;
+            this.drag.velocityX = dx * 0.3 + this.drag.velocityX * 0.7;
+            this.drag.velocityY = dy * 0.3 + this.drag.velocityY * 0.7;
+
+            this.viewOffset.x += this.drag.velocityX;
+            this.viewOffset.y += this.drag.velocityY;
+
+            this.drag.lastX = e.touches[0].clientX;
+            this.drag.lastY = e.touches[0].clientY;
+        }, { passive: false });
+
+        window.addEventListener('touchend', () => { this.drag.isDragging = false; });
+
+        this.canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            this.drag.velocityX -= e.deltaX * 0.25;
+            this.drag.velocityY -= e.deltaY * 0.25;
+        }, { passive: false });
+
+        this.canvas.addEventListener('keydown', (e) => {
+            switch (e.key) {
+                case '+': case '=': this.bulgeStrength = Math.min(1.5, this.bulgeStrength + 0.05); break;
+                case '-': case '_': this.bulgeStrength = Math.max(0, this.bulgeStrength - 0.05); break;
+                case '[': this.bulgeRadius = Math.max(0.5, this.bulgeRadius - 0.05); this.resizeCanvas(); break;
+                case ']': this.bulgeRadius = Math.min(3, this.bulgeRadius + 0.05); this.resizeCanvas(); break;
+                case 'r': case 'R': this.bulgeStrength = 0.3; this.bulgeRadius = 1.5; this.resizeCanvas(); break;
+            }
+        });
+
+        this.closeModalBtn.addEventListener('click', () => this.closeModal());
+        this.modal.addEventListener('click', (e) => {
+            if (e.target === this.modal) this.closeModal();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.modal.classList.contains('is-open')) {
+                this.closeModal();
+            }
+        });
+    }
+
+    openModal(index) {
+        const item = window.thumbnails[index] || window.thumbnails[0];
+        if (!item) return;
+
+        const price = (item.pricemultiplier || 1) * (item.suggestedprice || 0);
+
+        let availability = item.inStock ? "Currently available" : "Not on hand";
+        if (item.remakecustom) {
+            availability += ", would remake in new colors.";
+        } else {
+            availability += ", will not remake.";
+        }
+
+        const fullSizeSrc = item.fullsizesrc || item.fullSizeSrc || item.src;
+
+        const imgEl = document.getElementById('modal-full-image');
+        imgEl.src = fullSizeSrc;
+        imgEl.alt = item.alt || item.title;
+
+        imgEl.onerror = () => {
+            console.warn(`Failed to load fullsize image: ${fullSizeSrc}. Falling back to thumbnail.`);
+            imgEl.src = item.src;
+        };
+
+        document.getElementById('modal-title').textContent = item.title || 'Untitled';
+        document.getElementById('modal-price').textContent = `$${price.toFixed(2)}`;
+        document.getElementById('modal-availability').textContent = availability;
+        document.getElementById('modal-size').textContent = `${item.length || '?'} x ${item.width || '?'}`;
+        document.getElementById('modal-description').textContent = item.description || 'No description available.';
+
+        const email = "your-email@example.com";
+        const subject = encodeURIComponent(`Inquiry about: ${item.title}`);
+        const body = encodeURIComponent(`Hello,\n\nI am interested in learning more about "${item.title}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`);
+        document.getElementById('modal-inquire-btn').href = `mailto:${email}?subject=${subject}&body=${body}`;
+
+        this.modal.classList.add('is-open');
+    }
+
+    closeModal() {
+        this.modal.classList.remove('is-open');
+    }
+
+    setupFullscreen() {
+        const btn = this.container.querySelector('.fullscreen-btn');
+        if (!btn) return;
+        const icon = btn.querySelector('i');
+
+        btn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                this.container.requestFullscreen().catch(err => console.log(`Fullscreen error: ${err.message}`));
+                if (icon) icon.className = 'fas fa-compress';
+            } else {
+                document.exitFullscreen();
+                if (icon) icon.className = 'fas fa-expand';
+            }
+        });
+
+        document.addEventListener('fullscreenchange', () => {
+            if (icon) icon.className = document.fullscreenElement ? 'fas fa-compress' : 'fas fa-expand';
+            setTimeout(() => this.resizeCanvas(), 100);
+        });
+    }
+
+    animate() {
+        if (!this.drag.isDragging) {
+            this.viewOffset.x += this.drag.velocityX;
+            this.viewOffset.y += this.drag.velocityY;
+
+            this.drag.velocityX *= this.inertia;
+            this.drag.velocityY *= this.inertia;
+            if (Math.abs(this.drag.velocityX) < 0.01) this.drag.velocityX = 0;
+            if (Math.abs(this.drag.velocityY) < 0.01) this.drag.velocityY = 0;
+        }
+        this.render();
+        requestAnimationFrame(() => this.animate());
+    }
+
+    createProgram(vs, fs) {
+        const prog = this.gl.createProgram();
+        this.gl.attachShader(prog, this.loadShader(this.gl.VERTEX_SHADER, vs));
+        this.gl.attachShader(prog, this.loadShader(this.gl.FRAGMENT_SHADER, fs));
+        this.gl.linkProgram(prog);
+        return this.gl.getProgramParameter(prog, this.gl.LINK_STATUS) ? prog : null;
+    }
+
+    loadShader(type, source) {
+        const shader = this.gl.createShader(type);
+        this.gl.shaderSource(shader, source);
+        this.gl.compileShader(shader);
+        if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
+            console.error('Shader error:', this.gl.getShaderInfoLog(shader));
+            this.gl.deleteShader(shader);
+            return null;
+        }
+        return shader;
+    }
+}
+</script>
 <!-- ============================================================
       END GALLERY SECTION
      ============================================================ -->
