@@ -1496,7 +1496,7 @@ class InfinitePortraitGallery {
             float dist = length(delta);
             if(dist < uBulgeRadius){
                 float t = dist / uBulgeRadius;
-                float z = sqrt(0.5 - t * t);
+                float z = sqrt(max(0.0001, 0.5 - t * t));
                 delta *= 0.35 + uBulgeStrength / z;
                 delta.x /= aspect;
                 normalizedPos = center + delta;
@@ -1736,26 +1736,169 @@ class InfinitePortraitGallery {
         }
     }
 
+    // Apply the same bulge transformation used by the WebGL vertex shader.
+    applyBulgeToPoint(x, y) {
+        const resolutionX = this.canvas.width;
+        const resolutionY = this.canvas.height;
+
+        let normalizedX = x / resolutionX;
+        let normalizedY = y / resolutionY;
+
+        const centerX = 0.5;
+        const centerY = 0.5;
+
+        let deltaX = normalizedX - centerX;
+        let deltaY = normalizedY - centerY;
+
+        const aspect = resolutionX / resolutionY;
+
+        deltaX *= aspect;
+
+        const dist = Math.sqrt(
+            deltaX * deltaX +
+            deltaY * deltaY
+        );
+
+        if (dist < this.adjustedBulgeRadius) {
+            const t = dist / this.adjustedBulgeRadius;
+
+            // Match the shader while preventing sqrt() from receiving
+            // a negative value.
+            const z = Math.sqrt(
+                Math.max(0.0001, 0.5 - t * t)
+            );
+
+            const scale =
+                0.35 +
+                this.bulgeStrength / z;
+
+            deltaX *= scale;
+            deltaY *= scale;
+
+            deltaX /= aspect;
+
+            normalizedX = centerX + deltaX;
+            normalizedY = centerY + deltaY;
+
+            x = normalizedX * resolutionX;
+            y = normalizedY * resolutionY;
+        }
+
+        return { x, y };
+    }
+
+    // Build a polygon around the actual visually warped tile.
+    // Sampling the edges makes the hit area follow the curved bulge.
+    getWarpedTilePolygon(tile) {
+        const points = [];
+        const segments = 12;
+
+        const left = tile.x - this.viewOffset.x;
+        const top = tile.y - this.viewOffset.y;
+        const right = left + tile.width;
+        const bottom = top + tile.height;
+
+        // Top edge.
+        for (let i = 0; i <= segments; i++) {
+            const t = i / segments;
+            points.push(
+                this.applyBulgeToPoint(
+                    left + (right - left) * t,
+                    top
+                )
+            );
+        }
+
+        // Right edge.
+        for (let i = 1; i <= segments; i++) {
+            const t = i / segments;
+            points.push(
+                this.applyBulgeToPoint(
+                    right,
+                    top + (bottom - top) * t
+                )
+            );
+        }
+
+        // Bottom edge.
+        for (let i = 1; i <= segments; i++) {
+            const t = i / segments;
+            points.push(
+                this.applyBulgeToPoint(
+                    right - (right - left) * t,
+                    bottom
+                )
+            );
+        }
+
+        // Left edge.
+        for (let i = 1; i < segments; i++) {
+            const t = i / segments;
+            points.push(
+                this.applyBulgeToPoint(
+                    left,
+                    bottom - (bottom - top) * t
+                )
+            );
+        }
+
+        return points;
+    }
+
+    // Standard point-in-polygon test.
+    pointInPolygon(x, y, polygon) {
+        let inside = false;
+
+        for (
+            let i = 0, j = polygon.length - 1;
+            i < polygon.length;
+            j = i++
+        ) {
+            const xi = polygon[i].x;
+            const yi = polygon[i].y;
+            const xj = polygon[j].x;
+            const yj = polygon[j].y;
+
+            const intersects =
+                ((yi > y) !== (yj > y)) &&
+                (
+                    x <
+                    (xj - xi) *
+                    (y - yi) /
+                    (yj - yi) +
+                    xi
+                );
+
+            if (intersects) {
+                inside = !inside;
+            }
+        }
+
+        return inside;
+    }
+
     setupEventListeners() {
         const setFocus = () => this.canvas.focus();
         this.canvas.addEventListener('click', setFocus);
         this.canvas.addEventListener('touchstart', setFocus);
 
-        // Bulletproof hit testing
+        // Hit testing that matches the actual WebGL-bulged image geometry.
         this.canvas.addEventListener('click', (e) => {
-            // Ignore if it was a drag movement (threshold of 10px)
+            // Ignore clicks that were actually drags.
             if (this.drag.dragDistance > 10) {
                 this.drag.dragDistance = 0;
                 return;
             }
+
             this.drag.dragDistance = 0;
 
-            // Prevent execution if canvas isn't sized yet
-            if (this.canvas.width === 0 || this.canvas.height === 0) return;
+            if (this.canvas.width === 0 || this.canvas.height === 0) {
+                return;
+            }
 
             const rect = this.canvas.getBoundingClientRect();
 
-            // CRITICAL: Scale CSS click coordinates to match internal Canvas resolution
+            // Convert CSS/browser coordinates to the internal canvas resolution.
             const scaleX = this.canvas.width / rect.width;
             const scaleY = this.canvas.height / rect.height;
 
@@ -1763,31 +1906,41 @@ class InfinitePortraitGallery {
             const clickY = (e.clientY - rect.top) * scaleY;
 
             const tiles = this.getVisibleTiles();
+
             let closestTile = null;
             let closestDistance = Infinity;
 
-            for (const t of tiles) {
-                const screenX = t.x - this.viewOffset.x;
-                const screenY = t.y - this.viewOffset.y;
+            for (const tile of tiles) {
+                const polygon = this.getWarpedTilePolygon(tile);
 
-                // Strict bounds check against the rendered tile dimensions
-                if (clickX >= screenX && clickX <= screenX + t.width &&
-                    clickY >= screenY && clickY <= screenY + t.height) {
+                if (!this.pointInPolygon(clickX, clickY, polygon)) {
+                    continue;
+                }
 
-                    const centerX = screenX + t.width / 2;
-                    const centerY = screenY + t.height / 2;
-                    const distance = Math.sqrt(
-                        Math.pow(clickX - centerX, 2) + Math.pow(clickY - centerY, 2)
-                    );
+                // Use the center of the actual warped polygon.
+                let centerX = 0;
+                let centerY = 0;
 
-                    if (distance < closestDistance) {
-                        closestDistance = distance;
-                        closestTile = t;
-                    }
+                for (const point of polygon) {
+                    centerX += point.x;
+                    centerY += point.y;
+                }
+
+                centerX /= polygon.length;
+                centerY /= polygon.length;
+
+                const distance = Math.hypot(
+                    clickX - centerX,
+                    clickY - centerY
+                );
+
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closestTile = tile;
                 }
             }
 
-            // Open modal using the guaranteed-correct object reference
+            // The tile carries the exact source object used to render it.
             if (closestTile && closestTile.thumbnailItem) {
                 this.openModal(closestTile.thumbnailItem);
             }
