@@ -1115,20 +1115,90 @@ var particles;
   cursor: grabbing;
 }
 
-.gallery-wrapper .loading {
+/* ============================================================
+   NEW LOADER STYLES
+   ============================================================ */
+.gallery-loader {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: #5C4A32;
-  font-size: 20px;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(255, 253, 245, 0.95);
   z-index: 1000;
-  background: rgba(255, 253, 245, 0.9);
-  padding: 20px 40px;
-  border-radius: 10px;
-  border: 1px solid rgba(180, 154, 93, 0.4);
-  font-family: 'Share Tech Mono', monospace;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.gallery-loader.is-hidden {
+  opacity: 0;
+  visibility: hidden;
   pointer-events: none;
+}
+
+.loader-container {
+  width: 80px;
+  height: 80px;
+  position: relative;
+  margin-bottom: 24px;
+  animation: loader-spin 5s linear infinite;
+}
+
+.loader-common {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 4px;
+  height: 10px;
+  margin-left: -2px;
+  background-color: transparent;
+  border-radius: 0 20px 0 20px;
+  box-shadow: inset 0 0 0 1px #b49a5d, 0 0 8px 0 #b49a5d;
+  transform-origin: center 40px; /* Pivots perfectly around the 80px container center */
+}
+
+.loader-one   { transform: rotate(45deg);  animation: loader-pulse 1s ease infinite; }
+.loader-two   { transform: rotate(90deg);  animation: loader-pulse 1s 0.125s ease infinite; }
+.loader-three { transform: rotate(135deg); animation: loader-pulse 1s 0.25s ease infinite; }
+.loader-four  { transform: rotate(180deg); animation: loader-pulse 1s 0.375s ease infinite; }
+.loader-five  { transform: rotate(225deg); animation: loader-pulse 1s 0.5s ease infinite; }
+.loader-six   { transform: rotate(270deg); animation: loader-pulse 1s 0.625s ease infinite; }
+.loader-seven { transform: rotate(315deg); animation: loader-pulse 1s 0.75s ease infinite; }
+.loader-eight { transform: rotate(360deg); animation: loader-pulse 1s 0.875s ease infinite; }
+
+@keyframes loader-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+@keyframes loader-pulse {
+  0%, 100% { box-shadow: inset 0 0 0 1px #b49a5d, 0 0 8px 0 #b49a5d; }
+  50% { box-shadow: inset 0 0 0 1px #5C4A32, 0 0 12px 0 #5C4A32; }
+}
+
+.loader-bar {
+  width: 120px;
+  height: 4px;
+  position: relative;
+  background: rgba(180, 154, 93, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.loader-progress {
+  width: 0%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  background: #b49a5d;
+  transition: width 0.2s ease;
+}
+
+.loader-text {
+  font-family: 'Share Tech Mono', monospace;
+  color: #5C4A32;
+  font-size: 16px;
 }
 
 .gallery-wrapper .cache {
@@ -1440,7 +1510,23 @@ var particles;
 
 <div id="gallery-container" class="gallery-wrapper">
     <div class="cache"></div>
-    <div class="loading">Loading... 0%</div>
+    <!-- Loading Spinner -->
+    <div id="gallery-loader" class="gallery-loader">
+  <div class="loader-container">
+    <div class="loader-common loader-one"></div>
+    <div class="loader-common loader-two"></div>
+    <div class="loader-common loader-three"></div>
+    <div class="loader-common loader-four"></div>
+    <div class="loader-common loader-five"></div>
+    <div class="loader-common loader-six"></div>
+    <div class="loader-common loader-seven"></div>
+    <div class="loader-common loader-eight"></div>
+  </div>
+  <div class="loader-bar">
+    <div id="loader-progress" class="loader-progress"></div>
+  </div>
+  <div id="loader-text" class="loader-text">Loading... 0%</div>
+</div>
 
     <!-- Updated Hint -->
     <div class="hint">Scroll / Drag / + or -</div>
@@ -1724,6 +1810,29 @@ class InfinitePortraitGallery {
                 width: '12"',
                 description: 'Placeholder description for testing.'
             }));
+        }    async loadImages() {
+        // 1. Target the new loader elements
+        const loaderElement = this.container.querySelector('#gallery-loader');
+        const loaderText = this.container.querySelector('#loader-text');
+        const loaderProgress = this.container.querySelector('#loader-progress');
+        const cacheElement = this.container.querySelector('.cache');
+
+        let sourceItems = [];
+        if (typeof window.thumbnails !== 'undefined' && Array.isArray(window.thumbnails) && window.thumbnails.length > 0) {
+            sourceItems = window.thumbnails;
+        } else {
+            console.warn("window.thumbnails not found or empty. Using fallback placeholder data.");
+            sourceItems = [1011, 1015, 1018, 1020, 1023].map(id => ({
+                title: `Artwork ${id}`,
+                src: `https://picsum.photos/id/${id}/200/200`,
+                fullsizesrc: `https://picsum.photos/id/${id}/800/800`,
+                suggestedprice: 100,
+                inStock: true,
+                remakecustom: false,
+                length: '12"',
+                width: '12"',
+                description: 'Placeholder description for testing.'
+            }));
         }
 
         const imageCount = Math.max(50, sourceItems.length);
@@ -1731,7 +1840,6 @@ class InfinitePortraitGallery {
 
         for (let i = 0; i < imageCount; i++) {
             const item = sourceItems[i % sourceItems.length];
-
             const img = new Image();
             img.crossOrigin = 'Anonymous';
             img.src = item.src;
@@ -1780,11 +1888,22 @@ class InfinitePortraitGallery {
         for (const promise of loadPromises) {
             await promise;
             loaded++;
-            if (loadingElement) loadingElement.textContent = `Loading... ${Math.round(loaded / total * 100)}%`;
+
+            // 2. Update both the text and the visual progress bar width
+            const percent = Math.round((loaded / total) * 100);
+            if (loaderText) loaderText.textContent = `Loading... ${percent}%`;
+            if (loaderProgress) loaderProgress.style.width = `${percent}%`;
         }
 
-        if (loadingElement) loadingElement.style.display = 'none';
         if (cacheElement) cacheElement.style.display = 'none';
+
+        // 3. Trigger smooth fade-out, then remove from layout
+        if (loaderElement) {
+            loaderElement.classList.add('is-hidden');
+            setTimeout(() => {
+                loaderElement.style.display = 'none';
+            }, 500); // Matches the 0.5s CSS transition time
+        }
     }
 
     createTexture(img) {
