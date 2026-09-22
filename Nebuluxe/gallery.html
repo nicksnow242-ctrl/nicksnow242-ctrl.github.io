@@ -1302,7 +1302,7 @@ var particles;
 }
 
 /* ============================================================
-   MODAL STYLES (UPDATED LAYOUT)
+   MODAL STYLES
    ============================================================ */
 .gallery-modal {
   position: fixed;
@@ -1328,7 +1328,7 @@ var particles;
   border: 1px solid rgba(180, 154, 93, 0.4);
   border-radius: 12px;
   width: 100%;
-  max-width: 900px; /* Wider for side-by-side layout */
+  max-width: 900px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
@@ -1351,17 +1351,21 @@ var particles;
   overflow: hidden;
 }
 
+/* ============================================================
+   IMAGE CAROUSEL
+   ============================================================ */
 .gallery-card-image-container {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 253, 245, 0.25); /* Increased transparency */
+  background: rgba(255, 253, 245, 0.25);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   padding: 20px;
   min-width: 0;
   border-right: 1px solid rgba(180, 154, 93, 0.2);
+  position: relative;
 }
 
 .gallery-card-image {
@@ -1371,8 +1375,110 @@ var particles;
   width: auto;
   height: auto;
   object-fit: contain;
+  transition: opacity 0.25s ease;
 }
 
+/* Carousel Arrows */
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 253, 245, 0.85);
+  border: 1px solid rgba(180, 154, 93, 0.4);
+  color: #b49a5d;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.gallery-card-image-container:hover .carousel-arrow {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.carousel-arrow:hover {
+  background: #b49a5d;
+  color: #fff;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 4px 12px rgba(180, 154, 93, 0.3);
+}
+
+.carousel-prev {
+  left: 15px;
+}
+
+.carousel-next {
+  right: 15px;
+}
+
+/* Carousel Dots */
+.carousel-dots {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 5;
+  padding: 6px 12px;
+  background: rgba(255, 253, 245, 0.7);
+  border-radius: 20px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(180, 154, 93, 0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.gallery-card-image-container:hover .carousel-dots {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(180, 154, 93, 0.35);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.carousel-dot:hover {
+  background: rgba(180, 154, 93, 0.7);
+  transform: scale(1.2);
+}
+
+.carousel-dot.active {
+  background: #b49a5d;
+  width: 20px;
+  border-radius: 4px;
+  box-shadow: 0 0 6px rgba(180, 154, 93, 0.5);
+}
+
+/* Hide carousel controls when only one image */
+.gallery-card-image-container.single-image .carousel-arrow,
+.gallery-card-image-container.single-image .carousel-dots {
+  display: none;
+}
+
+/* ============================================================
+   CARD CONTENT
+   ============================================================ */
 .gallery-card-content {
   flex: 1;
   display: flex;
@@ -1440,7 +1546,7 @@ var particles;
   line-height: 1.6;
   color: #5C4A32;
   overflow-y: auto;
-  flex: 1; /* Pushes footer to the bottom */
+  flex: 1;
   padding-right: 10px;
   border-top: 1px solid rgba(180, 154, 93, 0.2);
   padding-top: 12px;
@@ -1460,7 +1566,7 @@ var particles;
 
 .gallery-card-footer {
   padding-top: 16px;
-  margin-top: auto; /* Ensures it stays at the bottom */
+  margin-top: auto;
 }
 
 .inquire-btn {
@@ -1517,7 +1623,6 @@ var particles;
     font-size: 20px;
   }
 
-  /* Stack modal vertically on mobile */
   .gallery-card {
     max-height: 95vh;
     max-width: 95vw;
@@ -1527,12 +1632,12 @@ var particles;
     overflow-y: auto;
   }
   .gallery-card-image-container {
-     flex: none;
-     max-height: 40vh;
-     padding: 12px;
-     border-right: none;
-     border-bottom: 1px solid rgba(180, 154, 93, 0.2);
-   }
+    flex: none;
+    max-height: 40vh;
+    padding: 12px;
+    border-right: none;
+    border-bottom: 1px solid rgba(180, 154, 93, 0.2);
+  }
   .gallery-card-image {
     max-height: 35vh;
   }
@@ -1543,6 +1648,21 @@ var particles;
   .gallery-card-title {
     font-size: 22px;
   }
+
+  /* Always show carousel controls on touch devices */
+  .carousel-arrow {
+    opacity: 1;
+    pointer-events: auto;
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+  .carousel-dots {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .carousel-prev { left: 10px; }
+  .carousel-next { right: 10px; }
 }
 </style>
 
@@ -1551,7 +1671,6 @@ var particles;
 <div id="gallery-container" class="gallery-wrapper">
     <div class="cache"></div>
 
-    <!-- New Loader Structure -->
     <div id="gallery-loader" class="gallery-loader">
       <div class="loader-container">
         <div class="loader-common loader-one"></div>
@@ -1580,13 +1699,19 @@ var particles;
         <i class="fas fa-expand"></i>
     </button>
 
-    <!-- Updated Modal Structure for Side-by-Side Layout -->
     <div id="gallery-modal" class="gallery-modal">
         <div class="gallery-card">
             <button class="gallery-card-close" id="modal-close-btn" aria-label="Close">&times;</button>
             <div class="gallery-card-layout">
-                <div class="gallery-card-image-container">
+                <div id="carousel-container" class="gallery-card-image-container">
+                    <button class="carousel-arrow carousel-prev" id="carousel-prev" aria-label="Previous image">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
                     <img id="modal-full-image" class="gallery-card-image" src="" alt="Full size artwork">
+                    <button class="carousel-arrow carousel-next" id="carousel-next" aria-label="Next image">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <div class="carousel-dots" id="carousel-dots"></div>
                 </div>
                 <div class="gallery-card-content">
                     <h2 id="modal-title" class="gallery-card-title">Artwork Title</h2>
@@ -1647,6 +1772,16 @@ class InfinitePortraitGallery {
 
         this.modal = this.container.querySelector('#gallery-modal');
         this.closeModalBtn = this.container.querySelector('#modal-close-btn');
+
+        // Carousel state
+        this.carouselContainer = this.container.querySelector('#carousel-container');
+        this.modalImage = this.container.querySelector('#modal-full-image');
+        this.carouselPrev = this.container.querySelector('#carousel-prev');
+        this.carouselNext = this.container.querySelector('#carousel-next');
+        this.carouselDots = this.container.querySelector('#carousel-dots');
+        this.currentImages = [];
+        this.currentImageIndex = 0;
+        this.currentItem = null;
 
         this.resizeCanvas();
         window.addEventListener('resize', () => this.resizeCanvas());
@@ -2138,19 +2273,120 @@ class InfinitePortraitGallery {
         if (zoomInBtn) zoomInBtn.addEventListener('click', () => { this.zoom = Math.min(3.0, this.zoom + 0.1); });
         if (zoomOutBtn) zoomOutBtn.addEventListener('click', () => { this.zoom = Math.max(0.5, this.zoom - 0.1); });
 
+        // Carousel arrow listeners
+        this.carouselPrev.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.prevImage();
+        });
+        this.carouselNext.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.nextImage();
+        });
+
         this.closeModalBtn.addEventListener('click', () => this.closeModal());
         this.modal.addEventListener('click', (e) => {
             if (e.target === this.modal) this.closeModal();
         });
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.modal.classList.contains('is-open')) {
-                this.closeModal();
+            if (this.modal.classList.contains('is-open')) {
+                if (e.key === 'Escape') {
+                    this.closeModal();
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    this.prevImage();
+                } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    this.nextImage();
+                }
             }
         });
     }
 
+    // ============================================================
+    // CAROUSEL METHODS
+    // ============================================================
+    buildImageArray(item) {
+        const images = [];
+        const primarySrc = item.fullsizesrc || item.fullSizeSrc || item.src;
+        if (primarySrc) images.push(primarySrc);
+
+        // Iterate through fullsizesrc2, fullsizesrc3, etc.
+        let i = 2;
+        while (item[`fullsizesrc${i}`]) {
+            images.push(item[`fullsizesrc${i}`]);
+            i++;
+        }
+        return images;
+    }
+
+    renderCarouselDots() {
+        this.carouselDots.innerHTML = '';
+        this.currentImages.forEach((_, index) => {
+            const dot = document.createElement('button');
+            dot.className = 'carousel-dot' + (index === this.currentImageIndex ? ' active' : '');
+            dot.setAttribute('aria-label', `Go to image ${index + 1}`);
+            dot.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.goToImage(index);
+            });
+            this.carouselDots.appendChild(dot);
+        });
+    }
+
+    updateActiveDot() {
+        const dots = this.carouselDots.querySelectorAll('.carousel-dot');
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === this.currentImageIndex);
+        });
+    }
+
+    updateCarouselImage() {
+        const src = this.currentImages[this.currentImageIndex];
+        const fallbackSrc = this.currentItem.src;
+
+        // Fade out
+        this.modalImage.style.opacity = '0';
+
+        setTimeout(() => {
+            this.modalImage.src = src;
+            this.modalImage.alt = `${this.currentItem.title || 'Artwork'} - Image ${this.currentImageIndex + 1}`;
+            this.modalImage.onerror = () => {
+                console.warn(`Failed to load carousel image: ${src}. Falling back to thumbnail.`);
+                this.modalImage.src = fallbackSrc;
+            };
+            // Fade in
+            this.modalImage.style.opacity = '1';
+        }, 200);
+
+        this.updateActiveDot();
+    }
+
+    nextImage() {
+        if (this.currentImages.length <= 1) return;
+        this.currentImageIndex = (this.currentImageIndex + 1) % this.currentImages.length;
+        this.updateCarouselImage();
+    }
+
+    prevImage() {
+        if (this.currentImages.length <= 1) return;
+        this.currentImageIndex = (this.currentImageIndex - 1 + this.currentImages.length) % this.currentImages.length;
+        this.updateCarouselImage();
+    }
+
+    goToImage(index) {
+        if (index === this.currentImageIndex) return;
+        this.currentImageIndex = index;
+        this.updateCarouselImage();
+    }
+
     openModal(item) {
         if (!item) return;
+
+        this.currentItem = item;
+
+        // Build the carousel image array
+        this.currentImages = this.buildImageArray(item);
+        this.currentImageIndex = 0;
 
         const suggestedPrice = item.suggestedprice || 0;
         const priceMultiplier = item.pricemultiplier || 1;
@@ -2165,15 +2401,14 @@ class InfinitePortraitGallery {
             availability += ", will not remake.";
         }
 
-        const fullSizeSrc = item.fullsizesrc || item.fullSizeSrc || item.src;
-
-        const imgEl = document.getElementById('modal-full-image');
-        imgEl.src = fullSizeSrc;
-        imgEl.alt = item.alt || item.title;
-
-        imgEl.onerror = () => {
-            console.warn(`Failed to load fullsize image: ${fullSizeSrc}. Falling back to thumbnail.`);
-            imgEl.src = item.src;
+        // Set initial image (no fade for first load)
+        const primarySrc = this.currentImages[0] || item.src;
+        this.modalImage.src = primarySrc;
+        this.modalImage.alt = item.alt || item.title;
+        this.modalImage.style.opacity = '1';
+        this.modalImage.onerror = () => {
+            console.warn(`Failed to load fullsize image: ${primarySrc}. Falling back to thumbnail.`);
+            this.modalImage.src = item.src;
         };
 
         document.getElementById('modal-title').textContent = item.title || 'Untitled';
@@ -2186,6 +2421,14 @@ class InfinitePortraitGallery {
         const subject = encodeURIComponent(`Inquiry about: ${item.title}`);
         const body = encodeURIComponent(`Hello,\n\nI am interested in learning more about "${item.title}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`);
         document.getElementById('modal-inquire-btn').href = `mailto:${email}?subject=${subject}&body=${body}`;
+
+        // Update carousel UI
+        this.renderCarouselDots();
+        if (this.currentImages.length <= 1) {
+            this.carouselContainer.classList.add('single-image');
+        } else {
+            this.carouselContainer.classList.remove('single-image');
+        }
 
         this.modal.classList.add('is-open');
     }
