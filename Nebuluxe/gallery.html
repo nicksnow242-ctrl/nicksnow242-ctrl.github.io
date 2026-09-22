@@ -1116,7 +1116,7 @@ var particles;
 }
 
 /* ============================================================
-   NEW LOADER STYLES
+   LOADER STYLES
    ============================================================ */
 .gallery-loader {
   position: absolute;
@@ -1154,7 +1154,7 @@ var particles;
   background-color: transparent;
   border-radius: 0 20px 0 20px;
   box-shadow: inset 0 0 0 1px #b49a5d, 0 0 8px 0 #b49a5d;
-  transform-origin: center 40px; /* Pivots perfectly around the 80px container center */
+  transform-origin: center 40px;
 }
 
 .loader-one   { transform: rotate(45deg);  animation: loader-pulse 1s ease infinite; }
@@ -1201,6 +1201,9 @@ var particles;
   font-size: 16px;
 }
 
+/* ============================================================
+   UI CONTROLS
+   ============================================================ */
 .gallery-wrapper .cache {
   position: absolute;
   height: 100%;
@@ -1212,11 +1215,10 @@ var particles;
   pointer-events: none;
 }
 
-/* Zoom Controls (Pill Shaped) */
 .gallery-wrapper .zoom-controls {
   position: absolute;
   bottom: 20px;
-  right: 76px; /* Positioned to the left of the fullscreen button */
+  right: 76px;
   display: flex;
   background: rgba(255, 253, 245, 0.9);
   border: 1px solid rgba(180, 154, 93, 0.4);
@@ -1299,14 +1301,9 @@ var particles;
   font-family: 'Share Tech Mono', monospace;
 }
 
-.gallery-wrapper .hint a {
-  color: #b49a5d;
-  text-decoration: none;
-  pointer-events: auto;
-  font-weight: bold;
-}
-
-/* Modal Styles */
+/* ============================================================
+   MODAL STYLES (UPDATED LAYOUT)
+   ============================================================ */
 .gallery-modal {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
@@ -1331,7 +1328,7 @@ var particles;
   border: 1px solid rgba(180, 154, 93, 0.4);
   border-radius: 12px;
   width: 100%;
-  max-width: 500px;
+  max-width: 900px; /* Wider for side-by-side layout */
   max-height: 90vh;
   display: flex;
   flex-direction: column;
@@ -1344,6 +1341,43 @@ var particles;
 
 .gallery-modal.is-open .gallery-card {
   transform: scale(1);
+}
+
+.gallery-card-layout {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
+.gallery-card-image-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1a1a;
+  padding: 20px;
+  min-width: 0;
+}
+
+.gallery-card-image {
+  display: block;
+  max-width: 100%;
+  max-height: calc(90vh - 40px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.gallery-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 12px;
+  overflow: hidden;
+  min-width: 0;
 }
 
 .gallery-card-close {
@@ -1368,27 +1402,6 @@ var particles;
 .gallery-card-close:hover {
   background: #b49a5d;
   color: #fff;
-}
-
-.gallery-card-image {
-  display: block;
-  max-width: 100%;
-  max-height: 400px;
-  width: auto;
-  height: auto;
-  margin: 0 auto;
-  object-fit: contain;
-  background: #1a1a1a;
-  border-bottom: 1px solid rgba(180, 154, 93, 0.2);
-}
-
-.gallery-card-body {
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  flex: 1;
-  overflow: hidden;
 }
 
 .gallery-card-title {
@@ -1416,6 +1429,7 @@ var particles;
   font-weight: bold;
   color: #b49a5d;
   margin-top: 4px;
+  margin-bottom: 8px;
 }
 
 .gallery-card-desc {
@@ -1423,7 +1437,7 @@ var particles;
   line-height: 1.6;
   color: #5C4A32;
   overflow-y: auto;
-  max-height: 150px;
+  flex: 1; /* Pushes footer to the bottom */
   padding-right: 10px;
   border-top: 1px solid rgba(180, 154, 93, 0.2);
   padding-top: 12px;
@@ -1442,9 +1456,8 @@ var particles;
 }
 
 .gallery-card-footer {
-  padding: 20px 24px 24px;
-  border-top: 1px solid rgba(180, 154, 93, 0.2);
-  background: rgba(255, 253, 245, 0.95);
+  padding-top: 16px;
+  margin-top: auto; /* Ensures it stays at the bottom */
 }
 
 .inquire-btn {
@@ -1475,6 +1488,9 @@ var particles;
   transform: translateY(0);
 }
 
+/* ============================================================
+   MOBILE RESPONSIVENESS
+   ============================================================ */
 @media (max-width: 768px) {
   .gallery-wrapper .hint {
     bottom: 70px;
@@ -1490,15 +1506,34 @@ var particles;
   }
   .gallery-wrapper .zoom-controls {
     bottom: 15px;
-    right: 65px; /* Adjusted for smaller fullscreen button */
+    right: 65px;
   }
   .gallery-wrapper .zoom-btn {
     width: 38px;
     height: 38px;
     font-size: 20px;
   }
+
+  /* Stack modal vertically on mobile */
   .gallery-card {
     max-height: 95vh;
+    max-width: 95vw;
+  }
+  .gallery-card-layout {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .gallery-card-image-container {
+    flex: none;
+    max-height: 40vh;
+    padding: 12px;
+  }
+  .gallery-card-image {
+    max-height: 35vh;
+  }
+  .gallery-card-content {
+    flex: 1;
+    padding: 16px;
   }
   .gallery-card-title {
     font-size: 22px;
@@ -1510,28 +1545,27 @@ var particles;
 
 <div id="gallery-container" class="gallery-wrapper">
     <div class="cache"></div>
-    <!-- Loading Spinner -->
-    <div id="gallery-loader" class="gallery-loader">
-  <div class="loader-container">
-    <div class="loader-common loader-one"></div>
-    <div class="loader-common loader-two"></div>
-    <div class="loader-common loader-three"></div>
-    <div class="loader-common loader-four"></div>
-    <div class="loader-common loader-five"></div>
-    <div class="loader-common loader-six"></div>
-    <div class="loader-common loader-seven"></div>
-    <div class="loader-common loader-eight"></div>
-  </div>
-  <div class="loader-bar">
-    <div id="loader-progress" class="loader-progress"></div>
-  </div>
-  <div id="loader-text" class="loader-text">Loading... 0%</div>
-</div>
 
-    <!-- Updated Hint -->
+    <!-- New Loader Structure -->
+    <div id="gallery-loader" class="gallery-loader">
+      <div class="loader-container">
+        <div class="loader-common loader-one"></div>
+        <div class="loader-common loader-two"></div>
+        <div class="loader-common loader-three"></div>
+        <div class="loader-common loader-four"></div>
+        <div class="loader-common loader-five"></div>
+        <div class="loader-common loader-six"></div>
+        <div class="loader-common loader-seven"></div>
+        <div class="loader-common loader-eight"></div>
+      </div>
+      <div class="loader-bar">
+        <div id="loader-progress" class="loader-progress"></div>
+      </div>
+      <div id="loader-text" class="loader-text">Loading... 0%</div>
+    </div>
+
     <div class="hint">Scroll / Drag / + or -</div>
 
-    <!-- New Zoom Controls -->
     <div class="zoom-controls">
         <button class="zoom-btn" id="zoom-in-btn" aria-label="Zoom In">+</button>
         <button class="zoom-btn" id="zoom-out-btn" aria-label="Zoom Out">-</button>
@@ -1541,23 +1575,28 @@ var particles;
         <i class="fas fa-expand"></i>
     </button>
 
+    <!-- Updated Modal Structure for Side-by-Side Layout -->
     <div id="gallery-modal" class="gallery-modal">
         <div class="gallery-card">
             <button class="gallery-card-close" id="modal-close-btn" aria-label="Close">&times;</button>
-            <img id="modal-full-image" class="gallery-card-image" src="" alt="Full size artwork">
-            <div class="gallery-card-body">
-                <h2 id="modal-title" class="gallery-card-title">Artwork Title</h2>
-                <div class="gallery-card-meta">
-                    <div id="modal-price" class="gallery-card-price">$0.00</div>
-                    <div><strong>Availability:</strong> <span id="modal-availability">Checking...</span></div>
-                    <div><strong>Size:</strong> <span id="modal-size">0 x 0</span></div>
+            <div class="gallery-card-layout">
+                <div class="gallery-card-image-container">
+                    <img id="modal-full-image" class="gallery-card-image" src="" alt="Full size artwork">
                 </div>
-                <div id="modal-description" class="gallery-card-desc">
-                    Description goes here.
+                <div class="gallery-card-content">
+                    <h2 id="modal-title" class="gallery-card-title">Artwork Title</h2>
+                    <div class="gallery-card-meta">
+                        <div id="modal-price" class="gallery-card-price">Suggested Price - $0.00</div>
+                        <div><strong>Availability:</strong> <span id="modal-availability">Checking...</span></div>
+                        <div><strong>Size:</strong> <span id="modal-size">0 x 0</span></div>
+                    </div>
+                    <div id="modal-description" class="gallery-card-desc">
+                        Description goes here.
+                    </div>
+                    <div class="gallery-card-footer">
+                        <a id="modal-inquire-btn" class="inquire-btn" href="#" target="_blank">Inquire About This</a>
+                    </div>
                 </div>
-            </div>
-            <div class="gallery-card-footer">
-                <a id="modal-inquire-btn" class="inquire-btn" href="#" target="_blank">Inquire about this</a>
             </div>
         </div>
     </div>
@@ -1590,7 +1629,7 @@ class InfinitePortraitGallery {
 
         this.imageData = [];
         this.maxDimension = 100;
-        this.zoom = 1.5; // Default zoom level
+        this.zoom = 1.5;
         this.gap = 15;
         this.viewOffset = { x: 0, y: 0 };
 
@@ -1615,7 +1654,6 @@ class InfinitePortraitGallery {
 
     setupPickingFramebuffer() {
         if (!this.gl) return;
-
         this.pickingTexture = this.gl.createTexture();
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.pickingTexture);
         this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
@@ -1625,46 +1663,17 @@ class InfinitePortraitGallery {
 
         this.pickingFramebuffer = this.gl.createFramebuffer();
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.pickingFramebuffer);
-
-        this.gl.framebufferTexture2D(
-            this.gl.FRAMEBUFFER,
-            this.gl.COLOR_ATTACHMENT0,
-            this.gl.TEXTURE_2D,
-            this.pickingTexture,
-            0
-        );
-
+        this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT0, this.gl.TEXTURE_2D, this.pickingTexture, 0);
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
         this.resizePickingFramebuffer();
     }
 
     resizePickingFramebuffer() {
         if (!this.gl || !this.pickingTexture || !this.pickingFramebuffer) return;
-
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.pickingTexture);
-
-        this.gl.texImage2D(
-            this.gl.TEXTURE_2D,
-            0,
-            this.gl.RGBA,
-            this.canvas.width,
-            this.canvas.height,
-            0,
-            this.gl.RGBA,
-            this.gl.UNSIGNED_BYTE,
-            null
-        );
-
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.canvas.width, this.canvas.height, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, null);
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.pickingFramebuffer);
-
-        this.gl.framebufferTexture2D(
-            this.gl.FRAMEBUFFER,
-            this.gl.COLOR_ATTACHMENT0,
-            this.gl.TEXTURE_2D,
-            this.pickingTexture,
-            0
-        );
-
+        this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT0, this.gl.TEXTURE_2D, this.pickingTexture, 0);
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
     }
 
@@ -1715,16 +1724,13 @@ class InfinitePortraitGallery {
             vec2 pos = aPosition * uImageSize;
             pos += uImagePosition;
             pos -= uOffset;
-
             vec2 center = uImagePosition + (uImageSize * 0.5) - uOffset;
             pos -= center;
             float cosR = cos(uRotation);
             float sinR = sin(uRotation);
             pos = vec2(pos.x*cosR - pos.y*sinR, pos.x*sinR + pos.y*cosR);
             pos += center;
-
             pos = applyBulgeEffect(pos);
-
             vec2 clip = pos / uResolution * 2.0 - 1.0;
             gl_Position = vec4(clip, 0.0, 1.0);
             vTexCoord = aTexCoord;
@@ -1748,13 +1754,10 @@ class InfinitePortraitGallery {
         varying vec2 vTexCoord;
         uniform sampler2D uSampler;
         uniform vec4 uPickColor;
-
         void main(){
             vec2 uv = vec2(vTexCoord.x, 1.0 - vTexCoord.y);
             vec4 color = texture2D(uSampler, uv);
-
             if(color.a < 0.01) discard;
-
             gl_FragColor = uPickColor;
         }`;
 
@@ -1791,27 +1794,6 @@ class InfinitePortraitGallery {
     }
 
     async loadImages() {
-        const loadingElement = this.container.querySelector('.loading');
-        const cacheElement = this.container.querySelector('.cache');
-
-        let sourceItems = [];
-        if (typeof window.thumbnails !== 'undefined' && Array.isArray(window.thumbnails) && window.thumbnails.length > 0) {
-            sourceItems = window.thumbnails;
-        } else {
-            console.warn("window.thumbnails not found or empty. Using fallback placeholder data.");
-            sourceItems = [1011, 1015, 1018, 1020, 1023].map(id => ({
-                title: `Artwork ${id}`,
-                src: `https://picsum.photos/id/${id}/200/200`,
-                fullsizesrc: `https://picsum.photos/id/${id}/800/800`,
-                suggestedprice: 100,
-                inStock: true,
-                remakecustom: false,
-                length: '12"',
-                width: '12"',
-                description: 'Placeholder description for testing.'
-            }));
-        }    async loadImages() {
-        // 1. Target the new loader elements
         const loaderElement = this.container.querySelector('#gallery-loader');
         const loaderText = this.container.querySelector('#loader-text');
         const loaderProgress = this.container.querySelector('#loader-progress');
@@ -1855,7 +1837,6 @@ class InfinitePortraitGallery {
                         w = (w / h) * this.maxDimension;
                         h = this.maxDimension;
                     }
-
                     this.imageData.push({
                         img: img,
                         texture: this.createTexture(img),
@@ -1888,8 +1869,6 @@ class InfinitePortraitGallery {
         for (const promise of loadPromises) {
             await promise;
             loaded++;
-
-            // 2. Update both the text and the visual progress bar width
             const percent = Math.round((loaded / total) * 100);
             if (loaderText) loaderText.textContent = `Loading... ${percent}%`;
             if (loaderProgress) loaderProgress.style.width = `${percent}%`;
@@ -1897,12 +1876,11 @@ class InfinitePortraitGallery {
 
         if (cacheElement) cacheElement.style.display = 'none';
 
-        // 3. Trigger smooth fade-out, then remove from layout
         if (loaderElement) {
             loaderElement.classList.add('is-hidden');
             setTimeout(() => {
                 loaderElement.style.display = 'none';
-            }, 500); // Matches the 0.5s CSS transition time
+            }, 500);
         }
     }
 
@@ -1921,9 +1899,6 @@ class InfinitePortraitGallery {
         const tiles = [];
         const baseTileW = this.maxDimension + this.gap;
         const baseTileH = this.maxDimension + this.gap;
-
-        const tileW = baseTileW * this.zoom;
-        const tileH = baseTileH * this.zoom;
 
         const visibleLeft = (this.viewOffset.x - this.canvas.width) / this.zoom;
         const visibleRight = (this.viewOffset.x + this.canvas.width * 2) / this.zoom;
@@ -1983,7 +1958,6 @@ class InfinitePortraitGallery {
             this.gl.uniform2f(offsetLoc, this.viewOffset.x, this.viewOffset.y);
             this.gl.uniform2f(imgPosLoc, t.x, t.y);
             this.gl.uniform2f(imgSizeLoc, t.width, t.height);
-
             this.gl.activeTexture(this.gl.TEXTURE0);
             this.gl.bindTexture(this.gl.TEXTURE_2D, this.imageData[t.imageIndex].texture);
             this.gl.uniform1i(samplerLoc, 0);
@@ -1993,11 +1967,9 @@ class InfinitePortraitGallery {
 
     pickTileAt(x, y) {
         const gl = this.gl;
-
         if (!this.pickingProgram || !this.pickingFramebuffer || this.imageData.length === 0) return -1;
 
         const tiles = this.getVisibleTiles();
-
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.pickingFramebuffer);
         gl.viewport(0, 0, this.canvas.width, this.canvas.height);
         gl.disable(gl.BLEND);
@@ -2007,15 +1979,12 @@ class InfinitePortraitGallery {
 
         const posLoc = gl.getAttribLocation(this.pickingProgram, 'aPosition');
         const texLoc = gl.getAttribLocation(this.pickingProgram, 'aTexCoord');
-
         gl.enableVertexAttribArray(posLoc);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
         gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
-
         gl.enableVertexAttribArray(texLoc);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
         gl.vertexAttribPointer(texLoc, 2, gl.FLOAT, false, 0, 0);
-
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
 
         const offsetLoc = gl.getUniformLocation(this.pickingProgram, 'uOffset');
@@ -2035,12 +2004,10 @@ class InfinitePortraitGallery {
 
         for (let i = 0; i < tiles.length; i++) {
             const tile = tiles[i];
-
             gl.uniform2f(offsetLoc, this.viewOffset.x, this.viewOffset.y);
             gl.uniform2f(imgPosLoc, tile.x, tile.y);
             gl.uniform2f(imgSizeLoc, tile.width, tile.height);
             gl.uniform1f(rotationLoc, 0);
-
             gl.activeTexture(gl.TEXTURE0);
             gl.bindTexture(gl.TEXTURE_2D, this.imageData[tile.imageIndex].texture);
 
@@ -2048,7 +2015,6 @@ class InfinitePortraitGallery {
             const r = (id & 0xFF) / 255;
             const g = ((id >> 8) & 0xFF) / 255;
             const b = ((id >> 16) & 0xFF) / 255;
-
             gl.uniform4f(pickColorLoc, r, g, b, 1);
             gl.drawElements(gl.TRIANGLES, this.indexCount, gl.UNSIGNED_SHORT, 0);
         }
@@ -2056,14 +2022,11 @@ class InfinitePortraitGallery {
         const pixel = new Uint8Array(4);
         gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
         const id = pixel[0] + (pixel[1] << 8) + (pixel[2] << 16);
-
         if (id === 0 || id > tiles.length) return -1;
-
         return id - 1;
     }
 
@@ -2077,15 +2040,12 @@ class InfinitePortraitGallery {
                 this.drag.dragDistance = 0;
                 return;
             }
-
             this.drag.dragDistance = 0;
-
             if (this.canvas.width === 0 || this.canvas.height === 0 || !this.pickingFramebuffer) return;
 
             const rect = this.canvas.getBoundingClientRect();
             const scaleX = this.canvas.width / rect.width;
             const scaleY = this.canvas.height / rect.height;
-
             const clickX = Math.max(0, Math.min(this.canvas.width - 1, Math.floor((e.clientX - rect.left) * scaleX)));
             const clickY = Math.max(0, Math.min(this.canvas.height - 1, Math.floor(this.canvas.height - (e.clientY - rect.top) * scaleY)));
 
@@ -2094,7 +2054,6 @@ class InfinitePortraitGallery {
 
             const tiles = this.getVisibleTiles();
             const tile = tiles[tileIndex];
-
             if (tile && tile.thumbnailItem) this.openModal(tile.thumbnailItem);
         });
 
@@ -2111,14 +2070,11 @@ class InfinitePortraitGallery {
             if (!this.drag.isDragging) return;
             const dx = e.clientX - this.drag.lastX;
             const dy = e.clientY - this.drag.lastY;
-
             this.drag.dragDistance += Math.sqrt(dx * dx + dy * dy);
             this.drag.velocityX = dx * 0.1 + this.drag.velocityX * 0.5;
             this.drag.velocityY = dy * 0.1 + this.drag.velocityY * 0.5;
-
             this.viewOffset.x -= this.drag.velocityX;
             this.viewOffset.y += this.drag.velocityY;
-
             this.drag.lastX = e.clientX;
             this.drag.lastY = e.clientY;
         });
@@ -2141,14 +2097,11 @@ class InfinitePortraitGallery {
             e.preventDefault();
             const dx = e.touches[0].clientX - this.drag.lastX;
             const dy = e.touches[0].clientY - this.drag.lastY;
-
             this.drag.dragDistance += Math.sqrt(dx * dx + dy * dy);
             this.drag.velocityX = dx * 0.3 + this.drag.velocityX * 0.7;
             this.drag.velocityY = dy * 0.3 + this.drag.velocityY * 0.7;
-
             this.viewOffset.x -= this.drag.velocityX;
             this.viewOffset.y += this.drag.velocityY;
-
             this.drag.lastX = e.touches[0].clientX;
             this.drag.lastY = e.touches[0].clientY;
         }, { passive: false });
@@ -2175,20 +2128,10 @@ class InfinitePortraitGallery {
             }
         });
 
-        // NEW: Zoom Controls Event Listeners
         const zoomInBtn = this.container.querySelector('#zoom-in-btn');
         const zoomOutBtn = this.container.querySelector('#zoom-out-btn');
-
-        if (zoomInBtn) {
-            zoomInBtn.addEventListener('click', () => {
-                this.zoom = Math.min(3.0, this.zoom + 0.1);
-            });
-        }
-        if (zoomOutBtn) {
-            zoomOutBtn.addEventListener('click', () => {
-                this.zoom = Math.max(0.5, this.zoom - 0.1);
-            });
-        }
+        if (zoomInBtn) zoomInBtn.addEventListener('click', () => { this.zoom = Math.min(3.0, this.zoom + 0.1); });
+        if (zoomOutBtn) zoomOutBtn.addEventListener('click', () => { this.zoom = Math.max(0.5, this.zoom - 0.1); });
 
         this.closeModalBtn.addEventListener('click', () => this.closeModal());
         this.modal.addEventListener('click', (e) => {
@@ -2204,7 +2147,11 @@ class InfinitePortraitGallery {
     openModal(item) {
         if (!item) return;
 
-        const price = (item.pricemultiplier || 1) * (item.suggestedprice || 0);
+        const suggestedPrice = item.suggestedprice || 0;
+        const priceMultiplier = item.pricemultiplier || 1;
+        const priceDisplay = (suggestedPrice === 0)
+            ? "Price N/A"
+            : `Suggested Price - $${(suggestedPrice * priceMultiplier).toFixed(2)}`;
 
         let availability = item.inStock ? "Currently available" : "Not on hand";
         if (item.remakecustom) {
@@ -2225,12 +2172,12 @@ class InfinitePortraitGallery {
         };
 
         document.getElementById('modal-title').textContent = item.title || 'Untitled';
-        document.getElementById('modal-price').textContent = `$${price.toFixed(2)}`;
+        document.getElementById('modal-price').textContent = priceDisplay;
         document.getElementById('modal-availability').textContent = availability;
         document.getElementById('modal-size').textContent = `${item.length || '?'} x ${item.width || '?'}`;
         document.getElementById('modal-description').textContent = item.description || 'No description available.';
 
-        const email = "your-email@example.com";
+        const email = "nebuluxeart@gmail.com";
         const subject = encodeURIComponent(`Inquiry about: ${item.title}`);
         const body = encodeURIComponent(`Hello,\n\nI am interested in learning more about "${item.title}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`);
         document.getElementById('modal-inquire-btn').href = `mailto:${email}?subject=${subject}&body=${body}`;
@@ -2267,7 +2214,6 @@ class InfinitePortraitGallery {
         if (!this.drag.isDragging) {
             this.viewOffset.x += this.drag.velocityX;
             this.viewOffset.y += this.drag.velocityY;
-
             this.drag.velocityX *= this.inertia;
             this.drag.velocityY *= this.inertia;
             if (Math.abs(this.drag.velocityX) < 0.01) this.drag.velocityX = 0;
