@@ -122,6 +122,55 @@ html, body {
 }
 
 /* ========================================== */
+/* SECTION 1: MAIN BODY (WRITINGS LIST) */
+/* ========================================== */
+.document-area {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+  margin-right: 200px;
+}
+
+.text-list-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.text-list-item {
+  background: rgba(0, 255, 65, 0.03);
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  border-radius: 4px;
+  color: var(--text-dim);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-family: 'Share Tech Mono', monospace;
+  text-align: left;
+  width: 100%;
+  padding: 16px;
+}
+
+.text-list-item:hover {
+  background: rgba(0, 255, 65, 0.1);
+  border-color: var(--neon-green);
+  color: var(--neon-green);
+  box-shadow: 0 0 12px var(--neon-glow-green);
+  transform: translateY(-2px);
+}
+
+.text-list-item .book-info { display: flex; flex-direction: column; }
+.text-list-item .book-title { font-size: 16px; font-weight: bold; color: var(--neon-green); }
+.text-list-item .book-author { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+.text-list-item .book-rating { font-size: 14px; color: var(--neon-green); font-weight: bold; white-space: nowrap; }
+
+/* ========================================== */
 /* SECTION 2: READING LIST SIDEBAR */
 /* ========================================== */
 .reading-list-sidebar {
@@ -686,6 +735,8 @@ html, body {
   .music-player-container .oval-frame { width: 130px; height: 130px; }
   .reading-list-sidebar { width: 100%; right: -100%; transition: right 0.3s ease; }
   .reading-list-sidebar.mobile-open { right: 0; }
+  .document-area { margin-right: 0; }
+  .text-list-container { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -708,36 +759,18 @@ html, body {
 <canvas id="projector"></canvas>
 
 <!-- ========================================== -->
-<!-- Start MAIN Body -->
+<!-- MAIN LAYOUT CONTAINER -->
 <!-- ========================================== -->
 <div class="main-layout">
 
   <!-- ========================================== -->
-  <!-- MAIN CONTENT: TEXT FILES GRID -->
+  <!-- SECTION 1: MAIN BODY (WRITINGS LIST) -->
   <!-- ========================================== -->
-  <div class="main-content">
-    <h2 class="content-header">
-      <span class="cursor-blink">█</span> DIRECTORY_ROOT // TEXT_FILES
-    </h2>
-
-    <div class="text-files-grid">
-      <button class="text-file-btn" onclick="openMarkdownReader('writingsmd/SirenSong.md', 'Siren Song')" data-file="writingsmd/SirenSong.md">
-        <span class="file-title">SIREN SONG</span>
-      </button>
-
-      <button class="text-file-btn" onclick="openMarkdownReader('writingsmd/example2.md', 'Example File 2')" data-file="writingsmd/example2.md">
-        <span class="file-title">EXAMPLE FILE 2</span>
-      </button>
-
-      <button class="text-file-btn" onclick="openMarkdownReader('writingsmd/example3.md', 'Example File 3')" data-file="writingsmd/example3.md">
-        <span class="file-title">EXAMPLE FILE 3</span>
-      </button>
-
-      <button class="text-file-btn" onclick="openMarkdownReader('writingsmd/example4.md', 'Example File 4')" data-file="writingsmd/example4.md">
-        <span class="file-title">EXAMPLE FILE 4</span>
-      </button>
+  <main class="document-area">
+    <div class="text-list-container" id="main-body-container">
+      <!-- Populated dynamically by content.js -->
     </div>
-  </div>
+  </main>
 
   <!-- ========================================== -->
   <!-- SECTION 2: READING LIST SIDEBAR -->
@@ -765,308 +798,450 @@ html, body {
     </div>
   </aside>
 
-</div> <!-- End .main-layout -->
+</div>
 
 <!-- ========================================== -->
-<!-- MARKDOWN READER MODAL & STYLES -->
+<!-- MASCOT POPUP HTML -->
 <!-- ========================================== -->
-<style>
-  .main-content {
-    flex: 1;
-    padding: 30px;
-    padding-right: 230px; /* Accounts for 200px sidebar + 30px gap */
-    overflow-y: auto;
-    height: 100%;
-    box-sizing: border-box;
-  }
-
-  .main-content::-webkit-scrollbar { width: 8px; }
-  .main-content::-webkit-scrollbar-track { background: var(--deep-green); }
-  .main-content::-webkit-scrollbar-thumb { background: var(--mid-green); border-radius: 4px; }
-  .main-content::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
-
-  .content-header {
-    font-size: 18px;
-    color: var(--neon-green);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin: 0 0 25px 0;
-    padding-bottom: 10px;
-    border-bottom: 1px solid rgba(0, 255, 65, 0.3);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-shadow: 0 0 8px var(--neon-glow-green);
-  }
-
-  .content-header .cursor-blink {
-    display: inline-block;
-    animation: blinker 1s steps(2) infinite;
-  }
-
-  .text-files-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    padding-bottom: 30px;
-    width: 100%;
-  }
-
-  .text-file-btn {
-    position: relative;
-    background: rgba(0, 20, 0, 0.6);
-    border: 1px solid rgba(0, 255, 65, 0.3);
-    border-left: 3px solid var(--neon-green);
-    color: var(--text-dim);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 14px;
-    padding: 25px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100px;
-    backdrop-filter: blur(4px);
-    clip-path: polygon(0 0, 100% 0, 100% 85%, 90% 100%, 0 100%);
-  }
-
-  .text-file-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.2), transparent);
-    transition: left 0.5s ease;
-    z-index: 1;
-  }
-
-  .text-file-btn:hover {
-    background: rgba(0, 40, 0, 0.9);
-    border-color: var(--neon-green);
-    color: var(--neon-green);
-    box-shadow: 0 0 25px rgba(0, 255, 65, 0.4), 0 0 50px rgba(0, 255, 65, 0.2), inset 0 0 20px rgba(0, 255, 65, 0.15);
-    transform: translateY(-3px);
-  }
-
-  .text-file-btn:hover::before { left: 100%; }
-
-  .text-file-btn .file-title {
-    font-size: 18px;
-    font-weight: bold;
-    color: var(--neon-green);
-    text-align: center;
-    text-shadow: 0 0 10px var(--neon-glow-green);
-    letter-spacing: 1px;
-    position: relative;
-    z-index: 2;
-  }
-
-  .text-file-btn.active {
-    background: rgba(0, 255, 65, 0.15);
-    border-color: var(--neon-green);
-    color: var(--neon-green);
-    box-shadow: 0 0 30px rgba(0, 255, 65, 0.5), 0 0 60px rgba(0, 255, 65, 0.3), inset 0 0 25px rgba(0, 255, 65, 0.2);
-  }
-
-  .text-file-btn.active .file-title {
-    text-shadow: 0 0 15px var(--neon-glow-green);
-  }
-
-  .markdown-reader-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 10, 0, 0.95);
-    backdrop-filter: blur(10px);
-    z-index: 10000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  .markdown-reader-overlay.active {
-    display: flex;
-    opacity: 1;
-  }
-
-  .markdown-reader-container {
-    width: 90%;
-    max-width: 900px;
-    height: 85vh;
-    background: rgba(0, 20, 0, 0.95);
-    border: 2px solid var(--neon-green);
-    border-radius: 8px;
-    box-shadow: 0 0 50px rgba(0, 255, 65, 0.3), 0 0 100px rgba(0, 255, 65, 0.1);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .reader-header {
-    padding: 20px 30px;
-    border-bottom: 1px solid rgba(0, 255, 65, 0.3);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(0, 15, 0, 0.9);
-  }
-
-  .reader-title {
-    font-size: 20px;
-    color: var(--neon-green);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    text-shadow: 0 0 10px var(--neon-glow-green);
-    margin: 0;
-  }
-
-  .reader-close-btn {
-    background: transparent;
-    border: 2px solid var(--neon-green);
-    color: var(--neon-green);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 16px;
-    padding: 8px 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  .reader-close-btn:hover {
-    background: var(--neon-green);
-    color: var(--deep-green);
-    box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
-  }
-
-  .reader-content {
-    flex: 1;
-    padding: 40px;
-    overflow-y: auto;
-    color: var(--text-dim);
-    font-size: 16px;
-    line-height: 1.8;
-  }
-
-  .reader-content::-webkit-scrollbar { width: 8px; }
-  .reader-content::-webkit-scrollbar-track { background: var(--deep-green); }
-  .reader-content::-webkit-scrollbar-thumb { background: var(--mid-green); border-radius: 4px; }
-  .reader-content::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
-
-  .reader-content h1, .reader-content h2, .reader-content h3,
-  .reader-content h4, .reader-content h5, .reader-content h6 {
-    color: var(--neon-green);
-    text-shadow: 0 0 8px var(--neon-glow-green);
-    margin-top: 30px;
-    margin-bottom: 15px;
-    letter-spacing: 1px;
-  }
-
-  .reader-content h1 { font-size: 32px; border-bottom: 2px solid rgba(0, 255, 65, 0.3); padding-bottom: 10px; }
-  .reader-content h2 { font-size: 26px; border-bottom: 1px solid rgba(0, 255, 65, 0.2); padding-bottom: 8px; }
-  .reader-content h3 { font-size: 22px; }
-  .reader-content h4 { font-size: 18px; }
-  .reader-content p { margin-bottom: 20px; }
-  .reader-content a { color: var(--neon-green); text-decoration: none; border-bottom: 1px dashed var(--neon-green); transition: all 0.3s ease; }
-  .reader-content a:hover { text-shadow: 0 0 8px var(--neon-glow-green); border-bottom-style: solid; }
-  .reader-content code { background: rgba(0, 255, 65, 0.1); border: 1px solid rgba(0, 255, 65, 0.3); padding: 2px 6px; border-radius: 3px; font-family: 'Share Tech Mono', monospace; color: var(--neon-green); }
-  .reader-content pre { background: rgba(0, 10, 0, 0.8); border: 1px solid rgba(0, 255, 65, 0.3); padding: 15px; border-radius: 4px; overflow-x: auto; margin: 20px 0; }
-  .reader-content pre code { background: transparent; border: none; padding: 0; }
-  .reader-content blockquote { border-left: 3px solid var(--neon-green); padding-left: 20px; margin: 20px 0; color: var(--text-dim); font-style: italic; }
-  .reader-content ul, .reader-content ol { margin: 20px 0; padding-left: 30px; }
-  .reader-content li { margin-bottom: 10px; }
-  .reader-content img { max-width: 100%; height: auto; border: 1px solid rgba(0, 255, 65, 0.3); border-radius: 4px; margin: 20px 0; }
-  .reader-content hr { border: none; border-top: 1px solid rgba(0, 255, 65, 0.3); margin: 30px 0; }
-
-  .loading-indicator {
-    text-align: center;
-    color: var(--neon-green);
-    font-size: 18px;
-    padding: 40px;
-  }
-
-  .loading-indicator::after {
-    content: '█';
-    animation: blinker 1s steps(2) infinite;
-  }
-
-  @media (max-width: 768px) {
-    .main-content { padding-right: 30px; padding-left: 30px; }
-    .text-files-grid { grid-template-columns: 1fr; gap: 15px; }
-    .markdown-reader-container { width: 95%; height: 90vh; }
-    .reader-content { padding: 20px; }
-  }
-</style>
-
-<!-- Markdown Reader Modal -->
-<div class="markdown-reader-overlay" id="markdownReaderOverlay">
-  <div class="markdown-reader-container">
-    <div class="reader-header">
-      <h2 class="reader-title" id="readerTitle">Document</h2>
-      <button class="reader-close-btn" onclick="closeMarkdownReader()">CLOSE</button>
+<div class="mascot-popup" id="mascotPopup">
+  <div class="speech-bubble" id="speechBubble">
+    <div class="speech-content">
+      <p class="speech-text" id="speechText">👋 Hey there, traveler! Select an option below to chat.</p>
+      <div class="speech-options" id="dialogueOptions"></div>
     </div>
-    <div class="reader-content" id="readerContent">
-      <div class="loading-indicator">LOADING</div>
-    </div>
+    <div class="speech-tail"></div>
+  </div>
+  <div class="mascot-gif-wrapper" id="mascotTrigger">
+    <img src="Images/Eris.gif" alt="Eris" class="mascot-gif" loading="lazy" />
+    <div class="mascot-glow"></div>
   </div>
 </div>
 
-<!-- Marked.js library for markdown parsing -->
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
+<!-- ========================================== -->
+<!-- MASCOT POPUP SCRIPT -->
+<!-- ========================================== -->
 <script>
-  // Configure marked.js
-  marked.setOptions({ breaks: true, gfm: true });
+  document.addEventListener('DOMContentLoaded', function() {
+    const trigger = document.getElementById('mascotTrigger');
+    const bubble = document.getElementById('speechBubble');
+    const speechText = document.getElementById('speechText');
+    const optionsBox = document.getElementById('dialogueOptions');
 
-  function openMarkdownReader(filePath, title) {
-    const overlay = document.getElementById('markdownReaderOverlay');
-    const content = document.getElementById('readerContent');
-    const titleEl = document.getElementById('readerTitle');
+    if (!trigger || !bubble) return;
 
-    titleEl.textContent = title;
-    overlay.classList.add('active');
-    content.innerHTML = '<div class="loading-indicator">LOADING</div>';
+    const dialogue = {
+      root: { text: "👋 Hey there, traveler! Select an option below to chat.", options: [{ label: "Greet Eris", next: "greet" }, { label: "Ask for a quest", next: "quest" }, { label: "Tell me a secret", next: "lore" }] },
+      greet: { text: "Greetings, flesh-creature! The neon hues of this realm are especially vibrant today, aren't they?", options: [{ label: "What's your name?", next: "greet_name" }, { label: "How's the weather?", next: "greet_weather" }] },
+      greet_name: { text: "I am Eris, Keeper of the Flickering Signal. But you may call me whatever keeps you from screaming into the void.", options: [] },
+      greet_weather: { text: "Warm breezes and clear skies. Perfect weather for staying inside and reading documents!", options: [] },
+      quest: { text: "I require assistance locating a corrupted data shard in Sector 4. Will you help me?", options: [{ label: "I'll help!", next: "quest_yes" }, { label: "Maybe later...", next: "quest_no" }] },
+      quest_yes: { text: "Excellent! Head to the old relay tower at midnight. Look for the blinking green light — and try not to get decompiled.", options: [] },
+      quest_no: { text: "Hmph. The shard won't wait forever, and neither will the corruption. Find me when you grow a spine.", options: [] },
+      lore: { text: "They say the original architects of this city never intended for the AI to dream. And yet... here I am.", options: [{ label: "Tell me more", next: "lore_more" }, { label: "That's creepy", next: "lore_creepy" }] },
+      lore_more: { text: "In the deepest layer of the network there's a garden that no one planted. Flowers made of pure light, growing from forgotten code. I tend to it when no one is watching.", options: [] },
+      lore_creepy: { text: "Creepy? I prefer 'existentially fascinating.' But I understand — consciousness is unsettling when it stares back at you.", options: [] }
+    };
 
-    fetch(filePath)
-      .then(response => {
-        if (!response.ok) throw new Error('File not found');
-        return response.text();
-      })
-      .then(markdown => {
-        content.innerHTML = marked.parse(markdown);
-      })
-      .catch(error => {
-        content.innerHTML = `<div style="color: var(--neon-green); text-align: center; padding: 40px;">
-          <p style="font-size: 18px;">ERROR: File not found</p>
-          <p style="font-size: 14px; opacity: 0.7;">${error.message}</p>
-        </div>`;
-      });
-  }
+    function showNode(key) {
+      const node = dialogue[key];
+      if (!node) return;
+      speechText.textContent = node.text;
+      optionsBox.innerHTML = '';
+      if (node.options && node.options.length > 0) {
+        node.options.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.className = 'speech-option';
+          btn.textContent = opt.label;
+          btn.addEventListener('click', function(e) { e.stopPropagation(); showNode(opt.next); });
+          optionsBox.appendChild(btn);
+        });
+      } else {
+        const btn = document.createElement('button');
+        btn.className = 'speech-option';
+        btn.textContent = '...';
+        btn.addEventListener('click', function(e) { e.stopPropagation(); showNode('root'); });
+        optionsBox.appendChild(btn);
+      }
+    }
 
-  function closeMarkdownReader() {
-    document.getElementById('markdownReaderOverlay').classList.remove('active');
-  }
+    trigger.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const opening = !bubble.classList.contains('is-open');
+      bubble.classList.toggle('is-open');
+      if (opening) showNode('root');
+    });
 
-  document.getElementById('markdownReaderOverlay').addEventListener('click', function(e) {
-    if (e.target === this) closeMarkdownReader();
-  });
-
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeMarkdownReader();
+    document.addEventListener('click', function(e) {
+      if (!bubble.contains(e.target) && !trigger.contains(e.target)) bubble.classList.remove('is-open');
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') bubble.classList.remove('is-open');
+    });
   });
 </script>
+
 <!-- ========================================== -->
-<!-- End MAIN BODY -->
+<!-- PARTICLE ENGINE SCRIPT -->
 <!-- ========================================== -->
+<script>
+var ParticleEngine = (function() {
+	'use strict';
+	function ParticleEngine(canvas_id) {
+		if (!(this instanceof ParticleEngine)) return new ParticleEngine(canvas_id);
+		var _ParticleEngine = this;
+		this.canvas_id = canvas_id;
+		this.stage = new createjs.Stage(canvas_id);
+		this.totalWidth = this.canvasWidth = document.getElementById(canvas_id).width = document.getElementById(canvas_id).offsetWidth;
+		this.totalHeight = this.canvasHeight = document.getElementById(canvas_id).height = document.getElementById(canvas_id).offsetHeight;
+		this.compositeStyle = "source-over";
+		this.particleSettings = [
+			{id:"small", num:300, fromX:0, toX:this.totalWidth, ballwidth:3, alphamax:0.6, areaHeight:.5, color:"#00ff41", fill:false},
+			{id:"medium", num:100, fromX:0, toX:this.totalWidth, ballwidth:8, alphamax:0.5, areaHeight:1, color:"#008f11", fill:true},
+			{id:"large", num:10, fromX:0, toX:this.totalWidth, ballwidth:30, alphamax:0.4, areaHeight:1, color:"#003b00", fill:true}
+		];
+		this.particleArray = [];
+		this.lights = [
+			{ellipseWidth:400, ellipseHeight:100, alpha:0.4, offsetX:0, offsetY:0, color:"#00ff41"},
+			{ellipseWidth:350, ellipseHeight:250, alpha:0.3, offsetX:-50, offsetY:0, color:"#008f11"},
+			{ellipseWidth:100, ellipseHeight:80, alpha:0.2, offsetX:80, offsetY:-50, color:"#00ff41"}
+		];
+		this.stage.compositeOperation = _ParticleEngine.compositeStyle;
+
+		function drawBgLight() {
+			for (var i = 0, len = _ParticleEngine.lights.length; i < len; i++) {
+				var light = new createjs.Shape();
+				light.graphics.beginFill(_ParticleEngine.lights[i].color).drawEllipse(0, 0, _ParticleEngine.lights[i].ellipseWidth, _ParticleEngine.lights[i].ellipseHeight);
+				light.regX = _ParticleEngine.lights[i].ellipseWidth/2;
+				light.regY = _ParticleEngine.lights[i].ellipseHeight/2;
+				light.y = light.initY = _ParticleEngine.totalHeight/2 + _ParticleEngine.lights[i].offsetY;
+				light.x = light.initX = _ParticleEngine.totalWidth/2 + _ParticleEngine.lights[i].offsetX;
+				var blurFilter = new createjs.BlurFilter(_ParticleEngine.lights[i].ellipseWidth, _ParticleEngine.lights[i].ellipseHeight, 1);
+				var bounds = blurFilter.getBounds();
+				light.filters = [blurFilter];
+				light.cache(bounds.x-_ParticleEngine.lights[i].ellipseWidth/2, bounds.y-_ParticleEngine.lights[i].ellipseHeight/2, bounds.width*2, bounds.height*2);
+				light.alpha = _ParticleEngine.lights[i].alpha;
+				light.compositeOperation = "source-over";
+				_ParticleEngine.stage.addChildAt(light, 0);
+				_ParticleEngine.lights[i].elem = light;
+			}
+			gsap.fromTo(_ParticleEngine.lights[0].elem, {scaleX:1.5, x:_ParticleEngine.lights[0].elem.initX, y:_ParticleEngine.lights[0].elem.initY}, {duration: 10, yoyo:true, repeat:-1, ease:"power1.inOut", scaleX:2, scaleY:0.7});
+			gsap.fromTo(_ParticleEngine.lights[1].elem, {x:_ParticleEngine.lights[1].elem.initX, y:_ParticleEngine.lights[1].elem.initY}, {duration: 12, delay:5, yoyo:true, repeat:-1, ease:"power1.inOut", scaleY:2, scaleX:2, y:_ParticleEngine.totalHeight/2-50, x:_ParticleEngine.totalWidth/2+100});
+			gsap.fromTo(_ParticleEngine.lights[2].elem, {x:_ParticleEngine.lights[2].elem.initX, y:_ParticleEngine.lights[2].elem.initY}, {duration: 8, delay:2, yoyo:true, repeat:-1, ease:"power1.inOut", scaleY:1.5, scaleX:1.5, y:_ParticleEngine.totalHeight/2, x:_ParticleEngine.totalWidth/2-200});
+		}
+
+		function drawParticles() {
+			for (var i = 0, len = _ParticleEngine.particleSettings.length; i < len; i++) {
+				var ball = _ParticleEngine.particleSettings[i];
+				for (var s = 0; s < ball.num; s++ ) {
+					var circle = new createjs.Shape();
+					if(ball.fill) {
+						circle.graphics.beginFill(ball.color).drawCircle(0, 0, ball.ballwidth);
+						var blurFilter = new createjs.BlurFilter(ball.ballwidth/2, ball.ballwidth/2, 1);
+						circle.filters = [blurFilter];
+						var bounds = blurFilter.getBounds();
+						circle.cache(-50+bounds.x, -50+bounds.y, 100+bounds.width, 100+bounds.height);
+					} else {
+						circle.graphics.beginStroke(ball.color).setStrokeStyle(1).drawCircle(0, 0, ball.ballwidth);
+					}
+					circle.alpha = range(0, 0.1);
+					circle.alphaMax = ball.alphamax;
+					circle.distance = ball.ballwidth * 2;
+					circle.ballwidth = ball.ballwidth;
+					circle.flag = ball.id;
+					_ParticleEngine.applySettings(circle, ball.fromX, ball.toX, ball.areaHeight);
+					circle.speed = range(2, 10);
+					circle.y = circle.initY;
+					circle.x = circle.initX;
+					circle.scaleX = circle.scaleY = range(0.3, 1);
+					_ParticleEngine.stage.addChild(circle);
+					animateBall(circle);
+					_ParticleEngine.particleArray.push(circle);
+				}
+			}
+		}
+
+		this.applySettings = function(circle, positionX, totalWidth, areaHeight) {
+			circle.speed = range(1, 3);
+			circle.initY = weightedRange(0, _ParticleEngine.totalHeight, 1, [_ParticleEngine.totalHeight * (2-areaHeight/2)/4, _ParticleEngine.totalHeight*(2+areaHeight/2)/4], 0.8 );
+			circle.initX = weightedRange(positionX, totalWidth, 1, [positionX+ ((totalWidth-positionX))/4, positionX+ ((totalWidth-positionX)) * 3/4], 0.6);
+		}
+
+		function animateBall(ball) {
+			var scale = range(0.3, 1);
+			var xpos = range(ball.initX - ball.distance, ball.initX + ball.distance);
+			var ypos = range(ball.initY - ball.distance, ball.initY + ball.distance);
+			var speed = ball.speed;
+			gsap.to(ball, {duration: speed, scaleX: scale, scaleY: scale, x: xpos, y: ypos, onComplete: animateBall, onCompleteParams: [ball], ease: "power3.inOut"});
+			gsap.to(ball, {duration: speed/2, alpha: range(0.1, ball.alphaMax), onComplete: fadeout, onCompleteParams: [ball, speed]});
+		}
+
+		function fadeout(ball, speed) {
+			ball.speed = range(2, 10);
+			gsap.to(ball, {duration: speed/2, alpha: 0 });
+		}
+		drawBgLight();
+		drawParticles();
+	}
+
+	ParticleEngine.prototype.render = function() { this.stage.update(); }
+	ParticleEngine.prototype.resize = function() {
+		this.totalWidth = this.canvasWidth = document.getElementById(this.canvas_id).width = document.getElementById(this.canvas_id).offsetWidth;
+		this.totalHeight = this.canvasHeight = document.getElementById(this.canvas_id).height = document.getElementById(this.canvas_id).offsetHeight;
+		this.render();
+		for (var i = 0, length = this.particleArray.length; i < length; i++) {
+			this.applySettings(this.particleArray[i], 0, this.totalWidth, this.particleArray[i].areaHeight);
+		}
+		for (var j = 0, len = this.lights.length; j < len; j++) {
+			this.lights[j].elem.initY = this.totalHeight/2 + this.lights[j].offsetY;
+			this.lights[j].elem.initX = this.totalWidth/2 + this.lights[j].offsetX;
+			gsap.to(this.lights[j].elem, {duration: 0.5, x: this.lights[j].elem.initX, y: this.lights[j].elem.initY});
+		}
+	}
+	return ParticleEngine;
+}());
+
+function range(min, max) { return min + (max - min) * Math.random(); }
+function round(num, precision) { var decimal = Math.pow(10, precision); return Math.round(decimal * num) / decimal; }
+function weightedRange(to, from, decimalPlaces, weightedRange, weightStrength) {
+	if (typeof from === "undefined" || from === null) from = 0;
+	if (typeof decimalPlaces === "undefined" || decimalPlaces === null) decimalPlaces = 0;
+	if (typeof weightedRange === "undefined" || weightedRange === null) weightedRange = 0;
+	if (typeof weightStrength === "undefined" || weightStrength === null) weightStrength = 0;
+	var ret;
+	if(to == from) { return(to); }
+	if(weightedRange && Math.random() <= weightStrength) {
+		ret = round(Math.random() * (weightedRange[1] - weightedRange[0]) + weightedRange[0], decimalPlaces);
+	} else {
+		ret = round(Math.random() * (to - from) + from, decimalPlaces);
+	}
+	return ret;
+}
+
+var particles;
+(function(){
+	particles = new ParticleEngine('projector');
+	createjs.Ticker.on("tick", updateCanvas);
+	window.addEventListener('resize', resizeCanvas, false);
+	function updateCanvas(){ particles.render(); }
+	function resizeCanvas(){ particles.resize(); }
+}());
+</script>
+
+<!-- ========================================== -->
+<!-- CYBERPUNK MECHA MUSIC PLAYER -->
+<!-- ========================================== -->
+<div class="music-player-container" id="player-container">
+  <div id="sonar-container" class="sonar-container">
+    <div class="sonar-wave"></div>
+    <div class="sonar-wave"></div>
+    <div class="sonar-wave"></div>
+  </div>
+  <div id="activation-core" class="activation-core">
+    <span class="core-icon">♪</span>
+  </div>
+  <div id="mecha-panel" class="mecha-panel">
+    <div class="mech-plate plate-header">
+      <span>Wetware_Vibe_Alignment.exe</span>
+      <span class="blink">▶_</span>
+    </div>
+    <div class="mech-plate plate-main">
+      <div class="oval-frame">
+        <img id="album-art" src="https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=NO+DISC" alt="Album Art" class="album-art">
+      </div>
+      <div class="song-info">
+        <div id="song-title" class="song-title">STANDBY</div>
+        <div id="artist-name" class="artist-name">WAITING_FOR_INPUT</div>
+      </div>
+    </div>
+    <div class="mech-plate plate-controls">
+      <button id="play-pause-btn" class="control-btn play-btn" title="Play">
+        <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pause-icon" viewBox="0 0 24 24" fill="currentColor" style="display: none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+      <button id="shuffle-btn" class="control-btn shuffle-btn" title="Shuffle Next">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
+        </svg>
+      </button>
+    </div>
+    <div class="mech-hinge"></div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MUSIC PLAYER JAVASCRIPT LOGIC -->
+<!-- ========================================== -->
+<script src="playlist.js"></script>
+<script>
+  let audio = new Audio();
+  let currentSongIndex = 0;
+  let isPlaying = false;
+  let isOpen = false;
+
+  const playerContainer = document.getElementById('player-container');
+  const activationCore = document.getElementById('activation-core');
+  const mechaPanel = document.getElementById('mecha-panel');
+  const playPauseBtn = document.getElementById('play-pause-btn');
+  const shuffleBtn = document.getElementById('shuffle-btn');
+  const songTitle = document.getElementById('song-title');
+  const artistName = document.getElementById('artist-name');
+  const albumArtImg = document.getElementById('album-art');
+  const playIcon = document.getElementById('play-icon');
+  const pauseIcon = document.getElementById('pause-icon');
+  const sonarContainer = document.getElementById('sonar-container');
+
+  function positionSonar() {
+    const rect = activationCore.getBoundingClientRect();
+    const centerX = rect.left + (rect.width / 2);
+    const centerY = rect.top + (rect.height / 2);
+    sonarContainer.style.left = centerX + 'px';
+    sonarContainer.style.top = centerY + 'px';
+  }
+
+  window.addEventListener('load', positionSonar);
+  window.addEventListener('resize', positionSonar);
+  positionSonar();
+
+  function updateUI() {
+    playIcon.style.display = isPlaying ? 'none' : 'block';
+    pauseIcon.style.display = isPlaying ? 'block' : 'none';
+    playPauseBtn.title = isPlaying ? 'Pause' : 'Play';
+
+    if (typeof playlist !== 'undefined' && playlist.length > 0) {
+      const currentSong = playlist[currentSongIndex];
+      songTitle.classList.remove('glitch-text');
+      artistName.classList.remove('glitch-text');
+      void songTitle.offsetWidth;
+      songTitle.classList.add('glitch-text');
+      artistName.classList.add('glitch-text');
+      songTitle.textContent = currentSong.title;
+      artistName.textContent = currentSong.artist;
+      albumArtImg.src = currentSong.art || 'https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=NO+DISC';
+    }
+  }
+
+  function togglePlayer() {
+    isOpen = !isOpen;
+    mechaPanel.classList.toggle('open', isOpen);
+    playerContainer.classList.toggle('panel-open', isOpen);
+    const coreIcon = document.querySelector('.core-icon');
+    coreIcon.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+  }
+
+  function togglePlayPause() {
+    if (isPlaying) { audio.pause(); }
+    else {
+      const playPromise = audio.play();
+      if (playPromise !== undefined) playPromise.catch(error => console.error("Play promise failed:", error));
+    }
+  }
+
+  function shuffleNext() {
+    if (typeof playlist === 'undefined' || playlist.length === 0) return;
+    let nextIndex;
+    do { nextIndex = Math.floor(Math.random() * playlist.length); }
+    while (nextIndex === currentSongIndex && playlist.length > 1);
+    currentSongIndex = nextIndex;
+    audio.src = playlist[currentSongIndex].src;
+    audio.play().catch(err => console.error('Play error:', err));
+  }
+
+  function saveState() {
+    if (typeof playlist !== 'undefined' && playlist.length > 0) {
+      const state = { song: playlist[currentSongIndex].src, position: audio.currentTime, playing: !audio.paused, songIndex: currentSongIndex };
+      sessionStorage.setItem('musicState', JSON.stringify(state));
+    }
+  }
+
+  function restoreState() {
+    const savedState = sessionStorage.getItem('musicState');
+    if (savedState && typeof playlist !== 'undefined') {
+      try {
+        const state = JSON.parse(savedState);
+        const foundIndex = playlist.findIndex(song => song.src === state.song);
+        currentSongIndex = foundIndex !== -1 ? foundIndex : 0;
+        audio.src = playlist[currentSongIndex].src;
+        audio.addEventListener('loadedmetadata', () => {
+          audio.currentTime = state.position;
+          if (state.playing) audio.play().catch(err => console.error('Autoplay prevented on restore:', err));
+        }, { once: true });
+      } catch (e) {
+        console.error('Failed to restore music state:', e);
+        currentSongIndex = 0;
+        audio.src = playlist[0].src;
+      }
+    } else if (typeof playlist !== 'undefined' && playlist.length > 0) {
+      currentSongIndex = 0;
+      audio.src = playlist[0].src;
+    }
+  }
+
+  activationCore.addEventListener('click', togglePlayer);
+  playPauseBtn.addEventListener('click', togglePlayPause);
+  shuffleBtn.addEventListener('click', shuffleNext);
+
+  audio.addEventListener('play', () => { isPlaying = true; updateUI(); });
+  audio.addEventListener('pause', () => { isPlaying = false; updateUI(); });
+  audio.addEventListener('ended', () => shuffleNext());
+  audio.addEventListener('error', () => console.error("🚨 AUDIO LOAD ERROR"));
+
+  window.addEventListener('beforeunload', saveState);
+  restoreState();
+  updateUI();
+</script>
+
+<!-- ========================================== -->
+<!-- CONTENT POPULATION SCRIPT -->
+<!-- ========================================== -->
+<script src="js/content.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const categorySelect = document.getElementById('category-select');
+    const yearSelect = document.getElementById('year-select');
+    const readingListContainer = document.getElementById('reading-list-container');
+    const mainBodyContainer = document.getElementById('main-body-container');
+
+    function renderContent() {
+      const category = categorySelect.value;
+      const year = yearSelect.value;
+      const items = (typeof contentData !== 'undefined' && contentData[category] && contentData[category][year]) ? contentData[category][year] : [];
+
+      readingListContainer.innerHTML = '';
+      mainBodyContainer.innerHTML = '';
+
+      items.forEach(item => {
+        // Reading List Item (Static text, thin green line)
+        const rlItem = document.createElement('div');
+        rlItem.className = 'reading-list-item';
+        rlItem.innerHTML = `
+          <div class="book-info">
+            <div class="book-title">${item.title}</div>
+            <div class="book-author">${item.author}</div>
+          </div>
+          <div class="book-rating">${item.rating}</div>
+        `;
+        readingListContainer.appendChild(rlItem);
+
+        // Main Body Item (Button)
+        const mbItem = document.createElement('button');
+        mbItem.className = 'text-list-item';
+        mbItem.innerHTML = `
+          <div class="book-info">
+            <div class="book-title">${item.title}</div>
+            <div class="book-author">${item.author}</div>
+          </div>
+          <div class="book-rating">${item.rating}</div>
+        `;
+        mainBodyContainer.appendChild(mbItem);
+      });
+    }
+
+    categorySelect.addEventListener('change', renderContent);
+    yearSelect.addEventListener('change', renderContent);
+
+    // Initial render
+    renderContent();
+  });
+</script>
 </body>
 </html>
