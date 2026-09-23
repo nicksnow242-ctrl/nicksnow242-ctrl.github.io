@@ -1267,9 +1267,10 @@ var particles;
     gap: 15px;
     margin-bottom: 30px;
     padding-bottom: 15px;
+    padding-left: 20%;
     border-bottom: 1px solid rgba(0, 255, 65, 0.3);
-    max-width: 70%;
-    margin-left: auto;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .back-btn,
@@ -1310,8 +1311,9 @@ var particles;
     font-size: 14px;
     color: var(--text-dim);
     margin-bottom: 30px;
-    max-width: 70%;
-    margin-left: auto;
+    padding-left: 20%;
+    width: 100%;
+    box-sizing: border-box;
   }
   .reader-meta span { display: flex; align-items: center; gap: 6px; }
 
@@ -1380,6 +1382,7 @@ var particles;
 
   .reader-view:fullscreen .reader-header,
   .reader-view:-webkit-full-screen .reader-header {
+    padding-left: 0;
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
@@ -1388,6 +1391,7 @@ var particles;
 
   .reader-view:fullscreen .reader-meta,
   .reader-view:-webkit-full-screen .reader-meta {
+    padding-left: 0;
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
