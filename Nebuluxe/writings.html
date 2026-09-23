@@ -1324,8 +1324,9 @@ var particles;
     font-size: 16px;
     line-height: 1.8;
     color: #d0ffd9;
-    max-width: 70%;
-    margin-left: auto;
+    width: calc(100% - 20%);
+    margin-left: 20%;
+    box-sizing: border-box;
   }
   .reader-content p { margin-bottom: 20px; text-align: justify; }
 
@@ -1370,7 +1371,9 @@ var particles;
   .reader-view:fullscreen .reader-content,
   .reader-view:-webkit-full-screen .reader-content {
     max-width: 800px;
+    width: 100%;
     margin: 0 auto;
+    padding-left: 0;
     padding-right: 20px;
     font-size: 18px;
   }
