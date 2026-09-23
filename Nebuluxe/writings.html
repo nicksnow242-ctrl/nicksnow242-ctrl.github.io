@@ -1246,90 +1246,172 @@ var particles;
 <!-- ========================================== -->
 <!-- Start Main Body -->
 <!-- ========================================== -->
+<!-- ========================================== -->
+<!-- MAIN BODY: READER STYLES & LOGIC           -->
+<!-- ========================================== -->
+<style>
+  /* ========================================== */
+  /* READER VIEW STYLES                         */
+  /* ========================================== */
+  .reader-view {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+    animation: fadeIn 0.4s ease-out;
+  }
+  .reader-view.active { display: flex; }
+
+  .reader-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+  }
+
+  .back-btn {
+    background: transparent;
+    border: 1px solid var(--neon-green);
+    color: var(--neon-green);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .back-btn:hover {
+    background: var(--neon-green);
+    color: var(--deep-green);
+    box-shadow: 0 0 15px var(--neon-glow-green);
+  }
+
+  .reader-title {
+    font-size: 28px;
+    color: var(--neon-green);
+    text-shadow: 0 0 10px var(--neon-glow-green);
+    margin: 0;
+    flex: 1;
+  }
+
+  .reader-meta {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 30px;
+  }
+  .reader-meta span { display: flex; align-items: center; gap: 6px; }
+
+  .reader-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 15px;
+    font-size: 16px;
+    line-height: 1.8;
+    color: #d0ffd9;
+  }
+  .reader-content p { margin-bottom: 20px; text-align: justify; }
+
+  .reader-content::-webkit-scrollbar { width: 6px; }
+  .reader-content::-webkit-scrollbar-track { background: var(--deep-green); }
+  .reader-content::-webkit-scrollbar-thumb { background: var(--mid-green); border-radius: 3px; }
+  .reader-content::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Hide the main grid when the reader is active */
+  .document-area.grid-hidden .text-list-container { display: none; }
+</style>
+
+<!-- Load the writings data file -->
+<script src="js/writings.js"></script>
+
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('main-body-container');
-    if (!container) return;
+    const documentArea = document.querySelector('.document-area');
+    if (!container || !documentArea) return;
 
-    // Fallback list: Update this with your actual .md filenames if your server
-    // does not support directory listing (autoindex).
-    const fallbackFiles = [
-      'example-document.md',
-      'another-writing.md',
-      'notes.md'
-    ];
+    // 1. Render the list of buttons
+    function renderButtons() {
+      if (typeof WRITINGS_DATA === 'undefined' || WRITINGS_DATA.length === 0) {
+        container.innerHTML = `<div style="color: var(--neon-green); padding: 20px; text-align: center;">⚠️ writings.js not found or empty.</div>`;
+        return;
+      }
 
-    function formatTitle(filename) {
-      return filename
-        .replace(/\.md$/i, '')
-        .replace(/[-_]/g, ' ')
-        .replace(/\b\w/g, char => char.toUpperCase());
-    }
-
-    function renderButtons(files) {
-      container.innerHTML = ''; // Clear any existing content
-
-      files.forEach(file => {
-        const title = formatTitle(file);
-
+      container.innerHTML = '';
+      WRITINGS_DATA.forEach(writing => {
         const btn = document.createElement('button');
         btn.className = 'text-list-item';
-        btn.setAttribute('data-file', file);
+        btn.setAttribute('data-id', writing.id);
         btn.innerHTML = `
           <div class="book-info">
-            <div class="book-title">${title}</div>
-            <div class="book-author">Markdown Document</div>
+            <div class="book-title">${writing.title}</div>
+            <div class="book-author">${writing.author}</div>
           </div>
-          <div class="book-rating">Read →</div>
+          <div class="book-rating">${writing.rating}</div>
         `;
 
-        btn.addEventListener('click', () => {
-          // Option 1: Navigate directly to the file
-          window.location.href = `writingmd/${file}`;
-
-          // Option 2: If you want to fetch and display inline via a modal or parser,
-          // replace the line above with something like:
-          // fetch(`writingmd/${file}`).then(res => res.text()).then(text => { console.log(text); });
-        });
-
+        btn.addEventListener('click', () => openReader(writing));
         container.appendChild(btn);
       });
     }
 
-    async function loadWritingFiles() {
-      try {
-        // Attempt to fetch directory listing (works if server has autoindex enabled, e.g., Python http.server, Apache, Nginx)
-        const response = await fetch('writingmd/');
-        if (!response.ok) throw new Error('Directory listing not available');
+    // 2. Open the Reader View
+    function openReader(writing) {
+      // Create reader HTML if it doesn't exist yet
+      if (!document.getElementById('reader-view')) {
+        const reader = document.createElement('div');
+        reader.id = 'reader-view';
+        reader.className = 'reader-view';
+        reader.innerHTML = `
+          <div class="reader-header">
+            <button class="back-btn" id="back-to-list">← Back</button>
+            <h2 class="reader-title" id="reader-title"></h2>
+          </div>
+          <div class="reader-meta">
+            <span>✍️ <strong id="reader-author"></strong></span>
+            <span>⭐ <strong id="reader-rating"></strong></span>
+          </div>
+          <div class="reader-content" id="reader-content"></div>
+        `;
+        documentArea.appendChild(reader);
 
-        const text = await response.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(text, 'text/html');
-
-        // Extract .md files from common autoindex HTML formats
-        const links = Array.from(doc.querySelectorAll('a'));
-        const mdFiles = links
-          .map(a => a.getAttribute('href'))
-          .filter(href => href && href.endsWith('.md') && !href.startsWith('?') && !href.includes('/'))
-          .map(href => decodeURIComponent(href));
-
-        if (mdFiles.length === 0) {
-          throw new Error('No .md files found in directory listing');
-        }
-
-        renderButtons(mdFiles);
-      } catch (error) {
-        console.warn('Could not auto-fetch writingmd directory:', error.message);
-        console.info('Using fallback file list. Please update the fallbackFiles array in this script with your actual .md filenames, or enable server directory listing.');
-        renderButtons(fallbackFiles);
+        // Back button logic
+        document.getElementById('back-to-list').addEventListener('click', () => {
+          reader.classList.remove('active');
+          documentArea.classList.remove('grid-hidden');
+        });
       }
+
+      // Populate data
+      document.getElementById('reader-title').textContent = writing.title;
+      document.getElementById('reader-author').textContent = writing.author;
+      document.getElementById('reader-rating').textContent = writing.rating;
+      document.getElementById('reader-content').innerHTML = writing.content;
+
+      // Switch views
+      const readerView = document.getElementById('reader-view');
+      readerView.classList.add('active');
+      documentArea.classList.add('grid-hidden');
+
+      // Scroll to top of reader content
+      document.getElementById('reader-content').scrollTop = 0;
     }
 
-    loadWritingFiles();
+    // Initial render
+    renderButtons();
   });
 </script>
 <!-- ========================================== -->
-<!-- End Main Body -->
+<!-- End Main Body                              -->
 <!-- ========================================== -->
 </body>
 </html>
