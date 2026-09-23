@@ -1987,7 +1987,12 @@ class InfinitePortraitGallery {
                     resolve();
                 };
                 img.onerror = () => {
-                    img.src = `https://picsum.photos/id/${(i % 100) + 1000}/${this.maxDimension}/${this.maxDimension}`;
+                    // Cycle through Default1, Default2, Default3, Default4 based on the index
+                    const fallbackIndex = (i % 4) + 1;
+
+                    // Note: Change '.png' to '.jpg' if your default images are JPEGs
+                    img.src = `Images/Misc/Default${fallbackIndex}.png`;
+
                     img.onload = () => {
                         this.imageData.push({
                             img: img,
@@ -1998,7 +2003,12 @@ class InfinitePortraitGallery {
                         });
                         resolve();
                     };
-                    img.onerror = resolve;
+
+                    // If the local fallback also fails, resolve anyway to prevent the loader from hanging
+                    img.onerror = () => {
+                        console.warn(`Failed to load local fallback: Images/Misc/Default${fallbackIndex}.png`);
+                        resolve();
+                    };
                 };
             });
             loadPromises.push(promise);
