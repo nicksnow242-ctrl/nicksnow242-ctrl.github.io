@@ -1079,6 +1079,143 @@ html, body {
     if (e.key === 'Escape') closeMarkdownReader();
   });
 </script>
+<!-- ========================================== -->
+<!-- MAIN BODY SECTION (WRITINGS LIST) -->
+<!-- ========================================== -->
+<style>
+  /* Required CSS Variables for theming */
+  :root {
+    --deep-green: #001a00;
+    --neon-green: #00ff41;
+    --neon-glow-green: rgba(0, 255, 65, 0.5);
+    --text-dim: #a0ffb0;
+  }
 
+  /* Main Body Styles */
+  .document-area {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+    height: 100vh; /* Ensures it scrolls independently if used standalone */
+    box-sizing: border-box;
+    background: linear-gradient(0deg, #000a00 0%, var(--deep-green) 100%);
+  }
+
+  .text-list-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .text-list-item {
+    background: rgba(0, 255, 65, 0.03);
+    border: 1px solid rgba(0, 255, 65, 0.2);
+    border-radius: 4px;
+    color: var(--text-dim);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-family: 'Share Tech Mono', monospace;
+    text-align: left;
+    width: 100%;
+    padding: 16px;
+  }
+
+  .text-list-item:hover {
+    background: rgba(0, 255, 65, 0.1);
+    border-color: var(--neon-green);
+    color: var(--neon-green);
+    box-shadow: 0 0 12px var(--neon-glow-green);
+    transform: translateY(-2px);
+  }
+
+  .text-list-item .book-info { display: flex; flex-direction: column; }
+  .text-list-item .book-title { font-size: 16px; font-weight: bold; color: var(--neon-green); }
+  .text-list-item .book-author { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+  .text-list-item .book-rating { font-size: 14px; color: var(--neon-green); font-weight: bold; white-space: nowrap; }
+
+  @media (max-width: 768px) {
+    .text-list-container { grid-template-columns: 1fr; }
+  }
+</style>
+
+<main class="document-area">
+  <div class="text-list-container" id="main-body-container">
+    <!-- Populated dynamically by JavaScript -->
+  </div>
+</main>
+
+<script>
+  // Main Body Population Script
+  document.addEventListener('DOMContentLoaded', () => {
+    const mainBodyContainer = document.getElementById('main-body-container');
+
+    function renderMainBody() {
+      // Assumes contentData is loaded globally from js/content.js
+      // A fallback is provided here so the component works standalone for testing
+      const dataSource = (typeof contentData !== 'undefined') ? contentData : {
+        Reading: { 2026: [
+          { title: "The Silent Ocean", author: "A. N. Author", rating: "9/10" },
+          { title: "Neon Dreams", author: "Cyber Scribe", rating: "10/10" },
+          { title: "Echoes of Code", author: "Dev Null", rating: "8/10" }
+        ]},
+        Film: { 2026: [
+          { title: "Blade Runner 2099", author: "Dir. V. Villeneuve", rating: "10/10" }
+        ]},
+        Pod: { 2026: [
+          { title: "Tech Horizons Ep. 42", author: "Host: J. Doe", rating: "9/10" }
+        ]},
+        Articles: { 2026: [
+          { title: "The Future of AI", author: "Tech Monthly", rating: "9/10" }
+        ]}
+      };
+
+      // Default to Reading / 2026.
+      // Note: If you have dropdowns elsewhere on the page, you can grab their values here instead.
+      const category = 'Reading';
+      const year = '2026';
+
+      const items = (dataSource[category] && dataSource[category][year]) ? dataSource[category][year] : [];
+
+      mainBodyContainer.innerHTML = '';
+
+      if (items.length === 0) {
+        mainBodyContainer.innerHTML = '<div class="text-list-item"><div class="book-info"><div class="book-title">No entries available</div></div></div>';
+        return;
+      }
+
+      items.forEach(item => {
+        const mbItem = document.createElement('button');
+        mbItem.className = 'text-list-item';
+        mbItem.innerHTML = `
+          <div class="book-info">
+            <div class="book-title">${item.title}</div>
+            <div class="book-author">${item.author}</div>
+          </div>
+          <div class="book-rating">${item.rating}</div>
+        `;
+
+        // Placeholder click handler for future document opening logic
+        mbItem.addEventListener('click', () => {
+          console.log(`Opening document: ${item.title}`);
+        });
+
+        mainBodyContainer.appendChild(mbItem);
+      });
+    }
+
+    // Initial render
+    renderMainBody();
+  });
+</script>
+<!-- ========================================== -->
+<!-- END MAIN BODY SECTION -->
+<!-- ========================================== -->
 </body>
 </html>
