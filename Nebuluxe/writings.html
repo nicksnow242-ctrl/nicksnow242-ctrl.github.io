@@ -768,7 +768,7 @@ html, body {
   <!-- ========================================== -->
   <main class="document-area">
     <div class="text-list-container" id="main-body-container">
-      <!-- Populated dynamically by content.js -->
+      <!-- Populated dynamically by writings.js -->
     </div>
   </main>
 
@@ -1199,15 +1199,14 @@ var particles;
     const categorySelect = document.getElementById('category-select');
     const yearSelect = document.getElementById('year-select');
     const readingListContainer = document.getElementById('reading-list-container');
-    const mainBodyContainer = document.getElementById('main-body-container');
 
-    function renderContent() {
+    function renderReadingList() {
       const category = categorySelect.value;
       const year = yearSelect.value;
       const items = (typeof contentData !== 'undefined' && contentData[category] && contentData[category][year]) ? contentData[category][year] : [];
 
+      // ONLY update the reading list container, leaving the main body untouched
       readingListContainer.innerHTML = '';
-      mainBodyContainer.innerHTML = '';
 
       items.forEach(item => {
         // Reading List Item (Static text, thin green line)
@@ -1221,31 +1220,17 @@ var particles;
           <div class="book-rating">${item.rating}</div>
         `;
         readingListContainer.appendChild(rlItem);
-
-        // Main Body Item (Button)
-        const mbItem = document.createElement('button');
-        mbItem.className = 'text-list-item';
-        mbItem.innerHTML = `
-          <div class="book-info">
-            <div class="book-title">${item.title}</div>
-            <div class="book-author">${item.author}</div>
-          </div>
-          <div class="book-rating">${item.rating}</div>
-        `;
-        mainBodyContainer.appendChild(mbItem);
       });
     }
 
-    categorySelect.addEventListener('change', renderContent);
-    yearSelect.addEventListener('change', renderContent);
+    categorySelect.addEventListener('change', renderReadingList);
+    yearSelect.addEventListener('change', renderReadingList);
 
     // Initial render
-    renderContent();
+    renderReadingList();
   });
 </script>
-<!-- ========================================== -->
-<!-- Start Main Body -->
-<!-- ========================================== -->
+
 <!-- ========================================== -->
 <!-- MAIN BODY: READER STYLES & LOGIC           -->
 <!-- ========================================== -->
