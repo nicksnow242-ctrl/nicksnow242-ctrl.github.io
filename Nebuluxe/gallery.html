@@ -2496,460 +2496,463 @@ class InfinitePortraitGallery {
       END GALLERY SECTION
      ============================================================ -->
      <!-- ========================================== -->
-     <!-- FILTER TAB (Styles, HTML, and Script) -->
-     <!-- ========================================== -->
-     <style>
-       .filter-tab {
-         position: fixed;
-         top: 110px;
-         left: 0;
-         z-index: 1001;
-         background: rgba(255, 255, 255, 0.65);
-         backdrop-filter: blur(12px);
-         -webkit-backdrop-filter: blur(12px);
-         border-bottom: 1px solid rgba(180, 154, 93, 0.2);
-         border-right: 1px solid rgba(180, 154, 93, 0.2);
-         border-radius: 0 0 12px 0;
-         transition: width 0.4s cubic-bezier(0.25, 1, 0.3, 1),
-                     border-radius 0.4s cubic-bezier(0.25, 1, 0.3, 1),
-                     box-shadow 0.4s ease;
-         width: 130px;
-         max-height: calc(100vh - 110px);
-         overflow-y: auto;
-         overflow-x: hidden;
-         display: flex;
-         flex-direction: column;
-         box-shadow: 0 4px 12px rgba(180, 154, 93, 0.1);
-       }
+<!-- FILTER TAB (Styles, HTML, and Script) -->
+<!-- ========================================== -->
+<style>
+  .filter-tab {
+    position: fixed;
+    top: 110px;
+    left: 0;
+    z-index: 1001;
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(180, 154, 93, 0.2);
+    border-right: 1px solid rgba(180, 154, 93, 0.2);
+    border-radius: 0 0 12px 0;
+    transition: width 0.4s cubic-bezier(0.25, 1, 0.3, 1),
+                border-radius 0.4s cubic-bezier(0.25, 1, 0.3, 1),
+                box-shadow 0.4s ease;
+    width: 130px;
+    height: 50px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(180, 154, 93, 0.1);
+  }
 
-       .filter-tab.is-open {
-         width: 100%;
-         border-right: none;
-         border-radius: 0;
-         box-shadow: 0 10px 30px rgba(180, 154, 93, 0.15);
-       }
+  .filter-tab.is-open {
+    width: 100%;
+    height: 70px;
+    border-right: none;
+    border-radius: 0;
+    box-shadow: 0 10px 30px rgba(180, 154, 93, 0.15);
+  }
 
-       .filter-tab-toggle {
-         display: flex;
-         align-items: center;
-         justify-content: center;
-         gap: 8px;
-         width: 130px;
-         height: 50px;
-         flex-shrink: 0;
-         background: transparent;
-         border: none;
-         cursor: pointer;
-         outline: none;
-         transition: all 0.3s ease;
-       }
+  .filter-tab-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 130px;
+    height: 50px;
+    flex-shrink: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease;
+  }
 
-       /* Gold text with glow on hover */
-       .filter-tab-text {
-         color: #b49a5d;
-         font-family: 'Segoe UI', system-ui, sans-serif;
-         font-size: 16px;
-         font-weight: 600;
-         letter-spacing: 0.05em;
-         transition: text-shadow 0.3s ease, transform 0.3s ease;
-       }
+  /* Gold text with glow on hover */
+  .filter-tab-text {
+    color: #b49a5d;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    transition: text-shadow 0.3s ease, transform 0.3s ease;
+  }
 
-       .filter-tab-toggle:hover .filter-tab-text {
-         text-shadow: 0 0 8px rgba(180, 154, 93, 0.8), 0 0 15px rgba(180, 154, 93, 0.4);
-         transform: scale(1.05);
-       }
+  .filter-tab-toggle:hover .filter-tab-text {
+    text-shadow: 0 0 8px rgba(180, 154, 93, 0.8), 0 0 15px rgba(180, 154, 93, 0.4);
+    transform: scale(1.05);
+  }
 
-       .filter-tab-arrow {
-         display: flex;
-         align-items: center;
-         color: #b49a5d;
-         transition: transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
-       }
+  .filter-tab-arrow {
+    display: flex;
+    align-items: center;
+    color: #b49a5d;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
+  }
 
-       .filter-tab.is-open .filter-tab-arrow {
-         transform: rotate(90deg);
-       }
+  .filter-tab.is-open .filter-tab-arrow {
+    transform: rotate(90deg);
+  }
 
-       .filter-tab-content {
-         flex: 1;
-         padding: 16px 24px;
-         opacity: 0;
-         transform: translateX(10px);
-         transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
-         pointer-events: none;
-       }
+  .filter-tab-content {
+    flex: 1;
+    height: 100%;
+    padding: 0 24px;
+    opacity: 0;
+    transform: translateX(10px);
+    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+  }
 
-       .filter-tab.is-open .filter-tab-content {
-         opacity: 1;
-         transform: translateX(0);
-         pointer-events: auto;
-         transition-delay: 0.1s;
-       }
+  .filter-tab.is-open .filter-tab-content {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+    transition-delay: 0.1s;
+  }
 
-       /* Filter Layout */
-       .filter-layout {
-         display: flex;
-         flex-wrap: wrap;
-         gap: 20px;
-         align-items: flex-start;
-       }
+  /* Three-column layout for open state */
+  .filter-layout {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    width: 100%;
+  }
 
-       .filter-group {
-         display: flex;
-         flex-direction: column;
-         gap: 8px;
-       }
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+  }
 
-       .filter-label {
-         font-size: 11px;
-         color: #8A7355;
-         font-weight: 700;
-         text-transform: uppercase;
-         letter-spacing: 0.1em;
-       }
+  .filter-label {
+    font-size: 10px;
+    color: #8A7355;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
 
-       .filter-toggles {
-         display: flex;
-         flex-wrap: wrap;
-         gap: 8px;
-       }
+  .filter-toggles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
 
-       .filter-toggle {
-         padding: 6px 14px;
-         border: 1px solid rgba(180, 154, 93, 0.4);
-         border-radius: 20px;
-         background: rgba(255, 255, 255, 0.5);
-         color: #5C4A32;
-         font-family: 'Segoe UI', system-ui, sans-serif;
-         font-size: 13px;
-         font-weight: 500;
-         cursor: pointer;
-         transition: all 0.25s ease;
-         white-space: nowrap;
-       }
+  .filter-toggle {
+    padding: 5px 12px;
+    border: 1px solid rgba(180, 154, 93, 0.4);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.5);
+    color: #5C4A32;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+  }
 
-       .filter-toggle:hover {
-         background: rgba(180, 154, 93, 0.15);
-         border-color: rgba(180, 154, 93, 0.7);
-       }
+  .filter-toggle:hover {
+    background: rgba(180, 154, 93, 0.15);
+    border-color: rgba(180, 154, 93, 0.7);
+  }
 
-       .filter-toggle.active {
-         background: #b49a5d;
-         color: #FFFFFF;
-         border-color: #b49a5d;
-         box-shadow: 0 0 10px rgba(180, 154, 93, 0.4);
-       }
+  .filter-toggle.active {
+    background: #b49a5d;
+    color: #FFFFFF;
+    border-color: #b49a5d;
+    box-shadow: 0 0 10px rgba(180, 154, 93, 0.4);
+  }
 
-       .filter-select {
-         padding: 8px 14px;
-         border: 1px solid rgba(180, 154, 93, 0.4);
-         border-radius: 8px;
-         background: rgba(255, 255, 255, 0.8);
-         color: #5C4A32;
-         font-family: 'Segoe UI', system-ui, sans-serif;
-         font-size: 13px;
-         font-weight: 500;
-         cursor: pointer;
-         outline: none;
-         backdrop-filter: blur(4px);
-         transition: all 0.25s ease;
-         min-width: 160px;
-       }
+  .filter-select {
+    padding: 6px 12px;
+    border: 1px solid rgba(180, 154, 93, 0.4);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    color: #5C4A32;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+    backdrop-filter: blur(4px);
+    transition: all 0.25s ease;
+    min-width: 140px;
+  }
 
-       .filter-select:hover, .filter-select:focus {
-         border-color: #b49a5d;
-         box-shadow: 0 0 8px rgba(180, 154, 93, 0.3);
-       }
+  .filter-select:hover, .filter-select:focus {
+    border-color: #b49a5d;
+    box-shadow: 0 0 8px rgba(180, 154, 93, 0.3);
+  }
 
-       .filter-reset-btn {
-         margin-left: auto;
-         padding: 8px 16px;
-         border: 1px solid rgba(180, 154, 93, 0.4);
-         border-radius: 8px;
-         background: transparent;
-         color: #8A7355;
-         font-family: 'Segoe UI', system-ui, sans-serif;
-         font-size: 13px;
-         font-weight: 600;
-         cursor: pointer;
-         transition: all 0.25s ease;
-         align-self: flex-end;
-       }
+  .filter-reset-btn {
+    padding: 6px 14px;
+    border: 1px solid rgba(180, 154, 93, 0.4);
+    border-radius: 8px;
+    background: transparent;
+    color: #8A7355;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    margin-left: auto;
+  }
 
-       .filter-reset-btn:hover {
-         background: rgba(180, 154, 93, 0.1);
-         color: #5C4A32;
-         border-color: #b49a5d;
-       }
+  .filter-reset-btn:hover {
+    background: rgba(180, 154, 93, 0.1);
+    color: #5C4A32;
+    border-color: #b49a5d;
+  }
 
-       @media (max-width: 768px) {
-         .filter-tab { width: 110px; }
-         .filter-tab-toggle { width: 110px; }
-         .filter-tab-text { font-size: 14px; }
-         .filter-layout { flex-direction: column; gap: 16px; }
-         .filter-reset-btn { margin-left: 0; align-self: flex-start; }
-       }
-     </style>
+  @media (max-width: 768px) {
+    .filter-tab { width: 110px; }
+    .filter-tab-toggle { width: 110px; }
+    .filter-tab-text { font-size: 14px; }
+    .filter-tab.is-open { height: auto; min-height: 70px; }
+    .filter-layout { flex-direction: column; gap: 12px; align-items: flex-start; }
+    .filter-reset-btn { margin-left: 0; }
+  }
+</style>
 
-     <div class="filter-tab" id="filterTab">
-       <button class="filter-tab-toggle" id="filterTabToggle" aria-label="Toggle Filters" aria-expanded="false">
-         <span class="filter-tab-text">Filters</span>
-         <span class="filter-tab-arrow">
-           <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-             <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
-           </svg>
-         </span>
-       </button>
+<div class="filter-tab" id="filterTab">
+  <button class="filter-tab-toggle" id="filterTabToggle" aria-label="Toggle Filters" aria-expanded="false">
+    <span class="filter-tab-text">Filters</span>
+    <span class="filter-tab-arrow">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+      </svg>
+    </span>
+  </button>
 
-       <div class="filter-tab-content">
-         <div class="filter-layout">
+  <div class="filter-tab-content">
+    <div class="filter-layout">
 
-           <!-- Size Filters -->
-           <div class="filter-group">
-             <span class="filter-label">Size (Area)</span>
-             <div class="filter-toggles" id="sizeToggles">
-               <button class="filter-toggle" data-filter="size" data-value="small">Small (&lt;70)</button>
-               <button class="filter-toggle" data-filter="size" data-value="medium">Medium (70-220)</button>
-               <button class="filter-toggle" data-filter="size" data-value="large">Large (220-400)</button>
-               <button class="filter-toggle" data-filter="size" data-value="very-large">Very Large (&gt;400)</button>
-             </div each="sizeToggles">
-           </div>
+      <!-- Column 1: Size Filters -->
+      <div class="filter-group">
+        <span class="filter-label">Size (Area)</span>
+        <div class="filter-toggles" id="sizeToggles">
+          <button class="filter-toggle" data-filter="size" data-value="small">Small (&lt;70)</button>
+          <button class="filter-toggle" data-filter="size" data-value="medium">Medium (70-220)</button>
+          <button class="filter-toggle" data-filter="size" data-value="large">Large (220-400)</button>
+          <button class="filter-toggle" data-filter="size" data-value="very-large">Very Large (&gt;400)</button>
+        </div>
+      </div>
 
-           <!-- Status Filters -->
-           <div class="filter-group">
-             <span class="filter-label">Status</span>
-             <div class="filter-toggles" id="statusToggles">
-               <button class="filter-toggle" data-filter="status" data-value="featured">Featured</button>
-               <button class="filter-toggle" data-filter="status" data-value="onsale">On Sale</button>
-               <button class="filter-toggle" data-filter="status" data-value="recent">Recent</button>
-               <button class="filter-toggle" data-filter="status" data-value="onhand">On Hand</button>
-               <button class="filter-toggle" data-filter="status" data-value="available">Available</button>
-             </div>
-           </div>
+      <!-- Column 2: Status Filters -->
+      <div class="filter-group">
+        <span class="filter-label">Status</span>
+        <div class="filter-toggles" id="statusToggles">
+          <button class="filter-toggle" data-filter="status" data-value="featured">Featured</button>
+          <button class="filter-toggle" data-filter="status" data-value="onsale">On Sale</button>
+          <button class="filter-toggle" data-filter="status" data-value="recent">Recent</button>
+          <button class="filter-toggle" data-filter="status" data-value="onhand">On Hand</button>
+          <button class="filter-toggle" data-filter="status" data-value="available">Available</button>
+        </div>
+      </div>
 
-           <!-- Collection Dropdown -->
-           <div class="filter-group">
-             <span class="filter-label">Collection</span>
-             <select class="filter-select" id="collectionSelect">
-               <option value="All">All Collections</option>
-               <!-- Populated dynamically via JS -->
-             </select>
-           </div>
+      <!-- Column 3: Collection + Reset -->
+      <div class="filter-group">
+        <span class="filter-label">Collection</span>
+        <select class="filter-select" id="collectionSelect">
+          <option value="All">All Collections</option>
+        </select>
+        <button class="filter-reset-btn" id="resetFiltersBtn">Reset All</button>
+      </div>
 
-           <!-- Reset Button -->
-           <button class="filter-reset-btn" id="resetFiltersBtn">Reset Filters</button>
+    </div>
+  </div>
+</div>
 
-         </div>
-       </div>
-     </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const filterTab = document.getElementById('filterTab');
+  const filterTabToggle = document.getElementById('filterTabToggle');
+  const collectionSelect = document.getElementById('collectionSelect');
+  const resetBtn = document.getElementById('resetFiltersBtn');
 
-     <script>
-     document.addEventListener('DOMContentLoaded', function() {
-       const filterTab = document.getElementById('filterTab');
-       const filterTabToggle = document.getElementById('filterTabToggle');
-       const collectionSelect = document.getElementById('collectionSelect');
-       const resetBtn = document.getElementById('resetFiltersBtn');
+  // State management
+  const filterState = {
+    sizes: new Set(),
+    statuses: new Set(),
+    collection: 'All'
+  };
 
-       // State management
-       const filterState = {
-         sizes: new Set(),
-         statuses: new Set(),
-         collection: 'All'
-       };
+  // 1. Toggle Tab Open/Close
+  if (filterTab && filterTabToggle) {
+    filterTabToggle.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const isOpen = filterTab.classList.toggle('is-open');
+      filterTabToggle.setAttribute('aria-expanded', isOpen);
+    });
 
-       // 1. Toggle Tab Open/Close
-       if (filterTab && filterTabToggle) {
-         filterTabToggle.addEventListener('click', function() {
-           const isOpen = filterTab.classList.toggle('is-open');
-           filterTabToggle.setAttribute('aria-expanded', isOpen);
-         });
-       }
+    // Close on outside click
+    document.addEventListener('click', function(e) {
+      if (!filterTab.contains(e.target)) {
+        filterTab.classList.remove('is-open');
+        filterTabToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
 
-       // 2. Populate Collection Dropdown dynamically from window.thumbnails
-       function populateCollections() {
-         // Wait a tick to ensure thumbnail.js has loaded
-         setTimeout(() => {
-           if (!window.thumbnails || !Array.isArray(window.thumbnails)) return;
+  // 2. Populate Collection Dropdown dynamically from window.thumbnails
+  function populateCollections() {
+    setTimeout(() => {
+      if (!window.thumbnails || !Array.isArray(window.thumbnails)) return;
 
-           const uniqueTypes = new Set();
-           window.thumbnails.forEach(item => {
-             if (item.type) uniqueTypes.add(item.type);
-           });
+      const uniqueTypes = new Set();
+      window.thumbnails.forEach(item => {
+        if (item.type) uniqueTypes.add(item.type);
+      });
 
-           uniqueTypes.forEach(type => {
-             const option = document.createElement('option');
-             option.value = type;
-             option.textContent = type;
-             collectionSelect.appendChild(option);
-           });
-         }, 500);
-       }
-       populateCollections();
+      uniqueTypes.forEach(type => {
+        const option = document.createElement('option');
+        option.value = type;
+        option.textContent = type;
+        collectionSelect.appendChild(option);
+      });
+    }, 500);
+  }
+  populateCollections();
 
-       // 3. Handle Toggle Clicks (Multi-select)
-       document.querySelectorAll('.filter-toggle').forEach(btn => {
-         btn.addEventListener('click', function() {
-           const filterType = this.dataset.filter;
-           const value = this.dataset.value;
+  // 3. Handle Toggle Clicks (Multi-select)
+  document.querySelectorAll('.filter-toggle').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const filterType = this.dataset.filter;
+      const value = this.dataset.value;
 
-           if (filterState[filterType + 's'].has(value)) {
-             filterState[filterType + 's'].delete(value);
-             this.classList.remove('active');
-           } else {
-             filterState[filterType + 's'].add(value);
-             this.classList.add('active');
-           }
-           applyFilters();
-         });
-       });
+      if (filterState[filterType + 's'].has(value)) {
+        filterState[filterType + 's'].delete(value);
+        this.classList.remove('active');
+      } else {
+        filterState[filterType + 's'].add(value);
+        this.classList.add('active');
+      }
+      applyFilters();
+    });
+  });
 
-       // 4. Handle Collection Dropdown Change
-       collectionSelect.addEventListener('change', function() {
-         filterState.collection = this.value;
-         applyFilters();
-       });
+  // 4. Handle Collection Dropdown Change
+  collectionSelect.addEventListener('change', function() {
+    filterState.collection = this.value;
+    applyFilters();
+  });
 
-       // 5. Handle Reset
-       resetBtn.addEventListener('click', function() {
-         filterState.sizes.clear();
-         filterState.statuses.clear();
-         filterState.collection = 'All';
+  // 5. Handle Reset
+  resetBtn.addEventListener('click', function() {
+    filterState.sizes.clear();
+    filterState.statuses.clear();
+    filterState.collection = 'All';
 
-         document.querySelectorAll('.filter-toggle').forEach(btn => btn.classList.remove('active'));
-         collectionSelect.value = 'All';
+    document.querySelectorAll('.filter-toggle').forEach(btn => btn.classList.remove('active'));
+    collectionSelect.value = 'All';
 
-         applyFilters();
-       });
+    applyFilters();
+  });
 
-       // 6. Core Filtering Logic
-       function applyFilters() {
-         if (!window.thumbnails || !Array.isArray(window.thumbnails)) return;
+  // 6. Core Filtering Logic
+  function applyFilters() {
+    if (!window.thumbnails || !Array.isArray(window.thumbnails)) return;
 
-         const filtered = window.thumbnails.filter(item => {
-           // --- Size Check ---
-           if (filterState.sizes.size > 0) {
-             let sizeMatch = false;
-             if (filterState.sizes.has('small') && item.area < 70) sizeMatch = true;
-             if (filterState.sizes.has('medium') && item.area >= 70 && item.area <= 220) sizeMatch = true;
-             if (filterState.sizes.has('large') && item.area > 220 && item.area <= 400) sizeMatch = true;
-             if (filterState.sizes.has('very-large') && item.area > 400) sizeMatch = true;
-             if (!sizeMatch) return false;
-           }
+    const filtered = window.thumbnails.filter(item => {
+      // --- Size Check ---
+      if (filterState.sizes.size > 0) {
+        let sizeMatch = false;
+        if (filterState.sizes.has('small') && item.area < 70) sizeMatch = true;
+        if (filterState.sizes.has('medium') && item.area >= 70 && item.area <= 220) sizeMatch = true;
+        if (filterState.sizes.has('large') && item.area > 220 && item.area <= 400) sizeMatch = true;
+        if (filterState.sizes.has('very-large') && item.area > 400) sizeMatch = true;
+        if (!sizeMatch) return false;
+      }
 
-           // --- Status Check ---
-           if (filterState.statuses.size > 0) {
-             let statusMatch = false;
-             if (filterState.statuses.has('featured') && item.featured === true) statusMatch = true;
-             if (filterState.statuses.has('onsale') && item.pricemultiplier < 1) statusMatch = true;
-             if (filterState.statuses.has('onhand') && item.inStock === true) statusMatch = true;
-             if (filterState.statuses.has('available') && item.remakecustom === true) statusMatch = true;
+      // --- Status Check ---
+      if (filterState.statuses.size > 0) {
+        let statusMatch = false;
+        if (filterState.statuses.has('featured') && item.featured === true) statusMatch = true;
+        if (filterState.statuses.has('onsale') && item.pricemultiplier < 1) statusMatch = true;
+        if (filterState.statuses.has('onhand') && item.inStock === true) statusMatch = true;
+        if (filterState.statuses.has('available') && item.remakecustom === true) statusMatch = true;
 
-             if (filterState.statuses.has('recent')) {
-               // Parses "MM-DD-YY" format safely
-               const parts = item.dateCreated.split('-');
-               if (parts.length === 3) {
-                 const year = 2000 + parseInt(parts[2], 10);
-                 const month = parseInt(parts[0], 10) - 1; // JS months are 0-indexed
-                 const day = parseInt(parts[1], 10);
-                 const dateCreated = new Date(year, month, day);
-                 const oneYearAgo = new Date();
-                 oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-                 if (dateCreated >= oneYearAgo) statusMatch = true;
-               }
-             }
-             if (!statusMatch) return false;
-           }
+        if (filterState.statuses.has('recent')) {
+          const parts = item.dateCreated.split('-');
+          if (parts.length === 3) {
+            const year = 2000 + parseInt(parts[2], 10);
+            const month = parseInt(parts[0], 10) - 1;
+            const day = parseInt(parts[1], 10);
+            const dateCreated = new Date(year, month, day);
+            const oneYearAgo = new Date();
+            oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+            if (dateCreated >= oneYearAgo) statusMatch = true;
+          }
+        }
+        if (!statusMatch) return false;
+      }
 
-           // --- Collection Check ---
-           if (filterState.collection !== 'All' && item.type !== filterState.collection) {
-             return false;
-           }
+      // --- Collection Check ---
+      if (filterState.collection !== 'All' && item.type !== filterState.collection) {
+        return false;
+      }
 
-           return true;
-         });
+      return true;
+    });
 
-         // 7. Update the Gallery
-         reloadGallery(filtered);
-       }
+    // 7. Update the Gallery
+    reloadGallery(filtered);
+  }
 
-       // 8. Gallery Reload Helper
-       // This safely clears the old WebGL instance and rebuilds it with the new filtered data
-       function reloadGallery(filteredData) {
-         const container = document.getElementById('gallery-container');
-         if (!container) return;
+  // 8. Gallery Reload Helper
+  function reloadGallery(filteredData) {
+    const container = document.getElementById('gallery-container');
+    if (!container) return;
 
-         // Preserve the original full dataset for resetting
-         if (!window._originalThumbnails) {
-           window._originalThumbnails = [...window.thumbnails];
-         }
+    if (!window._originalThumbnails) {
+      window._originalThumbnails = [...window.thumbnails];
+    }
 
-         // Update the global reference the gallery uses
-         window.thumbnails = filteredData;
+    window.thumbnails = filteredData;
 
-         // Preserve modal and controls HTML structure
-         const cacheHTML = container.querySelector('.cache') ? container.querySelector('.cache').outerHTML : '<div class="cache"></div>';
-         const hintHTML = container.querySelector('.hint') ? container.querySelector('.hint').outerHTML : '<div class="hint">Scroll / Drag / + or -</div>';
+    const cacheHTML = container.querySelector('.cache') ? container.querySelector('.cache').outerHTML : '<div class="cache"></div>';
+    const hintHTML = container.querySelector('.hint') ? container.querySelector('.hint').outerHTML : '<div class="hint">Scroll / Drag / + or -</div>';
 
-         container.innerHTML = `
-           ${cacheHTML}
-           <div id="gallery-loader" class="gallery-loader">
-             <div class="loader-container">
-               <div class="loader-common loader-one"></div>
-               <div class="loader-common loader-two"></div>
-               <div class="loader-common loader-three"></div>
-               <div class="loader-common loader-four"></div>
-               <div class="loader-common loader-five"></div>
-               <div class="loader-common loader-six"></div>
-               <div class="loader-common loader-seven"></div>
-               <div class="loader-common loader-eight"></div>
-             </div>
-             <div class="loader-bar"><div id="loader-progress" class="loader-progress"></div></div>
-             <div id="loader-text" class="loader-text">Loading... 0%</div if="loader-text">
-           </div>
-           ${hintHTML}
-           <div class="zoom-controls">
-             <button class="zoom-btn" id="zoom-in-btn" aria-label="Zoom In">+</button>
-             <button class="zoom-btn" id="zoom-out-btn" aria-label="Zoom Out">-</button>
-           </div>
-           <button class="fullscreen-btn" aria-label="Toggle Fullscreen"><i class="fas fa-expand"></i></button>
-           <div id="gallery-modal" class="gallery-modal">
-             <div class="gallery-card">
-               <button class="gallery-card-close" id="modal-close-btn" aria-label="Close">&times;</button>
-               <div class="gallery-card-layout">
-                 <div id="carousel-container" class="gallery-card-image-container">
-                   <button class="carousel-arrow carousel-prev" id="carousel-prev" aria-label="Previous image"><i class="fas fa-chevron-left"></i></button>
-                   <img id="modal-full-image" class="gallery-card-image" src="" alt="Full size artwork">
-                   <button class="carousel-arrow carousel-next" id="carousel-next" aria-label="Next image"><i class="fas fa-chevron-right"></i></button>
-                   <div class="carousel-dots" id="carousel-dots"></div>
-                 </div>
-                 <div class="gallery-card-content">
-                   <h2 id="modal-title" class="gallery-card-title">Artwork Title</h2>
-                   <div class="gallery-card-meta">
-                     <div id="modal-price" class="gallery-card-price">Suggested Price - $0.00</div>
-                     <div><strong>Availability:</strong> <span id="modal-availability">Checking...</span></div>
-                     <div><strong>Size:</strong> <span id="modal-size">0 x 0</span></div>
-                   </div>
-                   <div id="modal-description" class="gallery-card-desc">Description goes here.</div>
-                   <div class="gallery-card-footer">
-                     <a id="modal-inquire-btn" class="inquire-btn" href="#" target="_blank">Inquire About This</a>
-                   </div>
-                 </div>
-               </div>
-             </div>
-           </div>
-         `;
+    container.innerHTML = `
+      ${cacheHTML}
+      <div id="gallery-loader" class="gallery-loader">
+        <div class="loader-container">
+          <div class="loader-common loader-one"></div>
+          <div class="loader-common loader-two"></div>
+          <div class="loader-common loader-three"></div>
+          <div class="loader-common loader-four"></div>
+          <div class="loader-common loader-five"></div>
+          <div class="loader-common loader-six"></div>
+          <div class="loader-common loader-seven"></div>
+          <div class="loader-common loader-eight"></div>
+        </div>
+        <div class="loader-bar"><div id="loader-progress" class="loader-progress"></div></div>
+        <div id="loader-text" class="loader-text">Loading... 0%</div>
+      </div>
+      ${hintHTML}
+      <div class="zoom-controls">
+        <button class="zoom-btn" id="zoom-in-btn" aria-label="Zoom In">+</button>
+        <button class="zoom-btn" id="zoom-out-btn" aria-label="Zoom Out">-</button>
+      </div>
+      <button class="fullscreen-btn" aria-label="Toggle Fullscreen"><i class="fas fa-expand"></i></button>
+      <div id="gallery-modal" class="gallery-modal">
+        <div class="gallery-card">
+          <button class="gallery-card-close" id="modal-close-btn" aria-label="Close">&times;</button>
+          <div class="gallery-card-layout">
+            <div id="carousel-container" class="gallery-card-image-container">
+              <button class="carousel-arrow carousel-prev" id="carousel-prev" aria-label="Previous image"><i class="fas fa-chevron-left"></i></button>
+              <img id="modal-full-image" class="gallery-card-image" src="" alt="Full size artwork">
+              <button class="carousel-arrow carousel-next" id="carousel-next" aria-label="Next image"><i class="fas fa-chevron-right"></i></button>
+              <div class="carousel-dots" id="carousel-dots"></div>
+            </div>
+            <div class="gallery-card-content">
+              <h2 id="modal-title" class="gallery-card-title">Artwork Title</h2>
+              <div class="gallery-card-meta">
+                <div id="modal-price" class="gallery-card-price">Suggested Price - $0.00</div>
+                <div><strong>Availability:</strong> <span id="modal-availability">Checking...</span></div>
+                <div><strong>Size:</strong> <span id="modal-size">0 x 0</span></div>
+              </div>
+              <div id="modal-description" class="gallery-card-desc">Description goes here.</div>
+              <div class="gallery-card-footer">
+                <a id="modal-inquire-btn" class="inquire-btn" href="#" target="_blank">Inquire About This</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
 
-         // Re-initialize the gallery with a slight delay to ensure DOM is ready
-         setTimeout(() => {
-           if (typeof InfinitePortraitGallery === 'function') {
-             new InfinitePortraitGallery('gallery-container');
-           }
-         }, 100);
-       }
-     });
-     </script>
-     <!-- ========================================== -->
-     <!-- END FILTER TAB -->
-     <!-- ========================================== -->
+    setTimeout(() => {
+      if (typeof InfinitePortraitGallery === 'function') {
+        new InfinitePortraitGallery('gallery-container');
+      }
+    }, 100);
+  }
+});
+</script>
+<!-- ========================================== -->
+<!-- END FILTER TAB -->
+<!-- ========================================== -->
 </body>
 </html>
