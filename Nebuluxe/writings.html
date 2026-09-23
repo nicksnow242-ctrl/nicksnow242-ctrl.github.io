@@ -1246,104 +1246,86 @@ var particles;
 <!-- ========================================== -->
 <!-- Start Main Body -->
 <!-- ========================================== -->
-<section id="main-body">
-  <h2>My Writings</h2>
-  <div id="writing-list"></div>
-</section>
-
-<style>
-  #main-body {
-    padding: 2rem;
-    font-family: system-ui, -apple-system, sans-serif;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-
-  #writing-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-
-  .md-button {
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    font-weight: 500;
-    color: #fff;
-    background-color: #2563eb;
-    border: none;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-  }
-
-  .md-button:hover {
-    background-color: #1d4ed8;
-    transform: translateY(-2px);
-  }
-
-  .md-button:active {
-    transform: translateY(0);
-  }
-</style>
-
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const listContainer = document.getElementById('writing-list');
+    const container = document.getElementById('main-body-container');
+    if (!container) return;
 
-    /*
-     * NOTE: Browsers cannot directly read local file system folders for security reasons.
-     * This script fetches the directory index (requires a local server with auto-index
-     * enabled, like Apache, Nginx, Python http.server, or `live-server`).
-     * If you are using a static host (like GitHub Pages or Netlify), you will need to
-     * replace the fetch logic with a hardcoded array or a manifest.json file.
-     */
+    // Fallback list: Update this with your actual .md filenames if your server
+    // does not support directory listing (autoindex).
+    const fallbackFiles = [
+      'example-document.md',
+      'another-writing.md',
+      'notes.md'
+    ];
 
-    async function loadMarkdownFiles() {
+    function formatTitle(filename) {
+      return filename
+        .replace(/\.md$/i, '')
+        .replace(/[-_]/g, ' ')
+        .replace(/\b\w/g, char => char.toUpperCase());
+    }
+
+    function renderButtons(files) {
+      container.innerHTML = ''; // Clear any existing content
+
+      files.forEach(file => {
+        const title = formatTitle(file);
+
+        const btn = document.createElement('button');
+        btn.className = 'text-list-item';
+        btn.setAttribute('data-file', file);
+        btn.innerHTML = `
+          <div class="book-info">
+            <div class="book-title">${title}</div>
+            <div class="book-author">Markdown Document</div>
+          </div>
+          <div class="book-rating">Read →</div>
+        `;
+
+        btn.addEventListener('click', () => {
+          // Option 1: Navigate directly to the file
+          window.location.href = `writingmd/${file}`;
+
+          // Option 2: If you want to fetch and display inline via a modal or parser,
+          // replace the line above with something like:
+          // fetch(`writingmd/${file}`).then(res => res.text()).then(text => { console.log(text); });
+        });
+
+        container.appendChild(btn);
+      });
+    }
+
+    async function loadWritingFiles() {
       try {
-        const response = await fetch('./writingmd/');
-        if (!response.ok) throw new Error('Directory not found or listing disabled');
+        // Attempt to fetch directory listing (works if server has autoindex enabled, e.g., Python http.server, Apache, Nginx)
+        const response = await fetch('writingmd/');
+        if (!response.ok) throw new Error('Directory listing not available');
 
         const text = await response.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(text, 'text/html');
 
-        // Find all links ending in .md
-        const links = doc.querySelectorAll('a[href$=".md"]');
+        // Extract .md files from common autoindex HTML formats
+        const links = Array.from(doc.querySelectorAll('a'));
+        const mdFiles = links
+          .map(a => a.getAttribute('href'))
+          .filter(href => href && href.endsWith('.md') && !href.startsWith('?') && !href.includes('/'))
+          .map(href => decodeURIComponent(href));
 
-        if (links.length === 0) {
-          listContainer.innerHTML = '<p style="color: #666;">No .md files found. Ensure directory listing is enabled on your server.</p>';
-          return;
+        if (mdFiles.length === 0) {
+          throw new Error('No .md files found in directory listing');
         }
 
-        links.forEach(link => {
-          const fileName = link.getAttribute('href');
-
-          // Format title: remove .md, replace hyphens/underscores with spaces, convert to Title Case
-          const title = fileName
-            .replace(/\.md$/, '')
-            .replace(/[-_]/g, ' ')
-            .replace(/\b\w/g, char => char.toUpperCase());
-
-          const button = document.createElement('button');
-          button.textContent = title;
-          button.className = 'md-button';
-
-          button.addEventListener('click', () => {
-            // Action when clicked (navigates to the markdown file)
-            window.location.href = `./writingmd/${fileName}`;
-          });
-
-          listContainer.appendChild(button);
-        });
+        renderButtons(mdFiles);
       } catch (error) {
-        console.error('Error loading writingmd folder:', error);
-        listContainer.innerHTML = '<p style="color: #dc2626;">Failed to load files. Check console and ensure you are running a local web server with directory listing enabled.</p>';
+        console.warn('Could not auto-fetch writingmd directory:', error.message);
+        console.info('Using fallback file list. Please update the fallbackFiles array in this script with your actual .md filenames, or enable server directory listing.');
+        renderButtons(fallbackFiles);
       }
     }
 
-    loadMarkdownFiles();
+    loadWritingFiles();
   });
 </script>
 <!-- ========================================== -->
