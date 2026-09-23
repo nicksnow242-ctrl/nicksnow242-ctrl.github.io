@@ -708,6 +708,9 @@ html, body {
 <canvas id="projector"></canvas>
 
 <!-- ========================================== -->
+<!-- Start MAIN Body -->
+<!-- ========================================== -->
+<!-- ========================================== -->
 <!-- MAIN LAYOUT CONTAINER -->
 <!-- ========================================== -->
 <div class="main-layout">
@@ -778,10 +781,11 @@ html, body {
     overflow-y: auto;
     height: 100%;
     box-sizing: border-box;
+    background: transparent !important; /* Ensures page background and mascot show through */
   }
 
   .main-content::-webkit-scrollbar { width: 8px; }
-  .main-content::-webkit-scrollbar-track { background: var(--deep-green); }
+  .main-content::-webkit-scrollbar-track { background: transparent; }
   .main-content::-webkit-scrollbar-thumb { background: var(--mid-green); border-radius: 4px; }
   .main-content::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
 
@@ -814,9 +818,7 @@ html, body {
 
   .text-file-btn {
     position: relative;
-    background: rgba(0, 20, 0, 0.6);
-    border: 1px solid rgba(0, 255, 65, 0.3);
-    border-left: 3px solid var(--neon-green);
+    background: rgba(0, 20, 0, 0.4); /* More transparent to see background particles */
     color: var(--text-dim);
     font-family: 'Share Tech Mono', monospace;
     font-size: 14px;
@@ -830,7 +832,12 @@ html, body {
     justify-content: center;
     min-height: 100px;
     backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     clip-path: polygon(0 0, 100% 0, 100% 85%, 90% 100%, 0 100%);
+    /* Replaced 'border' with 'box-shadow' to prevent clipping artifacts/breaks at the angled corner */
+    box-shadow:
+      inset 0 0 0 1px rgba(0, 255, 65, 0.3),
+      inset 3px 0 0 0 var(--neon-green);
   }
 
   .text-file-btn::before {
@@ -843,13 +850,17 @@ html, body {
     background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.2), transparent);
     transition: left 0.5s ease;
     z-index: 1;
+    pointer-events: none;
   }
 
   .text-file-btn:hover {
-    background: rgba(0, 40, 0, 0.9);
-    border-color: var(--neon-green);
+    background: rgba(0, 40, 0, 0.6);
     color: var(--neon-green);
-    box-shadow: 0 0 25px rgba(0, 255, 65, 0.4), 0 0 50px rgba(0, 255, 65, 0.2), inset 0 0 20px rgba(0, 255, 65, 0.15);
+    box-shadow:
+      inset 0 0 0 1px var(--neon-green),
+      inset 3px 0 0 0 var(--neon-green),
+      0 0 25px rgba(0, 255, 65, 0.4),
+      0 0 50px rgba(0, 255, 65, 0.2);
     transform: translateY(-3px);
   }
 
@@ -868,15 +879,19 @@ html, body {
 
   .text-file-btn.active {
     background: rgba(0, 255, 65, 0.15);
-    border-color: var(--neon-green);
     color: var(--neon-green);
-    box-shadow: 0 0 30px rgba(0, 255, 65, 0.5), 0 0 60px rgba(0, 255, 65, 0.3), inset 0 0 25px rgba(0, 255, 65, 0.2);
+    box-shadow:
+      inset 0 0 0 1px var(--neon-green),
+      inset 3px 0 0 0 var(--neon-green),
+      0 0 30px rgba(0, 255, 65, 0.5),
+      0 0 60px rgba(0, 255, 65, 0.3);
   }
 
   .text-file-btn.active .file-title {
     text-shadow: 0 0 15px var(--neon-glow-green);
   }
 
+  /* Markdown Reader Modal Styles */
   .markdown-reader-overlay {
     position: fixed;
     top: 0;
@@ -1025,7 +1040,6 @@ html, body {
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <script>
-  // Configure marked.js
   marked.setOptions({ breaks: true, gfm: true });
 
   function openMarkdownReader(filePath, title) {
@@ -1065,8 +1079,6 @@ html, body {
     if (e.key === 'Escape') closeMarkdownReader();
   });
 </script>
-<!-- ========================================== -->
-<!-- End MAIN BODY -->
-<!-- ========================================== -->
+
 </body>
 </html>
