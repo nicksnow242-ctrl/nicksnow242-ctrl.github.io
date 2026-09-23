@@ -1270,7 +1270,8 @@ var particles;
     border-bottom: 1px solid rgba(0, 255, 65, 0.3);
   }
 
-  .back-btn {
+  .back-btn,
+  .fullscreen-btn {
     background: transparent;
     border: 1px solid var(--neon-green);
     color: var(--neon-green);
@@ -1283,7 +1284,8 @@ var particles;
     text-transform: uppercase;
     letter-spacing: 1px;
   }
-  .back-btn:hover {
+  .back-btn:hover,
+  .fullscreen-btn:hover {
     background: var(--neon-green);
     color: var(--deep-green);
     box-shadow: 0 0 15px var(--neon-glow-green);
@@ -1314,7 +1316,7 @@ var particles;
     line-height: 1.8;
     color: #d0ffd9;
     max-width: 70%;
-    margin-left: auto; /* Aligns the text block to the right */
+    margin-left: auto;
   }
   .reader-content p { margin-bottom: 20px; text-align: justify; }
 
@@ -1326,6 +1328,49 @@ var particles;
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ========================================== */
+  /* FULLSCREEN MODE STYLES                     */
+  /* ========================================== */
+  .reader-view:fullscreen,
+  .reader-view:-webkit-full-screen {
+    background: linear-gradient(0deg, #000a00 0%, var(--deep-green) 100%);
+    padding: 50px 80px;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Center and widen the text for comfortable reading in fullscreen */
+  .reader-view:fullscreen .reader-content,
+  .reader-view:-webkit-full-screen .reader-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding-right: 20px;
+    font-size: 18px;
+  }
+
+  .reader-view:fullscreen .reader-title,
+  .reader-view:-webkit-full-screen .reader-title {
+    font-size: 36px;
+  }
+
+  .reader-view:fullscreen .reader-header,
+  .reader-view:-webkit-full-screen .reader-header {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 40px;
+  }
+
+  .reader-view:fullscreen .reader-meta,
+  .reader-view:-webkit-full-screen .reader-meta {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 40px;
+    font-size: 15px;
   }
 
   /* Align button container to the right, away from the mascot */
@@ -1384,6 +1429,7 @@ var particles;
           <div class="reader-header">
             <button class="back-btn" id="back-to-list">← Back</button>
             <h2 class="reader-title" id="reader-title"></h2>
+            <button class="fullscreen-btn" id="fullscreen-toggle" title="Toggle Fullscreen">⛶ Fullscreen</button>
           </div>
           <div class="reader-meta">
             <span>✍️ <strong id="reader-author"></strong></span>
@@ -1395,9 +1441,25 @@ var particles;
 
         // Back button logic
         document.getElementById('back-to-list').addEventListener('click', () => {
+          // Exit fullscreen if active before going back
+          if (document.fullscreenElement || document.webkitFullscreenElement) {
+            (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+          }
           reader.classList.remove('active');
           documentArea.classList.remove('grid-hidden');
         });
+
+        // Fullscreen toggle logic
+        const fsBtn = document.getElementById('fullscreen-toggle');
+        fsBtn.addEventListener('click', toggleFullscreen);
+
+        // Sync button label when fullscreen state changes (e.g., user presses ESC)
+        const syncFsButton = () => {
+          const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+          fsBtn.textContent = isFs ? '⛶ Exit Fullscreen' : '⛶ Fullscreen';
+        };
+        document.addEventListener('fullscreenchange', syncFsButton);
+        document.addEventListener('webkitfullscreenchange', syncFsButton);
       }
 
       // Populate data
@@ -1413,6 +1475,28 @@ var particles;
 
       // Scroll to top of reader content
       document.getElementById('reader-content').scrollTop = 0;
+    }
+
+    // 3. Fullscreen toggle function
+    function toggleFullscreen() {
+      const readerView = document.getElementById('reader-view');
+      if (!readerView) return;
+
+      const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement);
+
+      if (!isFullscreen) {
+        // Enter fullscreen
+        const requestFs = readerView.requestFullscreen || readerView.webkitRequestFullscreen;
+        if (requestFs) {
+          requestFs.call(readerView).catch(err => {
+            console.error('Fullscreen error:', err);
+          });
+        }
+      } else {
+        // Exit fullscreen
+        const exitFs = document.exitFullscreen || document.webkitExitFullscreen;
+        if (exitFs) exitFs.call(document);
+      }
     }
 
     // Initial render
