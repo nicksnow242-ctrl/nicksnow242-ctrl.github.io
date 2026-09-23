@@ -1175,13 +1175,11 @@ var particles;
   });
 </script>
 
-  /* ========================================== */
-  /* Main Body Start */
-  /* ========================================== */
+<!-- ========================================== -->
+<!-- END Main Body                         -->
+<!-- ========================================== -->
   <style>
-    /* ========================================== */
-    /* MAIN CONTENT - TEXT FILES GRID */
-    /* ========================================== */
+
     .main-content {
       flex: 1;
       padding: 30px;
@@ -1189,6 +1187,7 @@ var particles;
       overflow-y: auto;
       height: 100%;
       box-sizing: border-box;
+      display: block;
     }
 
     .main-content::-webkit-scrollbar { width: 8px; }
@@ -1220,6 +1219,7 @@ var particles;
       grid-template-columns: repeat(2, 1fr);
       gap: 20px;
       padding-bottom: 30px;
+      width: 100%;
     }
 
     .text-file-btn {
@@ -1231,14 +1231,14 @@ var particles;
       font-family: 'Share Tech Mono', monospace;
       font-size: 14px;
       padding: 25px 20px;
-      text-align: left;
+      text-align: center;
       cursor: pointer;
       transition: all 0.3s ease;
       overflow: hidden;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
+      min-height: 100px;
       backdrop-filter: blur(4px);
       clip-path: polygon(0 0, 100% 0, 100% 85%, 90% 100%, 0 100%);
     }
@@ -1252,6 +1252,7 @@ var particles;
       height: 100%;
       background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.2), transparent);
       transition: left 0.5s ease;
+      z-index: 1;
     }
 
     .text-file-btn:hover {
@@ -1273,6 +1274,8 @@ var particles;
       text-align: center;
       text-shadow: 0 0 10px var(--neon-glow-green);
       letter-spacing: 1px;
+      position: relative;
+      z-index: 2;
     }
 
     .text-file-btn.active {
@@ -1288,9 +1291,199 @@ var particles;
       text-shadow: 0 0 15px var(--neon-glow-green);
     }
 
+    /* ========================================== */
+    /* MARKDOWN READER MODAL */
+    /* ========================================== */
+    .markdown-reader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 10, 0, 0.95);
+      backdrop-filter: blur(10px);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .markdown-reader-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .markdown-reader-container {
+      width: 90%;
+      max-width: 900px;
+      height: 85vh;
+      background: rgba(0, 20, 0, 0.95);
+      border: 2px solid var(--neon-green);
+      border-radius: 8px;
+      box-shadow: 0 0 50px rgba(0, 255, 65, 0.3),
+                  0 0 100px rgba(0, 255, 65, 0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .reader-header {
+      padding: 20px 30px;
+      border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 15, 0, 0.9);
+    }
+
+    .reader-title {
+      font-size: 20px;
+      color: var(--neon-green);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px var(--neon-glow-green);
+      margin: 0;
+    }
+
+    .reader-close-btn {
+      background: transparent;
+      border: 2px solid var(--neon-green);
+      color: var(--neon-green);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 16px;
+      padding: 8px 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .reader-close-btn:hover {
+      background: var(--neon-green);
+      color: var(--deep-green);
+      box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+    }
+
+    .reader-content {
+      flex: 1;
+      padding: 40px;
+      overflow-y: auto;
+      color: var(--text-dim);
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .reader-content::-webkit-scrollbar { width: 8px; }
+    .reader-content::-webkit-scrollbar-track { background: var(--deep-green); }
+    .reader-content::-webkit-scrollbar-thumb { background: var(--mid-green); border-radius: 4px; }
+    .reader-content::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
+
+    /* Markdown styling */
+    .reader-content h1, .reader-content h2, .reader-content h3,
+    .reader-content h4, .reader-content h5, .reader-content h6 {
+      color: var(--neon-green);
+      text-shadow: 0 0 8px var(--neon-glow-green);
+      margin-top: 30px;
+      margin-bottom: 15px;
+      letter-spacing: 1px;
+    }
+
+    .reader-content h1 { font-size: 32px; border-bottom: 2px solid rgba(0, 255, 65, 0.3); padding-bottom: 10px; }
+    .reader-content h2 { font-size: 26px; border-bottom: 1px solid rgba(0, 255, 65, 0.2); padding-bottom: 8px; }
+    .reader-content h3 { font-size: 22px; }
+    .reader-content h4 { font-size: 18px; }
+
+    .reader-content p {
+      margin-bottom: 20px;
+    }
+
+    .reader-content a {
+      color: var(--neon-green);
+      text-decoration: none;
+      border-bottom: 1px dashed var(--neon-green);
+      transition: all 0.3s ease;
+    }
+
+    .reader-content a:hover {
+      text-shadow: 0 0 8px var(--neon-glow-green);
+      border-bottom-style: solid;
+    }
+
+    .reader-content code {
+      background: rgba(0, 255, 65, 0.1);
+      border: 1px solid rgba(0, 255, 65, 0.3);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--neon-green);
+    }
+
+    .reader-content pre {
+      background: rgba(0, 10, 0, 0.8);
+      border: 1px solid rgba(0, 255, 65, 0.3);
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+
+    .reader-content pre code {
+      background: transparent;
+      border: none;
+      padding: 0;
+    }
+
+    .reader-content blockquote {
+      border-left: 3px solid var(--neon-green);
+      padding-left: 20px;
+      margin: 20px 0;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    .reader-content ul, .reader-content ol {
+      margin: 20px 0;
+      padding-left: 30px;
+    }
+
+    .reader-content li {
+      margin-bottom: 10px;
+    }
+
+    .reader-content img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid rgba(0, 255, 65, 0.3);
+      border-radius: 4px;
+      margin: 20px 0;
+    }
+
+    .reader-content hr {
+      border: none;
+      border-top: 1px solid rgba(0, 255, 65, 0.3);
+      margin: 30px 0;
+    }
+
+    .loading-indicator {
+      text-align: center;
+      color: var(--neon-green);
+      font-size: 18px;
+      padding: 40px;
+    }
+
+    .loading-indicator::after {
+      content: '█';
+      animation: blinker 1s steps(2) infinite;
+    }
+
     @media (max-width: 768px) {
       .main-content { padding-right: 30px; padding-left: 30px; }
       .text-files-grid { grid-template-columns: 1fr; gap: 15px; }
+      .markdown-reader-container { width: 95%; height: 90vh; }
+      .reader-content { padding: 20px; }
     }
   </style>
 
@@ -1300,50 +1493,100 @@ var particles;
     </h2>
 
     <div class="text-files-grid">
-      <button class="text-file-btn active" onclick="selectFile(this)">
-        <span class="file-title">NEURAL INTERFACE PROTOCOLS</span>
+      <button class="text-file-btn" onclick="openMarkdownReader('writingsmd/SirenSong.md', 'Siren Song')" data-file="writingsmd/SirenSong.md">
+        <span class="file-title">SIREN SONG</span>
       </button>
 
-      <button class="text-file-btn" onclick="selectFile(this)">
-        <span class="file-title">QUANTUM ENCRYPTION KEYS</span>
+      <button class="text-file-btn" onclick="openMarkdownReader('writingsmd/example2.md', 'Example File 2')" data-file="writingsmd/example2.md">
+        <span class="file-title">EXAMPLE FILE 2</span>
       </button>
 
-      <button class="text-file-btn" onclick="selectFile(this)">
-        <span class="file-title">SYNTHETIC MEMORY BANKS</span>
+      <button class="text-file-btn" onclick="openMarkdownReader('writingsmd/example3.md', 'Example File 3')" data-file="writingsmd/example3.md">
+        <span class="file-title">EXAMPLE FILE 3</span>
       </button>
 
-      <button class="text-file-btn" onclick="selectFile(this)">
-        <span class="file-title">CYBERNETIC UPGRADE LOGS</span>
-      </button>
-
-      <button class="text-file-btn" onclick="selectFile(this)">
-        <span class="file-title">NEON DISTRICT MAPS</span>
-      </button>
-
-      <button class="text-file-btn" onclick="selectFile(this)">
-        <span class="file-title">BLACK MARKET DATABASE</span>
-      </button>
-
-      <button class="text-file-btn" onclick="selectFile(this)">
-        <span class="file-title">CORPORATE SECRETS</span>
-      </button>
-
-      <button class="text-file-btn" onclick="selectFile(this)">
-        <span class="file-title">AI CONSCIOUSNESS FILES</span>
+      <button class="text-file-btn" onclick="openMarkdownReader('writingsmd/example4.md', 'Example File 4')" data-file="writingsmd/example4.md">
+        <span class="file-title">EXAMPLE FILE 4</span>
       </button>
     </div>
   </div>
 
-  <script>
-    function selectFile(selectedBtn) {
-      document.querySelectorAll('.text-file-btn').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      selectedBtn.classList.add('active');
+  <!-- Markdown Reader Modal -->
+  <div class="markdown-reader-overlay" id="markdownReaderOverlay">
+    <div class="markdown-reader-container">
+      <div class="reader-header">
+        <h2 class="reader-title" id="readerTitle">Document</h2>
+        <button class="reader-close-btn" onclick="closeMarkdownReader()">CLOSE</button>
+      </div>
+      <div class="reader-content" id="readerContent">
+        <div class="loading-indicator">LOADING</div>
+      </div>
+    </div>
+  </div>
 
-      const fileName = selectedBtn.querySelector('.file-title').textContent;
-      console.log("Loading file:", fileName);
+  <!-- Marked.js library for markdown parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <script>
+    // Configure marked.js
+    marked.setOptions({
+      breaks: true,
+      gfm: true
+    });
+
+    function openMarkdownReader(filePath, title) {
+      const overlay = document.getElementById('markdownReaderOverlay');
+      const content = document.getElementById('readerContent');
+      const titleEl = document.getElementById('readerTitle');
+
+      // Set title
+      titleEl.textContent = title;
+
+      // Show overlay
+      overlay.classList.add('active');
+
+      // Show loading state
+      content.innerHTML = '<div class="loading-indicator">LOADING</div>';
+
+      // Fetch the markdown file
+      fetch(filePath)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('File not found');
+          }
+          return response.text();
+        })
+        .then(markdown => {
+          // Parse markdown to HTML
+          const html = marked.parse(markdown);
+          content.innerHTML = html;
+        })
+        .catch(error => {
+          content.innerHTML = `<div style="color: var(--neon-green); text-align: center; padding: 40px;">
+            <p style="font-size: 18px;">ERROR: File not found</p>
+            <p style="font-size: 14px; opacity: 0.7;">${error.message}</p>
+          </div>`;
+        });
     }
+
+    function closeMarkdownReader() {
+      const overlay = document.getElementById('markdownReaderOverlay');
+      overlay.classList.remove('active');
+    }
+
+    // Close reader when clicking outside the container
+    document.getElementById('markdownReaderOverlay').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeMarkdownReader();
+      }
+    });
+
+    // Close reader with Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeMarkdownReader();
+      }
+    });
   </script>
 <!-- ========================================== -->
 <!-- END Main Body                         -->
