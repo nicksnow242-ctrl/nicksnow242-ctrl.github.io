@@ -1243,5 +1243,111 @@ var particles;
     renderContent();
   });
 </script>
+<!-- ========================================== -->
+<!-- Start Main Body -->
+<!-- ========================================== -->
+<section id="main-body">
+  <h2>My Writings</h2>
+  <div id="writing-list"></div>
+</section>
+
+<style>
+  #main-body {
+    padding: 2rem;
+    font-family: system-ui, -apple-system, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  #writing-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .md-button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #fff;
+    background-color: #2563eb;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+  }
+
+  .md-button:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-2px);
+  }
+
+  .md-button:active {
+    transform: translateY(0);
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const listContainer = document.getElementById('writing-list');
+
+    /*
+     * NOTE: Browsers cannot directly read local file system folders for security reasons.
+     * This script fetches the directory index (requires a local server with auto-index
+     * enabled, like Apache, Nginx, Python http.server, or `live-server`).
+     * If you are using a static host (like GitHub Pages or Netlify), you will need to
+     * replace the fetch logic with a hardcoded array or a manifest.json file.
+     */
+
+    async function loadMarkdownFiles() {
+      try {
+        const response = await fetch('./writingmd/');
+        if (!response.ok) throw new Error('Directory not found or listing disabled');
+
+        const text = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/html');
+
+        // Find all links ending in .md
+        const links = doc.querySelectorAll('a[href$=".md"]');
+
+        if (links.length === 0) {
+          listContainer.innerHTML = '<p style="color: #666;">No .md files found. Ensure directory listing is enabled on your server.</p>';
+          return;
+        }
+
+        links.forEach(link => {
+          const fileName = link.getAttribute('href');
+
+          // Format title: remove .md, replace hyphens/underscores with spaces, convert to Title Case
+          const title = fileName
+            .replace(/\.md$/, '')
+            .replace(/[-_]/g, ' ')
+            .replace(/\b\w/g, char => char.toUpperCase());
+
+          const button = document.createElement('button');
+          button.textContent = title;
+          button.className = 'md-button';
+
+          button.addEventListener('click', () => {
+            // Action when clicked (navigates to the markdown file)
+            window.location.href = `./writingmd/${fileName}`;
+          });
+
+          listContainer.appendChild(button);
+        });
+      } catch (error) {
+        console.error('Error loading writingmd folder:', error);
+        listContainer.innerHTML = '<p style="color: #dc2626;">Failed to load files. Check console and ensure you are running a local web server with directory listing enabled.</p>';
+      }
+    }
+
+    loadMarkdownFiles();
+  });
+</script>
+<!-- ========================================== -->
+<!-- End Main Body -->
+<!-- ========================================== -->
 </body>
 </html>
