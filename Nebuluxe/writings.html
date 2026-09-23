@@ -1251,6 +1251,89 @@ var particles;
 <!-- ========================================== -->
 <style>
   /* ========================================== */
+  /* GENRE FILTER STYLES                        */
+  /* ========================================== */
+  .genre-filter-container {
+    padding-left: 20%;
+    padding-right: 10px;
+    margin-bottom: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .radio-btn-group {
+    position: relative;
+  }
+
+  .radio-btn-group input[type="radio"] {
+    opacity: 0;
+    position: absolute;
+    width: 0;
+    height: 0;
+  }
+
+  .radio-btn-group label {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 16px;
+    position: relative;
+    color: var(--text-dim);
+    transition: color 0.3s ease;
+  }
+
+  .radio-btn-group input[type="radio"]:checked + label {
+    color: var(--neon-green);
+  }
+
+  .radio-btn-group label svg {
+    width: 220px;
+    height: 40px;
+    overflow: visible;
+  }
+
+  .radio-btn-group polygon.unchecked {
+    stroke: var(--mid-green);
+  }
+
+  .radio-btn-group polygon.accent-1,
+  .radio-btn-group polygon.accent-2 {
+    opacity: 0;
+    mix-blend-mode: plus-lighter;
+  }
+
+  .radio-btn-group polygon.accent-1 {
+    stroke: var(--neon-green);
+  }
+
+  .radio-btn-group polygon.accent-2 {
+    stroke: #00cc33;
+  }
+
+  .radio-btn-group text {
+    fill: var(--text-dim);
+    font-size: 16px;
+    font-family: 'Share Tech Mono', monospace;
+    transition: fill 0.3s ease;
+  }
+
+  .radio-btn-group input[type="radio"]:checked + label text {
+    fill: var(--neon-green);
+  }
+
+  .radio-btn-group .scanline {
+    fill: var(--deep-green);
+  }
+
+  .radio-btn-group .fade-stop {
+    stop-color: #000a00;
+  }
+
+  /* ========================================== */
   /* READER VIEW STYLES                         */
   /* ========================================== */
   .reader-view {
@@ -1352,13 +1435,11 @@ var particles;
     overflow: hidden;
   }
 
-  /* Hide the back button in fullscreen */
   .reader-view:fullscreen .back-btn,
   .reader-view:-webkit-full-screen .back-btn {
     display: none;
   }
 
-  /* Float the exit fullscreen button to the top-right corner */
   .reader-view:fullscreen .fullscreen-btn,
   .reader-view:-webkit-full-screen .fullscreen-btn {
     position: fixed;
@@ -1367,7 +1448,6 @@ var particles;
     z-index: 10000;
   }
 
-  /* Center and widen the text for comfortable reading in fullscreen */
   .reader-view:fullscreen .reader-content,
   .reader-view:-webkit-full-screen .reader-content {
     max-width: 800px;
@@ -1419,10 +1499,13 @@ var particles;
 
   /* Hide the main grid when the reader is active */
   .document-area.grid-hidden .text-list-container { display: none; }
+  .document-area.grid-hidden .genre-filter-container { display: none; }
 </style>
 
+<!-- Load GSAP EasePack for the RoughEase animation (optional, but included for fidelity to your snippet) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/EasePack.min.js"></script>
 <!-- Load the writings data file -->
-<script src="js/writings.js"></script>
+<script src="js/writings.js"></7script>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
@@ -1430,15 +1513,229 @@ var particles;
     const documentArea = document.querySelector('.document-area');
     if (!container || !documentArea) return;
 
-    // 1. Render the list of buttons
-    function renderButtons() {
-      if (typeof WRITINGS_DATA === 'undefined' || WRITINGS_DATA.length === 0) {
-        container.innerHTML = `<div style="color: var(--neon-green); padding: 20px; text-align: center;">⚠️ writings.js not found or empty.</div>`;
+    // Generate SVG for filter toggles
+    function createGenreSVG(genreName, index) {
+      return `
+        <svg width="220px" height="40px" viewBox="0 0 220 40">
+          <defs>
+            <filter id="displace-${index}" primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB">
+              <feFlood flood-color="#00ff41" y="0%" height="10%" result="s0" />
+              <feFlood flood-color="#003300" y="10%" height="10%" result="s1" />
+              <feFlood flood-color="#00ff41" y="20%" height="10%" result="s2" />
+              <feFlood flood-color="#003300" y="30%" height="10%" result="s3" />
+              <feFlood flood-color="#00ff41" y="40%" height="10%" result="s4" />
+              <feFlood flood-color="#003300" y="50%" height="10%" result="s5" />
+              <feFlood flood-color="#00ff41" y="60%" height="10%" result="s6" />
+              <feFlood flood-color="#003300" y="70%" height="10%" result="s7" />
+              <feFlood flood-color="#00ff41" y="80%" height="10%" result="s8" />
+              <feFlood flood-color="#003300" y="90%" height="10%" result="s9" />
+              <feMerge result="bands">
+                <feMergeNode in="s0" /><feMergeNode in="s1" /><feMergeNode in="s2" />
+                <feMergeNode in="s3" /><feMergeNode in="s4" /><feMergeNode in="s5" />
+                <feMergeNode in="s6" /><feMergeNode in="s7" /><feMergeNode in="s8" /><feMergeNode in="s9" />
+              </feMerge>
+              <feDisplacementMap class="displace" in="SourceGraphic" in2="bands" scale="0" xChannelSelector="R" yChannelSelector="B" />
+            </filter>
+            <pattern id="scanline-pattern-${index}" class="scanline-pattern" patternUnits="userSpaceOnUse" width="5" height="10">
+              <rect class="scanline" x="0" y="0" width="5" height="1" fill="#001a00" />
+              <rect x="0" y="1" width="5" height="9" fill="none" />
+            </pattern>
+            <radialGradient id="fade-${index}" gradientUnits="userSpaceOnUse" cx="110" cy="20" r="50" gradientTransform="translate(110 20) scale(2 1) translate(-110 -20)">
+              <stop class="fade-stop" offset="0%" stop-color="#000a00" stop-opacity="0" />
+              <stop class="fade-stop" offset="60%" stop-color="#000a00" stop-opacity="0" />
+              <stop class="fade-stop" offset="100%" stop-color="#000a00" stop-opacity="1" />
+            </radialGradient>
+          </defs>
+          <g filter="url(#displace-${index})">
+            <rect x="0" y="15" width="100%" height="15" fill="url(#scanline-pattern-${index})" />
+            <polygon class="unchecked" points="15,7.5 21.5,11.25 21.5,18.75 15,22.5 8.5,18.75 8.5,11.25" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" transform="translate(30 0)" />
+            <polygon class="accent-1" points="15,7.5 21.5,11.25 21.5,18.75 15,22.5 8.5,18.75 8.5,11.25" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" transform="translate(39 0)" />
+            <polygon class="accent-2" points="15,7.5 21.5,11.25 21.5,18.75 15,22.5 8.5,18.75 8.5,11.25" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" transform="translate(21 0)" />
+            <text x="85" y="20" dominant-baseline="middle">${genreName}</text>
+          </g>
+          <rect width="220" height="40" fill="url(#fade-${index})" />
+        </svg>
+      `;
+    }
+
+    // GSAP Radio Button Effect Class
+    class RadioButtonEffect {
+      constructor(radioBtnGroups, config) {
+        this.config = config;
+        this.previousGroup = null;
+        this.timelines = new WeakMap();
+
+        radioBtnGroups.forEach((group) => {
+          this.registerTimelines(group);
+          const radioBtn = group.querySelector("input[type='radio']");
+          const label = group.querySelector("label");
+          const timelines = this.timelines.get(group);
+
+          label.addEventListener("mouseenter", () => {
+            timelines.scanlineMotion.play();
+            timelines.scanlineFlicker.play();
+          });
+
+          label.addEventListener("mouseleave", () => {
+            timelines.scanlineMotion.pause(0);
+            timelines.scanlineFlicker.pause(0);
+          });
+
+          radioBtn.addEventListener("change", () => {
+            if (this.previousGroup && this.previousGroup !== group) {
+              const previousTimelines = this.timelines.get(this.previousGroup);
+              if (previousTimelines) {
+                previousTimelines.accent1Opacity.reverse();
+                previousTimelines.accent2Opacity.reverse();
+                previousTimelines.scanlineFlicker.reverse();
+                previousTimelines.scanlineDisplacement.pause(0);
+              }
+            }
+
+            timelines.accent1Opacity.play();
+            timelines.accent2Opacity.play();
+            timelines.scanlineFlicker.play();
+            timelines.scanlineDisplacement.play();
+
+            this.previousGroup = group;
+          });
+        });
+      }
+
+      registerTimelines(group) {
+        const { duration, ease, easeOut } = this.config;
+        const scanlinePattern = group.querySelector(".scanline-pattern");
+        const scanline = group.querySelector(".scanline");
+        const displacement = group.querySelector(".displace");
+        const accent1Polygon = group.querySelector(".accent-1");
+        const accent2Polygon = group.querySelector(".accent-2");
+
+        const createTimeline = (options = {}) => gsap.timeline({ paused: true, ...options });
+
+        const timelines = {
+          scanlineMotion: createTimeline(),
+          scanlineFlicker: createTimeline(),
+          scanlineDisplacement: createTimeline({ repeat: -1, repeatDelay: 1 }),
+          accent1Opacity: createTimeline(),
+          accent2Opacity: createTimeline()
+        };
+
+        timelines.scanlineMotion.to(scanlinePattern, {
+          attr: { y: 10 },
+          duration: 0.35,
+          ease: "none",
+          repeat: -1
+        });
+
+        timelines.scanlineFlicker.to(scanline, {
+          fill: "#003300",
+          duration,
+          ease,
+          repeat: -1,
+          yoyo: true
+        });
+
+        timelines.scanlineDisplacement
+          .to(displacement, {
+            attr: { scale: () => gsap.utils.random(0.02, 0.15) },
+            duration,
+            ease,
+            repeatRefresh: true
+          })
+          .to(displacement, {
+            attr: { scale: 0 },
+            duration,
+            ease
+          });
+
+        timelines.accent1Opacity.to(accent1Polygon, {
+          x: 30,
+          rotation: -1080,
+          transformOrigin: "center center",
+          opacity: 1,
+          ease,
+          duration,
+          easeReverse: easeOut,
+        });
+
+        timelines.accent2Opacity.to(accent2Polygon, {
+          x: 30,
+          rotation: 1080,
+          transformOrigin: "center center",
+          opacity: 1,
+          ease,
+          duration,
+          easeReverse: easeOut,
+        });
+
+        this.timelines.set(group, timelines);
+      }
+    }
+
+    // Render Filter Toggles
+    function renderFilter() {
+      // Create filter container if it doesn't exist
+      let filterContainer = document.getElementById('genre-filter-container');
+      if (!filterContainer) {
+        filterContainer = document.createElement('div');
+        filterContainer.id = 'genre-filter-container';
+        filterContainer.className = 'genre-filter-container';
+        documentArea.insertBefore(filterContainer, container);
+      }
+
+      const genres = ['All', ...new Set(WRITINGS_DATA.map(w => w.genre).filter(g => g))].sort((a, b) => {
+        if (a === 'All') return -1;
+        if (b === 'All') return 1;
+        return a.localeCompare(b);
+      });
+
+      filterContainer.innerHTML = '';
+      genres.forEach((genre, index) => {
+        const groupId = `genre-${index}`;
+        const div = document.createElement('div');
+        div.className = 'radio-btn-group';
+        div.innerHTML = `
+          <input type="radio" name="genre-filter" value="${genre}" id="${groupId}" ${genre === 'All' ? 'checked' : ''} />
+          <label for="${groupId}">
+            ${createGenreSVG(genre, index)}
+          </label>
+        `;
+        filterContainer.appendChild(div);
+      });
+
+      // Initialize GSAP effects
+      const config = {
+        ease: gsap.parseEase("rough") || "elastic.out(1, 0.3)", // Falls back to elastic if RoughEase isn't loaded
+        easeOut: "power2.in",
+        duration: 0.8
+      };
+
+      setTimeout(() => {
+        const radioBtnGroups = document.querySelectorAll(".radio-btn-group");
+        new RadioButtonEffect(radioBtnGroups, config);
+
+        radioBtnGroups.forEach(group => {
+          const radioBtn = group.querySelector("input[type='radio']");
+          radioBtn.addEventListener("change", (e) => {
+            renderButtons(e.target.value);
+          });
+        });
+      }, 50);
+    }
+
+    // Render Buttons based on filter
+    function renderButtons(filter = 'All') {
+      container.innerHTML = '';
+      const filteredData = filter === 'All'
+        ? WRITINGS_DATA
+        : WRITINGS_DATA.filter(w => w.genre === filter);
+
+      if (filteredData.length === 0) {
+        container.innerHTML = `<div style="color: var(--text-dim); padding: 20px; text-align: center;">No writings found for this genre.</div>`;
         return;
       }
 
-      container.innerHTML = '';
-      WRITINGS_DATA.forEach(writing => {
+      filteredData.forEach(writing => {
         const btn = document.createElement('button');
         btn.className = 'text-list-item';
         btn.setAttribute('data-id', writing.id);
@@ -1455,9 +1752,8 @@ var particles;
       });
     }
 
-    // 2. Open the Reader View
+    // Open the Reader View
     function openReader(writing) {
-      // Create reader HTML if it doesn't exist yet
       if (!document.getElementById('reader-view')) {
         const reader = document.createElement('div');
         reader.id = 'reader-view';
@@ -1476,9 +1772,7 @@ var particles;
         `;
         documentArea.appendChild(reader);
 
-        // Back button logic
         document.getElementById('back-to-list').addEventListener('click', () => {
-          // Exit fullscreen if active before going back
           if (document.fullscreenElement || document.webkitFullscreenElement) {
             (document.exitFullscreen || document.webkitExitFullscreen).call(document);
           }
@@ -1486,11 +1780,9 @@ var particles;
           documentArea.classList.remove('grid-hidden');
         });
 
-        // Fullscreen toggle logic
         const fsBtn = document.getElementById('fullscreen-toggle');
         fsBtn.addEventListener('click', toggleFullscreen);
 
-        // Sync button label when fullscreen state changes (e.g., user presses ESC)
         const syncFsButton = () => {
           const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
           fsBtn.textContent = isFs ? '⛶ Exit Fullscreen' : '⛶ Fullscreen';
@@ -1499,22 +1791,18 @@ var particles;
         document.addEventListener('webkitfullscreenchange', syncFsButton);
       }
 
-      // Populate data
       document.getElementById('reader-title').textContent = writing.title;
       document.getElementById('reader-author').textContent = writing.author;
       document.getElementById('reader-subtitle').textContent = writing.subtitle || '';
       document.getElementById('reader-content').innerHTML = writing.content;
 
-      // Switch views
       const readerView = document.getElementById('reader-view');
       readerView.classList.add('active');
       documentArea.classList.add('grid-hidden');
-
-      // Scroll to top of reader content
       document.getElementById('reader-content').scrollTop = 0;
     }
 
-    // 3. Fullscreen toggle function
+    // Fullscreen toggle function
     function toggleFullscreen() {
       const readerView = document.getElementById('reader-view');
       if (!readerView) return;
@@ -1522,22 +1810,23 @@ var particles;
       const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement);
 
       if (!isFullscreen) {
-        // Enter fullscreen
         const requestFs = readerView.requestFullscreen || readerView.webkitRequestFullscreen;
         if (requestFs) {
-          requestFs.call(readerView).catch(err => {
-            console.error('Fullscreen error:', err);
-          });
+          requestFs.call(readerView).catch(err => console.error('Fullscreen error:', err));
         }
       } else {
-        // Exit fullscreen
         const exitFs = document.exitFullscreen || document.webkitExitFullscreen;
         if (exitFs) exitFs.call(document);
       }
     }
 
     // Initial render
-    renderButtons();
+    if (typeof WRITINGS_DATA !== 'undefined' && WRITINGS_DATA.length > 0) {
+      renderFilter();
+      renderButtons('All');
+    } else {
+      container.innerHTML = `<div style="color: var(--neon-green); padding: 20px; text-align: center;">⚠️ writings.js not found or empty.</div>`;
+    }
   });
 </script>
 <!-- ========================================== -->
