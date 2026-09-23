@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Document Reader</title>
+<title>Writings</title>
 <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -12,9 +12,8 @@
   --deep-green: #001a00;
   --mid-green: #003300;
   --neon-green: #00ff41;
-  --neon-glow: rgba(0, 255, 65, 0.5);
+  --neon-glow-green: rgba(0, 255, 65, 0.5);
   --text-dim: #a0ffb0;
-  --mech-border: 2px solid var(--neon-green);
 }
 
 html, body {
@@ -67,12 +66,12 @@ html, body {
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--neon-green);
-  text-shadow: 0 0 10px var(--neon-glow);
+  text-shadow: 0 0 10px var(--neon-glow-green);
   margin: 0;
 }
 
 /* ========================================== */
-/* Glowing Logo (Adapted for Banner) */
+/* Glowing Logo */
 /* ========================================== */
 .glowing-logo-wrapper {
   position: relative;
@@ -139,59 +138,75 @@ html, body {
   flex: 1;
   padding: 40px;
   overflow-y: auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 24px;
-  align-content: start;
-  margin-right: 280px; /* Make room for fixed sidebar */
+  margin-right: 200px; /* Matches the 30% smaller sidebar width */
 }
 
-.text-button {
-  background: rgba(0, 30, 0, 0.7);
-  border: 1px solid var(--neon-green);
-  color: var(--neon-green);
-  padding: 28px 20px;
-  border-radius: 6px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 16px;
-  text-align: center;
+.text-list-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.text-list-item {
+  background: rgba(0, 255, 65, 0.03);
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  border-radius: 4px;
+  color: var(--text-dim);
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 0 10px rgba(0, 255, 65, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-family: 'Share Tech Mono', monospace;
+  text-align: left;
+  width: 100%;
+  padding: 16px;
+}
+
+.text-list-item:hover {
+  background: rgba(0, 255, 65, 0.1);
+  border-color: var(--neon-green);
+  color: var(--neon-green);
+  box-shadow: 0 0 12px var(--neon-glow-green);
+  transform: translateY(-2px);
+}
+
+.text-list-item .book-info {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  backdrop-filter: blur(4px);
 }
 
-.text-button:hover {
-  background: rgba(0, 255, 65, 0.1);
-  box-shadow: 0 0 25px var(--neon-glow);
-  transform: translateY(-4px);
-  border-color: #fff;
+.text-list-item .book-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--neon-green);
 }
 
-.text-button .doc-icon {
-  font-size: 36px;
-  margin-bottom: 4px;
-  text-shadow: 0 0 10px var(--neon-glow);
-}
-
-.text-button .doc-meta {
+.text-list-item .book-author {
   font-size: 12px;
   color: var(--text-dim);
-  opacity: 0.8;
+  margin-top: 4px;
+}
+
+.text-list-item .book-rating {
+  font-size: 14px;
+  color: var(--neon-green);
+  font-weight: bold;
+  white-space: nowrap;
 }
 
 /* ========================================== */
-/* READING LIST SIDEBAR */
+/* READING LIST SIDEBAR (30% Smaller) */
 /* ========================================== */
 .reading-list-sidebar {
   position: fixed;
   top: 110px;
   right: 0;
-  width: 280px;
+  width: 200px; /* Reduced from 280px */
   height: calc(100vh - 110px);
   background: rgba(0, 15, 0, 0.9);
   border-left: 2px solid var(--neon-green);
@@ -203,71 +218,86 @@ html, body {
 }
 
 .reading-list-header {
-  padding: 20px;
+  padding: 15px;
   border-bottom: 1px solid rgba(0, 255, 65, 0.3);
   color: var(--neon-green);
-  font-size: 18px;
-  letter-spacing: 2px;
+  font-size: 15px;
+  letter-spacing: 1px;
   text-transform: uppercase;
-  text-shadow: 0 0 8px var(--neon-glow);
+  text-shadow: 0 0 8px var(--neon-glow-green);
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .reading-list-header::before {
   content: '◈';
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .reading-list-items {
   flex: 1;
   overflow-y: auto;
-  padding: 15px;
+  padding: 12px;
 }
 
-.reading-list-items::-webkit-scrollbar {
-  width: 6px;
-}
-.reading-list-items::-webkit-scrollbar-track {
-  background: var(--deep-green);
-}
-.reading-list-items::-webkit-scrollbar-thumb {
-  background: var(--mid-green);
-  border-radius: 3px;
-}
-.reading-list-items::-webkit-scrollbar-thumb:hover {
-  background: var(--neon-green);
-}
+.reading-list-items::-webkit-scrollbar { width: 6px; }
+.reading-list-items::-webkit-scrollbar-track { background: var(--deep-green); }
+.reading-list-items::-webkit-scrollbar-thumb { background: var(--mid-green); border-radius: 3px; }
+.reading-list-items::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
 
 .reading-list-item {
-  padding: 14px;
+  padding: 12px;
   margin-bottom: 10px;
   background: rgba(0, 255, 65, 0.03);
   border: 1px solid rgba(0, 255, 65, 0.2);
   border-radius: 4px;
   color: var(--text-dim);
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 10px;
-}
-
-.reading-list-item::before {
-  content: '›';
-  color: var(--neon-green);
-  font-size: 18px;
-  font-weight: bold;
+  gap: 8px;
 }
 
 .reading-list-item:hover {
   background: rgba(0, 255, 65, 0.1);
   border-color: var(--neon-green);
   color: var(--neon-green);
-  box-shadow: 0 0 12px var(--neon-glow);
+  box-shadow: 0 0 12px var(--neon-glow-green);
   transform: translateX(4px);
+}
+
+.reading-list-item .book-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.reading-list-item .book-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--neon-green);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reading-list-item .book-author {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+.reading-list-item .book-rating {
+  font-size: 12px;
+  color: var(--neon-green);
+  font-weight: bold;
+  white-space: nowrap;
+  margin-left: 8px;
 }
 
 /* ========================================== */
@@ -364,9 +394,7 @@ html, body {
               0 0 30px rgba(0, 255, 65, 0.3);
 }
 
-.speech-content {
-  padding: 18px 20px;
-}
+.speech-content { padding: 18px 20px; }
 
 .speech-text {
   margin: 0;
@@ -428,7 +456,7 @@ html, body {
 
 .speech-option:hover::before {
   color: var(--neon-green);
-  text-shadow: 0 0 8px var(--neon-glow);
+  text-shadow: 0 0 8px var(--neon-glow-green);
 }
 
 .speech-tail {
@@ -465,9 +493,15 @@ html, body {
 }
 
 /* ========================================== */
-/* CYBERPUNK MECHA MUSIC PLAYER (Green Adapted) */
+/* CYBERPUNK MECHA MUSIC PLAYER (Original Orange) */
 /* ========================================== */
 .music-player-container {
+  --mp-neon: #ff5e00;
+  --mp-glow: rgba(255, 94, 0, 0.6);
+  --mp-dark: #0a0a0a;
+  --mp-gray: #1a1a1a;
+  --mp-border: 2px solid var(--mp-neon);
+
   position: fixed;
   top: 30px;
   right: 30px;
@@ -476,41 +510,41 @@ html, body {
   perspective: 1000px;
 }
 
-.activation-core {
+.music-player-container .activation-core {
   width: 60px;
   height: 60px;
-  background: var(--deep-green);
-  border: var(--mech-border);
+  background: var(--mp-dark);
+  border: var(--mp-border);
   clip-path: polygon(20% 0%, 100% 0%, 100% 80%, 80% 100%, 0% 100%, 0% 20%);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  box-shadow: 0 0 15px var(--neon-glow), inset 0 0 10px rgba(0, 255, 65, 0.2);
+  box-shadow: 0 0 15px var(--mp-glow), inset 0 0 10px rgba(255, 94, 0, 0.2);
   position: relative;
   z-index: 10001;
 }
 
-.activation-core:hover {
-  background: var(--neon-green);
-  box-shadow: 0 0 25px var(--neon-green);
+.music-player-container .activation-core:hover {
+  background: var(--mp-neon);
+  box-shadow: 0 0 25px var(--mp-neon);
 }
 
-.activation-core:hover .core-icon {
-  color: var(--deep-green);
+.music-player-container .activation-core:hover .core-icon {
+  color: var(--mp-dark);
   animation: icon-glitch 0.3s ease-in-out;
 }
 
-.core-icon {
-  color: var(--neon-green);
+.music-player-container .core-icon {
+  color: var(--mp-neon);
   font-size: 32px;
   transition: color 0.3s ease;
   position: relative;
   z-index: 2;
 }
 
-.sonar-container {
+.music-player-container .sonar-container {
   position: fixed;
   width: 0;
   height: 0;
@@ -518,22 +552,18 @@ html, body {
   pointer-events: none;
 }
 
-.sonar-wave {
+.music-player-container .sonar-wave {
   position: absolute;
   top: 0;
   left: 0;
   width: 30px;
   height: 30px;
-  border: 2px solid var(--neon-green);
+  border: 2px solid var(--mp-neon);
   border-radius: 50%;
   transform: translate(-50%, -50%) scale(1);
   opacity: 0;
   animation: sonar-pulse 6s ease-out 1;
 }
-
-.sonar-wave:nth-child(1) { animation-delay: 0s; }
-.sonar-wave:nth-child(2) { animation-delay: 2s; }
-.sonar-wave:nth-child(3) { animation-delay: 4s; }
 
 .music-player-container.panel-open .sonar-wave {
   animation: none;
@@ -555,7 +585,7 @@ html, body {
   50% { transform: translate(0); text-shadow: none; }
 }
 
-.mecha-panel {
+.music-player-container .mecha-panel {
   position: absolute;
   top: 50px;
   right: 0;
@@ -569,44 +599,44 @@ html, body {
   transform: rotate(-5deg) scale(0.95);
 }
 
-.mecha-panel.open {
+.music-player-container .mecha-panel.open {
   pointer-events: auto;
   clip-path: polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%, 0% 100%, 0% 100%, 0% 0%, 0% 0%);
   transform: rotate(0deg) scale(1);
 }
 
-.mech-plate {
-  background: var(--deep-green);
-  border: 1px solid #004400;
+.music-player-container .mech-plate {
+  background: var(--mp-dark);
+  border: 1px solid #333;
   position: relative;
   overflow: hidden;
 }
 
-.mech-plate::before {
+.music-player-container .mech-plate::before {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3) 1px, transparent 1px, transparent 2px);
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15) 1px, transparent 1px, transparent 2px);
   pointer-events: none;
   z-index: 2;
 }
 
-.plate-header {
+.music-player-container .plate-header {
   height: 40px;
-  border-bottom: var(--mech-border);
+  border-bottom: var(--mp-border);
   display: flex;
   align-items: center;
   padding: 0 15px;
   justify-content: space-between;
-  color: var(--neon-green);
+  color: var(--mp-neon);
   font-size: 12px;
   letter-spacing: 2px;
   clip-path: polygon(0 0, 100% 0, 100% 100%, 10% 100%, 0 70%);
 }
 
-.plate-main {
+.music-player-container .plate-main {
   padding: 20px;
-  border-bottom: 1px dashed #004400;
+  border-bottom: 1px dashed #444;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -614,42 +644,42 @@ html, body {
   clip-path: polygon(0 0, 100% 0, 100% 95%, 95% 100%, 0 100%);
 }
 
-.plate-controls {
+.music-player-container .plate-controls {
   height: 90px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 25px;
-  background: linear-gradient(180deg, var(--mid-green) 0%, var(--deep-green) 100%);
+  background: linear-gradient(180deg, var(--mp-gray) 0%, var(--mp-dark) 100%);
   clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 30%);
 }
 
-.mech-hinge {
+.music-player-container .mech-hinge {
   position: absolute;
   width: 15px;
   height: 100%;
-  background: repeating-linear-gradient(45deg, #002200, #002200 5px, #001100 5px, #001100 10px);
-  border-left: 1px solid var(--neon-green);
+  background: repeating-linear-gradient(45deg, #222, #222 5px, #111 5px, #111 10px);
+  border-left: 1px solid var(--mp-neon);
   right: -15px;
   top: 0;
   opacity: 0;
   transition: opacity 0.5s ease 0.3s;
 }
 
-.mecha-panel.open .mech-hinge { opacity: 1; }
+.music-player-container .mecha-panel.open .mech-hinge { opacity: 1; }
 
-.oval-frame {
+.music-player-container .oval-frame {
   width: 160px;
   height: 160px;
   border-radius: 50%;
   overflow: hidden;
-  border: 3px solid var(--neon-green);
-  box-shadow: 0 0 15px var(--neon-glow), inset 0 0 20px rgba(0,0,0,0.8);
+  border: 3px solid var(--mp-neon);
+  box-shadow: 0 0 15px var(--mp-glow), inset 0 0 20px rgba(0,0,0,0.8);
   position: relative;
   background: #000;
 }
 
-.oval-frame::after {
+.music-player-container .oval-frame::after {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -658,19 +688,19 @@ html, body {
   mix-blend-mode: overlay;
 }
 
-.album-art {
+.music-player-container .album-art {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: contrast(1.1) saturate(0.8) hue-rotate(90deg);
+  filter: contrast(1.1) saturate(0.8);
 }
 
-.song-info {
+.music-player-container .song-info {
   text-align: center;
   width: 100%;
 }
 
-.song-title {
+.music-player-container .song-title {
   font-size: 16px;
   font-weight: bold;
   color: #fff;
@@ -683,17 +713,17 @@ html, body {
   text-overflow: ellipsis;
 }
 
-.artist-name {
+.music-player-container .artist-name {
   font-size: 12px;
-  color: var(--neon-green);
+  color: var(--mp-neon);
   letter-spacing: 2px;
   text-transform: uppercase;
 }
 
-.control-btn {
+.music-player-container .control-btn {
   background: transparent;
-  border: 1px solid #004400;
-  color: var(--neon-green);
+  border: 1px solid #444;
+  color: var(--mp-neon);
   cursor: pointer;
   width: 50px;
   height: 50px;
@@ -704,23 +734,23 @@ html, body {
   clip-path: polygon(20% 0%, 100% 0%, 100% 80%, 80% 100%, 0% 100%, 0% 20%);
 }
 
-.control-btn:hover {
-  background: var(--neon-green);
-  color: var(--deep-green);
-  box-shadow: 0 0 15px var(--neon-glow);
-  border-color: var(--neon-green);
+.music-player-container .control-btn:hover {
+  background: var(--mp-neon);
+  color: var(--mp-dark);
+  box-shadow: 0 0 15px var(--mp-glow);
+  border-color: var(--mp-neon);
 }
 
-.play-btn {
+.music-player-container .play-btn {
   width: 65px;
   height: 65px;
-  border: 2px solid var(--neon-green);
-  background: rgba(0, 255, 65, 0.1);
+  border: 2px solid var(--mp-neon);
+  background: rgba(255, 94, 0, 0.1);
 }
 
-.play-btn svg { width: 28px; height: 28px; }
+.music-player-container .play-btn svg { width: 28px; height: 28px; }
 
-.glitch-text { animation: glitch-anim 0.3s cubic-bezier(.25, .46, .45, .94) both; }
+.music-player-container .glitch-text { animation: glitch-anim 0.3s cubic-bezier(.25, .46, .45, .94) both; }
 
 @keyframes glitch-anim {
   0% { transform: translate(0); }
@@ -731,16 +761,18 @@ html, body {
   100% { transform: translate(0); }
 }
 
-.blink { animation: blinker 1s linear infinite; }
+.music-player-container .blink { animation: blinker 1s linear infinite; }
 @keyframes blinker { 50% { opacity: 0; } }
 
 @media (max-width: 768px) {
   .music-player-container { top: 10px; right: 10px; }
-  .mecha-panel { width: 280px; }
-  .oval-frame { width: 130px; height: 130px; }
+  .music-player-container .mecha-panel { width: 280px; }
+  .music-player-container .oval-frame { width: 130px; height: 130px; }
+
   .reading-list-sidebar { width: 100%; right: -100%; transition: right 0.3s ease; }
   .reading-list-sidebar.mobile-open { right: 0; }
   .document-area { margin-right: 0; }
+  .text-list-container { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -757,7 +789,7 @@ html, body {
     </svg>
   </a>
 
-  <h1 class="banner-title">Document Reader</h1>
+  <h1 class="banner-title">Writings</h1>
   <div></div>
 </header>
 
@@ -767,49 +799,86 @@ html, body {
 <!-- MAIN LAYOUT: Document Area & Sidebar -->
 <!-- ========================================== -->
 <div class="main-layout">
-  <!-- Large area for text buttons -->
+  <!-- Large area for text buttons in two columns -->
   <main class="document-area">
-    <button class="text-button">
-      <span class="doc-icon">📄</span>
-      <span>Project_Alpha_Specs.txt</span>
-      <span class="doc-meta">24 KB • Modified: Today</span>
-    </button>
-    <button class="text-button">
-      <span class="doc-icon">📊</span>
-      <span>Q3_Financial_Report.pdf</span>
-      <span class="doc-meta">1.2 MB • Modified: Yesterday</span>
-    </button>
-    <button class="text-button">
-      <span class="doc-icon">📝</span>
-      <span>Meeting_Notes_Oct.docx</span>
-      <span class="doc-meta">15 KB • Modified: 3 days ago</span>
-    </button>
-    <button class="text-button">
-      <span class="doc-icon">🔒</span>
-      <span>Encrypted_Archives.zip</span>
-      <span class="doc-meta">45 MB • Modified: Last week</span>
-    </button>
-    <button class="text-button">
-      <span class="doc-icon">⚙️</span>
-      <span>System_Config.json</span>
-      <span class="doc-meta">4 KB • Modified: Last week</span>
-    </button>
-    <button class="text-button">
-      <span class="doc-icon">📚</span>
-      <span>Research_Paper_Draft.md</span>
-      <span class="doc-meta">89 KB • Modified: 2 weeks ago</span>
-    </button>
+    <div class="text-list-container">
+      <button class="text-list-item">
+        <div class="book-info">
+          <div class="book-title">The Silent Ocean</div>
+          <div class="book-author">A. N. Author</div>
+        </div>
+        <div class="book-rating">9/10</div>
+      </button>
+      <button class="text-list-item">
+        <div class="book-info">
+          <div class="book-title">Neon Dreams</div>
+          <div class="book-author">Cyber Scribe</div>
+        </div>
+        <div class="book-rating">10/10</div>
+      </button>
+      <button class="text-list-item">
+        <div class="book-info">
+          <div class="book-title">Echoes of Code</div>
+          <div class="book-author">Dev Null</div>
+        </div>
+        <div class="book-rating">8/10</div>
+      </button>
+      <button class="text-list-item">
+        <div class="book-info">
+          <div class="book-title">The Last Algorithm</div>
+          <div class="book-author">Jane Doe</div>
+        </div>
+        <div class="book-rating">10/10</div>
+      </button>
+      <button class="text-list-item">
+        <div class="book-info">
+          <div class="book-title">Whispers in the Wire</div>
+          <div class="book-author">John Smith</div>
+        </div>
+        <div class="book-rating">7/10</div>
+      </button>
+      <button class="text-list-item">
+        <div class="book-info">
+          <div class="book-title">Digital Horizons</div>
+          <div class="book-author">Alex Ray</div>
+        </div>
+        <div class="book-rating">9/10</div>
+      </button>
+    </div>
   </main>
 
-  <!-- Fixed Reading List Sidebar -->
+  <!-- Fixed Reading List Sidebar (30% Smaller) -->
   <aside class="reading-list-sidebar">
     <div class="reading-list-header">My Reading List</div>
     <div class="reading-list-items">
-      <div class="reading-list-item">Project_Alpha_Specs.txt</div>
-      <div class="reading-list-item">Q3_Financial_Report.pdf</div>
-      <div class="reading-list-item">System_Config.json</div>
-      <div class="reading-list-item">Research_Paper_Draft.md</div>
-      <!-- Add more items dynamically or statically here -->
+      <div class="reading-list-item">
+        <div class="book-info">
+          <div class="book-title">Book 1</div>
+          <div class="book-author">Author 1</div>
+        </div>
+        <div class="book-rating">10/10</div>
+      </div>
+      <div class="reading-list-item">
+        <div class="book-info">
+          <div class="book-title">Book 2</div>
+          <div class="book-author">Author 2</div>
+        </div>
+        <div class="book-rating">8/10</div>
+      </div>
+      <div class="reading-list-item">
+        <div class="book-info">
+          <div class="book-title">Book 3</div>
+          <div class="book-author">Author 3</div>
+        </div>
+        <div class="book-rating">9/10</div>
+      </div>
+      <div class="reading-list-item">
+        <div class="book-info">
+          <div class="book-title">Book 4</div>
+          <div class="book-author">Author 4</div>
+        </div>
+        <div class="book-rating">10/10</div>
+      </div>
     </div>
   </aside>
 </div>
@@ -1110,7 +1179,7 @@ var particles;
 
     <div class="mech-plate plate-main">
       <div class="oval-frame">
-        <img id="album-art" src="https://via.placeholder.com/160x160/001a00/00ff41?text=NO+DISC" alt="Album Art" class="album-art">
+        <img id="album-art" src="https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=NO+DISC" alt="Album Art" class="album-art">
       </div>
       <div class="song-info">
         <div id="song-title" class="song-title">STANDBY</div>
@@ -1181,7 +1250,7 @@ var particles;
       artistName.classList.add('glitch-text');
       songTitle.textContent = currentSong.title;
       artistName.textContent = currentSong.artist;
-      albumArtImg.src = currentSong.art || 'https://via.placeholder.com/160x160/001a00/00ff41?text=NO+DISC';
+      albumArtImg.src = currentSong.art || 'https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=NO+DISC';
     }
   }
 
@@ -1275,8 +1344,5 @@ var particles;
   restoreState();
   updateUI();
 </script>
-<!-- ========================================== -->
-<!-- END CYBERPUNK MECHA MUSIC PLAYER -->
-<!-- ========================================== -->
 </body>
 </html>
