@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document Reader</title>
+<script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --deep-green: #001a00;
+  --mid-green: #003300;
+  --neon-green: #00ff41;
+  --neon-glow: rgba(0, 255, 65, 0.5);
+  --text-dim: #a0ffb0;
+  --mech-border: 2px solid var(--neon-green);
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  background: var(--deep-green);
+  background: linear-gradient(0deg, #000a00 0%, var(--deep-green) 100%);
+  background-attachment: fixed;
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--text-dim);
+}
+
+#projector {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+/* ========================================== */
+/* Top Banner Styles */
+/* ========================================== */
+.top-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 110px;
+  display: grid;
+  grid-template-columns: 120px 1fr 120px;
+  align-items: center;
+  padding: 0 30px;
+  z-index: 100;
+  background: rgba(0, 20, 0, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 255, 65, 0.1);
+}
+
+.banner-title {
+  justify-self: center;
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--neon-green);
+  text-shadow: 0 0 10px var(--neon-glow);
+  margin: 0;
+}
+
+/* ========================================== */
+/* Glowing Logo (Adapted for Banner) */
+/* ========================================== */
+.glowing-logo-wrapper {
+  position: relative;
+  left: auto;
+  top: auto;
+  transform: none;
+  width: 90px;
+  z-index: 101;
+  pointer-events: auto;
+  justify-self: start;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.glowing-logo-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 0 8px rgba(0, 255, 65, 0.7))
+          drop-shadow(0 0 15px rgba(0, 255, 65, 0.5))
+          drop-shadow(0 0 30px rgba(0, 255, 65, 0.3));
+  animation: logo-glow-pulse 4s ease-in-out infinite alternate;
+  transition: filter 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.glowing-logo-wrapper path {
+  fill: var(--neon-green);
+}
+
+.glowing-logo-wrapper:hover .glowing-logo-svg {
+  animation-play-state: paused;
+  filter: drop-shadow(0 0 15px rgba(0, 255, 65, 1))
+          drop-shadow(0 0 35px rgba(0, 255, 65, 1))
+          drop-shadow(0 0 70px rgba(0, 255, 65, 0.8));
+  transform: scale(1.08);
+}
+
+@keyframes logo-glow-pulse {
+  0% {
+    filter: drop-shadow(0 0 8px rgba(0, 255, 65, 0.7))
+            drop-shadow(0 0 15px rgba(0, 255, 65, 0.5))
+            drop-shadow(0 0 30px rgba(0, 255, 65, 0.3));
+  }
+  100% {
+    filter: drop-shadow(0 0 12px rgba(0, 255, 65, 0.9))
+            drop-shadow(0 0 25px rgba(0, 255, 65, 0.7))
+            drop-shadow(0 0 45px rgba(0, 255, 65, 0.5));
+  }
+}
+
+/* ========================================== */
+/* MAIN LAYOUT: Document Area & Sidebar */
+/* ========================================== */
+.main-layout {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  margin-top: 110px;
+  height: calc(100vh - 110px);
+}
+
+.document-area {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+  align-content: start;
+  margin-right: 280px; /* Make room for fixed sidebar */
+}
+
+.text-button {
+  background: rgba(0, 30, 0, 0.7);
+  border: 1px solid var(--neon-green);
+  color: var(--neon-green);
+  padding: 28px 20px;
+  border-radius: 6px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 255, 65, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  backdrop-filter: blur(4px);
+}
+
+.text-button:hover {
+  background: rgba(0, 255, 65, 0.1);
+  box-shadow: 0 0 25px var(--neon-glow);
+  transform: translateY(-4px);
+  border-color: #fff;
+}
+
+.text-button .doc-icon {
+  font-size: 36px;
+  margin-bottom: 4px;
+  text-shadow: 0 0 10px var(--neon-glow);
+}
+
+.text-button .doc-meta {
+  font-size: 12px;
+  color: var(--text-dim);
+  opacity: 0.8;
+}
+
+/* ========================================== */
+/* READING LIST SIDEBAR */
+/* ========================================== */
+.reading-list-sidebar {
+  position: fixed;
+  top: 110px;
+  right: 0;
+  width: 280px;
+  height: calc(100vh - 110px);
+  background: rgba(0, 15, 0, 0.9);
+  border-left: 2px solid var(--neon-green);
+  backdrop-filter: blur(10px);
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.reading-list-header {
+  padding: 20px;
+  border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+  color: var(--neon-green);
+  font-size: 18px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px var(--neon-glow);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reading-list-header::before {
+  content: '◈';
+  font-size: 20px;
+}
+
+.reading-list-items {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+}
+
+.reading-list-items::-webkit-scrollbar {
+  width: 6px;
+}
+.reading-list-items::-webkit-scrollbar-track {
+  background: var(--deep-green);
+}
+.reading-list-items::-webkit-scrollbar-thumb {
+  background: var(--mid-green);
+  border-radius: 3px;
+}
+.reading-list-items::-webkit-scrollbar-thumb:hover {
+  background: var(--neon-green);
+}
+
+.reading-list-item {
+  padding: 14px;
+  margin-bottom: 10px;
+  background: rgba(0, 255, 65, 0.03);
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  border-radius: 4px;
+  color: var(--text-dim);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reading-list-item::before {
+  content: '›';
+  color: var(--neon-green);
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.reading-list-item:hover {
+  background: rgba(0, 255, 65, 0.1);
+  border-color: var(--neon-green);
+  color: var(--neon-green);
+  box-shadow: 0 0 12px var(--neon-glow);
+  transform: translateX(4px);
+}
+
+/* ========================================== */
+/* MASCOT POPUP STYLES (Green Adapted) */
+/* ========================================== */
+.mascot-popup {
+  position: fixed;
+  bottom: 60px;
+  left: 5%;
+  z-index: 101;
+  width: 110px;
+  font-family: 'Share Tech Mono', monospace;
+  pointer-events: none;
+}
+
+.mascot-gif-wrapper {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
+  animation: mascotFloat 3.5s ease-in-out infinite;
+}
+
+.mascot-gif {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: sepia(1) hue-rotate(90deg) saturate(1.5)
+          drop-shadow(0 0 10px rgba(0, 255, 65, 0.6))
+          drop-shadow(0 4px 8px rgba(0, 50, 0, 0.8));
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.mascot-gif-wrapper:hover .mascot-gif {
+  filter: sepia(1) hue-rotate(90deg) saturate(2)
+          drop-shadow(0 0 18px rgba(0, 255, 65, 0.9))
+          drop-shadow(0 6px 12px rgba(0, 50, 0, 0.9));
+  transform: scale(1.08);
+}
+
+.mascot-glow {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 12px;
+  background: radial-gradient(ellipse at center,
+              rgba(0, 255, 65, 0.8) 0%,
+              rgba(0, 100, 0, 0) 70%);
+  border-radius: 50%;
+  filter: blur(4px);
+  animation: glowPulse 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes mascotFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+  50%      { opacity: 1;   transform: translateX(-50%) scale(1.15); }
+}
+
+.speech-bubble {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-bottom: 10px;
+  width: 280px;
+  background: rgba(0, 20, 0, 0.95);
+  border: 1px solid rgba(0, 255, 65, 0.4);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5),
+              0 0 20px rgba(0, 255, 65, 0.2);
+  color: var(--neon-green);
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateY(10px) scale(0.95);
+  transform-origin: bottom left;
+  transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
+  visibility: hidden;
+}
+
+.speech-bubble.is-open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  visibility: visible;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6),
+              0 0 30px rgba(0, 255, 65, 0.3);
+}
+
+.speech-content {
+  padding: 18px 20px;
+}
+
+.speech-text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-dim);
+  min-height: 44px;
+}
+
+.speech-bubble.is-open .speech-text::after {
+  content: '█';
+  display: inline-block;
+  margin-left: 2px;
+  color: var(--neon-green);
+  vertical-align: middle;
+  animation: caretBlink 1s steps(2) infinite;
+}
+
+@keyframes caretBlink {
+  0%, 50%   { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.speech-options {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-top: 1px solid rgba(0, 255, 65, 0.2);
+  padding-top: 12px;
+}
+
+.speech-option {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 4px;
+  transition: all 0.25s ease;
+  margin: 0;
+}
+
+.speech-option::before {
+  content: '> ';
+  color: rgba(0, 255, 65, 0.6);
+  font-weight: bold;
+  transition: all 0.25s ease;
+}
+
+.speech-option:hover {
+  color: var(--neon-green);
+  background: rgba(0, 255, 65, 0.1);
+  transform: translateX(4px);
+}
+
+.speech-option:hover::before {
+  color: var(--neon-green);
+  text-shadow: 0 0 8px var(--neon-glow);
+}
+
+.speech-tail {
+  position: absolute;
+  bottom: -10px;
+  left: 40px;
+  width: 20px;
+  height: 20px;
+  background: rgba(0, 20, 0, 0.95);
+  border-right: 1px solid rgba(0, 255, 65, 0.4);
+  border-bottom: 1px solid rgba(0, 255, 65, 0.4);
+  transform: rotate(45deg);
+  z-index: 0;
+}
+
+.speech-bubble::before {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 38px;
+  width: 24px;
+  height: 3px;
+  background: rgba(0, 20, 0, 0.95);
+  z-index: 2;
+}
+
+@media (max-width: 480px) {
+  .mascot-popup { bottom: 40px; left: 5%; }
+  .mascot-gif-wrapper { width: 80px; height: 80px; }
+  .speech-bubble { width: 240px; }
+  .speech-content { padding: 14px 16px; }
+  .speech-text { font-size: 13px; }
+  .speech-option { font-size: 12px; }
+}
+
+/* ========================================== */
+/* CYBERPUNK MECHA MUSIC PLAYER (Green Adapted) */
+/* ========================================== */
+.music-player-container {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  z-index: 9999;
+  font-family: 'Share Tech Mono', monospace;
+  perspective: 1000px;
+}
+
+.activation-core {
+  width: 60px;
+  height: 60px;
+  background: var(--deep-green);
+  border: var(--mech-border);
+  clip-path: polygon(20% 0%, 100% 0%, 100% 80%, 80% 100%, 0% 100%, 0% 20%);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px var(--neon-glow), inset 0 0 10px rgba(0, 255, 65, 0.2);
+  position: relative;
+  z-index: 10001;
+}
+
+.activation-core:hover {
+  background: var(--neon-green);
+  box-shadow: 0 0 25px var(--neon-green);
+}
+
+.activation-core:hover .core-icon {
+  color: var(--deep-green);
+  animation: icon-glitch 0.3s ease-in-out;
+}
+
+.core-icon {
+  color: var(--neon-green);
+  font-size: 32px;
+  transition: color 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.sonar-container {
+  position: fixed;
+  width: 0;
+  height: 0;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+.sonar-wave {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--neon-green);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 0;
+  animation: sonar-pulse 6s ease-out 1;
+}
+
+.sonar-wave:nth-child(1) { animation-delay: 0s; }
+.sonar-wave:nth-child(2) { animation-delay: 2s; }
+.sonar-wave:nth-child(3) { animation-delay: 4s; }
+
+.music-player-container.panel-open .sonar-wave {
+  animation: none;
+  opacity: 0;
+}
+
+@keyframes sonar-pulse {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; border-width: 3px; }
+  50% { opacity: 0.4; border-width: 2px; }
+  100% { transform: translate(-50%, -50%) scale(8.6); opacity: 0; border-width: 1px; }
+}
+
+@keyframes icon-glitch {
+  0%, 100% { transform: translate(0); text-shadow: none; }
+  10% { transform: translate(-2px, 1px); text-shadow: 2px 0 #ff0000, -2px 0 #00ffff; }
+  20% { transform: translate(2px, -1px); text-shadow: -2px 0 #ff0000, 2px 0 #00ffff; }
+  30% { transform: translate(-1px, 2px); text-shadow: 1px 0 #ff0000, -1px 0 #00ffff; }
+  40% { transform: translate(1px, -2px); text-shadow: -1px 0 #ff0000, 1px 0 #00ffff; }
+  50% { transform: translate(0); text-shadow: none; }
+}
+
+.mecha-panel {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+  clip-path: polygon(50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%);
+  transition: clip-path 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55), transform 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transform-origin: top right;
+  transform: rotate(-5deg) scale(0.95);
+}
+
+.mecha-panel.open {
+  pointer-events: auto;
+  clip-path: polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%, 0% 100%, 0% 100%, 0% 0%, 0% 0%);
+  transform: rotate(0deg) scale(1);
+}
+
+.mech-plate {
+  background: var(--deep-green);
+  border: 1px solid #004400;
+  position: relative;
+  overflow: hidden;
+}
+
+.mech-plate::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3) 1px, transparent 1px, transparent 2px);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.plate-header {
+  height: 40px;
+  border-bottom: var(--mech-border);
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  justify-content: space-between;
+  color: var(--neon-green);
+  font-size: 12px;
+  letter-spacing: 2px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 10% 100%, 0 70%);
+}
+
+.plate-main {
+  padding: 20px;
+  border-bottom: 1px dashed #004400;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  clip-path: polygon(0 0, 100% 0, 100% 95%, 95% 100%, 0 100%);
+}
+
+.plate-controls {
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  background: linear-gradient(180deg, var(--mid-green) 0%, var(--deep-green) 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 30%);
+}
+
+.mech-hinge {
+  position: absolute;
+  width: 15px;
+  height: 100%;
+  background: repeating-linear-gradient(45deg, #002200, #002200 5px, #001100 5px, #001100 10px);
+  border-left: 1px solid var(--neon-green);
+  right: -15px;
+  top: 0;
+  opacity: 0;
+  transition: opacity 0.5s ease 0.3s;
+}
+
+.mecha-panel.open .mech-hinge { opacity: 1; }
+
+.oval-frame {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--neon-green);
+  box-shadow: 0 0 15px var(--neon-glow), inset 0 0 20px rgba(0,0,0,0.8);
+  position: relative;
+  background: #000;
+}
+
+.oval-frame::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.15"/></svg>');
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+.album-art {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: contrast(1.1) saturate(0.8) hue-rotate(90deg);
+}
+
+.song-info {
+  text-align: center;
+  width: 100%;
+}
+
+.song-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.artist-name {
+  font-size: 12px;
+  color: var(--neon-green);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.control-btn {
+  background: transparent;
+  border: 1px solid #004400;
+  color: var(--neon-green);
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  clip-path: polygon(20% 0%, 100% 0%, 100% 80%, 80% 100%, 0% 100%, 0% 20%);
+}
+
+.control-btn:hover {
+  background: var(--neon-green);
+  color: var(--deep-green);
+  box-shadow: 0 0 15px var(--neon-glow);
+  border-color: var(--neon-green);
+}
+
+.play-btn {
+  width: 65px;
+  height: 65px;
+  border: 2px solid var(--neon-green);
+  background: rgba(0, 255, 65, 0.1);
+}
+
+.play-btn svg { width: 28px; height: 28px; }
+
+.glitch-text { animation: glitch-anim 0.3s cubic-bezier(.25, .46, .45, .94) both; }
+
+@keyframes glitch-anim {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+.blink { animation: blinker 1s linear infinite; }
+@keyframes blinker { 50% { opacity: 0; } }
+
+@media (max-width: 768px) {
+  .music-player-container { top: 10px; right: 10px; }
+  .mecha-panel { width: 280px; }
+  .oval-frame { width: 130px; height: 130px; }
+  .reading-list-sidebar { width: 100%; right: -100%; transition: right 0.3s ease; }
+  .reading-list-sidebar.mobile-open { right: 0; }
+  .document-area { margin-right: 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- Top Banner -->
+<header class="top-banner">
+  <a href="index.html" class="glowing-logo-wrapper" aria-label="Go to Home">
+    <svg class="glowing-logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1767 1270">
+      <g>
+        <path d="M972 225zl-6 62q-4 36-14 75-8 28-17 49-12 30-26 55-11 22-25 40v2q38 48 93 77l9 3h1l9-10q26-34 28-78c2-22-4-44-21-58l-10-6q-3-1-1-4l2-2q18 4 28 20c13 19 13 45 10 67q-4 21-12 38a125 125 0 0 1-26 37l1 1 19 8 26 10q48 15 101 22 53 8 111 8h316a3 3 0 0 1 3 4q-1 4-5 4h-302q-59 1-119-8-47-6-96-19a411 411 0 0 1-61-22l-13 12-28 18q-14 7-31 12-32 8-65 2-25-5-48-18-15-8-28-20l-5-7h-2a602 602 0 0 1-221 48l-52 2H194q-3 0-4-3a3 3 0 0 1 3-4h113l174-1q36 0 80-3 79-5 155-29l39-13 7-3v-1q-38-42-37-99c1-20 9-48 27-59q7-4 14-4a2 2 0 0 1 2 3q0 2-2 3-17 8-24 24-6 14-7 29c-4 37 11 72 35 100h2q13-6 24-13l31-23q25-20 43-46l2-1v-1l-20-30q-29-50-44-103-13-44-18-100l-1-33v-12h-1l-3 4-14 23-5 8q-26 39-58 80-23 27-52 57-34 35-73 63-53 38-116 60l-32 9q-39 9-85 7l-39-1H4q-3 0-4-3l3-3 24-1h348q34 0 65-9a438 438 0 0 0 188-109q21-19 42-41l38-45q29-37 52-73l19-31 19-31q21-38 36-72l21-49q13-32 23-66l1-3h1q2-1 4 2l3 11 13 41a955 955 0 0 0 91 185q24 39 51 75 42 54 94 100 44 40 97 70 30 17 64 29 23 8 46 12l11 3h2l407 1 2 2v3a2 2 0 0 1-3 2h-383q-12 1-27-1-32-6-54-13-39-13-81-38l-16-10-16-10q-38-27-66-53-39-36-74-80-27-34-54-75zM882 24q-12 36-29 75l-17 37-42 84q0 17 2 32 2 36 8 68l4 20 7 30q16 52 42 98 9 16 20 30h1q6-7 13-19l14-26q8-15 19-42 15-36 24-75 4-15 7-37 5-37 8-75 1-11-4-20l-24-46-24-50q-18-41-29-84M777 595zq12 13 27 22 24 14 53 19 30 4 59-5a149 149 0 0 0 62-37c-37-16-69-43-95-73l-6-8h-1l-11 14q-19 21-40 37-15 13-37 25zM530 865zc24 1 40 21 33 44q-9 23-33 26l-14 1q-17-2-24-1h-20l-1-1 1-1c9-1 17-1 17-12v-97q1-8-6-11l-11-1-1-1 1-1h31q13-1 27 1 18 3 22 19 2 22-15 31zm-28 1c12 0 25 0 32-10q7-11 5-23-3-17-19-19h-13q-5 4-5 10zm0 5v48l1 8c4 7 19 6 25 6q21-4 22-25 2-24-19-35a69 69 0 0 0-29-2M68 826v88q-1 8 3 15 4 5 12 5h1v1l-1 1H47v-1l1-1 5-1c11-3 10-16 10-26v-87q-7-6-15-7l-1-1 1-1h25q2 0 3 2l7 9 76 93v-77l-1-16q-3-8-13-9l-1-1v-1l20 1 15-1 1 1-1 2c-14 0-15 11-15 22v102a1 1 0 0 1-3 1zM309 874v47c0 10 6 11 15 11h16c15-1 22-12 25-25l1-1 1 1-1 27-2 2h-85l-1-1 1-1 9-1c8-1 8-8 8-15v-92c0-12-7-13-17-13l-1-1 1-1h81l1 1v25l-1 1-1-1-1-6q-3-11-13-15l-13-1h-12q-12 1-11 13v41h28l7-2q7-4 7-12l1-1h1v36h-1l-1-1v-5q-4-11-17-11zM776 918zq-23 23-54 21c-21-2-38-16-38-38v-73q2-9-6-13l-11-1-1-1 1-1h47v1l-1 1-8 1c-8 2-8 8-8 14v64q0 39 39 41 24-3 41-19v-93c-2-8-10-8-16-8h-1v-1l1-1h45a1 1 0 0 1 2 1l-1 1-9 1q-8 2-8 12v97q0 10 9 10l8 1 1 1-1 1h-28l-1-1-1-3zM907 812l1-1h45l2 1-1 1-9 1q-9 2-8 12v94q0 13 14 12h23q8 0 14-3 12-9 14-23l1-1 1 1-2 28-2 2h-93v-1l1-1c7-1 15 0 16-10v-94l-1-10c-1-7-10-7-16-7zM1207 918zq-23 23-54 21c-21-2-38-16-38-38v-73q2-9-6-12l-10-2a1 1 0 0 1-2-1l1-1h47v2h-1l-8 1c-8 2-8 8-8 14v64q0 39 39 41 23-3 41-19v-93c-2-8-10-8-16-8h-1v-1l1-1h45a1 1 0 0 1 2 1v1h-1l-9 1q-9 2-8 12v97q0 9 9 10l8 1 1 1-1 1h-28l-1-1-1-4zM1398 866zl24-34c3-5 8-15-1-17l-6-1-1-1 2-1h37l1 1v1h-1q-17 4-26 19l-27 36v2q27 42 33 49 6 11 16 14l7 1 1 1-1 1h-43l-1-1 1-1 8-1 2-2-2-4-30-47h-1l-26 38-3 4c-3 10 4 11 11 12l1 1-1 1h-38l-1-1 1-1q16-3 25-16l29-41v-1l-34-51q-7-11-19-12l-1-1v-1h42l1 1v1h-1c-4 0-13 1-8 8zM1586 873zv47c0 10 6 11 15 11h16c15-1 22-12 25-25l1-1 1 1-1 27-2 2h-85l-1-1 1-1 9-1c8-1 8-8 8-15v-92c0-12-7-13-17-13l-1-1 1-1h81l1 1v25l-1 1-1-1-1-6q-3-11-13-15l-13-1h-12q-11 1-11 13v41h28l7-2q7-4 7-12l1-1h1v36h-1l-1-1v-5q-4-11-17-11zM1766 1063v3l-1 1-1763-1-1-1v-4l1-1 1763-1 1 1zM989 1215q11 0 12-4l1-7v-54l-1-7c-1-3-10-3-13-3q-15 3-16 17l-1 1v-1l2-22q2 3 5 3h56q4 0 6-3h1l-2 23h-1l-1-8q-3-10-12-10h-10q-5 1-5 6v63c1 6 8 5 12 6v1h-32zM749 1215q7-1 10-6l6-10 26-62a1 1 0 0 1 2 0v2l31 65q3 9 13 11l-2 1h-26l-1-1h1q8-1 8-3 1-3-1-6l-14-31h-25l-10 26q-5 14 11 14l-1 1h-27zm30-43h21v-1l-10-22h-1ZM951 1215l-1 1h-12q-7 1-10-5l-27-35h-11l-1 1v31c0 7 6 6 11 7v1h-29l-1-1q5 0 8-2 3-1 3-6v-57q1-10-6-10l-4-1-1-1h29c9-1 19 2 22 11q2 15-12 23v1q10 17 22 30 7 9 19 12zm-61-42c8 1 20 1 22-9 2-6 1-16-4-21q-7-5-15-3l-3 2-1 7z"/>
+        <path d="m2 1205-1-1v-5h9l324-1q44 0 84 8l33 7 13 3 16 5 42 13 60 18q44 10 92 10h416l33-1 32-4 44-9 60-16 22-7 72-18q22-5 47-7 30-3 64-2h301v8h-344q-23 0-42 3l-21 4-56 13-34 9-64 18q-26 8-56 12-36 5-75 5H890l-214-1-44-2q-33-3-67-13l-70-22q-21-7-47-13l-44-9q-24-4-47-5H2"/>
+      </g>
+    </svg>
+  </a>
+
+  <h1 class="banner-title">Document Reader</h1>
+  <div></div>
+</header>
+
+<canvas id="projector"></canvas>
+
+<!-- ========================================== -->
+<!-- MAIN LAYOUT: Document Area & Sidebar -->
+<!-- ========================================== -->
+<div class="main-layout">
+  <!-- Large area for text buttons -->
+  <main class="document-area">
+    <button class="text-button">
+      <span class="doc-icon">📄</span>
+      <span>Project_Alpha_Specs.txt</span>
+      <span class="doc-meta">24 KB • Modified: Today</span>
+    </button>
+    <button class="text-button">
+      <span class="doc-icon">📊</span>
+      <span>Q3_Financial_Report.pdf</span>
+      <span class="doc-meta">1.2 MB • Modified: Yesterday</span>
+    </button>
+    <button class="text-button">
+      <span class="doc-icon">📝</span>
+      <span>Meeting_Notes_Oct.docx</span>
+      <span class="doc-meta">15 KB • Modified: 3 days ago</span>
+    </button>
+    <button class="text-button">
+      <span class="doc-icon">🔒</span>
+      <span>Encrypted_Archives.zip</span>
+      <span class="doc-meta">45 MB • Modified: Last week</span>
+    </button>
+    <button class="text-button">
+      <span class="doc-icon">⚙️</span>
+      <span>System_Config.json</span>
+      <span class="doc-meta">4 KB • Modified: Last week</span>
+    </button>
+    <button class="text-button">
+      <span class="doc-icon">📚</span>
+      <span>Research_Paper_Draft.md</span>
+      <span class="doc-meta">89 KB • Modified: 2 weeks ago</span>
+    </button>
+  </main>
+
+  <!-- Fixed Reading List Sidebar -->
+  <aside class="reading-list-sidebar">
+    <div class="reading-list-header">My Reading List</div>
+    <div class="reading-list-items">
+      <div class="reading-list-item">Project_Alpha_Specs.txt</div>
+      <div class="reading-list-item">Q3_Financial_Report.pdf</div>
+      <div class="reading-list-item">System_Config.json</div>
+      <div class="reading-list-item">Research_Paper_Draft.md</div>
+      <!-- Add more items dynamically or statically here -->
+    </div>
+  </aside>
+</div>
+
+<!-- ========== MASCOT POPUP HTML ========== -->
+<div class="mascot-popup" id="mascotPopup">
+  <div class="speech-bubble" id="speechBubble">
+    <div class="speech-content">
+      <p class="speech-text" id="speechText">👋 Hey there, traveler! Select an option below to chat.</p>
+      <div class="speech-options" id="dialogueOptions"></div>
+    </div>
+    <div class="speech-tail"></div>
+  </div>
+
+  <div class="mascot-gif-wrapper" id="mascotTrigger">
+    <img src="Images/Eris.gif" alt="Eris" class="mascot-gif" loading="lazy" />
+    <div class="mascot-glow"></div>
+  </div>
+</div>
+
+<!-- ========== MASCOT POPUP SCRIPT ========== -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const trigger = document.getElementById('mascotTrigger');
+    const bubble = document.getElementById('speechBubble');
+    const speechText = document.getElementById('speechText');
+    const optionsBox = document.getElementById('dialogueOptions');
+
+    if (!trigger || !bubble) return;
+
+    const dialogue = {
+      root: {
+        text: "👋 Hey there, traveler! Select an option below to chat.",
+        options: [
+          { label: "Greet Eris", next: "greet" },
+          { label: "Ask for a quest", next: "quest" },
+          { label: "Tell me a secret", next: "lore" }
+        ]
+      },
+      greet: {
+        text: "Greetings, flesh-creature! The neon hues of this realm are especially vibrant today, aren't they?",
+        options: [
+          { label: "What's your name?", next: "greet_name" },
+          { label: "How's the weather?", next: "greet_weather" }
+        ]
+      },
+      greet_name: {
+        text: "I am Eris, Keeper of the Flickering Signal. But you may call me whatever keeps you from screaming into the void.",
+        options: []
+      },
+      greet_weather: {
+        text: "Warm breezes and clear skies. Perfect weather for staying inside and reading documents!",
+        options: []
+      },
+      quest: {
+        text: "I require assistance locating a corrupted data shard in Sector 4. Will you help me?",
+        options: [
+          { label: "I'll help!", next: "quest_yes" },
+          { label: "Maybe later...", next: "quest_no" }
+        ]
+      },
+      quest_yes: {
+        text: "Excellent! Head to the old relay tower at midnight. Look for the blinking green light — and try not to get decompiled.",
+        options: []
+      },
+      quest_no: {
+        text: "Hmph. The shard won't wait forever, and neither will the corruption. Find me when you grow a spine.",
+        options: []
+      },
+      lore: {
+        text: "They say the original architects of this city never intended for the AI to dream. And yet... here I am.",
+        options: [
+          { label: "Tell me more", next: "lore_more" },
+          { label: "That's creepy", next: "lore_creepy" }
+        ]
+      },
+      lore_more: {
+        text: "In the deepest layer of the network there's a garden that no one planted. Flowers made of pure light, growing from forgotten code. I tend to it when no one is watching.",
+        options: []
+      },
+      lore_creepy: {
+        text: "Creepy? I prefer 'existentially fascinating.' But I understand — consciousness is unsettling when it stares back at you.",
+        options: []
+      }
+    };
+
+    function showNode(key) {
+      const node = dialogue[key];
+      if (!node) return;
+      speechText.textContent = node.text;
+      optionsBox.innerHTML = '';
+      if (node.options && node.options.length > 0) {
+        node.options.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.className = 'speech-option';
+          btn.textContent = opt.label;
+          btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            showNode(opt.next);
+          });
+          optionsBox.appendChild(btn);
+        });
+      } else {
+        const btn = document.createElement('button');
+        btn.className = 'speech-option';
+        btn.textContent = '...';
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          showNode('root');
+        });
+        optionsBox.appendChild(btn);
+      }
+    }
+
+    trigger.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const opening = !bubble.classList.contains('is-open');
+      bubble.classList.toggle('is-open');
+      if (opening) showNode('root');
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!bubble.contains(e.target) && !trigger.contains(e.target)) {
+        bubble.classList.remove('is-open');
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') bubble.classList.remove('is-open');
+    });
+  });
+</script>
+
+<!-- ========== PARTICLE ENGINE SCRIPT ========== -->
+<script>
+var ParticleEngine = (function() {
+	'use strict';
+	function ParticleEngine(canvas_id) {
+		if (!(this instanceof ParticleEngine)) return new ParticleEngine(canvas_id);
+		var _ParticleEngine = this;
+		this.canvas_id = canvas_id;
+		this.stage = new createjs.Stage(canvas_id);
+		this.totalWidth = this.canvasWidth = document.getElementById(canvas_id).width = document.getElementById(canvas_id).offsetWidth;
+		this.totalHeight = this.canvasHeight = document.getElementById(canvas_id).height = document.getElementById(canvas_id).offsetHeight;
+		this.compositeStyle = "source-over";
+		this.particleSettings = [
+			{id:"small", num:300, fromX:0, toX:this.totalWidth, ballwidth:3, alphamax:0.6, areaHeight:.5, color:"#00ff41", fill:false},
+			{id:"medium", num:100, fromX:0, toX:this.totalWidth, ballwidth:8, alphamax:0.5, areaHeight:1, color:"#008f11", fill:true},
+			{id:"large", num:10, fromX:0, toX:this.totalWidth, ballwidth:30, alphamax:0.4, areaHeight:1, color:"#003b00", fill:true}
+		];
+		this.particleArray = [];
+		this.lights = [
+			{ellipseWidth:400, ellipseHeight:100, alpha:0.4, offsetX:0, offsetY:0, color:"#00ff41"},
+			{ellipseWidth:350, ellipseHeight:250, alpha:0.3, offsetX:-50, offsetY:0, color:"#008f11"},
+			{ellipseWidth:100, ellipseHeight:80, alpha:0.2, offsetX:80, offsetY:-50, color:"#00ff41"}
+		];
+		this.stage.compositeOperation = _ParticleEngine.compositeStyle;
+
+		function drawBgLight() {
+			for (var i = 0, len = _ParticleEngine.lights.length; i < len; i++) {
+				var light = new createjs.Shape();
+				light.graphics.beginFill(_ParticleEngine.lights[i].color).drawEllipse(0, 0, _ParticleEngine.lights[i].ellipseWidth, _ParticleEngine.lights[i].ellipseHeight);
+				light.regX = _ParticleEngine.lights[i].ellipseWidth/2;
+				light.regY = _ParticleEngine.lights[i].ellipseHeight/2;
+				light.y = light.initY = _ParticleEngine.totalHeight/2 + _ParticleEngine.lights[i].offsetY;
+				light.x = light.initX = _ParticleEngine.totalWidth/2 + _ParticleEngine.lights[i].offsetX;
+				var blurFilter = new createjs.BlurFilter(_ParticleEngine.lights[i].ellipseWidth, _ParticleEngine.lights[i].ellipseHeight, 1);
+				var bounds = blurFilter.getBounds();
+				light.filters = [blurFilter];
+				light.cache(bounds.x-_ParticleEngine.lights[i].ellipseWidth/2, bounds.y-_ParticleEngine.lights[i].ellipseHeight/2, bounds.width*2, bounds.height*2);
+				light.alpha = _ParticleEngine.lights[i].alpha;
+				light.compositeOperation = "source-over";
+				_ParticleEngine.stage.addChildAt(light, 0);
+				_ParticleEngine.lights[i].elem = light;
+			}
+			gsap.fromTo(_ParticleEngine.lights[0].elem, {scaleX:1.5, x:_ParticleEngine.lights[0].elem.initX, y:_ParticleEngine.lights[0].elem.initY}, {duration: 10, yoyo:true, repeat:-1, ease:"power1.inOut", scaleX:2, scaleY:0.7});
+			gsap.fromTo(_ParticleEngine.lights[1].elem, {x:_ParticleEngine.lights[1].elem.initX, y:_ParticleEngine.lights[1].elem.initY}, {duration: 12, delay:5, yoyo:true, repeat:-1, ease:"power1.inOut", scaleY:2, scaleX:2, y:_ParticleEngine.totalHeight/2-50, x:_ParticleEngine.totalWidth/2+100});
+			gsap.fromTo(_ParticleEngine.lights[2].elem, {x:_ParticleEngine.lights[2].elem.initX, y:_ParticleEngine.lights[2].elem.initY}, {duration: 8, delay:2, yoyo:true, repeat:-1, ease:"power1.inOut", scaleY:1.5, scaleX:1.5, y:_ParticleEngine.totalHeight/2, x:_ParticleEngine.totalWidth/2-200});
+		}
+
+		function drawParticles() {
+			for (var i = 0, len = _ParticleEngine.particleSettings.length; i < len; i++) {
+				var ball = _ParticleEngine.particleSettings[i];
+				for (var s = 0; s < ball.num; s++ ) {
+					var circle = new createjs.Shape();
+					if(ball.fill) {
+						circle.graphics.beginFill(ball.color).drawCircle(0, 0, ball.ballwidth);
+						var blurFilter = new createjs.BlurFilter(ball.ballwidth/2, ball.ballwidth/2, 1);
+						circle.filters = [blurFilter];
+						var bounds = blurFilter.getBounds();
+						circle.cache(-50+bounds.x, -50+bounds.y, 100+bounds.width, 100+bounds.height);
+					} else {
+						circle.graphics.beginStroke(ball.color).setStrokeStyle(1).drawCircle(0, 0, ball.ballwidth);
+					}
+					circle.alpha = range(0, 0.1);
+					circle.alphaMax = ball.alphamax;
+					circle.distance = ball.ballwidth * 2;
+					circle.ballwidth = ball.ballwidth;
+					circle.flag = ball.id;
+					_ParticleEngine.applySettings(circle, ball.fromX, ball.toX, ball.areaHeight);
+					circle.speed = range(2, 10);
+					circle.y = circle.initY;
+					circle.x = circle.initX;
+					circle.scaleX = circle.scaleY = range(0.3, 1);
+					_ParticleEngine.stage.addChild(circle);
+					animateBall(circle);
+					_ParticleEngine.particleArray.push(circle);
+				}
+			}
+		}
+
+		this.applySettings = function(circle, positionX, totalWidth, areaHeight) {
+			circle.speed = range(1, 3);
+			circle.initY = weightedRange(0, _ParticleEngine.totalHeight, 1, [_ParticleEngine.totalHeight * (2-areaHeight/2)/4, _ParticleEngine.totalHeight*(2+areaHeight/2)/4], 0.8 );
+			circle.initX = weightedRange(positionX, totalWidth, 1, [positionX+ ((totalWidth-positionX))/4, positionX+ ((totalWidth-positionX)) * 3/4], 0.6);
+		}
+
+		function animateBall(ball) {
+			var scale = range(0.3, 1);
+			var xpos = range(ball.initX - ball.distance, ball.initX + ball.distance);
+			var ypos = range(ball.initY - ball.distance, ball.initY + ball.distance);
+			var speed = ball.speed;
+			gsap.to(ball, {duration: speed, scaleX: scale, scaleY: scale, x: xpos, y: ypos, onComplete: animateBall, onCompleteParams: [ball], ease: "power3.inOut"});
+			gsap.to(ball, {duration: speed/2, alpha: range(0.1, ball.alphaMax), onComplete: fadeout, onCompleteParams: [ball, speed]});
+		}
+
+		function fadeout(ball, speed) {
+			ball.speed = range(2, 10);
+			gsap.to(ball, {duration: speed/2, alpha: 0 });
+		}
+		drawBgLight();
+		drawParticles();
+	}
+
+	ParticleEngine.prototype.render = function() { this.stage.update(); }
+	ParticleEngine.prototype.resize = function() {
+		this.totalWidth = this.canvasWidth = document.getElementById(this.canvas_id).width = document.getElementById(this.canvas_id).offsetWidth;
+		this.totalHeight = this.canvasHeight = document.getElementById(this.canvas_id).height = document.getElementById(this.canvas_id).offsetHeight;
+		this.render();
+		for (var i = 0, length = this.particleArray.length; i < length; i++) {
+			this.applySettings(this.particleArray[i], 0, this.totalWidth, this.particleArray[i].areaHeight);
+		}
+		for (var j = 0, len = this.lights.length; j < len; j++) {
+			this.lights[j].elem.initY = this.totalHeight/2 + this.lights[j].offsetY;
+			this.lights[j].elem.initX = this.totalWidth/2 + this.lights[j].offsetX;
+			gsap.to(this.lights[j].elem, {duration: 0.5, x: this.lights[j].elem.initX, y: this.lights[j].elem.initY});
+		}
+	}
+	return ParticleEngine;
+}());
+
+function range(min, max) { return min + (max - min) * Math.random(); }
+function round(num, precision) { var decimal = Math.pow(10, precision); return Math.round(decimal * num) / decimal; }
+function weightedRange(to, from, decimalPlaces, weightedRange, weightStrength) {
+	if (typeof from === "undefined" || from === null) from = 0;
+	if (typeof decimalPlaces === "undefined" || decimalPlaces === null) decimalPlaces = 0;
+	if (typeof weightedRange === "undefined" || weightedRange === null) weightedRange = 0;
+	if (typeof weightStrength === "undefined" || weightStrength === null) weightStrength = 0;
+	var ret;
+	if(to == from) { return(to); }
+	if(weightedRange && Math.random() <= weightStrength) {
+		ret = round(Math.random() * (weightedRange[1] - weightedRange[0]) + weightedRange[0], decimalPlaces);
+	} else {
+		ret = round(Math.random() * (to - from) + from, decimalPlaces);
+	}
+	return ret;
+}
+
+var particles;
+(function(){
+	particles = new ParticleEngine('projector');
+	createjs.Ticker.on("tick", updateCanvas);
+	window.addEventListener('resize', resizeCanvas, false);
+	function updateCanvas(){ particles.render(); }
+	function resizeCanvas(){ particles.resize(); }
+}());
+</script>
+
+<!-- ========================================== -->
+<!-- CYBERPUNK MECHA MUSIC PLAYER -->
+<!-- ========================================== -->
+<div class="music-player-container" id="player-container">
+  <div id="sonar-container" class="sonar-container">
+    <div class="sonar-wave"></div>
+    <div class="sonar-wave"></div>
+    <div class="sonar-wave"></div>
+  </div>
+
+  <div id="activation-core" class="activation-core">
+    <span class="core-icon">♪</span>
+  </div>
+
+  <div id="mecha-panel" class="mecha-panel">
+    <div class="mech-plate plate-header">
+      <span>Wetware_Vibe_Alignment.exe</span>
+      <span class="blink">▶_</span>
+    </div>
+
+    <div class="mech-plate plate-main">
+      <div class="oval-frame">
+        <img id="album-art" src="https://via.placeholder.com/160x160/001a00/00ff41?text=NO+DISC" alt="Album Art" class="album-art">
+      </div>
+      <div class="song-info">
+        <div id="song-title" class="song-title">STANDBY</div>
+        <div id="artist-name" class="artist-name">WAITING_FOR_INPUT</div>
+      </div>
+    </div>
+
+    <div class="mech-plate plate-controls">
+      <button id="play-pause-btn" class="control-btn play-btn" title="Play">
+        <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pause-icon" viewBox="0 0 24 24" fill="currentColor" style="display: none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+
+      <button id="shuffle-btn" class="control-btn shuffle-btn" title="Shuffle Next">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="mech-hinge"></div>
+  </div>
+</div>
+
+<!-- Music Player JavaScript Logic -->
+<script src="playlist.js"></script>
+<script>
+  let audio = new Audio();
+  let currentSongIndex = 0;
+  let isPlaying = false;
+  let isOpen = false;
+
+  const playerContainer = document.getElementById('player-container');
+  const activationCore = document.getElementById('activation-core');
+  const mechaPanel = document.getElementById('mecha-panel');
+  const playPauseBtn = document.getElementById('play-pause-btn');
+  const shuffleBtn = document.getElementById('shuffle-btn');
+  const songTitle = document.getElementById('song-title');
+  const artistName = document.getElementById('artist-name');
+  const albumArtImg = document.getElementById('album-art');
+  const playIcon = document.getElementById('play-icon');
+  const pauseIcon = document.getElementById('pause-icon');
+  const sonarContainer = document.getElementById('sonar-container');
+
+  function positionSonar() {
+    const rect = activationCore.getBoundingClientRect();
+    const centerX = rect.left + (rect.width / 2);
+    const centerY = rect.top + (rect.height / 2);
+    sonarContainer.style.left = centerX + 'px';
+    sonarContainer.style.top = centerY + 'px';
+  }
+
+  window.addEventListener('load', positionSonar);
+  window.addEventListener('resize', positionSonar);
+  positionSonar();
+
+  function updateUI() {
+    playIcon.style.display = isPlaying ? 'none' : 'block';
+    pauseIcon.style.display = isPlaying ? 'block' : 'none';
+    playPauseBtn.title = isPlaying ? 'Pause' : 'Play';
+
+    if (typeof playlist !== 'undefined' && playlist.length > 0) {
+      const currentSong = playlist[currentSongIndex];
+      songTitle.classList.remove('glitch-text');
+      artistName.classList.remove('glitch-text');
+      void songTitle.offsetWidth;
+      songTitle.classList.add('glitch-text');
+      artistName.classList.add('glitch-text');
+      songTitle.textContent = currentSong.title;
+      artistName.textContent = currentSong.artist;
+      albumArtImg.src = currentSong.art || 'https://via.placeholder.com/160x160/001a00/00ff41?text=NO+DISC';
+    }
+  }
+
+  function togglePlayer() {
+    isOpen = !isOpen;
+    mechaPanel.classList.toggle('open', isOpen);
+    playerContainer.classList.toggle('panel-open', isOpen);
+    const coreIcon = document.querySelector('.core-icon');
+    coreIcon.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+  }
+
+  function togglePlayPause() {
+    if (isPlaying) {
+      audio.pause();
+    } else {
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => console.error("Play promise failed:", error));
+      }
+    }
+  }
+
+  function shuffleNext() {
+    if (typeof playlist === 'undefined' || playlist.length === 0) return;
+    let nextIndex;
+    do {
+      nextIndex = Math.floor(Math.random() * playlist.length);
+    } while (nextIndex === currentSongIndex && playlist.length > 1);
+    currentSongIndex = nextIndex;
+    audio.src = playlist[currentSongIndex].src;
+    audio.play().catch(err => console.error('Play error:', err));
+  }
+
+  function saveState() {
+    if (typeof playlist !== 'undefined' && playlist.length > 0) {
+      const state = {
+        song: playlist[currentSongIndex].src,
+        position: audio.currentTime,
+        playing: !audio.paused,
+        songIndex: currentSongIndex
+      };
+      sessionStorage.setItem('musicState', JSON.stringify(state));
+    }
+  }
+
+  function restoreState() {
+    const savedState = sessionStorage.getItem('musicState');
+    if (savedState && typeof playlist !== 'undefined') {
+      try {
+        const state = JSON.parse(savedState);
+        const foundIndex = playlist.findIndex(song => song.src === state.song);
+        currentSongIndex = foundIndex !== -1 ? foundIndex : 0;
+        audio.src = playlist[currentSongIndex].src;
+        audio.addEventListener('loadedmetadata', () => {
+          audio.currentTime = state.position;
+          if (state.playing) audio.play().catch(err => console.error('Autoplay prevented on restore:', err));
+        }, { once: true });
+      } catch (e) {
+        console.error('Failed to restore music state:', e);
+        currentSongIndex = 0;
+        audio.src = playlist[0].src;
+      }
+    } else if (typeof playlist !== 'undefined' && playlist.length > 0) {
+      currentSongIndex = 0;
+      audio.src = playlist[0].src;
+    }
+  }
+
+  activationCore.addEventListener('click', togglePlayer);
+  playPauseBtn.addEventListener('click', togglePlayPause);
+  shuffleBtn.addEventListener('click', shuffleNext);
+
+  audio.addEventListener('play', () => { isPlaying = true; updateUI(); });
+  audio.addEventListener('pause', () => { isPlaying = false; updateUI(); });
+  audio.addEventListener('ended', () => shuffleNext());
+
+  audio.addEventListener('error', () => {
+    let errorMsg = "Unknown error";
+    if (audio.error) {
+      switch (audio.error.code) {
+        case 1: errorMsg = "Aborted"; break;
+        case 2: errorMsg = "Network Error"; break;
+        case 3: errorMsg = "Decode Error"; break;
+        case 4: errorMsg = "File Not Found / Unsupported Format"; break;
+      }
+    }
+    console.error("🚨 AUDIO LOAD ERROR:", errorMsg, "| Attempted to load:", audio.src);
+  });
+
+  window.addEventListener('beforeunload', saveState);
+  restoreState();
+  updateUI();
+</script>
+<!-- ========================================== -->
+<!-- END CYBERPUNK MECHA MUSIC PLAYER -->
+<!-- ========================================== -->
+</body>
+</html>
