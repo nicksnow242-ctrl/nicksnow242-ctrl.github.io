@@ -70,9 +70,6 @@ html, body {
   margin: 0;
 }
 
-/* ========================================== */
-/* Glowing Logo */
-/* ========================================== */
 .glowing-logo-wrapper {
   position: relative;
   left: auto;
@@ -98,9 +95,7 @@ html, body {
   transition: filter 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.glowing-logo-wrapper path {
-  fill: var(--neon-green);
-}
+.glowing-logo-wrapper path { fill: var(--neon-green); }
 
 .glowing-logo-wrapper:hover .glowing-logo-svg {
   animation-play-state: paused;
@@ -111,20 +106,12 @@ html, body {
 }
 
 @keyframes logo-glow-pulse {
-  0% {
-    filter: drop-shadow(0 0 8px rgba(0, 255, 65, 0.7))
-            drop-shadow(0 0 15px rgba(0, 255, 65, 0.5))
-            drop-shadow(0 0 30px rgba(0, 255, 65, 0.3));
-  }
-  100% {
-    filter: drop-shadow(0 0 12px rgba(0, 255, 65, 0.9))
-            drop-shadow(0 0 25px rgba(0, 255, 65, 0.7))
-            drop-shadow(0 0 45px rgba(0, 255, 65, 0.5));
-  }
+  0% { filter: drop-shadow(0 0 8px rgba(0, 255, 65, 0.7)) drop-shadow(0 0 15px rgba(0, 255, 65, 0.5)) drop-shadow(0 0 30px rgba(0, 255, 65, 0.3)); }
+  100% { filter: drop-shadow(0 0 12px rgba(0, 255, 65, 0.9)) drop-shadow(0 0 25px rgba(0, 255, 65, 0.7)) drop-shadow(0 0 45px rgba(0, 255, 65, 0.5)); }
 }
 
 /* ========================================== */
-/* MAIN LAYOUT: Document Area & Sidebar */
+/* MAIN LAYOUT CONTAINER */
 /* ========================================== */
 .main-layout {
   position: relative;
@@ -134,11 +121,14 @@ html, body {
   height: calc(100vh - 110px);
 }
 
+/* ========================================== */
+/* SECTION 1: MAIN BODY (WRITINGS LIST) */
+/* ========================================== */
 .document-area {
   flex: 1;
   padding: 40px;
   overflow-y: auto;
-  margin-right: 200px; /* Matches the 30% smaller sidebar width */
+  margin-right: 200px;
 }
 
 .text-list-container {
@@ -175,38 +165,19 @@ html, body {
   transform: translateY(-2px);
 }
 
-.text-list-item .book-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.text-list-item .book-title {
-  font-size: 16px;
-  font-weight: bold;
-  color: var(--neon-green);
-}
-
-.text-list-item .book-author {
-  font-size: 12px;
-  color: var(--text-dim);
-  margin-top: 4px;
-}
-
-.text-list-item .book-rating {
-  font-size: 14px;
-  color: var(--neon-green);
-  font-weight: bold;
-  white-space: nowrap;
-}
+.text-list-item .book-info { display: flex; flex-direction: column; }
+.text-list-item .book-title { font-size: 16px; font-weight: bold; color: var(--neon-green); }
+.text-list-item .book-author { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+.text-list-item .book-rating { font-size: 14px; color: var(--neon-green); font-weight: bold; white-space: nowrap; }
 
 /* ========================================== */
-/* READING LIST SIDEBAR (30% Smaller) */
+/* SECTION 2: READING LIST SIDEBAR */
 /* ========================================== */
 .reading-list-sidebar {
   position: fixed;
   top: 110px;
   right: 0;
-  width: 200px; /* Reduced from 280px */
+  width: 200px;
   height: calc(100vh - 110px);
   background: rgba(0, 15, 0, 0.9);
   border-left: 2px solid var(--neon-green);
@@ -227,18 +198,60 @@ html, body {
   text-shadow: 0 0 8px var(--neon-glow-green);
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
-.reading-list-header::before {
-  content: '◈';
-  font-size: 16px;
+.header-dropdown {
+  background: transparent;
+  border: 1px solid var(--neon-green);
+  color: var(--neon-green);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 15px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  outline: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
+
+.header-dropdown option {
+  background: var(--deep-green);
+  color: var(--neon-green);
+  text-transform: none;
+}
+
+.filter-section {
+  padding: 10px 15px;
+  border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+}
+
+.filter-dropdown {
+  background: rgba(0, 20, 0, 0.9);
+  border: 1px solid var(--neon-green);
+  color: var(--neon-green);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 14px;
+  padding: 8px 12px;
+  width: 100%;
+  border-radius: 4px;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300ff41' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+}
+
+.filter-dropdown:focus { box-shadow: 0 0 8px var(--neon-glow-green); }
+.filter-dropdown option { background: var(--deep-green); color: var(--neon-green); }
 
 .reading-list-items {
   flex: 1;
   overflow-y: auto;
-  padding: 12px;
 }
 
 .reading-list-items::-webkit-scrollbar { width: 6px; }
@@ -246,59 +259,23 @@ html, body {
 .reading-list-items::-webkit-scrollbar-thumb { background: var(--mid-green); border-radius: 3px; }
 .reading-list-items::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
 
+/* Static text with thin green line, NO hover highlights */
 .reading-list-item {
-  padding: 12px;
-  margin-bottom: 10px;
-  background: rgba(0, 255, 65, 0.03);
-  border: 1px solid rgba(0, 255, 65, 0.2);
-  border-radius: 4px;
+  padding: 12px 15px;
+  border-bottom: 1px solid rgba(0, 255, 65, 0.3);
   color: var(--text-dim);
   font-size: 13px;
-  cursor: pointer;
-  transition: all 0.3s ease;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
 }
 
-.reading-list-item:hover {
-  background: rgba(0, 255, 65, 0.1);
-  border-color: var(--neon-green);
-  color: var(--neon-green);
-  box-shadow: 0 0 12px var(--neon-glow-green);
-  transform: translateX(4px);
-}
-
-.reading-list-item .book-info {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 0;
-}
-
-.reading-list-item .book-title {
-  font-size: 14px;
-  font-weight: bold;
-  color: var(--neon-green);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.reading-list-item .book-author {
-  font-size: 11px;
-  color: var(--text-dim);
-  margin-top: 2px;
-}
-
-.reading-list-item .book-rating {
-  font-size: 12px;
-  color: var(--neon-green);
-  font-weight: bold;
-  white-space: nowrap;
-  margin-left: 8px;
-}
+.reading-list-item:last-child { border-bottom: none; }
+.reading-list-item .book-info { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.reading-list-item .book-title { font-size: 14px; font-weight: bold; color: var(--neon-green); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.reading-list-item .book-author { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.reading-list-item .book-rating { font-size: 12px; color: var(--neon-green); font-weight: bold; white-space: nowrap; margin-left: 8px; }
 
 /* ========================================== */
 /* MASCOT POPUP STYLES (Green Adapted) */
@@ -347,9 +324,7 @@ html, body {
   transform: translateX(-50%);
   width: 80%;
   height: 12px;
-  background: radial-gradient(ellipse at center,
-              rgba(0, 255, 65, 0.8) 0%,
-              rgba(0, 100, 0, 0) 70%);
+  background: radial-gradient(ellipse at center, rgba(0, 255, 65, 0.8) 0%, rgba(0, 100, 0, 0) 70%);
   border-radius: 50%;
   filter: blur(4px);
   animation: glowPulse 2.5s ease-in-out infinite;
@@ -375,8 +350,7 @@ html, body {
   background: rgba(0, 20, 0, 0.95);
   border: 1px solid rgba(0, 255, 65, 0.4);
   border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5),
-              0 0 20px rgba(0, 255, 65, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 65, 0.2);
   color: var(--neon-green);
   pointer-events: auto;
   opacity: 0;
@@ -390,19 +364,11 @@ html, body {
   opacity: 1;
   transform: translateY(0) scale(1);
   visibility: visible;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6),
-              0 0 30px rgba(0, 255, 65, 0.3);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 255, 65, 0.3);
 }
 
 .speech-content { padding: 18px 20px; }
-
-.speech-text {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--text-dim);
-  min-height: 44px;
-}
+.speech-text { margin: 0; font-size: 14px; line-height: 1.6; color: var(--text-dim); min-height: 44px; }
 
 .speech-bubble.is-open .speech-text::after {
   content: '█';
@@ -749,7 +715,6 @@ html, body {
 }
 
 .music-player-container .play-btn svg { width: 28px; height: 28px; }
-
 .music-player-container .glitch-text { animation: glitch-anim 0.3s cubic-bezier(.25, .46, .45, .94) both; }
 
 @keyframes glitch-anim {
@@ -768,7 +733,6 @@ html, body {
   .music-player-container { top: 10px; right: 10px; }
   .music-player-container .mecha-panel { width: 280px; }
   .music-player-container .oval-frame { width: 130px; height: 130px; }
-
   .reading-list-sidebar { width: 100%; right: -100%; transition: right 0.3s ease; }
   .reading-list-sidebar.mobile-open { right: 0; }
   .document-area { margin-right: 0; }
@@ -788,7 +752,6 @@ html, body {
       </g>
     </svg>
   </a>
-
   <h1 class="banner-title">Writings</h1>
   <div></div>
 </header>
@@ -796,94 +759,50 @@ html, body {
 <canvas id="projector"></canvas>
 
 <!-- ========================================== -->
-<!-- MAIN LAYOUT: Document Area & Sidebar -->
+<!-- MAIN LAYOUT CONTAINER -->
 <!-- ========================================== -->
 <div class="main-layout">
-  <!-- Large area for text buttons in two columns -->
+
+  <!-- ========================================== -->
+  <!-- SECTION 1: MAIN BODY (WRITINGS LIST) -->
+  <!-- ========================================== -->
   <main class="document-area">
-    <div class="text-list-container">
-      <button class="text-list-item">
-        <div class="book-info">
-          <div class="book-title">The Silent Ocean</div>
-          <div class="book-author">A. N. Author</div>
-        </div>
-        <div class="book-rating">9/10</div>
-      </button>
-      <button class="text-list-item">
-        <div class="book-info">
-          <div class="book-title">Neon Dreams</div>
-          <div class="book-author">Cyber Scribe</div>
-        </div>
-        <div class="book-rating">10/10</div>
-      </button>
-      <button class="text-list-item">
-        <div class="book-info">
-          <div class="book-title">Echoes of Code</div>
-          <div class="book-author">Dev Null</div>
-        </div>
-        <div class="book-rating">8/10</div>
-      </button>
-      <button class="text-list-item">
-        <div class="book-info">
-          <div class="book-title">The Last Algorithm</div>
-          <div class="book-author">Jane Doe</div>
-        </div>
-        <div class="book-rating">10/10</div>
-      </button>
-      <button class="text-list-item">
-        <div class="book-info">
-          <div class="book-title">Whispers in the Wire</div>
-          <div class="book-author">John Smith</div>
-        </div>
-        <div class="book-rating">7/10</div>
-      </button>
-      <button class="text-list-item">
-        <div class="book-info">
-          <div class="book-title">Digital Horizons</div>
-          <div class="book-author">Alex Ray</div>
-        </div>
-        <div class="book-rating">9/10</div>
-      </button>
+    <div class="text-list-container" id="main-body-container">
+      <!-- Populated dynamically by content.js -->
     </div>
   </main>
 
-  <!-- Fixed Reading List Sidebar (30% Smaller) -->
+  <!-- ========================================== -->
+  <!-- SECTION 2: READING LIST SIDEBAR -->
+  <!-- ========================================== -->
   <aside class="reading-list-sidebar">
-    <div class="reading-list-header">My Reading List</div>
-    <div class="reading-list-items">
-      <div class="reading-list-item">
-        <div class="book-info">
-          <div class="book-title">Book 1</div>
-          <div class="book-author">Author 1</div>
-        </div>
-        <div class="book-rating">10/10</div>
-      </div>
-      <div class="reading-list-item">
-        <div class="book-info">
-          <div class="book-title">Book 2</div>
-          <div class="book-author">Author 2</div>
-        </div>
-        <div class="book-rating">8/10</div>
-      </div>
-      <div class="reading-list-item">
-        <div class="book-info">
-          <div class="book-title">Book 3</div>
-          <div class="book-author">Author 3</div>
-        </div>
-        <div class="book-rating">9/10</div>
-      </div>
-      <div class="reading-list-item">
-        <div class="book-info">
-          <div class="book-title">Book 4</div>
-          <div class="book-author">Author 4</div>
-        </div>
-        <div class="book-rating">10/10</div>
-      </div>
+    <div class="reading-list-header">
+      <span>My</span>
+      <select id="category-select" class="header-dropdown">
+        <option value="Reading">Reading</option>
+        <option value="Film">Film</option>
+        <option value="Pod">Pod</option>
+        <option value="Articles">Articles</option>
+      </select>
+      <span>List</span>
+    </div>
+
+    <div class="filter-section">
+      <select id="year-select" class="filter-dropdown">
+        <option value="2026">2026</option>
+      </select>
+    </div>
+
+    <div class="reading-list-items" id="reading-list-container">
+      <!-- Populated dynamically by content.js -->
     </div>
   </aside>
+
 </div>
 
-<!-- ========== MASCOT POPUP HTML ========== -->
+<!-- ========================================== -->
+<!-- MASCOT POPUP HTML -->
+<!-- ========================================== -->
 <div class="mascot-popup" id="mascotPopup">
   <div class="speech-bubble" id="speechBubble">
     <div class="speech-content">
@@ -892,14 +811,15 @@ html, body {
     </div>
     <div class="speech-tail"></div>
   </div>
-
   <div class="mascot-gif-wrapper" id="mascotTrigger">
     <img src="Images/Eris.gif" alt="Eris" class="mascot-gif" loading="lazy" />
     <div class="mascot-glow"></div>
   </div>
 </div>
 
-<!-- ========== MASCOT POPUP SCRIPT ========== -->
+<!-- ========================================== -->
+<!-- MASCOT POPUP SCRIPT -->
+<!-- ========================================== -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const trigger = document.getElementById('mascotTrigger');
@@ -910,59 +830,16 @@ html, body {
     if (!trigger || !bubble) return;
 
     const dialogue = {
-      root: {
-        text: "👋 Hey there, traveler! Select an option below to chat.",
-        options: [
-          { label: "Greet Eris", next: "greet" },
-          { label: "Ask for a quest", next: "quest" },
-          { label: "Tell me a secret", next: "lore" }
-        ]
-      },
-      greet: {
-        text: "Greetings, flesh-creature! The neon hues of this realm are especially vibrant today, aren't they?",
-        options: [
-          { label: "What's your name?", next: "greet_name" },
-          { label: "How's the weather?", next: "greet_weather" }
-        ]
-      },
-      greet_name: {
-        text: "I am Eris, Keeper of the Flickering Signal. But you may call me whatever keeps you from screaming into the void.",
-        options: []
-      },
-      greet_weather: {
-        text: "Warm breezes and clear skies. Perfect weather for staying inside and reading documents!",
-        options: []
-      },
-      quest: {
-        text: "I require assistance locating a corrupted data shard in Sector 4. Will you help me?",
-        options: [
-          { label: "I'll help!", next: "quest_yes" },
-          { label: "Maybe later...", next: "quest_no" }
-        ]
-      },
-      quest_yes: {
-        text: "Excellent! Head to the old relay tower at midnight. Look for the blinking green light — and try not to get decompiled.",
-        options: []
-      },
-      quest_no: {
-        text: "Hmph. The shard won't wait forever, and neither will the corruption. Find me when you grow a spine.",
-        options: []
-      },
-      lore: {
-        text: "They say the original architects of this city never intended for the AI to dream. And yet... here I am.",
-        options: [
-          { label: "Tell me more", next: "lore_more" },
-          { label: "That's creepy", next: "lore_creepy" }
-        ]
-      },
-      lore_more: {
-        text: "In the deepest layer of the network there's a garden that no one planted. Flowers made of pure light, growing from forgotten code. I tend to it when no one is watching.",
-        options: []
-      },
-      lore_creepy: {
-        text: "Creepy? I prefer 'existentially fascinating.' But I understand — consciousness is unsettling when it stares back at you.",
-        options: []
-      }
+      root: { text: "👋 Hey there, traveler! Select an option below to chat.", options: [{ label: "Greet Eris", next: "greet" }, { label: "Ask for a quest", next: "quest" }, { label: "Tell me a secret", next: "lore" }] },
+      greet: { text: "Greetings, flesh-creature! The neon hues of this realm are especially vibrant today, aren't they?", options: [{ label: "What's your name?", next: "greet_name" }, { label: "How's the weather?", next: "greet_weather" }] },
+      greet_name: { text: "I am Eris, Keeper of the Flickering Signal. But you may call me whatever keeps you from screaming into the void.", options: [] },
+      greet_weather: { text: "Warm breezes and clear skies. Perfect weather for staying inside and reading documents!", options: [] },
+      quest: { text: "I require assistance locating a corrupted data shard in Sector 4. Will you help me?", options: [{ label: "I'll help!", next: "quest_yes" }, { label: "Maybe later...", next: "quest_no" }] },
+      quest_yes: { text: "Excellent! Head to the old relay tower at midnight. Look for the blinking green light — and try not to get decompiled.", options: [] },
+      quest_no: { text: "Hmph. The shard won't wait forever, and neither will the corruption. Find me when you grow a spine.", options: [] },
+      lore: { text: "They say the original architects of this city never intended for the AI to dream. And yet... here I am.", options: [{ label: "Tell me more", next: "lore_more" }, { label: "That's creepy", next: "lore_creepy" }] },
+      lore_more: { text: "In the deepest layer of the network there's a garden that no one planted. Flowers made of pure light, growing from forgotten code. I tend to it when no one is watching.", options: [] },
+      lore_creepy: { text: "Creepy? I prefer 'existentially fascinating.' But I understand — consciousness is unsettling when it stares back at you.", options: [] }
     };
 
     function showNode(key) {
@@ -975,20 +852,14 @@ html, body {
           const btn = document.createElement('button');
           btn.className = 'speech-option';
           btn.textContent = opt.label;
-          btn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            showNode(opt.next);
-          });
+          btn.addEventListener('click', function(e) { e.stopPropagation(); showNode(opt.next); });
           optionsBox.appendChild(btn);
         });
       } else {
         const btn = document.createElement('button');
         btn.className = 'speech-option';
         btn.textContent = '...';
-        btn.addEventListener('click', function(e) {
-          e.stopPropagation();
-          showNode('root');
-        });
+        btn.addEventListener('click', function(e) { e.stopPropagation(); showNode('root'); });
         optionsBox.appendChild(btn);
       }
     }
@@ -1001,18 +872,17 @@ html, body {
     });
 
     document.addEventListener('click', function(e) {
-      if (!bubble.contains(e.target) && !trigger.contains(e.target)) {
-        bubble.classList.remove('is-open');
-      }
+      if (!bubble.contains(e.target) && !trigger.contains(e.target)) bubble.classList.remove('is-open');
     });
-
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') bubble.classList.remove('is-open');
     });
   });
 </script>
 
-<!-- ========== PARTICLE ENGINE SCRIPT ========== -->
+<!-- ========================================== -->
+<!-- PARTICLE ENGINE SCRIPT -->
+<!-- ========================================== -->
 <script>
 var ParticleEngine = (function() {
 	'use strict';
@@ -1166,17 +1036,14 @@ var particles;
     <div class="sonar-wave"></div>
     <div class="sonar-wave"></div>
   </div>
-
   <div id="activation-core" class="activation-core">
     <span class="core-icon">♪</span>
   </div>
-
   <div id="mecha-panel" class="mecha-panel">
     <div class="mech-plate plate-header">
       <span>Wetware_Vibe_Alignment.exe</span>
       <span class="blink">▶_</span>
     </div>
-
     <div class="mech-plate plate-main">
       <div class="oval-frame">
         <img id="album-art" src="https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=NO+DISC" alt="Album Art" class="album-art">
@@ -1186,25 +1053,24 @@ var particles;
         <div id="artist-name" class="artist-name">WAITING_FOR_INPUT</div>
       </div>
     </div>
-
     <div class="mech-plate plate-controls">
       <button id="play-pause-btn" class="control-btn play-btn" title="Play">
         <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
         <svg id="pause-icon" viewBox="0 0 24 24" fill="currentColor" style="display: none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
       </button>
-
       <button id="shuffle-btn" class="control-btn shuffle-btn" title="Shuffle Next">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
           <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
         </svg>
       </button>
     </div>
-
     <div class="mech-hinge"></div>
   </div>
 </div>
 
-<!-- Music Player JavaScript Logic -->
+<!-- ========================================== -->
+<!-- MUSIC PLAYER JAVASCRIPT LOGIC -->
+<!-- ========================================== -->
 <script src="playlist.js"></script>
 <script>
   let audio = new Audio();
@@ -1263,22 +1129,18 @@ var particles;
   }
 
   function togglePlayPause() {
-    if (isPlaying) {
-      audio.pause();
-    } else {
+    if (isPlaying) { audio.pause(); }
+    else {
       const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(error => console.error("Play promise failed:", error));
-      }
+      if (playPromise !== undefined) playPromise.catch(error => console.error("Play promise failed:", error));
     }
   }
 
   function shuffleNext() {
     if (typeof playlist === 'undefined' || playlist.length === 0) return;
     let nextIndex;
-    do {
-      nextIndex = Math.floor(Math.random() * playlist.length);
-    } while (nextIndex === currentSongIndex && playlist.length > 1);
+    do { nextIndex = Math.floor(Math.random() * playlist.length); }
+    while (nextIndex === currentSongIndex && playlist.length > 1);
     currentSongIndex = nextIndex;
     audio.src = playlist[currentSongIndex].src;
     audio.play().catch(err => console.error('Play error:', err));
@@ -1286,12 +1148,7 @@ var particles;
 
   function saveState() {
     if (typeof playlist !== 'undefined' && playlist.length > 0) {
-      const state = {
-        song: playlist[currentSongIndex].src,
-        position: audio.currentTime,
-        playing: !audio.paused,
-        songIndex: currentSongIndex
-      };
+      const state = { song: playlist[currentSongIndex].src, position: audio.currentTime, playing: !audio.paused, songIndex: currentSongIndex };
       sessionStorage.setItem('musicState', JSON.stringify(state));
     }
   }
@@ -1326,23 +1183,65 @@ var particles;
   audio.addEventListener('play', () => { isPlaying = true; updateUI(); });
   audio.addEventListener('pause', () => { isPlaying = false; updateUI(); });
   audio.addEventListener('ended', () => shuffleNext());
-
-  audio.addEventListener('error', () => {
-    let errorMsg = "Unknown error";
-    if (audio.error) {
-      switch (audio.error.code) {
-        case 1: errorMsg = "Aborted"; break;
-        case 2: errorMsg = "Network Error"; break;
-        case 3: errorMsg = "Decode Error"; break;
-        case 4: errorMsg = "File Not Found / Unsupported Format"; break;
-      }
-    }
-    console.error("🚨 AUDIO LOAD ERROR:", errorMsg, "| Attempted to load:", audio.src);
-  });
+  audio.addEventListener('error', () => console.error("🚨 AUDIO LOAD ERROR"));
 
   window.addEventListener('beforeunload', saveState);
   restoreState();
   updateUI();
+</script>
+
+<!-- ========================================== -->
+<!-- CONTENT POPULATION SCRIPT -->
+<!-- ========================================== -->
+<script src="content.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const categorySelect = document.getElementById('category-select');
+    const yearSelect = document.getElementById('year-select');
+    const readingListContainer = document.getElementById('reading-list-container');
+    const mainBodyContainer = document.getElementById('main-body-container');
+
+    function renderContent() {
+      const category = categorySelect.value;
+      const year = yearSelect.value;
+      const items = (typeof contentData !== 'undefined' && contentData[category] && contentData[category][year]) ? contentData[category][year] : [];
+
+      readingListContainer.innerHTML = '';
+      mainBodyContainer.innerHTML = '';
+
+      items.forEach(item => {
+        // Reading List Item (Static text, thin green line)
+        const rlItem = document.createElement('div');
+        rlItem.className = 'reading-list-item';
+        rlItem.innerHTML = `
+          <div class="book-info">
+            <div class="book-title">${item.title}</div>
+            <div class="book-author">${item.author}</div>
+          </div>
+          <div class="book-rating">${item.rating}</div>
+        `;
+        readingListContainer.appendChild(rlItem);
+
+        // Main Body Item (Button)
+        const mbItem = document.createElement('button');
+        mbItem.className = 'text-list-item';
+        mbItem.innerHTML = `
+          <div class="book-info">
+            <div class="book-title">${item.title}</div>
+            <div class="book-author">${item.author}</div>
+          </div>
+          <div class="book-rating">${item.rating}</div>
+        `;
+        mainBodyContainer.appendChild(mbItem);
+      });
+    }
+
+    categorySelect.addEventListener('change', renderContent);
+    yearSelect.addEventListener('change', renderContent);
+
+    // Initial render
+    renderContent();
+  });
 </script>
 </body>
 </html>
