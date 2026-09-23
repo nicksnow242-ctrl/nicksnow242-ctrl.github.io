@@ -1314,6 +1314,7 @@ var particles;
     line-height: 1.8;
     color: #d0ffd9;
     max-width: 70%;
+    margin-left: auto; /* Aligns the text block to the right */
   }
   .reader-content p { margin-bottom: 20px; text-align: justify; }
 
@@ -1327,10 +1328,11 @@ var particles;
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* Reduce button container width to avoid mascot overlap */
+  /* Align button container to the right, away from the mascot */
   .text-list-container {
     max-width: 650px;
-    margin-left: 80px;
+    margin-left: auto;
+    margin-right: 20px;
   }
 
   /* Hide the main grid when the reader is active */
