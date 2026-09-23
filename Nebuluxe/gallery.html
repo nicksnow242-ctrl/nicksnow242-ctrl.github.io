@@ -2741,6 +2741,121 @@ class InfinitePortraitGallery {
            padding: 16px 20px;
          }
        }
+       /* ========================================== */
+/* EMPTY STATE GLITCH POPUP */
+/* ========================================== */
+.glitch-popup {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.glitch-popup.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.glitch-text-main {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 42px;
+  color: #b49a5d;
+  position: relative;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  text-align: center;
+  animation: glitch-skew 1s infinite linear alternate-reverse;
+}
+
+.glitch-text-main::before,
+.glitch-text-main::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 10, 10, 0.85); /* Matches popup bg to "erase" parts of the main text */
+}
+
+.glitch-text-main::before {
+  left: 2px;
+  text-shadow: -2px 0 #ff00c1;
+  clip-path: inset(44% 0 61% 0);
+  animation: glitch-anim-1 2s infinite linear alternate-reverse;
+}
+
+.glitch-text-main::after {
+  left: -2px;
+  text-shadow: -2px 0 #00fff9;
+  clip-path: inset(50% 0 30% 0);
+  animation: glitch-anim-2 2s infinite linear alternate-reverse;
+}
+
+.glitch-text-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 16px;
+  color: #8A7355;
+  margin-top: 16px;
+  letter-spacing: 2px;
+  text-align: center;
+  animation: glitch-skew 1.5s infinite linear alternate-reverse;
+}
+
+.glitch-close-btn {
+  margin-top: 40px;
+  padding: 10px 24px;
+  background: transparent;
+  border: 1px solid #b49a5d;
+  color: #b49a5d;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.glitch-close-btn:hover {
+  background: #b49a5d;
+  color: #0a0a0a;
+  box-shadow: 0 0 15px rgba(180, 154, 93, 0.6);
+}
+
+@keyframes glitch-anim-1 {
+  0% { clip-path: inset(20% 0 80% 0); }
+  20% { clip-path: inset(60% 0 10% 0); }
+  40% { clip-path: inset(40% 0 50% 0); }
+  60% { clip-path: inset(80% 0 5% 0); }
+  80% { clip-path: inset(10% 0 70% 0); }
+  100% { clip-path: inset(30% 0 20% 0); }
+}
+
+@keyframes glitch-anim-2 {
+  0% { clip-path: inset(10% 0 60% 0); }
+  20% { clip-path: inset(80% 0 5% 0); }
+  40% { clip-path: inset(30% 0 20% 0); }
+  60% { clip-path: inset(15% 0 80% 0); }
+  80% { clip-path: inset(55% 0 10% 0); }
+  100% { clip-path: inset(40% 0 30% 0); }
+}
+
+@keyframes glitch-skew {
+  0% { transform: skew(0deg); }
+  10% { transform: skew(-2deg); }
+  20% { transform: skew(2deg); }
+  30% { transform: skew(0deg); }
+  100% { transform: skew(0deg); }
+}
      </style>
 
      <div class="filter-tab" id="filterTab">
@@ -2957,114 +3072,121 @@ class InfinitePortraitGallery {
        collectionSelect.addEventListener('change', triggerFilterUpdate);
 
        // 5. Handle Reset
-       resetBtn.addEventListener('click', function() {
-         // Reset toggles
-         document.querySelectorAll('.cyber-toggle input').forEach(input => {
-           if (input.checked) {
-             input.checked = false;
-             const toggle = input.closest('.cyber-toggle');
-             toggle.classList.remove('active');
-             const glow1 = toggle.querySelector('.glow-1');
-             const glow2 = toggle.querySelector('.glow-2');
-             const unchecked = toggle.querySelector('.unchecked');
-             if(glow1) gsap.to(glow1, { x: -5, rotation: -20, opacity: 0, duration: 0.3, ease: "power2.in" });
-             if(glow2) gsap.to(glow2, { x: 5, rotation: 20, opacity: 0, duration: 0.3, ease: "power2.in" });
-             if(unchecked) gsap.to(unchecked, { opacity: 1, duration: 0.2 });
-           }
-         });
+resetBtn.addEventListener('click', function() {
+  document.querySelectorAll('.cyber-toggle input').forEach(input => {
+    if (input.checked) {
+      input.checked = false;
+      const toggle = input.closest('.cyber-toggle');
+      toggle.classList.remove('active');
+      const glow1 = toggle.querySelector('.glow-1');
+      const glow2 = toggle.querySelector('.glow-2');
+      const unchecked = toggle.querySelector('.unchecked');
+      if(glow1) gsap.to(glow1, { x: -5, rotation: -20, opacity: 0, duration: 0.3, ease: "power2.in" });
+      if(glow2) gsap.to(glow2, { x: 5, rotation: 20, opacity: 0, duration: 0.3, ease: "power2.in" });
+      if(unchecked) gsap.to(unchecked, { opacity: 1, duration: 0.2 });
+    }
+  });
 
-         // Reset text inputs
-         searchInput.value = '';
-         collectionSelect.value = 'All';
+  searchInput.value = '';
+  collectionSelect.value = 'All';
 
-         // Restore full dataset safely
-         if (window._originalThumbnails) {
-           window.thumbnails = [...window._originalThumbnails];
-         }
+  if (window._originalThumbnails) {
+    window.thumbnails = [...window._originalThumbnails];
+  }
 
-         triggerFilterUpdate();
-       });
+  triggerFilterUpdate();
+});
 
-       // 6. Core Filtering Logic
-       function triggerFilterUpdate() {
-         const sizes = new Set();
-         document.querySelectorAll('.cyber-toggle input[data-filter="size"]:checked').forEach(el => sizes.add(el.dataset.value));
+// 5b. Handle Empty State Popup Close
+const closeEmptyStateBtn = document.getElementById('closeEmptyStateBtn');
+if (closeEmptyStateBtn) {
+  closeEmptyStateBtn.addEventListener('click', function() {
+    // Reset filters to ensure images show up again and popup closes
+    resetBtn.click();
+  });
+}
 
-         const statuses = new Set();
-         document.querySelectorAll('.cyber-toggle input[data-filter="status"]:checked').forEach(el => statuses.add(el.dataset.value));
+// 6. Core Filtering Logic
+function triggerFilterUpdate() {
+  const sizes = new Set();
+  document.querySelectorAll('.cyber-toggle input[data-filter="size"]:checked').forEach(el => sizes.add(el.dataset.value));
 
-         const collection = collectionSelect.value;
-         const searchTerm = searchInput.value.trim().toLowerCase();
+  const statuses = new Set();
+  document.querySelectorAll('.cyber-toggle input[data-filter="status"]:checked').forEach(el => statuses.add(el.dataset.value));
 
-         applyFilters(sizes, statuses, collection, searchTerm);
-       }
+  const collection = collectionSelect.value;
+  const searchTerm = searchInput.value.trim().toLowerCase();
 
-       function applyFilters(sizes, statuses, collection, searchTerm) {
-         // Always filter from the original, complete dataset to prevent data degradation
-         const sourceData = window._originalThumbnails || window.thumbnails;
-         if (!sourceData || !Array.isArray(sourceData) || sourceData.length === 0) {
-           console.warn("No thumbnail data available to filter.");
-           return;
-         }
+  applyFilters(sizes, statuses, collection, searchTerm);
+}
 
-         // Save original if not already saved
-         if (!window._originalThumbnails && window.thumbnails && window.thumbnails.length > 0) {
-           window._originalThumbnails = [...window.thumbnails];
-         }
+function applyFilters(sizes, statuses, collection, searchTerm) {
+  const sourceData = window._originalThumbnails || window.thumbnails;
+  if (!sourceData || !Array.isArray(sourceData) || sourceData.length === 0) {
+    console.warn("No thumbnail data available to filter.");
+    return;
+  }
 
-         const filtered = sourceData.filter(item => {
-           // Search Check (Substring match on Title, case-insensitive)
-           if (searchTerm) {
-             const title = (item.title || '').toLowerCase();
-             if (!title.includes(searchTerm)) {
-               return false;
-             }
-           }
+  if (!window._originalThumbnails && window.thumbnails && window.thumbnails.length > 0) {
+    window._originalThumbnails = [...window.thumbnails];
+  }
 
-           // Size Check
-           if (sizes.size > 0) {
-             let sizeMatch = false;
-             if (sizes.has('small') && item.area < 70) sizeMatch = true;
-             if (sizes.has('medium') && item.area >= 70 && item.area <= 220) sizeMatch = true;
-             if (sizes.has('large') && item.area > 220 && item.area <= 400) sizeMatch = true;
-             if (sizes.has('gargantuan') && item.area > 400) sizeMatch = true;
-             if (!sizeMatch) return false;
-           }
+  const filtered = sourceData.filter(item => {
+    if (searchTerm) {
+      const title = (item.title || '').toLowerCase();
+      if (!title.includes(searchTerm)) return false;
+    }
 
-           // Status Check
-           if (statuses.size > 0) {
-             let statusMatch = false;
-             if (statuses.has('featured') && item.featured === true) statusMatch = true;
-             if (statuses.has('onsale') && item.pricemultiplier < 1) statusMatch = true;
-             if (statuses.has('onhand') && item.inStock === true) statusMatch = true;
-             if (statuses.has('available') && item.remakecustom === true) statusMatch = true;
+    if (sizes.size > 0) {
+      let sizeMatch = false;
+      if (sizes.has('small') && item.area < 70) sizeMatch = true;
+      if (sizes.has('medium') && item.area >= 70 && item.area <= 220) sizeMatch = true;
+      if (sizes.has('large') && item.area > 220 && item.area <= 400) sizeMatch = true;
+      if (sizes.has('gargantuan') && item.area > 400) sizeMatch = true;
+      if (!sizeMatch) return false;
+    }
 
-             if (statuses.has('recent')) {
-               const parts = item.dateCreated.split('-');
-               if (parts.length === 3) {
-                 const year = 2000 + parseInt(parts[2], 10);
-                 const month = parseInt(parts[0], 10) - 1;
-                 const day = parseInt(parts[1], 10);
-                 const dateCreated = new Date(year, month, day);
-                 const oneYearAgo = new Date();
-                 oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-                 if (dateCreated >= oneYearAgo) statusMatch = true;
-               }
-             }
-             if (!statusMatch) return false;
-           }
+    if (statuses.size > 0) {
+      let statusMatch = false;
+      if (statuses.has('featured') && item.featured === true) statusMatch = true;
+      if (statuses.has('onsale') && item.pricemultiplier < 1) statusMatch = true;
+      if (statuses.has('onhand') && item.inStock === true) statusMatch = true;
+      if (statuses.has('available') && item.remakecustom === true) statusMatch = true;
 
-           // Collection Check
-           if (collection !== 'All' && item.type !== collection) {
-             return false;
-           }
+      if (statuses.has('recent')) {
+        const parts = item.dateCreated.split('-');
+        if (parts.length === 3) {
+          const year = 2000 + parseInt(parts[2], 10);
+          const month = parseInt(parts[0], 10) - 1;
+          const day = parseInt(parts[1], 10);
+          const dateCreated = new Date(year, month, day);
+          const oneYearAgo = new Date();
+          oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+          if (dateCreated >= oneYearAgo) statusMatch = true;
+        }
+      }
+      if (!statusMatch) return false;
+    }
 
-           return true;
-         });
+    if (collection !== 'All' && item.type !== collection) {
+      return false;
+    }
 
-         window.thumbnails = filtered;
-         reloadGallery(filtered);
-       }
+    return true;
+  });
+
+  window.thumbnails = filtered;
+
+  // Handle Empty State Popup visibility
+  const emptyPopup = document.getElementById('emptyStatePopup');
+  if (filtered.length === 0) {
+    if (emptyPopup) emptyPopup.classList.add('is-open');
+  } else {
+    if (emptyPopup) emptyPopup.classList.remove('is-open');
+  }
+
+  reloadGallery(filtered);
+}
 
        // 7. Gallery Reload Helper (with WebGL context cleanup)
        function reloadGallery(filteredData) {
