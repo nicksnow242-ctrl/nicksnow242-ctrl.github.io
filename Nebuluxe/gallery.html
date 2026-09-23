@@ -1492,7 +1492,7 @@ var particles;
 .gallery-card-close {
   position: absolute;
   top: 15px;
-  right: 15px;
+  left: 15px; /* Changed from right: 15px */
   background: rgba(255, 253, 245, 0.9);
   border: 1px solid rgba(180, 154, 93, 0.4);
   border-radius: 50%;
@@ -2677,6 +2677,8 @@ class InfinitePortraitGallery {
          opacity: 1;
        }
 
+       /* Search & Select Inputs */
+       .filter-search,
        .filter-select {
          padding: 6px 10px;
          border: 1px solid rgba(180, 154, 93, 0.4);
@@ -2685,13 +2687,18 @@ class InfinitePortraitGallery {
          color: #5C4A32;
          font-family: 'Share Tech Mono', monospace;
          font-size: 11px;
-         cursor: pointer;
          outline: none;
          backdrop-filter: blur(4px);
          transition: all 0.25s ease;
-         min-width: 140px;
+         width: 100%;
+         box-sizing: border-box;
        }
 
+       .filter-search::placeholder {
+         color: rgba(92, 74, 50, 0.6);
+       }
+
+       .filter-search:hover, .filter-search:focus,
        .filter-select:hover, .filter-select:focus {
          border-color: #b49a5d;
          box-shadow: 0 0 8px rgba(180, 154, 93, 0.3);
@@ -2851,8 +2858,11 @@ class InfinitePortraitGallery {
              </div>
            </div>
 
-           <!-- Column 3: Collection + Reset -->
+           <!-- Column 3: Search, Collection + Reset -->
            <div class="filter-group">
+             <span class="filter-label">Search</span>
+             <input type="text" class="filter-search" id="searchInput" placeholder="Search by Name" autocomplete="off" />
+
              <span class="filter-label">Collection</span>
              <select class="filter-select" id="collectionSelect">
                <option value="All">All Collections</option>
@@ -2868,6 +2878,7 @@ class InfinitePortraitGallery {
      document.addEventListener('DOMContentLoaded', function() {
        const filterTab = document.getElementById('filterTab');
        const filterTabToggle = document.getElementById('filterTabToggle');
+       const searchInput = document.getElementById('searchInput');
        const collectionSelect = document.getElementById('collectionSelect');
        const resetBtn = document.getElementById('resetFiltersBtn');
 
@@ -2941,11 +2952,13 @@ class InfinitePortraitGallery {
          });
        });
 
-       // 4. Handle Collection Dropdown Change
+       // 4. Handle Search & Collection Changes
+       searchInput.addEventListener('input', triggerFilterUpdate);
        collectionSelect.addEventListener('change', triggerFilterUpdate);
 
        // 5. Handle Reset
        resetBtn.addEventListener('click', function() {
+         // Reset toggles
          document.querySelectorAll('.cyber-toggle input').forEach(input => {
            if (input.checked) {
              input.checked = false;
@@ -2960,6 +2973,8 @@ class InfinitePortraitGallery {
            }
          });
 
+         // Reset text inputs
+         searchInput.value = '';
          collectionSelect.value = 'All';
 
          // Restore full dataset safely
@@ -2967,7 +2982,6 @@ class InfinitePortraitGallery {
            window.thumbnails = [...window._originalThumbnails];
          }
 
-         // Trigger update (will pass empty filters and full dataset to reloadGallery)
          triggerFilterUpdate();
        });
 
@@ -2980,11 +2994,12 @@ class InfinitePortraitGallery {
          document.querySelectorAll('.cyber-toggle input[data-filter="status"]:checked').forEach(el => statuses.add(el.dataset.value));
 
          const collection = collectionSelect.value;
+         const searchTerm = searchInput.value.trim().toLowerCase();
 
-         applyFilters(sizes, statuses, collection);
+         applyFilters(sizes, statuses, collection, searchTerm);
        }
 
-       function applyFilters(sizes, statuses, collection) {
+       function applyFilters(sizes, statuses, collection, searchTerm) {
          // Always filter from the original, complete dataset to prevent data degradation
          const sourceData = window._originalThumbnails || window.thumbnails;
          if (!sourceData || !Array.isArray(sourceData) || sourceData.length === 0) {
@@ -2998,6 +3013,14 @@ class InfinitePortraitGallery {
          }
 
          const filtered = sourceData.filter(item => {
+           // Search Check (Substring match on Title, case-insensitive)
+           if (searchTerm) {
+             const title = (item.title || '').toLowerCase();
+             if (!title.includes(searchTerm)) {
+               return false;
+             }
+           }
+
            // Size Check
            if (sizes.size > 0) {
              let sizeMatch = false;
