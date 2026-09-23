@@ -36,7 +36,7 @@ window.thumbnails = [
         featured: false,
         suggestedprice: 200,
         description: 'loren ipsum',
-        type: 'window_hanging'
+        type: 'Window Hanging'
     },
     {
         id: 3,
