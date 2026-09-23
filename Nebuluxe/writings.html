@@ -121,54 +121,6 @@ html, body {
   height: calc(100vh - 110px);
 }
 
-/* ========================================== */
-/* SECTION 1: MAIN BODY (WRITINGS LIST) */
-/* ========================================== */
-.document-area {
-  flex: 1;
-  padding: 40px;
-  overflow-y: auto;
-  margin-right: 200px;
-}
-
-.text-list-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.text-list-item {
-  background: rgba(0, 255, 65, 0.03);
-  border: 1px solid rgba(0, 255, 65, 0.2);
-  border-radius: 4px;
-  color: var(--text-dim);
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  font-family: 'Share Tech Mono', monospace;
-  text-align: left;
-  width: 100%;
-  padding: 16px;
-}
-
-.text-list-item:hover {
-  background: rgba(0, 255, 65, 0.1);
-  border-color: var(--neon-green);
-  color: var(--neon-green);
-  box-shadow: 0 0 12px var(--neon-glow-green);
-  transform: translateY(-2px);
-}
-
-.text-list-item .book-info { display: flex; flex-direction: column; }
-.text-list-item .book-title { font-size: 16px; font-weight: bold; color: var(--neon-green); }
-.text-list-item .book-author { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
-.text-list-item .book-rating { font-size: 14px; color: var(--neon-green); font-weight: bold; white-space: nowrap; }
 
 /* ========================================== */
 /* SECTION 2: READING LIST SIDEBAR */
@@ -763,14 +715,6 @@ html, body {
 <!-- ========================================== -->
 <div class="main-layout">
 
-  <!-- ========================================== -->
-  <!-- SECTION 1: MAIN BODY (WRITINGS LIST) -->
-  <!-- ========================================== -->
-  <main class="document-area">
-    <div class="text-list-container" id="main-body-container">
-      <!-- Populated dynamically by content.js -->
-    </div>
-  </main>
 
   <!-- ========================================== -->
   <!-- SECTION 2: READING LIST SIDEBAR -->
@@ -1189,40 +1133,94 @@ var particles;
   restoreState();
   updateUI();
 </script>
-
-<!-- ========================================== -->
-<!-- CONTENT POPULATION SCRIPT -->
-<!-- ========================================== -->
 <script src="js/content.js"></script>
+
+  });
+</script>
+<!-- ========================================== -->
+<!-- MAIN BODY SECTION (WRITINGS LIST) -->
+<!-- ========================================== -->
+<style>
+  /* Main Body Styles */
+  .document-area {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+    margin-right: 200px;
+  }
+
+  .text-list-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .text-list-item {
+    background: rgba(0, 255, 65, 0.03);
+    border: 1px solid rgba(0, 255, 65, 0.2);
+    border-radius: 4px;
+    color: var(--text-dim);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-family: 'Share Tech Mono', monospace;
+    text-align: left;
+    width: 100%;
+    padding: 16px;
+  }
+
+  .text-list-item:hover {
+    background: rgba(0, 255, 65, 0.1);
+    border-color: var(--neon-green);
+    color: var(--neon-green);
+    box-shadow: 0 0 12px var(--neon-glow-green);
+    transform: translateY(-2px);
+  }
+
+  .text-list-item .book-info { display: flex; flex-direction: column; }
+  .text-list-item .book-title { font-size: 16px; font-weight: bold; color: var(--neon-green); }
+  .text-list-item .book-author { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+  .text-list-item .book-rating { font-size: 14px; color: var(--neon-green); font-weight: bold; white-space: nowrap; }
+
+  @media (max-width: 768px) {
+    .document-area { margin-right: 0; }
+    .text-list-container { grid-template-columns: 1fr; }
+  }
+</style>
+
+<main class="document-area">
+  <div class="text-list-container" id="main-body-container">
+    <!-- Populated dynamically by content.js -->
+  </div>
+</main>
+
 <script>
+  // Main Body Population Script
   document.addEventListener('DOMContentLoaded', () => {
     const categorySelect = document.getElementById('category-select');
     const yearSelect = document.getElementById('year-select');
-    const readingListContainer = document.getElementById('reading-list-container');
     const mainBodyContainer = document.getElementById('main-body-container');
 
-    function renderContent() {
+    function renderMainBody() {
       const category = categorySelect.value;
       const year = yearSelect.value;
-      const items = (typeof contentData !== 'undefined' && contentData[category] && contentData[category][year]) ? contentData[category][year] : [];
+      const dataSource = (typeof contentData !== 'undefined') ? contentData : {};
+      const items = (dataSource[category] && dataSource[category][year]) ? dataSource[category][year] : [];
 
-      readingListContainer.innerHTML = '';
       mainBodyContainer.innerHTML = '';
 
-      items.forEach(item => {
-        // Reading List Item (Static text, thin green line)
-        const rlItem = document.createElement('div');
-        rlItem.className = 'reading-list-item';
-        rlItem.innerHTML = `
-          <div class="book-info">
-            <div class="book-title">${item.title}</div>
-            <div class="book-author">${item.author}</div>
-          </div>
-          <div class="book-rating">${item.rating}</div>
-        `;
-        readingListContainer.appendChild(rlItem);
+      if (items.length === 0) {
+        mainBodyContainer.innerHTML = '<div class="text-list-item"><div class="book-info"><div class="book-title">No entries available</div></div></div>';
+        return;
+      }
 
-        // Main Body Item (Button)
+      items.forEach(item => {
         const mbItem = document.createElement('button');
         mbItem.className = 'text-list-item';
         mbItem.innerHTML = `
@@ -1236,12 +1234,15 @@ var particles;
       });
     }
 
-    categorySelect.addEventListener('change', renderContent);
-    yearSelect.addEventListener('change', renderContent);
+    categorySelect.addEventListener('change', renderMainBody);
+    yearSelect.addEventListener('change', renderMainBody);
 
     // Initial render
-    renderContent();
+    renderMainBody();
   });
 </script>
+<!-- ========================================== -->
+<!-- END MAIN BODY SECTION -->
+<!-- ========================================== -->
 </body>
 </html>
