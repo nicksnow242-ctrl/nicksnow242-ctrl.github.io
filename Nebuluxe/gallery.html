@@ -1934,105 +1934,104 @@ class InfinitePortraitGallery {
     }
 
     async loadImages() {
-        const loaderElement = this.container.querySelector('#gallery-loader');
-        const loaderText = this.container.querySelector('#loader-text');
-        const loaderProgress = this.container.querySelector('#loader-progress');
-        const cacheElement = this.container.querySelector('.cache');
+    const loaderElement = this.container.querySelector('#gallery-loader');
+    const loaderText = this.container.querySelector('#loader-text');
+    const loaderProgress = this.container.querySelector('#loader-progress');
+    const cacheElement = this.container.querySelector('.cache');
 
-        let sourceItems = [];
-        if (typeof window.thumbnails !== 'undefined' && Array.isArray(window.thumbnails) && window.thumbnails.length > 0) {
-            sourceItems = window.thumbnails;
-        } else {
-            console.warn("window.thumbnails not found or empty. Using fallback placeholder data.");
-            sourceItems = [1011, 1015, 1018, 1020, 1023].map(id => ({
-                title: `Artwork ${id}`,
-                src: `https://picsum.photos/id/${id}/200/200`,
-                fullsizesrc: `https://picsum.photos/id/${id}/800/800`,
-                suggestedprice: 100,
-                inStock: true,
-                remakecustom: false,
-                length: '12"',
-                width: '12"',
-                description: 'Placeholder description for testing.'
-            }));
-        }
+    let sourceItems = [];
+    if (typeof window.thumbnails !== 'undefined' && Array.isArray(window.thumbnails) && window.thumbnails.length > 0) {
+        sourceItems = window.thumbnails;
+    } else {
+        console.warn("window.thumbnails not found or empty. Using Images/Misc gifs as fallback.");
+        sourceItems = [1, 2, 3, 4].map(id => ({
+            title: `Default Artwork ${id}`,
+            src: `Images/Misc/Default${id}.gif`,
+            fullsizesrc: `Images/Misc/Default${id}.gif`,
+            suggestedprice: 0,
+            inStock: true,
+            remakecustom: false,
+            length: 'N/A',
+            width: 'N/A',
+            description: 'Default artwork display.'
+        }));
+    }
 
-        const imageCount = Math.max(50, sourceItems.length);
-        const loadPromises = [];
+    const imageCount = Math.max(50, sourceItems.length);
+    const loadPromises = [];
 
-        for (let i = 0; i < imageCount; i++) {
-            const item = sourceItems[i % sourceItems.length];
-            const img = new Image();
-            img.crossOrigin = 'Anonymous';
-            img.src = item.src;
+    for (let i = 0; i < imageCount; i++) {
+        const item = sourceItems[i % sourceItems.length];
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.src = item.src;
 
-            const promise = new Promise((resolve) => {
+        const promise = new Promise((resolve) => {
+            img.onload = () => {
+                let w = img.naturalWidth;
+                let h = img.naturalHeight;
+                if (w > h) {
+                    h = (h / w) * this.maxDimension;
+                    w = this.maxDimension;
+                } else {
+                    w = (w / h) * this.maxDimension;
+                    h = this.maxDimension;
+                }
+                this.imageData.push({
+                    img: img,
+                    texture: this.createTexture(img),
+                    width: w,
+                    height: h,
+                    thumbnailItem: item
+                });
+                resolve();
+            };
+            img.onerror = () => {
+                // Cycle through Default1, Default2, Default3, Default4 based on the index
+                const fallbackIndex = (i % 4) + 1;
+
+                img.src = `Images/Misc/Default${fallbackIndex}.gif`;
+
                 img.onload = () => {
-                    let w = img.naturalWidth;
-                    let h = img.naturalHeight;
-                    if (w > h) {
-                        h = (h / w) * this.maxDimension;
-                        w = this.maxDimension;
-                    } else {
-                        w = (w / h) * this.maxDimension;
-                        h = this.maxDimension;
-                    }
                     this.imageData.push({
                         img: img,
                         texture: this.createTexture(img),
-                        width: w,
-                        height: h,
+                        width: this.maxDimension,
+                        height: this.maxDimension,
                         thumbnailItem: item
                     });
                     resolve();
                 };
+
+                // If the local fallback also fails, resolve anyway to prevent the loader from hanging
                 img.onerror = () => {
-                    // Cycle through Default1, Default2, Default3, Default4 based on the index
-                    const fallbackIndex = (i % 4) + 1;
-
-                    // Note: Change '.png' to '.jpg' if your default images are JPEGs
-                    img.src = `Images/Misc/Default${fallbackIndex}.gif`;
-
-                    img.onload = () => {
-                        this.imageData.push({
-                            img: img,
-                            texture: this.createTexture(img),
-                            width: this.maxDimension,
-                            height: this.maxDimension,
-                            thumbnailItem: item
-                        });
-                        resolve();
-                    };
-
-                    // If the local fallback also fails, resolve anyway to prevent the loader from hanging
-                    img.onerror = () => {
-                        console.warn(`Failed to load local fallback: Images/Misc/Default${fallbackIndex}.png`);
-                        resolve();
-                    };
+                    console.warn(`Failed to load local fallback: Images/Misc/Default${fallbackIndex}.gif`);
+                    resolve();
                 };
-            });
-            loadPromises.push(promise);
-        }
-
-        let loaded = 0;
-        const total = loadPromises.length;
-        for (const promise of loadPromises) {
-            await promise;
-            loaded++;
-            const percent = Math.round((loaded / total) * 100);
-            if (loaderText) loaderText.textContent = `Loading... ${percent}%`;
-            if (loaderProgress) loaderProgress.style.width = `${percent}%`;
-        }
-
-        if (cacheElement) cacheElement.style.display = 'none';
-
-        if (loaderElement) {
-            loaderElement.classList.add('is-hidden');
-            setTimeout(() => {
-                loaderElement.style.display = 'none';
-            }, 500);
-        }
+            };
+        });
+        loadPromises.push(promise);
     }
+
+    let loaded = 0;
+    const total = loadPromises.length;
+    for (const promise of loadPromises) {
+        await promise;
+        loaded++;
+        const percent = Math.round((loaded / total) * 100);
+        if (loaderText) loaderText.textContent = `Loading... ${percent}%`;
+        if (loaderProgress) loaderProgress.style.width = `${percent}%`;
+    }
+
+    if (cacheElement) cacheElement.style.display = 'none';
+
+    if (loaderElement) {
+        loaderElement.classList.add('is-hidden');
+        setTimeout(() => {
+            loaderElement.style.display = 'none';
+        }, 500);
+    }
+}
 
     createTexture(img) {
         const tex = this.gl.createTexture();
