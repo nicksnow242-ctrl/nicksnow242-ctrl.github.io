@@ -1349,6 +1349,21 @@ var particles;
     overflow: hidden;
   }
 
+  /* Hide the back button in fullscreen */
+  .reader-view:fullscreen .back-btn,
+  .reader-view:-webkit-full-screen .back-btn {
+    display: none;
+  }
+
+  /* Float the exit fullscreen button to the top-right corner */
+  .reader-view:fullscreen .fullscreen-btn,
+  .reader-view:-webkit-full-screen .fullscreen-btn {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    z-index: 10000;
+  }
+
   /* Center and widen the text for comfortable reading in fullscreen */
   .reader-view:fullscreen .reader-content,
   .reader-view:-webkit-full-screen .reader-content {
