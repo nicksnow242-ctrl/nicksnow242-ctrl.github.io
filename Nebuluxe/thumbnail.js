@@ -17,7 +17,7 @@ window.thumbnails = [
         featured: false,
         suggestedprice: 100,
         description: 'loren ipsum',
-        type: 'normal'
+        type: 'No Collection'
     },
     {
         id: 2,
@@ -55,7 +55,7 @@ window.thumbnails = [
         featured: false,
         suggestedprice: 80,
         description: 'loren ipsum',
-        type: 'normal'
+        type: 'No Collection'
     },
     {
         id: 4,
@@ -74,7 +74,7 @@ window.thumbnails = [
         featured: false,
         suggestedprice: 80,
         description: 'loren ipsum',
-        type: 'normal'
+        type: 'No Collection'
     },
     {
         id: 5,
@@ -93,6 +93,6 @@ window.thumbnails = [
         featured: false,
         suggestedprice: 60,
         description: 'loren ipsum',
-        type: 'normal'
+        type: 'Commission'
     }
 ];
