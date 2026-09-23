@@ -2495,5 +2495,140 @@ class InfinitePortraitGallery {
 <!-- ============================================================
       END GALLERY SECTION
      ============================================================ -->
+     <!-- ========================================== -->
+<!-- FILTER TAB (Styles, HTML, and Script) -->
+<!-- ========================================== -->
+<style>
+  .filter-tab {
+    position: fixed;
+    top: 110px;
+    left: 0;
+    z-index: 1001; /* Above gallery controls (1000) and cache (999) */
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(180, 154, 93, 0.2);
+    border-right: 1px solid rgba(180, 154, 93, 0.2);
+    border-radius: 0 0 12px 0;
+    transition: width 0.4s cubic-bezier(0.25, 1, 0.3, 1),
+                border-radius 0.4s cubic-bezier(0.25, 1, 0.3, 1),
+                box-shadow 0.4s ease;
+    width: 130px;
+    height: 50px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(180, 154, 93, 0.1);
+  }
+
+  .filter-tab.is-open {
+    width: 100%;
+    border-right: none;
+    border-radius: 0;
+    box-shadow: 0 10px 30px rgba(180, 154, 93, 0.15);
+  }
+
+  .filter-tab-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 130px;
+    height: 100%;
+    flex-shrink: 0;
+    background: transparent;
+    border: none;
+    color: #5C4A32;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    outline: none;
+  }
+
+  .filter-tab-toggle:hover {
+    color: #b49a5d;
+  }
+
+  .filter-tab-arrow {
+    display: flex;
+    align-items: center;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
+  }
+
+  /* Rotates the arrow to point down when open */
+  .filter-tab.is-open .filter-tab-arrow {
+    transform: rotate(90deg);
+  }
+
+  .filter-tab-content {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    opacity: 0;
+    transform: translateX(10px);
+    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
+    pointer-events: none; /* Prevents interaction when closed */
+    white-space: nowrap;
+  }
+
+  .filter-tab.is-open .filter-tab-content {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+    transition-delay: 0.1s; /* Slight delay so it fades in as the tab stretches */
+  }
+
+  @media (max-width: 480px) {
+    .filter-tab {
+      width: 110px;
+    }
+    .filter-tab-toggle {
+      width: 110px;
+      font-size: 14px;
+    }
+  }
+</style>
+
+<div class="filter-tab" id="filterTab">
+  <button class="filter-tab-toggle" id="filterTabToggle" aria-label="Toggle Filters" aria-expanded="false">
+    <span class="filter-tab-text">Filters</span>
+    <span class="filter-tab-arrow">
+      <!-- Right-pointing chevron -->
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+      </svg>
+    </span>
+  </button>
+
+  <div class="filter-tab-content">
+    <!-- Placeholder: Actual filter inputs will be implemented here in the next step -->
+    <span style="color: #8A7355; font-size: 14px; font-family: 'Segoe UI', system-ui, sans-serif;">
+      Filter options coming soon...
+    </span>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const filterTab = document.getElementById('filterTab');
+    const filterTabToggle = document.getElementById('filterTabToggle');
+
+    if (filterTab && filterTabToggle) {
+      filterTabToggle.addEventListener('click', function() {
+        const isOpen = filterTab.classList.toggle('is-open');
+        // Update accessibility attribute
+        filterTabToggle.setAttribute('aria-expanded', isOpen);
+      });
+    }
+  });
+</script>
+<!-- ========================================== -->
+<!-- END FILTER TAB -->
+<!-- ========================================== -->
 </body>
 </html>
