@@ -2495,7 +2495,7 @@ class InfinitePortraitGallery {
 <!-- ============================================================
       END GALLERY SECTION
      ============================================================ -->
-     
+
      <!-- ========================================== -->
      <!-- FILTER TAB (Styles, HTML, and Script) -->
      <!-- ========================================== -->
@@ -2591,7 +2591,7 @@ class InfinitePortraitGallery {
        .filter-layout {
          display: grid;
          grid-template-columns: 1fr 1fr auto;
-         gap: 30px;
+         gap: 24px;
          align-items: start;
          width: 100%;
        }
@@ -2599,11 +2599,11 @@ class InfinitePortraitGallery {
        .filter-group {
          display: flex;
          flex-direction: column;
-         gap: 10px;
+         gap: 8px;
        }
 
        .filter-label {
-         font-size: 11px;
+         font-size: 10px;
          color: #8A7355;
          font-weight: 700;
          text-transform: uppercase;
@@ -2613,17 +2613,17 @@ class InfinitePortraitGallery {
        .filter-toggles {
          display: flex;
          flex-wrap: wrap;
-         gap: 10px;
+         gap: 6px;
        }
 
-       /* Cyberpunk Toggle Styles */
+       /* Compact Cyberpunk Toggle Styles (~30% smaller) */
        .cyber-toggle {
          display: flex;
          align-items: center;
-         gap: 8px;
-         padding: 8px 14px;
+         gap: 5px;
+         padding: 5px 10px;
          border: 1px solid rgba(180, 154, 93, 0.4);
-         border-radius: 8px;
+         border-radius: 6px;
          background: rgba(255, 255, 255, 0.5);
          cursor: pointer;
          transition: all 0.3s ease;
@@ -2638,14 +2638,14 @@ class InfinitePortraitGallery {
        }
 
        .cyber-icon {
-         width: 24px;
-         height: 24px;
+         width: 16px;
+         height: 16px;
          flex-shrink: 0;
        }
 
        .cyber-text {
          font-family: 'Share Tech Mono', monospace;
-         font-size: 13px;
+         font-size: 11px;
          font-weight: 400;
          color: #5C4A32;
          transition: all 0.3s ease;
@@ -2678,18 +2678,18 @@ class InfinitePortraitGallery {
        }
 
        .filter-select {
-         padding: 8px 14px;
+         padding: 6px 10px;
          border: 1px solid rgba(180, 154, 93, 0.4);
-         border-radius: 8px;
+         border-radius: 6px;
          background: rgba(255, 255, 255, 0.8);
          color: #5C4A32;
          font-family: 'Share Tech Mono', monospace;
-         font-size: 13px;
+         font-size: 11px;
          cursor: pointer;
          outline: none;
          backdrop-filter: blur(4px);
          transition: all 0.25s ease;
-         min-width: 160px;
+         min-width: 140px;
        }
 
        .filter-select:hover, .filter-select:focus {
@@ -2698,14 +2698,14 @@ class InfinitePortraitGallery {
        }
 
        .filter-reset-btn {
-         margin-top: 10px;
-         padding: 8px 14px;
+         margin-top: 8px;
+         padding: 6px 10px;
          border: 1px solid rgba(180, 154, 93, 0.4);
-         border-radius: 8px;
+         border-radius: 6px;
          background: transparent;
          color: #8A7355;
          font-family: 'Share Tech Mono', monospace;
-         font-size: 13px;
+         font-size: 11px;
          font-weight: 400;
          cursor: pointer;
          transition: all 0.25s ease;
@@ -2724,14 +2724,14 @@ class InfinitePortraitGallery {
          .filter-tab-text { font-size: 14px; }
          .filter-layout {
            grid-template-columns: 1fr;
-           gap: 20px;
+           gap: 16px;
          }
          .filter-tab.is-open {
            max-height: 80vh;
            overflow-y: auto;
          }
          .filter-tab-content {
-           padding: 20px;
+           padding: 16px 20px;
          }
        }
      </style>
@@ -2751,58 +2751,46 @@ class InfinitePortraitGallery {
 
            <!-- Column 1: Size Filters -->
            <div class="filter-group">
-             <span class="filter-label">Size (Area)</span>
+             <span class="filter-label">Size</span>
              <div class="filter-toggles">
                <label class="cyber-toggle">
                  <input type="checkbox" data-filter="size" data-value="small" />
                  <svg class="cyber-icon" viewBox="0 0 24 24">
-                   <g filter="url(#glitch-gold)">
-                     <rect x="0" y="0" width="100%" height="100%" fill="url(#scanline-gold)" class="scanline-rect" opacity="0" />
-                     <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#8A7355" />
-                     <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
-                     <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
-                   </g>
+                   <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                   <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                   <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
                  </svg>
-                 <span class="cyber-text">Small (&lt;70)</span>
+                 <span class="cyber-text">Small</span>
                </label>
 
                <label class="cyber-toggle">
                  <input type="checkbox" data-filter="size" data-value="medium" />
                  <svg class="cyber-icon" viewBox="0 0 24 24">
-                   <g filter="url(#glitch-gold)">
-                     <rect x="0" y="0" width="100%" height="100%" fill="url(#scanline-gold)" class="scanline-rect" opacity="0" />
-                     <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#8A7355" />
-                     <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
-                     <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
-                   </g>
+                   <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                   <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                   <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
                  </svg>
-                 <span class="cyber-text">Medium (70-220)</span>
+                 <span class="cyber-text">Medium</span>
                </label>
 
                <label class="cyber-toggle">
                  <input type="checkbox" data-filter="size" data-value="large" />
                  <svg class="cyber-icon" viewBox="0 0 24 24">
-                   <g filter="url(#glitch-gold)">
-                     <rect x="0" y="0" width="100%" height="100%" fill="url(#scanline-gold)" class="scanline-rect" opacity="0" />
-                     <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#8A7355" />
-                     <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
-                     <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
-                   </g>
+                   <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                   <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                   <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
                  </svg>
-                 <span class="cyber-text">Large (220-400)</span>
+                 <span class="cyber-text">Large</span>
                </label>
 
                <label class="cyber-toggle">
-                 <input type="checkbox" data-filter="size" data-value="very-large" />
+                 <input type="checkbox" data-filter="size" data-value="gargantuan" />
                  <svg class="cyber-icon" viewBox="0 0 24 24">
-                   <g filter="url(#glitch-gold)">
-                     <rect x="0" y="0" width="100%" height="100%" fill="url(#scanline-gold)" class="scanline-rect" opacity="0" />
-                     <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#8A7355" />
-                     <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
-                     <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
-                   </g>
+                   <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                   <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                   <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
                  </svg>
-                 <span class="cyber-text">Very Large (&gt;400)</span>
+                 <span class="cyber-text">Gargantuan</span>
                </label>
              </div>
            </div>
@@ -2814,12 +2802,9 @@ class InfinitePortraitGallery {
                <label class="cyber-toggle">
                  <input type="checkbox" data-filter="status" data-value="featured" />
                  <svg class="cyber-icon" viewBox="0 0 24 24">
-                   <g filter="url(#glitch-gold)">
-                     <rect x="0" y="0" width="100%" height="100%" fill="url(#scanline-gold)" class="scanline-rect" opacity="0" />
-                     <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#8A7355" />
-                     <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
-                     <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
-                   </g>
+                   <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                   <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                   <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
                  </svg>
                  <span class="cyber-text">Featured</span>
                </label>
@@ -2827,12 +2812,9 @@ class InfinitePortraitGallery {
                <label class="cyber-toggle">
                  <input type="checkbox" data-filter="status" data-value="onsale" />
                  <svg class="cyber-icon" viewBox="0 0 24 24">
-                   <g filter="url(#glitch-gold)">
-                     <rect x="0" y="0" width="100%" height="100%" fill="url(#scanline-gold)" class="scanline-rect" opacity="0" />
-                     <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#8A7355" />
-                     <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
-                     <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
-                   </g>
+                   <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                   <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                   <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
                  </svg>
                  <span class="cyber-text">On Sale</span>
                </label>
@@ -2840,12 +2822,9 @@ class InfinitePortraitGallery {
                <label class="cyber-toggle">
                  <input type="checkbox" data-filter="status" data-value="recent" />
                  <svg class="cyber-icon" viewBox="0 0 24 24">
-                   <g filter="url(#glitch-gold)">
-                     <rect x="0" y="0" width="100%" height="100%" fill="url(#scanline-gold)" class="scanline-rect" opacity="0" />
-                     <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#8A7355" />
-                     <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
-                     <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
-                   </g>
+                   <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                   <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                   <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
                  </svg>
                  <span class="cyber-text">Recent</span>
                </label>
@@ -2853,12 +2832,9 @@ class InfinitePortraitGallery {
                <label class="cyber-toggle">
                  <input type="checkbox" data-filter="status" data-value="onhand" />
                  <svg class="cyber-icon" viewBox="0 0 24 24">
-                   <g filter="url(#glitch-gold)">
-                     <rect x="0" y="0" width="100%" height="100%" fill="url(#scanline-gold)" class="scanline-rect" opacity="0" />
-                     <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#8A7355" />
-                     <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
-                     <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
-                   </g>
+                   <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                   <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                   <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
                  </svg>
                  <span class="cyber-text">On Hand</span>
                </label>
@@ -2866,12 +2842,9 @@ class InfinitePortraitGallery {
                <label class="cyber-toggle">
                  <input type="checkbox" data-filter="status" data-value="available" />
                  <svg class="cyber-icon" viewBox="0 0 24 24">
-                   <g filter="url(#glitch-gold)">
-                     <rect x="0" y="0" width="100%" height="100%" fill="url(#scanline-gold)" class="scanline-rect" opacity="0" />
-                     <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#8A7355" />
-                     <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
-                     <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
-                   </g>
+                   <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                   <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                   <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
                  </svg>
                  <span class="cyber-text">Available</span>
                </label>
@@ -2890,26 +2863,6 @@ class InfinitePortraitGallery {
          </div>
        </div>
      </div>
-
-     <!-- Global SVG Definitions for Filters (avoids duplicating heavy defs in every button) -->
-     <svg width="0" height="0" style="position: absolute;">
-       <defs>
-         <filter id="glitch-gold" color-interpolation-filters="sRGB">
-           <feFlood flood-color="#b49a5d" y="0%" height="20%" result="s0" />
-           <feFlood flood-color="#5C4A32" y="20%" height="15%" result="s1" />
-           <feFlood flood-color="#b49a5d" y="35%" height="25%" result="s2" />
-           <feFlood flood-color="#5C4A32" y="60%" height="20%" result="s3" />
-           <feFlood flood-color="#b49a5d" y="80%" height="20%" result="s4" />
-           <feMerge result="bands">
-             <feMergeNode in="s0" /><feMergeNode in="s1" /><feMergeNode in="s2" /><feMergeNode in="s3" /><feMergeNode in="s4" />
-           </feMerge>
-           <feDisplacementMap class="displace" in="SourceGraphic" in2="bands" scale="0" xChannelSelector="R" yChannelSelector="B" />
-         </filter>
-         <pattern id="scanline-gold" patternUnits="userSpaceOnUse" width="4" height="4">
-           <rect x="0" y="0" width="4" height="1" fill="rgba(92, 74, 50, 0.4)" />
-         </pattern>
-       </defs>
-     </svg>
 
      <script>
      document.addEventListener('DOMContentLoaded', function() {
@@ -2956,25 +2909,13 @@ class InfinitePortraitGallery {
        // 3. Cyberpunk Toggle Animations & Logic
        document.querySelectorAll('.cyber-toggle').forEach(toggle => {
          const input = toggle.querySelector('input');
-         const scanline = toggle.querySelector('.scanline-rect');
-         const displace = toggle.querySelector('.displace');
          const glow1 = toggle.querySelector('.glow-1');
          const glow2 = toggle.querySelector('.glow-2');
+         const unchecked = toggle.querySelector('.unchecked');
 
          // Initial state setup
-         gsap.set(glow1, { x: -4, rotation: -15, transformOrigin: "center center" });
-         gsap.set(glow2, { x: 4, rotation: 15, transformOrigin: "center center" });
-
-         toggle.addEventListener('mouseenter', () => {
-           gsap.to(scanline, { opacity: 0.6, duration: 0.2 });
-           gsap.to(scanline, { attr: { y: 4 }, duration: 0.5, repeat: -1, ease: "none" });
-         });
-
-         toggle.addEventListener('mouseleave', () => {
-           gsap.to(scanline, { opacity: 0, duration: 0.2 });
-           gsap.killTweensOf(scanline);
-           gsap.set(scanline, { attr: { y: 0 } });
-         });
+         gsap.set(glow1, { x: -5, rotation: -20, transformOrigin: "center center" });
+         gsap.set(glow2, { x: 5, rotation: 20, transformOrigin: "center center" });
 
          input.addEventListener('change', () => {
            if (input.checked) {
@@ -2988,18 +2929,13 @@ class InfinitePortraitGallery {
                { x: 10, rotation: 30, opacity: 0 },
                { x: 0, rotation: 0, opacity: 1, duration: 0.4, delay: 0.05, ease: "elastic.out(1, 0.5)" }
              );
-             gsap.to(displace, {
-               attr: { scale: 0.15 },
-               duration: 0.1,
-               repeat: 3,
-               yoyo: true,
-               onComplete: () => gsap.set(displace, { attr: { scale: 0 } })
-             });
+             gsap.to(unchecked, { opacity: 0, duration: 0.2 });
            } else {
              toggle.classList.remove('active');
              // Glitch out effect
-             gsap.to(glow1, { x: -10, rotation: -30, opacity: 0, duration: 0.3, ease: "power2.in" });
-             gsap.to(glow2, { x: 10, rotation: 30, opacity: 0, duration: 0.3, ease: "power2.in" });
+             gsap.to(glow1, { x: -5, rotation: -20, opacity: 0, duration: 0.3, ease: "power2.in" });
+             gsap.to(glow2, { x: 5, rotation: 20, opacity: 0, duration: 0.3, ease: "power2.in" });
+             gsap.to(unchecked, { opacity: 1, duration: 0.2 });
            }
            triggerFilterUpdate();
          });
@@ -3011,10 +2947,27 @@ class InfinitePortraitGallery {
        // 5. Handle Reset
        resetBtn.addEventListener('click', function() {
          document.querySelectorAll('.cyber-toggle input').forEach(input => {
-           input.checked = false;
-           input.dispatchEvent(new Event('change')); // Trigger the animation and logic
+           if (input.checked) {
+             input.checked = false;
+             const toggle = input.closest('.cyber-toggle');
+             toggle.classList.remove('active');
+             const glow1 = toggle.querySelector('.glow-1');
+             const glow2 = toggle.querySelector('.glow-2');
+             const unchecked = toggle.querySelector('.unchecked');
+             if(glow1) gsap.to(glow1, { x: -5, rotation: -20, opacity: 0, duration: 0.3, ease: "power2.in" });
+             if(glow2) gsap.to(glow2, { x: 5, rotation: 20, opacity: 0, duration: 0.3, ease: "power2.in" });
+             if(unchecked) gsap.to(unchecked, { opacity: 1, duration: 0.2 });
+           }
          });
+
          collectionSelect.value = 'All';
+
+         // Restore full dataset safely
+         if (window._originalThumbnails) {
+           window.thumbnails = [...window._originalThumbnails];
+         }
+
+         // Trigger update (will pass empty filters and full dataset to reloadGallery)
          triggerFilterUpdate();
        });
 
@@ -3032,16 +2985,26 @@ class InfinitePortraitGallery {
        }
 
        function applyFilters(sizes, statuses, collection) {
-         if (!window.thumbnails || !Array.isArray(window.thumbnails)) return;
+         // Always filter from the original, complete dataset to prevent data degradation
+         const sourceData = window._originalThumbnails || window.thumbnails;
+         if (!sourceData || !Array.isArray(sourceData) || sourceData.length === 0) {
+           console.warn("No thumbnail data available to filter.");
+           return;
+         }
 
-         const filtered = window.thumbnails.filter(item => {
+         // Save original if not already saved
+         if (!window._originalThumbnails && window.thumbnails && window.thumbnails.length > 0) {
+           window._originalThumbnails = [...window.thumbnails];
+         }
+
+         const filtered = sourceData.filter(item => {
            // Size Check
            if (sizes.size > 0) {
              let sizeMatch = false;
              if (sizes.has('small') && item.area < 70) sizeMatch = true;
              if (sizes.has('medium') && item.area >= 70 && item.area <= 220) sizeMatch = true;
              if (sizes.has('large') && item.area > 220 && item.area <= 400) sizeMatch = true;
-             if (sizes.has('very-large') && item.area > 400) sizeMatch = true;
+             if (sizes.has('gargantuan') && item.area > 400) sizeMatch = true;
              if (!sizeMatch) return false;
            }
 
@@ -3076,20 +3039,25 @@ class InfinitePortraitGallery {
            return true;
          });
 
+         window.thumbnails = filtered;
          reloadGallery(filtered);
        }
 
-       // 7. Gallery Reload Helper
+       // 7. Gallery Reload Helper (with WebGL context cleanup)
        function reloadGallery(filteredData) {
          const container = document.getElementById('gallery-container');
          if (!container) return;
 
-         if (!window._originalThumbnails) {
-           window._originalThumbnails = [...window.thumbnails];
+         // Clean up old WebGL context to prevent memory leaks
+         if (window.currentGallery && window.currentGallery.gl) {
+           const loseContext = window.currentGallery.gl.getExtension('WEBGL_lose_context');
+           if (loseContext) loseContext.loseContext();
          }
 
+         // Update the active global reference
          window.thumbnails = filteredData;
 
+         // Preserve modal and controls HTML structure
          const cacheHTML = container.querySelector('.cache') ? container.querySelector('.cache').outerHTML : '<div class="cache"></div>';
          const hintHTML = container.querySelector('.hint') ? container.querySelector('.hint').outerHTML : '<div class="hint">Scroll / Drag / + or -</div>';
 
@@ -3144,7 +3112,7 @@ class InfinitePortraitGallery {
 
          setTimeout(() => {
            if (typeof InfinitePortraitGallery === 'function') {
-             new InfinitePortraitGallery('gallery-container');
+             window.currentGallery = new InfinitePortraitGallery('gallery-container');
            }
          }, 100);
        }
