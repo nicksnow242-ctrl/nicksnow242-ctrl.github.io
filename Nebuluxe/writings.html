@@ -1251,25 +1251,49 @@ var particles;
 <!-- ========================================== -->
 <style>
   /* ========================================== */
-  /* GENRE FILTER STYLES                        */
+  /* FILTER SIDEBAR STYLES                      */
   /* ========================================== */
-  .genre-filter-container {
-    padding-left: 20%;
-    padding-right: 10px;
-    margin-bottom: 25px;
+  .filter-sidebar {
+    position: fixed;
+    top: 110px;
+    left: 0;
+    width: 200px;
+    height: calc(100vh - 110px);
+    background: rgba(0, 15, 0, 0.9);
+    border-right: 2px solid var(--neon-green);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 90;
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: center;
+    flex-direction: column;
+    box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
   }
 
-  .filter-label {
-    color: var(--text-dim);
-    font-size: 14px;
-    text-transform: uppercase;
+  .filter-sidebar-header {
+    padding: 15px;
+    border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+    color: var(--neon-green);
+    font-size: 15px;
     letter-spacing: 1px;
-    margin-right: 10px;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px var(--neon-glow-green);
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
   }
+
+  .filter-sidebar-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .filter-sidebar-items::-webkit-scrollbar { width: 6px; }
+  .filter-sidebar-items::-webkit-scrollbar-track { background: var(--deep-green); }
+  .filter-sidebar-items::-webkit-scrollbar-thumb { background: var(--mid-green); border-radius: 3px; }
+  .filter-sidebar-items::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
 
   .genre-toggle {
     background: rgba(0, 255, 65, 0.03);
@@ -1277,12 +1301,14 @@ var particles;
     color: var(--text-dim);
     font-family: 'Share Tech Mono', monospace;
     font-size: 13px;
-    padding: 6px 14px;
+    padding: 8px 12px;
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s ease;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    text-align: left;
+    width: 100%;
   }
 
   .genre-toggle:hover {
@@ -1316,7 +1342,6 @@ var particles;
     gap: 15px;
     margin-bottom: 30px;
     padding-bottom: 15px;
-    padding-left: 20%;
     border-bottom: 1px solid rgba(0, 255, 65, 0.3);
     width: 100%;
     box-sizing: border-box;
@@ -1360,7 +1385,6 @@ var particles;
     font-size: 14px;
     color: var(--text-dim);
     margin-bottom: 30px;
-    padding-left: 20%;
     width: 100%;
     box-sizing: border-box;
   }
@@ -1373,8 +1397,7 @@ var particles;
     font-size: 16px;
     line-height: 1.8;
     color: #d0ffd9;
-    width: calc(100% - 20%);
-    margin-left: 20%;
+    width: 100%;
     box-sizing: border-box;
   }
   .reader-content p { margin-bottom: 20px; text-align: justify; }
@@ -1434,7 +1457,6 @@ var particles;
 
   .reader-view:fullscreen .reader-header,
   .reader-view:-webkit-full-screen .reader-header {
-    padding-left: 0;
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
@@ -1443,7 +1465,6 @@ var particles;
 
   .reader-view:fullscreen .reader-meta,
   .reader-view:-webkit-full-screen .reader-meta {
-    padding-left: 0;
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
@@ -1452,13 +1473,10 @@ var particles;
   }
 
   /* ========================================== */
-  /* BUTTON CONTAINER - AUTO WIDTH WITH PADDING */
+  /* BUTTON CONTAINER                           */
   /* ========================================== */
   .text-list-container {
     width: 100%;
-    max-width: none;
-    padding-left: 20%;
-    padding-right: 10px;
     box-sizing: border-box;
   }
 
@@ -1466,9 +1484,32 @@ var particles;
     width: 100%;
   }
 
-  /* Hide the main grid when the reader is active */
+  /* Hide the main grid and filter sidebar when the reader is active */
   .document-area.grid-hidden .text-list-container { display: none; }
-  .document-area.grid-hidden .genre-filter-container { display: none; }
+  body.reader-active .filter-sidebar { display: none; }
+
+  @media (max-width: 768px) {
+    .filter-sidebar {
+      width: 100%;
+      height: auto;
+      max-height: 200px;
+      position: relative;
+      top: 0;
+      border-right: none;
+      border-bottom: 2px solid var(--neon-green);
+    }
+    .filter-sidebar-items {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+    .genre-toggle {
+      width: auto;
+      flex: 0 0 auto;
+    }
+    .document-area {
+      margin-left: 0 !important;
+    }
+  }
 </style>
 
 <!-- Load the writings data file -->
@@ -1478,27 +1519,33 @@ var particles;
   document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('main-body-container');
     const documentArea = document.querySelector('.document-area');
-    if (!container || !documentArea) return;
+    const mainLayout = document.querySelector('.main-layout');
+    if (!container || !documentArea || !mainLayout) return;
 
     let activeGenres = new Set();
+    let filterSidebar = null;
 
-    // 1. Extract unique genres and create filter toggles
-    function createGenreFilter() {
+    // 1. Create the filter sidebar on the left
+    function createFilterSidebar() {
       if (typeof WRITINGS_DATA === 'undefined' || WRITINGS_DATA.length === 0) return;
 
       // Extract unique genres
       const genres = [...new Set(WRITINGS_DATA.map(w => w.genre || 'Uncategorized'))].sort();
 
-      // Create filter container
-      const filterContainer = document.createElement('div');
-      filterContainer.className = 'genre-filter-container';
-      filterContainer.id = 'genre-filter';
+      // Create sidebar element
+      filterSidebar = document.createElement('aside');
+      filterSidebar.className = 'filter-sidebar';
+      filterSidebar.id = 'filter-sidebar';
 
-      // Add label
-      const label = document.createElement('span');
-      label.className = 'filter-label';
-      label.textContent = 'Filter:';
-      filterContainer.appendChild(label);
+      // Header
+      const header = document.createElement('div');
+      header.className = 'filter-sidebar-header';
+      header.textContent = 'Genre Filter';
+      filterSidebar.appendChild(header);
+
+      // Items container
+      const itemsContainer = document.createElement('div');
+      itemsContainer.className = 'filter-sidebar-items';
 
       // Create toggle for each genre
       genres.forEach(genre => {
@@ -1518,11 +1565,16 @@ var particles;
           renderButtons();
         });
 
-        filterContainer.appendChild(toggle);
+        itemsContainer.appendChild(toggle);
       });
 
-      // Insert filter before the main container
-      documentArea.insertBefore(filterContainer, container);
+      filterSidebar.appendChild(itemsContainer);
+
+      // Insert sidebar into main-layout (before document-area)
+      mainLayout.insertBefore(filterSidebar, documentArea);
+
+      // Adjust document-area margin to account for sidebar
+      documentArea.style.marginLeft = '200px';
     }
 
     // 2. Render the list of buttons (filtered)
@@ -1590,6 +1642,7 @@ var particles;
           }
           reader.classList.remove('active');
           documentArea.classList.remove('grid-hidden');
+          document.body.classList.remove('reader-active');
         });
 
         // Fullscreen toggle logic
@@ -1615,6 +1668,7 @@ var particles;
       const readerView = document.getElementById('reader-view');
       readerView.classList.add('active');
       documentArea.classList.add('grid-hidden');
+      document.body.classList.add('reader-active');
 
       // Scroll to top of reader content
       document.getElementById('reader-content').scrollTop = 0;
@@ -1643,7 +1697,7 @@ var particles;
     }
 
     // Initial setup
-    createGenreFilter();
+    createFilterSidebar();
     renderButtons();
   });
 </script>
