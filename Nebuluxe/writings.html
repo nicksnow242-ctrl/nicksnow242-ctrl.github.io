@@ -707,143 +707,366 @@ html, body {
 
 <canvas id="projector"></canvas>
 
-<<!-- ========================================== -->
-<!-- MAIN BODY SECTION (WRITINGS LIST) -->
+<!-- ========================================== -->
+<!-- Start MAIN Body -->
+<!-- ========================================== -->
+<div class="main-layout">
+
+  <!-- ========================================== -->
+  <!-- MAIN CONTENT: TEXT FILES GRID -->
+  <!-- ========================================== -->
+  <div class="main-content">
+    <h2 class="content-header">
+      <span class="cursor-blink">█</span> DIRECTORY_ROOT // TEXT_FILES
+    </h2>
+
+    <div class="text-files-grid">
+      <button class="text-file-btn" onclick="openMarkdownReader('writingsmd/SirenSong.md', 'Siren Song')" data-file="writingsmd/SirenSong.md">
+        <span class="file-title">SIREN SONG</span>
+      </button>
+
+      <button class="text-file-btn" onclick="openMarkdownReader('writingsmd/example2.md', 'Example File 2')" data-file="writingsmd/example2.md">
+        <span class="file-title">EXAMPLE FILE 2</span>
+      </button>
+
+      <button class="text-file-btn" onclick="openMarkdownReader('writingsmd/example3.md', 'Example File 3')" data-file="writingsmd/example3.md">
+        <span class="file-title">EXAMPLE FILE 3</span>
+      </button>
+
+      <button class="text-file-btn" onclick="openMarkdownReader('writingsmd/example4.md', 'Example File 4')" data-file="writingsmd/example4.md">
+        <span class="file-title">EXAMPLE FILE 4</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- SECTION 2: READING LIST SIDEBAR -->
+  <!-- ========================================== -->
+  <aside class="reading-list-sidebar">
+    <div class="reading-list-header">
+      <span>My</span>
+      <select id="category-select" class="header-dropdown">
+        <option value="Reading">Reading</option>
+        <option value="Film">Film</option>
+        <option value="Pod">Pod</option>
+        <option value="Articles">Articles</option>
+      </select>
+      <span>List</span>
+    </div>
+
+    <div class="filter-section">
+      <select id="year-select" class="filter-dropdown">
+        <option value="2026">2026</option>
+      </select>
+    </div>
+
+    <div class="reading-list-items" id="reading-list-container">
+      <!-- Populated dynamically by content.js -->
+    </div>
+  </aside>
+
+</div> <!-- End .main-layout -->
+
+<!-- ========================================== -->
+<!-- MARKDOWN READER MODAL & STYLES -->
 <!-- ========================================== -->
 <style>
-  /* Required CSS Variables for theming */
-  :root {
-    --deep-green: #001a00;
-    --neon-green: #00ff41;
-    --neon-glow-green: rgba(0, 255, 65, 0.5);
-    --text-dim: #a0ffb0;
+  .main-content {
+    flex: 1;
+    padding: 30px;
+    padding-right: 230px; /* Accounts for 200px sidebar + 30px gap */
+    overflow-y: auto;
+    height: 100%;
+    box-sizing: border-box;
   }
 
-  /* Main Body Styles */
-  .document-area {
+  .main-content::-webkit-scrollbar { width: 8px; }
+  .main-content::-webkit-scrollbar-track { background: var(--deep-green); }
+  .main-content::-webkit-scrollbar-thumb { background: var(--mid-green); border-radius: 4px; }
+  .main-content::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
+
+  .content-header {
+    font-size: 18px;
+    color: var(--neon-green);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0 0 25px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-shadow: 0 0 8px var(--neon-glow-green);
+  }
+
+  .content-header .cursor-blink {
+    display: inline-block;
+    animation: blinker 1s steps(2) infinite;
+  }
+
+  .text-files-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding-bottom: 30px;
+    width: 100%;
+  }
+
+  .text-file-btn {
+    position: relative;
+    background: rgba(0, 20, 0, 0.6);
+    border: 1px solid rgba(0, 255, 65, 0.3);
+    border-left: 3px solid var(--neon-green);
+    color: var(--text-dim);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    padding: 25px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+    backdrop-filter: blur(4px);
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 90% 100%, 0 100%);
+  }
+
+  .text-file-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.2), transparent);
+    transition: left 0.5s ease;
+    z-index: 1;
+  }
+
+  .text-file-btn:hover {
+    background: rgba(0, 40, 0, 0.9);
+    border-color: var(--neon-green);
+    color: var(--neon-green);
+    box-shadow: 0 0 25px rgba(0, 255, 65, 0.4), 0 0 50px rgba(0, 255, 65, 0.2), inset 0 0 20px rgba(0, 255, 65, 0.15);
+    transform: translateY(-3px);
+  }
+
+  .text-file-btn:hover::before { left: 100%; }
+
+  .text-file-btn .file-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--neon-green);
+    text-align: center;
+    text-shadow: 0 0 10px var(--neon-glow-green);
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .text-file-btn.active {
+    background: rgba(0, 255, 65, 0.15);
+    border-color: var(--neon-green);
+    color: var(--neon-green);
+    box-shadow: 0 0 30px rgba(0, 255, 65, 0.5), 0 0 60px rgba(0, 255, 65, 0.3), inset 0 0 25px rgba(0, 255, 65, 0.2);
+  }
+
+  .text-file-btn.active .file-title {
+    text-shadow: 0 0 15px var(--neon-glow-green);
+  }
+
+  .markdown-reader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 10, 0, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .markdown-reader-overlay.active {
+    display: flex;
+    opacity: 1;
+  }
+
+  .markdown-reader-container {
+    width: 90%;
+    max-width: 900px;
+    height: 85vh;
+    background: rgba(0, 20, 0, 0.95);
+    border: 2px solid var(--neon-green);
+    border-radius: 8px;
+    box-shadow: 0 0 50px rgba(0, 255, 65, 0.3), 0 0 100px rgba(0, 255, 65, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .reader-header {
+    padding: 20px 30px;
+    border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 15, 0, 0.9);
+  }
+
+  .reader-title {
+    font-size: 20px;
+    color: var(--neon-green);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px var(--neon-glow-green);
+    margin: 0;
+  }
+
+  .reader-close-btn {
+    background: transparent;
+    border: 2px solid var(--neon-green);
+    color: var(--neon-green);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 16px;
+    padding: 8px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .reader-close-btn:hover {
+    background: var(--neon-green);
+    color: var(--deep-green);
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+  }
+
+  .reader-content {
     flex: 1;
     padding: 40px;
     overflow-y: auto;
-    height: 100vh; /* Ensures it scrolls independently if used standalone */
-    box-sizing: border-box;
-    background: linear-gradient(0deg, #000a00 0%, var(--deep-green) 100%);
-  }
-
-  .text-list-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  .text-list-item {
-    background: rgba(0, 255, 65, 0.03);
-    border: 1px solid rgba(0, 255, 65, 0.2);
-    border-radius: 4px;
     color: var(--text-dim);
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    font-family: 'Share Tech Mono', monospace;
-    text-align: left;
-    width: 100%;
-    padding: 16px;
+    font-size: 16px;
+    line-height: 1.8;
   }
 
-  .text-list-item:hover {
-    background: rgba(0, 255, 65, 0.1);
-    border-color: var(--neon-green);
+  .reader-content::-webkit-scrollbar { width: 8px; }
+  .reader-content::-webkit-scrollbar-track { background: var(--deep-green); }
+  .reader-content::-webkit-scrollbar-thumb { background: var(--mid-green); border-radius: 4px; }
+  .reader-content::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
+
+  .reader-content h1, .reader-content h2, .reader-content h3,
+  .reader-content h4, .reader-content h5, .reader-content h6 {
     color: var(--neon-green);
-    box-shadow: 0 0 12px var(--neon-glow-green);
-    transform: translateY(-2px);
+    text-shadow: 0 0 8px var(--neon-glow-green);
+    margin-top: 30px;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
   }
 
-  .text-list-item .book-info { display: flex; flex-direction: column; }
-  .text-list-item .book-title { font-size: 16px; font-weight: bold; color: var(--neon-green); }
-  .text-list-item .book-author { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
-  .text-list-item .book-rating { font-size: 14px; color: var(--neon-green); font-weight: bold; white-space: nowrap; }
+  .reader-content h1 { font-size: 32px; border-bottom: 2px solid rgba(0, 255, 65, 0.3); padding-bottom: 10px; }
+  .reader-content h2 { font-size: 26px; border-bottom: 1px solid rgba(0, 255, 65, 0.2); padding-bottom: 8px; }
+  .reader-content h3 { font-size: 22px; }
+  .reader-content h4 { font-size: 18px; }
+  .reader-content p { margin-bottom: 20px; }
+  .reader-content a { color: var(--neon-green); text-decoration: none; border-bottom: 1px dashed var(--neon-green); transition: all 0.3s ease; }
+  .reader-content a:hover { text-shadow: 0 0 8px var(--neon-glow-green); border-bottom-style: solid; }
+  .reader-content code { background: rgba(0, 255, 65, 0.1); border: 1px solid rgba(0, 255, 65, 0.3); padding: 2px 6px; border-radius: 3px; font-family: 'Share Tech Mono', monospace; color: var(--neon-green); }
+  .reader-content pre { background: rgba(0, 10, 0, 0.8); border: 1px solid rgba(0, 255, 65, 0.3); padding: 15px; border-radius: 4px; overflow-x: auto; margin: 20px 0; }
+  .reader-content pre code { background: transparent; border: none; padding: 0; }
+  .reader-content blockquote { border-left: 3px solid var(--neon-green); padding-left: 20px; margin: 20px 0; color: var(--text-dim); font-style: italic; }
+  .reader-content ul, .reader-content ol { margin: 20px 0; padding-left: 30px; }
+  .reader-content li { margin-bottom: 10px; }
+  .reader-content img { max-width: 100%; height: auto; border: 1px solid rgba(0, 255, 65, 0.3); border-radius: 4px; margin: 20px 0; }
+  .reader-content hr { border: none; border-top: 1px solid rgba(0, 255, 65, 0.3); margin: 30px 0; }
+
+  .loading-indicator {
+    text-align: center;
+    color: var(--neon-green);
+    font-size: 18px;
+    padding: 40px;
+  }
+
+  .loading-indicator::after {
+    content: '█';
+    animation: blinker 1s steps(2) infinite;
+  }
 
   @media (max-width: 768px) {
-    .text-list-container { grid-template-columns: 1fr; }
+    .main-content { padding-right: 30px; padding-left: 30px; }
+    .text-files-grid { grid-template-columns: 1fr; gap: 15px; }
+    .markdown-reader-container { width: 95%; height: 90vh; }
+    .reader-content { padding: 20px; }
   }
 </style>
 
-<main class="document-area">
-  <div class="text-list-container" id="main-body-container">
-    <!-- Populated dynamically by JavaScript -->
+<!-- Markdown Reader Modal -->
+<div class="markdown-reader-overlay" id="markdownReaderOverlay">
+  <div class="markdown-reader-container">
+    <div class="reader-header">
+      <h2 class="reader-title" id="readerTitle">Document</h2>
+      <button class="reader-close-btn" onclick="closeMarkdownReader()">CLOSE</button>
+    </div>
+    <div class="reader-content" id="readerContent">
+      <div class="loading-indicator">LOADING</div>
+    </div>
   </div>
-</main>
+</div>
+
+<!-- Marked.js library for markdown parsing -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <script>
-  // Main Body Population Script
-  document.addEventListener('DOMContentLoaded', () => {
-    const mainBodyContainer = document.getElementById('main-body-container');
+  // Configure marked.js
+  marked.setOptions({ breaks: true, gfm: true });
 
-    function renderMainBody() {
-      // Assumes contentData is loaded globally from js/content.js
-      // A fallback is provided here so the component works standalone for testing
-      const dataSource = (typeof contentData !== 'undefined') ? contentData : {
-        Reading: { 2026: [
-          { title: "The Silent Ocean", author: "A. N. Author", rating: "9/10" },
-          { title: "Neon Dreams", author: "Cyber Scribe", rating: "10/10" },
-          { title: "Echoes of Code", author: "Dev Null", rating: "8/10" }
-        ]},
-        Film: { 2026: [
-          { title: "Blade Runner 2099", author: "Dir. V. Villeneuve", rating: "10/10" }
-        ]},
-        Pod: { 2026: [
-          { title: "Tech Horizons Ep. 42", author: "Host: J. Doe", rating: "9/10" }
-        ]},
-        Articles: { 2026: [
-          { title: "The Future of AI", author: "Tech Monthly", rating: "9/10" }
-        ]}
-      };
+  function openMarkdownReader(filePath, title) {
+    const overlay = document.getElementById('markdownReaderOverlay');
+    const content = document.getElementById('readerContent');
+    const titleEl = document.getElementById('readerTitle');
 
-      // Default to Reading / 2026.
-      // Note: If you have dropdowns elsewhere on the page, you can grab their values here instead.
-      const category = 'Reading';
-      const year = '2026';
+    titleEl.textContent = title;
+    overlay.classList.add('active');
+    content.innerHTML = '<div class="loading-indicator">LOADING</div>';
 
-      const items = (dataSource[category] && dataSource[category][year]) ? dataSource[category][year] : [];
-
-      mainBodyContainer.innerHTML = '';
-
-      if (items.length === 0) {
-        mainBodyContainer.innerHTML = '<div class="text-list-item"><div class="book-info"><div class="book-title">No entries available</div></div></div>';
-        return;
-      }
-
-      items.forEach(item => {
-        const mbItem = document.createElement('button');
-        mbItem.className = 'text-list-item';
-        mbItem.innerHTML = `
-          <div class="book-info">
-            <div class="book-title">${item.title}</div>
-            <div class="book-author">${item.author}</div>
-          </div>
-          <div class="book-rating">${item.rating}</div>
-        `;
-
-        // Placeholder click handler for future document opening logic
-        mbItem.addEventListener('click', () => {
-          console.log(`Opening document: ${item.title}`);
-        });
-
-        mainBodyContainer.appendChild(mbItem);
+    fetch(filePath)
+      .then(response => {
+        if (!response.ok) throw new Error('File not found');
+        return response.text();
+      })
+      .then(markdown => {
+        content.innerHTML = marked.parse(markdown);
+      })
+      .catch(error => {
+        content.innerHTML = `<div style="color: var(--neon-green); text-align: center; padding: 40px;">
+          <p style="font-size: 18px;">ERROR: File not found</p>
+          <p style="font-size: 14px; opacity: 0.7;">${error.message}</p>
+        </div>`;
       });
-    }
+  }
 
-    // Initial render
-    renderMainBody();
+  function closeMarkdownReader() {
+    document.getElementById('markdownReaderOverlay').classList.remove('active');
+  }
+
+  document.getElementById('markdownReaderOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeMarkdownReader();
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeMarkdownReader();
   });
 </script>
 <!-- ========================================== -->
-<!-- END MAIN BODY SECTION -->
+<!-- End MAIN BODY -->
 <!-- ========================================== -->
 </body>
 </html>
