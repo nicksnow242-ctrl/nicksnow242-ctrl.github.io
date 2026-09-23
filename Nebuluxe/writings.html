@@ -1313,6 +1313,7 @@ var particles;
     font-size: 16px;
     line-height: 1.8;
     color: #d0ffd9;
+    max-width: 70%;
   }
   .reader-content p { margin-bottom: 20px; text-align: justify; }
 
@@ -1324,6 +1325,12 @@ var particles;
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Reduce button container width to avoid mascot overlap */
+  .text-list-container {
+    max-width: 650px;
+    margin-left: 80px;
   }
 
   /* Hide the main grid when the reader is active */
@@ -1356,7 +1363,7 @@ var particles;
             <div class="book-title">${writing.title}</div>
             <div class="book-author">${writing.author}</div>
           </div>
-          <div class="book-rating">${writing.rating}</div>
+          <div class="book-rating">${writing.genre || 'Uncategorized'}</div>
         `;
 
         btn.addEventListener('click', () => openReader(writing));
@@ -1378,7 +1385,7 @@ var particles;
           </div>
           <div class="reader-meta">
             <span>✍️ <strong id="reader-author"></strong></span>
-            <span>⭐ <strong id="reader-rating"></strong></span>
+            <span>📖 <strong id="reader-subtitle"></strong></span>
           </div>
           <div class="reader-content" id="reader-content"></div>
         `;
@@ -1394,7 +1401,7 @@ var particles;
       // Populate data
       document.getElementById('reader-title').textContent = writing.title;
       document.getElementById('reader-author').textContent = writing.author;
-      document.getElementById('reader-rating').textContent = writing.rating;
+      document.getElementById('reader-subtitle').textContent = writing.subtitle || '';
       document.getElementById('reader-content').innerHTML = writing.content;
 
       // Switch views

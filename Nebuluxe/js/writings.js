@@ -5,6 +5,8 @@ const WRITINGS_DATA = [
     title: "Siren Song",
     author: "Nick Snow",
     rating: "★★★★★",
+    subtitle:"Thoughts on the Sirens",
+    genre:"Fragment",
     content: `
       <p>My treatment of the Sirens pulls heavily from Adorno and Horkheimer’s Dialectic of Enlightenment. Mythical thought is closely related to enlightened thought, with the prototype for enlightened thinking already found in the earliest historical myths. The Odyssey, one of the most basic texts underlying the West, exemplifies this. The hero Odysseus is engaged in the task of becoming; the journey of individuation. His encounters on the great voyage are the events which produce the individual. They are the struggle of Logos against primal modes of being. Adorkheimer notes that the only times Odysseus overcomes his challenges with strength are when he wrestles the beggar and when he strings the bow before Telemachus. These feats are the athletic achievements of man against man, for the mythic forces which Odysseus contends with in the rest of his adventures can not be overcome by force. </p>
 
@@ -20,6 +22,8 @@ const WRITINGS_DATA = [
     title: "The Flickering Signal",
     author: "Unknown",
     rating: "★★★★☆",
+    subtitle:"Test",
+    genre:"Test2",
     content: `
       <p>It started as a whisper in the static. A pattern in the chaos of the deep web.</p>
       <p>Most dismissed it as a glitch. A ghost in the machine. But I knew better. The architects left breadcrumbs, and I was the only one foolish enough to follow them.</p>
