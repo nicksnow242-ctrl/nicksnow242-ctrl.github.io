@@ -2507,653 +2507,658 @@ class InfinitePortraitGallery {
      ============================================================ -->
 
      <!-- ========================================== -->
-     <!-- FILTER TAB (Styles, HTML, and Script) -->
-     <!-- ========================================== -->
-     <style>
-       .filter-tab {
-         position: fixed;
-         top: 110px;
-         left: 0;
-         z-index: 1001;
-         background: rgba(255, 255, 255, 0.65);
-         backdrop-filter: blur(12px);
-         -webkit-backdrop-filter: blur(12px);
-         border-bottom: 1px solid rgba(180, 154, 93, 0.2);
-         border-right: 1px solid rgba(180, 154, 93, 0.2);
-         border-radius: 0 0 12px 0;
-         transition: width 0.4s cubic-bezier(0.25, 1, 0.3, 1),
-                     border-radius 0.4s cubic-bezier(0.25, 1, 0.3, 1),
-                     box-shadow 0.4s ease,
-                     height 0.4s cubic-bezier(0.25, 1, 0.3, 1);
-         width: 130px;
-         height: 50px;
-         overflow: hidden;
-         display: flex;
-         align-items: center;
-         box-shadow: 0 4px 12px rgba(180, 154, 93, 0.1);
-       }
+   <!-- FILTER TAB (Styles, HTML, and Script) -->
+   <!-- ========================================== -->
+   <style>
+     .filter-tab {
+       position: fixed;
+       top: 110px;
+       left: 0;
+       z-index: 1001;
+       background: rgba(255, 255, 255, 0.65);
+       backdrop-filter: blur(12px);
+       -webkit-backdrop-filter: blur(12px);
+       border-bottom: 1px solid rgba(180, 154, 93, 0.2);
+       border-right: 1px solid rgba(180, 154, 93, 0.2);
+       border-radius: 0 0 12px 0;
+       transition: width 0.4s cubic-bezier(0.25, 1, 0.3, 1),
+                   border-radius 0.4s cubic-bezier(0.25, 1, 0.3, 1),
+                   box-shadow 0.4s ease,
+                   height 0.4s cubic-bezier(0.25, 1, 0.3, 1);
+       width: 130px;
+       height: 50px;
+       overflow: hidden;
+       display: flex;
+       align-items: center;
+       box-shadow: 0 4px 12px rgba(180, 154, 93, 0.1);
+     }
 
-       .filter-tab.is-open {
-         width: 100%;
-         height: auto;
-         min-height: 90px;
-         border-right: none;
-         border-radius: 0;
-         box-shadow: 0 10px 30px rgba(180, 154, 93, 0.15);
-       }
+     .filter-tab.is-open {
+       width: 100%;
+       height: auto;
+       min-height: 90px;
+       border-right: none;
+       border-radius: 0;
+       box-shadow: 0 10px 30px rgba(180, 154, 93, 0.15);
+     }
 
-       .filter-tab-toggle {
-         display: flex;
-         align-items: center;
-         justify-content: center;
-         gap: 8px;
-         width: 130px;
-         height: 50px;
-         flex-shrink: 0;
-         background: transparent;
-         border: none;
-         cursor: pointer;
-         outline: none;
-         transition: all 0.3s ease;
-       }
+     .filter-tab-toggle {
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       gap: 8px;
+       width: 130px;
+       height: 50px;
+       flex-shrink: 0;
+       background: transparent;
+       border: none;
+       cursor: pointer;
+       outline: none;
+       transition: all 0.3s ease;
+     }
 
-       .filter-tab-text {
-         color: #b49a5d;
-         font-family: 'Segoe UI', system-ui, sans-serif;
-         font-size: 16px;
-         font-weight: 600;
-         letter-spacing: 0.05em;
-         transition: text-shadow 0.3s ease, transform 0.3s ease;
-       }
+     .filter-tab-text {
+       color: #b49a5d;
+       font-family: 'Segoe UI', system-ui, sans-serif;
+       font-size: 16px;
+       font-weight: 600;
+       letter-spacing: 0.05em;
+       transition: text-shadow 0.3s ease, transform 0.3s ease;
+     }
 
-       .filter-tab-toggle:hover .filter-tab-text {
-         text-shadow: 0 0 8px rgba(180, 154, 93, 0.8), 0 0 15px rgba(180, 154, 93, 0.4);
-         transform: scale(1.05);
-       }
+     .filter-tab-toggle:hover .filter-tab-text {
+       text-shadow: 0 0 8px rgba(180, 154, 93, 0.8), 0 0 15px rgba(180, 154, 93, 0.4);
+       transform: scale(1.05);
+     }
 
-       .filter-tab-arrow {
-         display: flex;
-         align-items: center;
-         color: #b49a5d;
-         transition: transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
-       }
+     .filter-tab-arrow {
+       display: flex;
+       align-items: center;
+       color: #b49a5d;
+       transition: transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
+     }
 
-       .filter-tab.is-open .filter-tab-arrow {
-         transform: rotate(90deg);
-       }
+     .filter-tab.is-open .filter-tab-arrow {
+       transform: rotate(90deg);
+     }
 
-       .filter-tab-content {
-         flex: 1;
-         padding: 20px 30px;
-         opacity: 0;
-         transform: translateY(10px);
-         transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
-         pointer-events: none;
-       }
+     .filter-tab-content {
+       flex: 1;
+       padding: 20px 30px;
+       opacity: 0;
+       transform: translateY(10px);
+       transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
+       pointer-events: none;
+     }
 
-       .filter-tab.is-open .filter-tab-content {
-         opacity: 1;
-         transform: translateY(0);
-         pointer-events: auto;
-         transition-delay: 0.1s;
-       }
+     .filter-tab.is-open .filter-tab-content {
+       opacity: 1;
+       transform: translateY(0);
+       pointer-events: auto;
+       transition-delay: 0.1s;
+     }
 
+     .filter-layout {
+       display: grid;
+       grid-template-columns: 1fr 1fr 1fr;
+       gap: 24px;
+       align-items: start;
+       width: 100%;
+     }
+
+     .filter-group {
+       display: flex;
+       flex-direction: column;
+       gap: 8px;
+     }
+
+     .filter-label {
+       font-size: 10px;
+       color: #8A7355;
+       font-weight: 700;
+       text-transform: uppercase;
+       letter-spacing: 0.1em;
+     }
+
+     .filter-toggles {
+       display: flex;
+       flex-wrap: wrap;
+       gap: 6px;
+     }
+
+     /* Compact Cyberpunk Toggle Styles */
+     .cyber-toggle {
+       display: flex;
+       align-items: center;
+       gap: 5px;
+       padding: 5px 10px;
+       border: 1px solid rgba(180, 154, 93, 0.4);
+       border-radius: 6px;
+       background: rgba(255, 255, 255, 0.5);
+       cursor: pointer;
+       transition: all 0.3s ease;
+       position: relative;
+       overflow: hidden;
+     }
+
+     .cyber-toggle input {
+       position: absolute;
+       opacity: 0;
+       pointer-events: none;
+     }
+
+     .cyber-icon {
+       width: 16px;
+       height: 16px;
+       flex-shrink: 0;
+     }
+
+     .cyber-text {
+       font-family: 'Share Tech Mono', monospace;
+       font-size: 11px;
+       font-weight: 400;
+       color: #5C4A32;
+       transition: all 0.3s ease;
+     }
+
+     .cyber-toggle:hover {
+       border-color: rgba(180, 154, 93, 0.8);
+       background: rgba(255, 255, 255, 0.8);
+     }
+
+     /* Active State */
+     .cyber-toggle.active {
+       background: #0a0a0a;
+       border-color: #b49a5d;
+       box-shadow: 0 0 12px rgba(180, 154, 93, 0.3), inset 0 0 10px rgba(180, 154, 93, 0.1);
+     }
+
+     .cyber-toggle.active .cyber-text {
+       color: #b49a5d;
+       text-shadow: 0 0 8px rgba(180, 154, 93, 0.6);
+     }
+
+     .cyber-toggle.active .unchecked {
+       opacity: 0;
+     }
+
+     .cyber-toggle.active .glow-1,
+     .cyber-toggle.active .glow-2 {
+       opacity: 1;
+     }
+
+     /* Search & Select Inputs */
+     .filter-search,
+     .filter-select {
+       padding: 6px 10px;
+       border: 1px solid rgba(180, 154, 93, 0.4);
+       border-radius: 6px;
+       background: rgba(255, 255, 255, 0.8);
+       color: #5C4A32;
+       font-family: 'Share Tech Mono', monospace;
+       font-size: 11px;
+       outline: none;
+       backdrop-filter: blur(4px);
+       transition: all 0.25s ease;
+       width: 100%;
+       box-sizing: border-box;
+     }
+
+     .filter-search::placeholder {
+       color: rgba(92, 74, 50, 0.6);
+     }
+
+     .filter-search:hover, .filter-search:focus,
+     .filter-select:hover, .filter-select:focus {
+       border-color: #b49a5d;
+       box-shadow: 0 0 8px rgba(180, 154, 93, 0.3);
+     }
+
+     .filter-reset-btn {
+       margin-top: 12px;
+       padding: 6px 10px;
+       border: 1px solid rgba(180, 154, 93, 0.4);
+       border-radius: 6px;
+       background: transparent;
+       color: #8A7355;
+       font-family: 'Share Tech Mono', monospace;
+       font-size: 11px;
+       font-weight: 400;
+       cursor: pointer;
+       transition: all 0.25s ease;
+       width: 100%;
+     }
+
+     .filter-reset-btn:hover {
+       background: rgba(180, 154, 93, 0.1);
+       color: #5C4A32;
+       border-color: #b49a5d;
+     }
+
+     @media (max-width: 900px) {
        .filter-layout {
-         display: grid;
-         grid-template-columns: 1fr 1fr auto;
-         gap: 24px;
-         align-items: start;
-         width: 100%;
+         grid-template-columns: 1fr 1fr;
        }
+     }
 
-       .filter-group {
-         display: flex;
-         flex-direction: column;
-         gap: 8px;
+     @media (max-width: 768px) {
+       .filter-tab { width: 110px; }
+       .filter-tab-toggle { width: 110px; }
+       .filter-tab-text { font-size: 14px; }
+       .filter-layout {
+         grid-template-columns: 1fr;
+         gap: 16px;
        }
-
-       .filter-label {
-         font-size: 10px;
-         color: #8A7355;
-         font-weight: 700;
-         text-transform: uppercase;
-         letter-spacing: 0.1em;
+       .filter-tab.is-open {
+         max-height: 80vh;
+         overflow-y: auto;
        }
-
-       .filter-toggles {
-         display: flex;
-         flex-wrap: wrap;
-         gap: 6px;
+       .filter-tab-content {
+         padding: 16px 20px;
        }
+     }
+   </style>
 
-       /* Compact Cyberpunk Toggle Styles (~30% smaller) */
-       .cyber-toggle {
-         display: flex;
-         align-items: center;
-         gap: 5px;
-         padding: 5px 10px;
-         border: 1px solid rgba(180, 154, 93, 0.4);
-         border-radius: 6px;
-         background: rgba(255, 255, 255, 0.5);
-         cursor: pointer;
-         transition: all 0.3s ease;
-         position: relative;
-         overflow: hidden;
-       }
+   <div class="filter-tab" id="filterTab">
+     <button class="filter-tab-toggle" id="filterTabToggle" aria-label="Toggle Filters" aria-expanded="false">
+       <span class="filter-tab-text">Filters</span>
+       <span class="filter-tab-arrow">
+         <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+           <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+         </svg>
+       </span>
+     </button>
 
-       .cyber-toggle input {
-         position: absolute;
-         opacity: 0;
-         pointer-events: none;
-       }
+     <div class="filter-tab-content">
+       <div class="filter-layout">
 
-       .cyber-icon {
-         width: 16px;
-         height: 16px;
-         flex-shrink: 0;
-       }
+         <!-- Column 1: Search & Collection (Left) -->
+         <div class="filter-group">
+           <span class="filter-label">Search</span>
+           <input type="text" class="filter-search" id="searchInput" placeholder="Search by Name" autocomplete="off" />
 
-       .cyber-text {
-         font-family: 'Share Tech Mono', monospace;
-         font-size: 11px;
-         font-weight: 400;
-         color: #5C4A32;
-         transition: all 0.3s ease;
-       }
-
-       .cyber-toggle:hover {
-         border-color: rgba(180, 154, 93, 0.8);
-         background: rgba(255, 255, 255, 0.8);
-       }
-
-       /* Active State */
-       .cyber-toggle.active {
-         background: #0a0a0a;
-         border-color: #b49a5d;
-         box-shadow: 0 0 12px rgba(180, 154, 93, 0.3), inset 0 0 10px rgba(180, 154, 93, 0.1);
-       }
-
-       .cyber-toggle.active .cyber-text {
-         color: #b49a5d;
-         text-shadow: 0 0 8px rgba(180, 154, 93, 0.6);
-       }
-
-       .cyber-toggle.active .unchecked {
-         opacity: 0;
-       }
-
-       .cyber-toggle.active .glow-1,
-       .cyber-toggle.active .glow-2 {
-         opacity: 1;
-       }
-
-       /* Search & Select Inputs */
-       .filter-search,
-       .filter-select {
-         padding: 6px 10px;
-         border: 1px solid rgba(180, 154, 93, 0.4);
-         border-radius: 6px;
-         background: rgba(255, 255, 255, 0.8);
-         color: #5C4A32;
-         font-family: 'Share Tech Mono', monospace;
-         font-size: 11px;
-         outline: none;
-         backdrop-filter: blur(4px);
-         transition: all 0.25s ease;
-         width: 100%;
-         box-sizing: border-box;
-       }
-
-       .filter-search::placeholder {
-         color: rgba(92, 74, 50, 0.6);
-       }
-
-       .filter-search:hover, .filter-search:focus,
-       .filter-select:hover, .filter-select:focus {
-         border-color: #b49a5d;
-         box-shadow: 0 0 8px rgba(180, 154, 93, 0.3);
-       }
-
-       .filter-reset-btn {
-         margin-top: 8px;
-         padding: 6px 10px;
-         border: 1px solid rgba(180, 154, 93, 0.4);
-         border-radius: 6px;
-         background: transparent;
-         color: #8A7355;
-         font-family: 'Share Tech Mono', monospace;
-         font-size: 11px;
-         font-weight: 400;
-         cursor: pointer;
-         transition: all 0.25s ease;
-         width: 100%;
-       }
-
-       .filter-reset-btn:hover {
-         background: rgba(180, 154, 93, 0.1);
-         color: #5C4A32;
-         border-color: #b49a5d;
-       }
-
-       @media (max-width: 768px) {
-         .filter-tab { width: 110px; }
-         .filter-tab-toggle { width: 110px; }
-         .filter-tab-text { font-size: 14px; }
-         .filter-layout {
-           grid-template-columns: 1fr;
-           gap: 16px;
-         }
-         .filter-tab.is-open {
-           max-height: 80vh;
-           overflow-y: auto;
-         }
-         .filter-tab-content {
-           padding: 16px 20px;
-         }
-       }
-
-     </style>
-
-     <div class="filter-tab" id="filterTab">
-       <button class="filter-tab-toggle" id="filterTabToggle" aria-label="Toggle Filters" aria-expanded="false">
-         <span class="filter-tab-text">Filters</span>
-         <span class="filter-tab-arrow">
-           <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-             <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
-           </svg>
-         </span>
-       </button>
-
-       <div class="filter-tab-content">
-         <div class="filter-layout">
-
-           <!-- Column 1: Size Filters -->
-           <div class="filter-group">
-             <span class="filter-label">Size</span>
-             <div class="filter-toggles">
-               <label class="cyber-toggle">
-                 <input type="checkbox" data-filter="size" data-value="small" />
-                 <svg class="cyber-icon" viewBox="0 0 24 24">
-                   <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
-                   <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
-                   <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
-                 </svg>
-                 <span class="cyber-text">Small</span>
-               </label>
-
-               <label class="cyber-toggle">
-                 <input type="checkbox" data-filter="size" data-value="medium" />
-                 <svg class="cyber-icon" viewBox="0 0 24 24">
-                   <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
-                   <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
-                   <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
-                 </svg>
-                 <span class="cyber-text">Medium</span>
-               </label>
-
-               <label class="cyber-toggle">
-                 <input type="checkbox" data-filter="size" data-value="large" />
-                 <svg class="cyber-icon" viewBox="0 0 24 24">
-                   <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
-                   <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
-                   <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
-                 </svg>
-                 <span class="cyber-text">Large</span>
-               </label>
-
-               <label class="cyber-toggle">
-                 <input type="checkbox" data-filter="size" data-value="gargantuan" />
-                 <svg class="cyber-icon" viewBox="0 0 24 24">
-                   <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
-                   <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
-                   <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
-                 </svg>
-                 <span class="cyber-text">Gargantuan</span>
-               </label>
-             </div>
-           </div>
-
-           <!-- Column 2: Status Filters -->
-           <div class="filter-group">
-             <span class="filter-label">Status</span>
-             <div class="filter-toggles">
-               <label class="cyber-toggle">
-                 <input type="checkbox" data-filter="status" data-value="featured" />
-                 <svg class="cyber-icon" viewBox="0 0 24 24">
-                   <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
-                   <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
-                   <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
-                 </svg>
-                 <span class="cyber-text">Featured</span>
-               </label>
-
-               <label class="cyber-toggle">
-                 <input type="checkbox" data-filter="status" data-value="onsale" />
-                 <svg class="cyber-icon" viewBox="0 0 24 24">
-                   <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
-                   <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
-                   <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
-                 </svg>
-                 <span class="cyber-text">On Sale</span>
-               </label>
-
-               <label class="cyber-toggle">
-                 <input type="checkbox" data-filter="status" data-value="recent" />
-                 <svg class="cyber-icon" viewBox="0 0 24 24">
-                   <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
-                   <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
-                   <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
-                 </svg>
-                 <span class="cyber-text">Recent</span>
-               </label>
-
-               <label class="cyber-toggle">
-                 <input type="checkbox" data-filter="status" data-value="onhand" />
-                 <svg class="cyber-icon" viewBox="0 0 24 24">
-                   <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
-                   <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
-                   <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
-                 </svg>
-                 <span class="cyber-text">On Hand</span>
-               </label>
-
-               <label class="cyber-toggle">
-                 <input type="checkbox" data-filter="status" data-value="available" />
-                 <svg class="cyber-icon" viewBox="0 0 24 24">
-                   <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
-                   <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
-                   <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
-                 </svg>
-                 <span class="cyber-text">Available</span>
-               </label>
-             </div>
-           </div>
-
-           <!-- Column 3: Search, Collection + Reset -->
-           <div class="filter-group">
-             <span class="filter-label">Search</span>
-             <input type="text" class="filter-search" id="searchInput" placeholder="Search by Name" autocomplete="off" />
-
-             <span class="filter-label">Collection</span>
-             <select class="filter-select" id="collectionSelect">
-               <option value="All">All Collections</option>
-             </select>
-             <button class="filter-reset-btn" id="resetFiltersBtn">Reset All Filters</button>
-           </div>
-
+           <span class="filter-label" style="margin-top: 12px;">Collection</span>
+           <select class="filter-select" id="collectionSelect">
+             <option value="All">All Collections</option>
+           </select>
          </div>
+
+         <!-- Column 2: Size Filters (Middle) -->
+         <div class="filter-group">
+           <span class="filter-label">Size</span>
+           <div class="filter-toggles">
+             <label class="cyber-toggle">
+               <input type="checkbox" data-filter="size" data-value="small" />
+               <svg class="cyber-icon" viewBox="0 0 24 24">
+                 <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                 <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                 <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
+               </svg>
+               <span class="cyber-text">Small</span>
+             </label>
+
+             <label class="cyber-toggle">
+               <input type="checkbox" data-filter="size" data-value="medium" />
+               <svg class="cyber-icon" viewBox="0 0 24 24">
+                 <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                 <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                 <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
+               </svg>
+               <span class="cyber-text">Medium</span>
+             </label>
+
+             <label class="cyber-toggle">
+               <input type="checkbox" data-filter="size" data-value="large" />
+               <svg class="cyber-icon" viewBox="0 0 24 24">
+                 <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                 <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                 <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
+               </svg>
+               <span class="cyber-text">Large</span>
+             </label>
+
+             <label class="cyber-toggle">
+               <input type="checkbox" data-filter="size" data-value="gargantuan" />
+               <svg class="cyber-icon" viewBox="0 0 24 24">
+                 <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                 <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                 <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
+               </svg>
+               <span class="cyber-text">Gargantuan</span>
+             </label>
+           </div>
+         </div>
+
+         <!-- Column 3: Status Filters & Reset (Right) -->
+         <div class="filter-group">
+           <span class="filter-label">Status</span>
+           <div class="filter-toggles">
+             <label class="cyber-toggle">
+               <input type="checkbox" data-filter="status" data-value="featured" />
+               <svg class="cyber-icon" viewBox="0 0 24 24">
+                 <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                 <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                 <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
+               </svg>
+               <span class="cyber-text">Featured</span>
+             </label>
+
+             <label class="cyber-toggle">
+               <input type="checkbox" data-filter="status" data-value="onsale" />
+               <svg class="cyber-icon" viewBox="0 0 24 24">
+                 <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                 <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                 <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
+               </svg>
+               <span class="cyber-text">On Sale</span>
+             </label>
+
+             <label class="cyber-toggle">
+               <input type="checkbox" data-filter="status" data-value="recent" />
+               <svg class="cyber-icon" viewBox="0 0 24 24">
+                 <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                 <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                 <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
+               </svg>
+               <span class="cyber-text">Recent</span>
+             </label>
+
+             <label class="cyber-toggle">
+               <input type="checkbox" data-filter="status" data-value="onhand" />
+               <svg class="cyber-icon" viewBox="0 0 24 24">
+                 <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                 <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                 <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
+               </svg>
+               <span class="cyber-text">On Hand</span>
+             </label>
+
+             <label class="cyber-toggle">
+               <input type="checkbox" data-filter="status" data-value="available" />
+               <svg class="cyber-icon" viewBox="0 0 24 24">
+                 <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                 <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                 <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
+               </svg>
+               <span class="cyber-text">Available</span>
+             </label>
+           </div>
+           <button class="filter-reset-btn" id="resetFiltersBtn">Reset All Filters</button>
+         </div>
+
        </div>
      </div>
+   </div>
 
-     <script>
-     document.addEventListener('DOMContentLoaded', function() {
-       const filterTab = document.getElementById('filterTab');
-       const filterTabToggle = document.getElementById('filterTabToggle');
-       const searchInput = document.getElementById('searchInput');
-       const collectionSelect = document.getElementById('collectionSelect');
-       const resetBtn = document.getElementById('resetFiltersBtn');
+   <script>
+   document.addEventListener('DOMContentLoaded', function() {
+     const filterTab = document.getElementById('filterTab');
+     const filterTabToggle = document.getElementById('filterTabToggle');
+     const searchInput = document.getElementById('searchInput');
+     const collectionSelect = document.getElementById('collectionSelect');
+     const resetBtn = document.getElementById('resetFiltersBtn');
 
-       // 1. Toggle Tab Open/Close
-       if (filterTab && filterTabToggle) {
-         filterTabToggle.addEventListener('click', function(e) {
-           e.stopPropagation();
-           const isOpen = filterTab.classList.toggle('is-open');
-           filterTabToggle.setAttribute('aria-expanded', isOpen);
-         });
-
-         // Close on outside click
-         document.addEventListener('click', function(e) {
-           if (!filterTab.contains(e.target)) {
-             filterTab.classList.remove('is-open');
-             filterTabToggle.setAttribute('aria-expanded', 'false');
-           }
-         });
-       }
-
-       // 2. Populate Collection Dropdown dynamically
-       function populateCollections() {
-         setTimeout(() => {
-           if (!window.thumbnails || !Array.isArray(window.thumbnails)) return;
-           const uniqueTypes = new Set();
-           window.thumbnails.forEach(item => {
-             if (item.type) uniqueTypes.add(item.type);
-           });
-           uniqueTypes.forEach(type => {
-             const option = document.createElement('option');
-             option.value = type;
-             option.textContent = type;
-             collectionSelect.appendChild(option);
-           });
-         }, 500);
-       }
-       populateCollections();
-
-       // 3. Cyberpunk Toggle Animations & Logic
-       document.querySelectorAll('.cyber-toggle').forEach(toggle => {
-         const input = toggle.querySelector('input');
-         const glow1 = toggle.querySelector('.glow-1');
-         const glow2 = toggle.querySelector('.glow-2');
-         const unchecked = toggle.querySelector('.unchecked');
-
-         // Initial state setup
-         gsap.set(glow1, { x: -5, rotation: -20, transformOrigin: "center center" });
-         gsap.set(glow2, { x: 5, rotation: 20, transformOrigin: "center center" });
-
-         input.addEventListener('change', () => {
-           if (input.checked) {
-             toggle.classList.add('active');
-             // Glitch in effect
-             gsap.fromTo(glow1,
-               { x: -10, rotation: -30, opacity: 0 },
-               { x: 0, rotation: 0, opacity: 1, duration: 0.4, ease: "elastic.out(1, 0.5)" }
-             );
-             gsap.fromTo(glow2,
-               { x: 10, rotation: 30, opacity: 0 },
-               { x: 0, rotation: 0, opacity: 1, duration: 0.4, delay: 0.05, ease: "elastic.out(1, 0.5)" }
-             );
-             gsap.to(unchecked, { opacity: 0, duration: 0.2 });
-           } else {
-             toggle.classList.remove('active');
-             // Glitch out effect
-             gsap.to(glow1, { x: -5, rotation: -20, opacity: 0, duration: 0.3, ease: "power2.in" });
-             gsap.to(glow2, { x: 5, rotation: 20, opacity: 0, duration: 0.3, ease: "power2.in" });
-             gsap.to(unchecked, { opacity: 1, duration: 0.2 });
-           }
-           triggerFilterUpdate();
-         });
+     // 1. Toggle Tab Open/Close
+     if (filterTab && filterTabToggle) {
+       filterTabToggle.addEventListener('click', function(e) {
+         e.stopPropagation();
+         const isOpen = filterTab.classList.toggle('is-open');
+         filterTabToggle.setAttribute('aria-expanded', isOpen);
        });
 
-       // 4. Handle Search & Collection Changes
-       searchInput.addEventListener('input', triggerFilterUpdate);
-       collectionSelect.addEventListener('change', triggerFilterUpdate);
-
-       // 5. Handle Reset
-       resetBtn.addEventListener('click', function() {
-         // Reset toggles
-         document.querySelectorAll('.cyber-toggle input').forEach(input => {
-           if (input.checked) {
-             input.checked = false;
-             const toggle = input.closest('.cyber-toggle');
-             toggle.classList.remove('active');
-             const glow1 = toggle.querySelector('.glow-1');
-             const glow2 = toggle.querySelector('.glow-2');
-             const unchecked = toggle.querySelector('.unchecked');
-             if(glow1) gsap.to(glow1, { x: -5, rotation: -20, opacity: 0, duration: 0.3, ease: "power2.in" });
-             if(glow2) gsap.to(glow2, { x: 5, rotation: 20, opacity: 0, duration: 0.3, ease: "power2.in" });
-             if(unchecked) gsap.to(unchecked, { opacity: 1, duration: 0.2 });
-           }
-         });
-
-         // Reset text inputs
-         searchInput.value = '';
-         collectionSelect.value = 'All';
-
-         // Restore full dataset safely
-         if (window._originalThumbnails) {
-           window.thumbnails = [...window._originalThumbnails];
+       // Close on outside click
+       document.addEventListener('click', function(e) {
+         if (!filterTab.contains(e.target)) {
+           filterTab.classList.remove('is-open');
+           filterTabToggle.setAttribute('aria-expanded', 'false');
          }
+       });
+     }
 
+     // 2. Populate Collection Dropdown dynamically
+     function populateCollections() {
+       setTimeout(() => {
+         if (!window.thumbnails || !Array.isArray(window.thumbnails)) return;
+         const uniqueTypes = new Set();
+         window.thumbnails.forEach(item => {
+           if (item.type) uniqueTypes.add(item.type);
+         });
+         uniqueTypes.forEach(type => {
+           const option = document.createElement('option');
+           option.value = type;
+           option.textContent = type;
+           collectionSelect.appendChild(option);
+         });
+       }, 500);
+     }
+     populateCollections();
+
+     // 3. Cyberpunk Toggle Animations & Logic
+     document.querySelectorAll('.cyber-toggle').forEach(toggle => {
+       const input = toggle.querySelector('input');
+       const glow1 = toggle.querySelector('.glow-1');
+       const glow2 = toggle.querySelector('.glow-2');
+       const unchecked = toggle.querySelector('.unchecked');
+
+       // Initial state setup
+       gsap.set(glow1, { x: -5, rotation: -20, transformOrigin: "center center" });
+       gsap.set(glow2, { x: 5, rotation: 20, transformOrigin: "center center" });
+
+       input.addEventListener('change', () => {
+         if (input.checked) {
+           toggle.classList.add('active');
+           // Glitch in effect
+           gsap.fromTo(glow1,
+             { x: -10, rotation: -30, opacity: 0 },
+             { x: 0, rotation: 0, opacity: 1, duration: 0.4, ease: "elastic.out(1, 0.5)" }
+           );
+           gsap.fromTo(glow2,
+             { x: 10, rotation: 30, opacity: 0 },
+             { x: 0, rotation: 0, opacity: 1, duration: 0.4, delay: 0.05, ease: "elastic.out(1, 0.5)" }
+           );
+           gsap.to(unchecked, { opacity: 0, duration: 0.2 });
+         } else {
+           toggle.classList.remove('active');
+           // Glitch out effect
+           gsap.to(glow1, { x: -5, rotation: -20, opacity: 0, duration: 0.3, ease: "power2.in" });
+           gsap.to(glow2, { x: 5, rotation: 20, opacity: 0, duration: 0.3, ease: "power2.in" });
+           gsap.to(unchecked, { opacity: 1, duration: 0.2 });
+         }
          triggerFilterUpdate();
        });
+     });
 
-       // 6. Core Filtering Logic
-       function triggerFilterUpdate() {
-         const sizes = new Set();
-         document.querySelectorAll('.cyber-toggle input[data-filter="size"]:checked').forEach(el => sizes.add(el.dataset.value));
+     // 4. Handle Search & Collection Changes
+     searchInput.addEventListener('input', triggerFilterUpdate);
+     collectionSelect.addEventListener('change', triggerFilterUpdate);
 
-         const statuses = new Set();
-         document.querySelectorAll('.cyber-toggle input[data-filter="status"]:checked').forEach(el => statuses.add(el.dataset.value));
+     // 5. Handle Reset
+     resetBtn.addEventListener('click', function() {
+       // Reset toggles
+       document.querySelectorAll('.cyber-toggle input').forEach(input => {
+         if (input.checked) {
+           input.checked = false;
+           const toggle = input.closest('.cyber-toggle');
+           toggle.classList.remove('active');
+           const glow1 = toggle.querySelector('.glow-1');
+           const glow2 = toggle.querySelector('.glow-2');
+           const unchecked = toggle.querySelector('.unchecked');
+           if(glow1) gsap.to(glow1, { x: -5, rotation: -20, opacity: 0, duration: 0.3, ease: "power2.in" });
+           if(glow2) gsap.to(glow2, { x: 5, rotation: 20, opacity: 0, duration: 0.3, ease: "power2.in" });
+           if(unchecked) gsap.to(unchecked, { opacity: 1, duration: 0.2 });
+         }
+       });
 
-         const collection = collectionSelect.value;
-         const searchTerm = searchInput.value.trim().toLowerCase();
+       // Reset text inputs
+       searchInput.value = '';
+       collectionSelect.value = 'All';
 
-         applyFilters(sizes, statuses, collection, searchTerm);
+       // Restore full dataset safely
+       if (window._originalThumbnails) {
+         window.thumbnails = [...window._originalThumbnails];
        }
 
-       function applyFilters(sizes, statuses, collection, searchTerm) {
-         // Always filter from the original, complete dataset to prevent data degradation
-         const sourceData = window._originalThumbnails || window.thumbnails;
-         if (!sourceData || !Array.isArray(sourceData) || sourceData.length === 0) {
-           console.warn("No thumbnail data available to filter.");
-           return;
-         }
+       triggerFilterUpdate();
+     });
 
-         // Save original if not already saved
-         if (!window._originalThumbnails && window.thumbnails && window.thumbnails.length > 0) {
-           window._originalThumbnails = [...window.thumbnails];
-         }
+     // 6. Core Filtering Logic
+     function triggerFilterUpdate() {
+       const sizes = new Set();
+       document.querySelectorAll('.cyber-toggle input[data-filter="size"]:checked').forEach(el => sizes.add(el.dataset.value));
 
-         const filtered = sourceData.filter(item => {
-           // Search Check (Substring match on Title, case-insensitive)
-           if (searchTerm) {
-             const title = (item.title || '').toLowerCase();
-             if (!title.includes(searchTerm)) {
-               return false;
-             }
-           }
+       const statuses = new Set();
+       document.querySelectorAll('.cyber-toggle input[data-filter="status"]:checked').forEach(el => statuses.add(el.dataset.value));
 
-           // Size Check
-           if (sizes.size > 0) {
-             let sizeMatch = false;
-             if (sizes.has('small') && item.area < 70) sizeMatch = true;
-             if (sizes.has('medium') && item.area >= 70 && item.area <= 220) sizeMatch = true;
-             if (sizes.has('large') && item.area > 220 && item.area <= 400) sizeMatch = true;
-             if (sizes.has('gargantuan') && item.area > 400) sizeMatch = true;
-             if (!sizeMatch) return false;
-           }
+       const collection = collectionSelect.value;
+       const searchTerm = searchInput.value.trim().toLowerCase();
 
-           // Status Check
-           if (statuses.size > 0) {
-             let statusMatch = false;
-             if (statuses.has('featured') && item.featured === true) statusMatch = true;
-             if (statuses.has('onsale') && item.pricemultiplier < 1) statusMatch = true;
-             if (statuses.has('onhand') && item.inStock === true) statusMatch = true;
-             if (statuses.has('available') && item.remakecustom === true) statusMatch = true;
+       applyFilters(sizes, statuses, collection, searchTerm);
+     }
 
-             if (statuses.has('recent')) {
-               const parts = item.dateCreated.split('-');
-               if (parts.length === 3) {
-                 const year = 2000 + parseInt(parts[2], 10);
-                 const month = parseInt(parts[0], 10) - 1;
-                 const day = parseInt(parts[1], 10);
-                 const dateCreated = new Date(year, month, day);
-                 const oneYearAgo = new Date();
-                 oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-                 if (dateCreated >= oneYearAgo) statusMatch = true;
-               }
-             }
-             if (!statusMatch) return false;
-           }
+     function applyFilters(sizes, statuses, collection, searchTerm) {
+       // Always filter from the original, complete dataset to prevent data degradation
+       const sourceData = window._originalThumbnails || window.thumbnails;
+       if (!sourceData || !Array.isArray(sourceData) || sourceData.length === 0) {
+         console.warn("No thumbnail data available to filter.");
+         return;
+       }
 
-           // Collection Check
-           if (collection !== 'All' && item.type !== collection) {
+       // Save original if not already saved
+       if (!window._originalThumbnails && window.thumbnails && window.thumbnails.length > 0) {
+         window._originalThumbnails = [...window.thumbnails];
+       }
+
+       const filtered = sourceData.filter(item => {
+         // Search Check (Substring match on Title, case-insensitive)
+         if (searchTerm) {
+           const title = (item.title || '').toLowerCase();
+           if (!title.includes(searchTerm)) {
              return false;
            }
-
-           return true;
-         });
-
-         window.thumbnails = filtered;
-         reloadGallery(filtered);
-       }
-
-       // 7. Gallery Reload Helper (with WebGL context cleanup)
-       function reloadGallery(filteredData) {
-         const container = document.getElementById('gallery-container');
-         if (!container) return;
-
-         // Clean up old WebGL context to prevent memory leaks
-         if (window.currentGallery && window.currentGallery.gl) {
-           const loseContext = window.currentGallery.gl.getExtension('WEBGL_lose_context');
-           if (loseContext) loseContext.loseContext();
          }
 
-         // Update the active global reference
-         window.thumbnails = filteredData;
+         // Size Check
+         if (sizes.size > 0) {
+           let sizeMatch = false;
+           if (sizes.has('small') && item.area < 70) sizeMatch = true;
+           if (sizes.has('medium') && item.area >= 70 && item.area <= 220) sizeMatch = true;
+           if (sizes.has('large') && item.area > 220 && item.area <= 400) sizeMatch = true;
+           if (sizes.has('gargantuan') && item.area > 400) sizeMatch = true;
+           if (!sizeMatch) return false;
+         }
 
-         // Preserve modal and controls HTML structure
-         const cacheHTML = container.querySelector('.cache') ? container.querySelector('.cache').outerHTML : '<div class="cache"></div>';
-         const hintHTML = container.querySelector('.hint') ? container.querySelector('.hint').outerHTML : '<div class="hint">Scroll / Drag / + or -</div>';
+         // Status Check
+         if (statuses.size > 0) {
+           let statusMatch = false;
+           if (statuses.has('featured') && item.featured === true) statusMatch = true;
+           if (statuses.has('onsale') && item.pricemultiplier < 1) statusMatch = true;
+           if (statuses.has('onhand') && item.inStock === true) statusMatch = true;
+           if (statuses.has('available') && item.remakecustom === true) statusMatch = true;
 
-         container.innerHTML = `
-           ${cacheHTML}
-           <div id="gallery-loader" class="gallery-loader">
-             <div class="loader-container">
-               <div class="loader-common loader-one"></div>
-               <div class="loader-common loader-two"></div>
-               <div class="loader-common loader-three"></div>
-               <div class="loader-common loader-four"></div>
-               <div class="loader-common loader-five"></div>
-               <div class="loader-common loader-six"></div>
-               <div class="loader-common loader-seven"></div>
-               <div class="loader-common loader-eight"></div>
-             </div>
-             <div class="loader-bar"><div id="loader-progress" class="loader-progress"></div></div>
-             <div id="loader-text" class="loader-text">Loading... 0%</div>
+           if (statuses.has('recent')) {
+             const parts = item.dateCreated.split('-');
+             if (parts.length === 3) {
+               const year = 2000 + parseInt(parts[2], 10);
+               const month = parseInt(parts[0], 10) - 1;
+               const day = parseInt(parts[1], 10);
+               const dateCreated = new Date(year, month, day);
+               const oneYearAgo = new Date();
+               oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+               if (dateCreated >= oneYearAgo) statusMatch = true;
+             }
+           }
+           if (!statusMatch) return false;
+         }
+
+         // Collection Check
+         if (collection !== 'All' && item.type !== collection) {
+           return false;
+         }
+
+         return true;
+       });
+
+       window.thumbnails = filtered;
+       reloadGallery(filtered);
+     }
+
+     // 7. Gallery Reload Helper (with WebGL context cleanup)
+     function reloadGallery(filteredData) {
+       const container = document.getElementById('gallery-container');
+       if (!container) return;
+
+       // Clean up old WebGL context to prevent memory leaks
+       if (window.currentGallery && window.currentGallery.gl) {
+         const loseContext = window.currentGallery.gl.getExtension('WEBGL_lose_context');
+         if (loseContext) loseContext.loseContext();
+       }
+
+       // Update the active global reference
+       window.thumbnails = filteredData;
+
+       // Preserve modal and controls HTML structure
+       const cacheHTML = container.querySelector('.cache') ? container.querySelector('.cache').outerHTML : '<div class="cache"></div>';
+       const hintHTML = container.querySelector('.hint') ? container.querySelector('.hint').outerHTML : '<div class="hint">Scroll / Drag / + or -</div>';
+
+       container.innerHTML = `
+         ${cacheHTML}
+         <div id="gallery-loader" class="gallery-loader">
+           <div class="loader-container">
+             <div class="loader-common loader-one"></div>
+             <div class="loader-common loader-two"></div>
+             <div class="loader-common loader-three"></div>
+             <div class="loader-common loader-four"></div>
+             <div class="loader-common loader-five"></div>
+             <div class="loader-common loader-six"></div>
+             <div class="loader-common loader-seven"></div>
+             <div class="loader-common loader-eight"></div>
            </div>
-           ${hintHTML}
-           <div class="zoom-controls">
-             <button class="zoom-btn" id="zoom-in-btn" aria-label="Zoom In">+</button>
-             <button class="zoom-btn" id="zoom-out-btn" aria-label="Zoom Out">-</button>
-           </div>
-           <button class="fullscreen-btn" aria-label="Toggle Fullscreen"><i class="fas fa-expand"></i></button>
-           <div id="gallery-modal" class="gallery-modal">
-             <div class="gallery-card">
-               <button class="gallery-card-close" id="modal-close-btn" aria-label="Close">&times;</button>
-               <div class="gallery-card-layout">
-                 <div id="carousel-container" class="gallery-card-image-container">
-                   <button class="carousel-arrow carousel-prev" id="carousel-prev" aria-label="Previous image"><i class="fas fa-chevron-left"></i></button>
-                   <img id="modal-full-image" class="gallery-card-image" src="" alt="Full size artwork">
-                   <button class="carousel-arrow carousel-next" id="carousel-next" aria-label="Next image"><i class="fas fa-chevron-right"></i></button>
-                   <div class="carousel-dots" id="carousel-dots"></div>
+           <div class="loader-bar"><div id="loader-progress" class="loader-progress"></div></div>
+           <div id="loader-text" class="loader-text">Loading... 0%</div>
+         </div>
+         ${hintHTML}
+         <div class="zoom-controls">
+           <button class="zoom-btn" id="zoom-in-btn" aria-label="Zoom In">+</button>
+           <button class="zoom-btn" id="zoom-out-btn" aria-label="Zoom Out">-</button>
+         </div>
+         <button class="fullscreen-btn" aria-label="Toggle Fullscreen"><i class="fas fa-expand"></i></button>
+         <div id="gallery-modal" class="gallery-modal">
+           <div class="gallery-card">
+             <button class="gallery-card-close" id="modal-close-btn" aria-label="Close">&times;</button>
+             <div class="gallery-card-layout">
+               <div id="carousel-container" class="gallery-card-image-container">
+                 <button class="carousel-arrow carousel-prev" id="carousel-prev" aria-label="Previous image"><i class="fas fa-chevron-left"></i></button>
+                 <img id="modal-full-image" class="gallery-card-image" src="" alt="Full size artwork">
+                 <button class="carousel-arrow carousel-next" id="carousel-next" aria-label="Next image"><i class="fas fa-chevron-right"></i></button>
+                 <div class="carousel-dots" id="carousel-dots"></div>
+               </div>
+               <div class="gallery-card-content">
+                 <h2 id="modal-title" class="gallery-card-title">Artwork Title</h2>
+                 <div class="gallery-card-meta">
+                   <div id="modal-price" class="gallery-card-price">Suggested Price - $0.00</div>
+                   <div><strong>Availability:</strong> <span id="modal-availability">Checking...</span></div>
+                   <div><strong>Size:</strong> <span id="modal-size">0 x 0</span></div>
                  </div>
-                 <div class="gallery-card-content">
-                   <h2 id="modal-title" class="gallery-card-title">Artwork Title</h2>
-                   <div class="gallery-card-meta">
-                     <div id="modal-price" class="gallery-card-price">Suggested Price - $0.00</div>
-                     <div><strong>Availability:</strong> <span id="modal-availability">Checking...</span></div>
-                     <div><strong>Size:</strong> <span id="modal-size">0 x 0</span></div>
-                   </div>
-                   <div id="modal-description" class="gallery-card-desc">Description goes here.</div>
-                   <div class="gallery-card-footer">
-                     <a id="modal-inquire-btn" class="inquire-btn" href="#" target="_blank">Inquire About This</a>
-                   </div>
+                 <div id="modal-description" class="gallery-card-desc">Description goes here.</div>
+                 <div class="gallery-card-footer">
+                   <a id="modal-inquire-btn" class="inquire-btn" href="#" target="_blank">Inquire About This</a>
                  </div>
                </div>
              </div>
            </div>
-         `;
+         </div>
+       `;
 
-         setTimeout(() => {
-           if (typeof InfinitePortraitGallery === 'function') {
-             window.currentGallery = new InfinitePortraitGallery('gallery-container');
-           }
-         }, 100);
-       }
-     });
-     </script>
-     <!-- ========================================== -->
-     <!-- END FILTER TAB -->
-     <!-- ========================================== -->
+       setTimeout(() => {
+         if (typeof InfinitePortraitGallery === 'function') {
+           window.currentGallery = new InfinitePortraitGallery('gallery-container');
+         }
+       }, 100);
+     }
+   });
+   </script>
+   <!-- ========================================== -->
+   <!-- END FILTER TAB -->
+   <!-- ========================================== -->
 </body>
 </html>
