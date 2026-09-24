@@ -1626,114 +1626,173 @@ var particles;
   }
 
   /* 2. Parchment Style */
-#reader-view.style-parchment:fullscreen,
-#reader-view.style-parchment:-webkit-full-screen {
-  background:
-    /* Fireplace light variations - warm amber and orange gradients */
-    radial-gradient(ellipse at 30% 40%, rgba(255, 191, 105, 0.25) 0%, transparent 50%),
-    radial-gradient(ellipse at 70% 60%, rgba(255, 165, 74, 0.2) 0%, transparent 45%),
-    radial-gradient(ellipse at 50% 30%, rgba(255, 200, 120, 0.18) 0%, transparent 55%),
-    radial-gradient(ellipse at 20% 70%, rgba(255, 170, 80, 0.15) 0%, transparent 40%),
-    radial-gradient(ellipse at 80% 30%, rgba(255, 185, 95, 0.15) 0%, transparent 45%),
-    /* Natural staining and aging - deep brown spots */
-    radial-gradient(ellipse at 25% 35%, rgba(139, 90, 43, 0.12) 0%, transparent 35%),
-    radial-gradient(ellipse at 75% 65%, rgba(139, 90, 43, 0.1) 0%, transparent 40%),
-    radial-gradient(ellipse at 45% 55%, rgba(160, 100, 50, 0.08) 0%, transparent 45%),
-    radial-gradient(ellipse at 15% 75%, rgba(139, 90, 43, 0.1) 0%, transparent 30%),
-    radial-gradient(ellipse at 85% 25%, rgba(160, 100, 50, 0.1) 0%, transparent 35%),
-    /* Base parchment - warm ivory and muted tan */
-    linear-gradient(135deg, #f5e6d3 0%, #ede0cc 20%, #f2e4d0 40%, #e8d8c0 60%, #f0e2cc 80%, #f5e6d3 100%);
-  color: #3d2817 !important;
-  font-family: "Palatino Linotype", "Book Antiqua", Palatino, Garamond, "Times New Roman", serif !important;
-  position: relative;
-  animation: fireplace-flicker 8s ease-in-out infinite;
-}
+  #reader-view.style-parchment:fullscreen,
+  #reader-view.style-parchment:-webkit-full-screen {
+    background:
+      /* Fireplace light variations - warm amber and orange gradients */
+      radial-gradient(ellipse at 30% 40%, rgba(255, 191, 105, 0.25) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 60%, rgba(255, 165, 74, 0.2) 0%, transparent 45%),
+      radial-gradient(ellipse at 50% 30%, rgba(255, 200, 120, 0.18) 0%, transparent 55%),
+      radial-gradient(ellipse at 20% 70%, rgba(255, 170, 80, 0.15) 0%, transparent 40%),
+      radial-gradient(ellipse at 80% 30%, rgba(255, 185, 95, 0.15) 0%, transparent 45%),
+      /* Natural staining and aging - deep brown spots */
+      radial-gradient(ellipse at 25% 35%, rgba(139, 90, 43, 0.12) 0%, transparent 35%),
+      radial-gradient(ellipse at 75% 65%, rgba(139, 90, 43, 0.1) 0%, transparent 40%),
+      radial-gradient(ellipse at 45% 55%, rgba(160, 100, 50, 0.08) 0%, transparent 45%),
+      radial-gradient(ellipse at 15% 75%, rgba(139, 90, 43, 0.1) 0%, transparent 30%),
+      radial-gradient(ellipse at 85% 25%, rgba(160, 100, 50, 0.1) 0%, transparent 35%),
+      /* Base parchment - warm ivory and muted tan */
+      linear-gradient(135deg, #f5e6d3 0%, #ede0cc 20%, #f2e4d0 40%, #e8d8c0 60%, #f0e2cc 80%, #f5e6d3 100%);
+    color: #3d2817 !important;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, Garamond, "Times New Roman", serif !important;
+    position: relative;
+    animation: fireplace-flicker 8s ease-in-out infinite;
+  }
 
-/* Paper texture overlay - fibers and wrinkles - increased */
-#reader-view.style-parchment:fullscreen::before,
-#reader-view.style-parchment:-webkit-full-screen::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500'%3E%3Cfilter id='paper-texture-1'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper-texture-1)' opacity='0.08'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='paper-texture-2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper-texture-2)' opacity='0.06'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='paper-texture-3'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper-texture-3)' opacity='0.05'/%3E%3C/svg%3E");
-  pointer-events: none;
-  mix-blend-mode: multiply;
-  opacity: 0.8;
-}
+  /* Paper texture overlay - fibers and wrinkles - increased */
+  #reader-view.style-parchment:fullscreen::before,
+  #reader-view.style-parchment:-webkit-full-screen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500'%3E%3Cfilter id='paper-texture-1'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper-texture-1)' opacity='0.08'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='paper-texture-2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper-texture-2)' opacity='0.06'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='paper-texture-3'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper-texture-3)' opacity='0.05'/%3E%3C/svg%3E");
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    opacity: 0.8;
+  }
 
-/* Vignette effect - darkened edges */
-#reader-view.style-parchment:fullscreen::after,
-#reader-view.style-parchment:-webkit-full-screen::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background:
-    radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(101, 67, 33, 0.4) 100%);
-  pointer-events: none;
-}
+  /* Vignette effect - darkened edges */
+  #reader-view.style-parchment:fullscreen::after,
+  #reader-view.style-parchment:-webkit-full-screen::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+      radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(101, 67, 33, 0.4) 100%);
+    pointer-events: none;
+  }
 
-/* Title glow - change from green to gold */
-#reader-view.style-parchment:fullscreen .reader-title,
-#reader-view.style-parchment:-webkit-full-screen .reader-title {
-  color: #3d2817 !important;
-  text-shadow:
-    0 0 10px rgba(255, 191, 0, 0.6),
-    0 0 20px rgba(255, 165, 0, 0.4),
-    0 0 30px rgba(255, 140, 0, 0.3) !important;
-}
+  /* Title glow - change from green to gold */
+  #reader-view.style-parchment:fullscreen .reader-title,
+  #reader-view.style-parchment:-webkit-full-screen .reader-title {
+    color: #3d2817 !important;
+    text-shadow:
+      0 0 10px rgba(255, 191, 0, 0.6),
+      0 0 20px rgba(255, 165, 0, 0.4),
+      0 0 30px rgba(255, 140, 0, 0.3) !important;
+  }
 
-#reader-view.style-parchment:fullscreen .reader-header,
-#reader-view.style-parchment:-webkit-full-screen .reader-header,
-#reader-view.style-parchment:fullscreen .reader-meta,
-#reader-view.style-parchment:-webkit-full-screen .reader-meta,
-#reader-view.style-parchment:fullscreen .reader-content,
-#reader-view.style-parchment:-webkit-full-screen .reader-content {
-  background: transparent !important;
-  color: #3d2817 !important;
-  font-family: "Palatino Linotype", "Book Antiqua", Palatino, Garamond, "Times New Roman", serif !important;
-  border-color: rgba(139, 90, 43, 0.3) !important;
-}
+  /* Wooden scrollbar styling */
+  #reader-view.style-parchment:fullscreen ::-webkit-scrollbar,
+  #reader-view.style-parchment:-webkit-full-screen ::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+  }
 
-#reader-view.style-parchment:fullscreen *:not(.style-orb),
-#reader-view.style-parchment:-webkit-full-screen *:not(.style-orb) {
-  color: #3d2817 !important;
-  font-family: "Palatino Linotype", "Book Antiqua", Palatino, Garamond, "Times New Roman", serif !important;
-  border-color: rgba(139, 90, 43, 0.3) !important;
-}
+  #reader-view.style-parchment:fullscreen ::-webkit-scrollbar-track,
+  #reader-view.style-parchment:-webkit-full-screen ::-webkit-scrollbar-track {
+    background: linear-gradient(
+      90deg,
+      #8b6f47 0%,
+      #a0826d 15%,
+      #6b5344 30%,
+      #8b6f47 45%,
+      #7a5f4a 60%,
+      #9b7f5f 75%,
+      #6b5344 90%,
+      #8b6f47 100%
+    );
+    border-radius: 0;
+    border-left: 1px solid #5a4a3a;
+    border-right: 1px solid #5a4a3a;
+  }
 
-/* Fireplace flickering animation - gentle, warm, cinematic */
-@keyframes fireplace-flicker {
-  0%, 100% {
-    filter: brightness(1) contrast(1) saturate(1);
+  #reader-view.style-parchment:fullscreen ::-webkit-scrollbar-thumb,
+  #reader-view.style-parchment:-webkit-full-screen ::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+      90deg,
+      #6b4423 0%,
+      #8b5a2b 20%,
+      #5a3a1a 40%,
+      #7a4a23 60%,
+      #6b4423 80%,
+      #8b5a2b 100%
+    );
+    border-radius: 3px;
+    border: 1px solid #4a3018;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
   }
-  15% {
-    filter: brightness(0.97) contrast(1.02) saturate(1.03);
+
+  #reader-view.style-parchment:fullscreen ::-webkit-scrollbar-thumb:hover,
+  #reader-view.style-parchment:-webkit-full-screen ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(
+      90deg,
+      #7a5030 0%,
+      #9b6a3b 20%,
+      #6a4a2a 40%,
+      #8a5a33 60%,
+      #7a5030 80%,
+      #9b6a3b 100%
+    );
   }
-  30% {
-    filter: brightness(1.02) contrast(0.99) saturate(1.01);
+
+  #reader-view.style-parchment:fullscreen ::-webkit-scrollbar-corner,
+  #reader-view.style-parchment:-webkit-full-screen ::-webkit-scrollbar-corner {
+    background: #8b6f47;
   }
-  45% {
-    filter: brightness(0.98) contrast(1.01) saturate(1.02);
+
+  #reader-view.style-parchment:fullscreen .reader-header,
+  #reader-view.style-parchment:-webkit-full-screen .reader-header,
+  #reader-view.style-parchment:fullscreen .reader-meta,
+  #reader-view.style-parchment:-webkit-full-screen .reader-meta,
+  #reader-view.style-parchment:fullscreen .reader-content,
+  #reader-view.style-parchment:-webkit-full-screen .reader-content {
+    background: transparent !important;
+    color: #3d2817 !important;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, Garamond, "Times New Roman", serif !important;
+    border-color: rgba(139, 90, 43, 0.3) !important;
   }
-  60% {
-    filter: brightness(1.01) contrast(0.98) saturate(1.01);
+
+  #reader-view.style-parchment:fullscreen *:not(.style-orb),
+  #reader-view.style-parchment:-webkit-full-screen *:not(.style-orb) {
+    color: #3d2817 !important;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, Garamond, "Times New Roman", serif !important;
+    border-color: rgba(139, 90, 43, 0.3) !important;
   }
-  75% {
-    filter: brightness(0.99) contrast(1.02) saturate(1.03);
+
+  /* Fireplace flickering animation - gentle, warm, cinematic */
+  @keyframes fireplace-flicker {
+    0%, 100% {
+      filter: brightness(1) contrast(1) saturate(1);
+    }
+    15% {
+      filter: brightness(0.97) contrast(1.02) saturate(1.03);
+    }
+    30% {
+      filter: brightness(1.02) contrast(0.99) saturate(1.01);
+    }
+    45% {
+      filter: brightness(0.98) contrast(1.01) saturate(1.02);
+    }
+    60% {
+      filter: brightness(1.01) contrast(0.98) saturate(1.01);
+    }
+    75% {
+      filter: brightness(0.99) contrast(1.02) saturate(1.03);
+    }
+    90% {
+      filter: brightness(1.01) contrast(0.99) saturate(1.02);
+    }
   }
-  90% {
-    filter: brightness(1.01) contrast(0.99) saturate(1.02);
-  }
-}
   /* 3. Swirl Style */
   #reader-view.style-swirl:fullscreen,
   #reader-view.style-swirl:-webkit-full-screen {
