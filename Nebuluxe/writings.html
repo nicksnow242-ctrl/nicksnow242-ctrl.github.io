@@ -2224,9 +2224,9 @@ var particles;
       if (!document.getElementById('reader-view')) {
         const reader = document.createElement('div');
         reader.id = 'reader-view';
-        reader.className = 'reader-view style-dark font-medium'; // FIXED: Starts with font-medium class applied
+        reader.className = 'reader-view style-dark font-medium'; // Start with Dark as default
 
-reader.innerHTML = `
+        reader.innerHTML = `
   <div class="reader-header">
     <button class="back-btn" id="back-to-list">← Back</button>
     <h2 class="reader-title" id="reader-title"></h2>
@@ -2252,39 +2252,37 @@ reader.innerHTML = `
   </div>
   <div class="reader-content" id="reader-content"></div>
 `;
-documentArea.appendChild(reader);
+        documentArea.appendChild(reader);
 
-// FIXED: Separated style orb and size orb logic to prevent nesting bugs
-const styleOrbs = reader.querySelectorAll('.style-orb');
-styleOrbs.forEach(styleOrb => {
-  styleOrb.addEventListener('click', () => {
-    styleOrbs.forEach(o => o.classList.remove('active'));
-    styleOrb.classList.add('active');
+        // Style orb selector logic (Independent)
+  const styleOrbs = reader.querySelectorAll('.style-orb');
+  styleOrbs.forEach(styleOrb => {
+    styleOrb.addEventListener('click', () => {
+      // Update active state visually
+      styleOrbs.forEach(o => o.classList.remove('active'));
+      styleOrb.classList.add('active');
 
-    const selectedStyle = styleOrb.getAttribute('data-style');
-    reader.classList.remove('style-dark', 'style-parchment', 'style-swirl');
-    reader.classList.add('style-' + selectedStyle);
+      // Update reader theme class
+      const selectedStyle = styleOrb.getAttribute('data-style');
+      reader.classList.remove('style-dark', 'style-parchment', 'style-swirl');
+      reader.classList.add('style-' + selectedStyle);
+    });
   });
-});
 
-const sizeOrbs = reader.querySelectorAll('.size-orb');
-sizeOrbs.forEach(sizeOrb => {
-  sizeOrb.addEventListener('click', () => {
-    sizeOrbs.forEach(o => o.classList.remove('active'));
-    sizeOrb.classList.add('active');
+  // Size orb selector logic (Independent)
+  const sizeOrbs = reader.querySelectorAll('.size-orb');
+  sizeOrbs.forEach(sizeOrb => {
+    sizeOrb.addEventListener('click', () => {
+      // Update active state visually
+      sizeOrbs.forEach(o => o.classList.remove('active'));
+      sizeOrb.classList.add('active');
 
-    const selectedSize = sizeOrb.getAttribute('data-size');
-    reader.classList.remove('font-small', 'font-medium', 'font-large');
-    reader.classList.add('font-' + selectedSize);
+      // Update reader font class
+      const selectedSize = sizeOrb.getAttribute('data-size');
+      reader.classList.remove('font-small', 'font-medium', 'font-large');
+      reader.classList.add('font-' + selectedSize);
+    });
   });
-});
-
-            // Update reader theme class
-            const selectedStyle = orb.getAttribute('data-style');
-            reader.classList.remove('style-dark', 'style-parchment', 'style-swirl');
-            reader.classList.add('style-' + selectedStyle);
-          });
-        });
 
         document.getElementById('back-to-list').addEventListener('click', () => {
           if (document.fullscreenElement || document.webkitFullscreenElement) {
