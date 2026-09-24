@@ -6,6 +6,7 @@
 <title>Writings</title>
 <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/EasePack.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -259,7 +260,6 @@ html, body {
 .reading-list-items::-webkit-scrollbar-thumb { background: var(--mid-green); border-radius: 3px; }
 .reading-list-items::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
 
-/* Static text with thin green line, NO hover highlights */
 .reading-list-item {
   padding: 12px 15px;
   border-bottom: 1px solid rgba(0, 255, 65, 0.3);
@@ -278,7 +278,7 @@ html, body {
 .reading-list-item .book-rating { font-size: 12px; color: var(--neon-green); font-weight: bold; white-space: nowrap; margin-left: 8px; }
 
 /* ========================================== */
-/* MASCOT POPUP STYLES (Green Adapted) */
+/* MASCOT POPUP STYLES */
 /* ========================================== */
 .mascot-popup {
   position: fixed;
@@ -459,7 +459,7 @@ html, body {
 }
 
 /* ========================================== */
-/* CYBERPUNK MECHA MUSIC PLAYER (Original Orange) */
+/* CYBERPUNK MECHA MUSIC PLAYER */
 /* ========================================== */
 .music-player-container {
   --mp-neon: #ff5e00;
@@ -737,6 +737,292 @@ html, body {
   .reading-list-sidebar.mobile-open { right: 0; }
   .document-area { margin-right: 0; }
   .text-list-container { grid-template-columns: 1fr; }
+}
+
+/* ========================================== */
+/* FILTER SIDEBAR STYLES (Radio Buttons)      */
+/* ========================================== */
+.filter-sidebar {
+  position: fixed;
+  top: 110px;
+  left: 0;
+  width: 200px;
+  height: calc(100vh - 110px);
+  background: rgba(0, 15, 0, 0.9);
+  border-right: 2px solid var(--neon-green);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.filter-sidebar-header {
+  padding: 15px;
+  border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+  color: var(--neon-green);
+  font-size: 15px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px var(--neon-glow-green);
+  text-align: center;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.filter-sidebar-items {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filter-sidebar-items::-webkit-scrollbar { width: 6px; }
+.filter-sidebar-items::-webkit-scrollbar-track { background: var(--deep-green); }
+.filter-sidebar-items::-webkit-scrollbar-thumb { background: var(--mid-green); border-radius: 3px; }
+.filter-sidebar-items::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
+
+.radio-btn-group {
+  position: relative;
+  width: 100%;
+}
+
+.radio-btn-group input[type="radio"] {
+  opacity: 0;
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.radio-btn-group label {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  font-family: 'Share Tech Mono', monospace;
+  font-weight: 400;
+  font-size: 16px;
+  position: relative;
+  width: 100%;
+  padding: 4px 0;
+}
+
+.radio-btn-group input[type="radio"]:checked + label .radio-text {
+  color: var(--neon-green);
+  text-shadow: 0 0 12px var(--neon-glow-green);
+}
+
+.radio-btn-group input[type="radio"]:focus-visible + label {
+  outline: 2px solid var(--neon-green);
+  border-radius: 4px;
+}
+
+.radio-svg {
+  width: 100%;
+  height: 40px;
+  display: block;
+}
+
+.radio-svg .unchecked {
+  stroke: rgba(0, 255, 65, 0.3);
+}
+
+.radio-svg .pink,
+.radio-svg .blue {
+  opacity: 0;
+}
+
+.radio-svg .blue {
+  mix-blend-mode: plus-lighter;
+  stroke: var(--neon-green);
+}
+
+.radio-svg .pink {
+  stroke: var(--text-dim);
+}
+
+.radio-svg text {
+  fill: var(--neon-green);
+  font-size: 16px;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.radio-svg .scanline {
+  fill: var(--deep-green);
+}
+
+/* ========================================== */
+/* READER VIEW STYLES                         */
+/* ========================================== */
+.reader-view {
+  display: none;
+  flex-direction: column;
+  height: 100%;
+  animation: fadeIn 0.4s ease-out;
+}
+.reader-view.active { display: flex; }
+
+.reader-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.back-btn,
+.fullscreen-btn {
+  background: transparent;
+  border: 1px solid var(--neon-green);
+  color: var(--neon-green);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+.back-btn:hover,
+.fullscreen-btn:hover {
+  background: var(--neon-green);
+  color: var(--deep-green);
+  box-shadow: 0 0 15px var(--neon-glow-green);
+}
+
+.reader-title {
+  font-size: 28px;
+  color: var(--neon-green);
+  text-shadow: 0 0 10px var(--neon-glow-green);
+  margin: 0;
+  flex: 1;
+  text-align: center;
+}
+
+.reader-meta {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 14px;
+  color: var(--text-dim);
+  margin-bottom: 30px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.reader-meta span { display: flex; align-items: center; gap: 6px; }
+
+.reader-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 15px;
+  font-size: 16px;
+  line-height: 1.8;
+  color: #d0ffd9;
+  width: 100%;
+  box-sizing: border-box;
+}
+.reader-content p { margin-bottom: 20px; text-align: justify; }
+
+.reader-content::-webkit-scrollbar { width: 6px; }
+.reader-content::-webkit-scrollbar-track { background: var(--deep-green); }
+.reader-content::-webkit-scrollbar-thumb { background: var(--mid-green); border-radius: 3px; }
+.reader-content::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reader-view:fullscreen,
+.reader-view:-webkit-full-screen {
+  background: linear-gradient(0deg, #000a00 0%, var(--deep-green) 100%);
+  padding: 50px 80px;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.reader-view:fullscreen .back-btn,
+.reader-view:-webkit-full-screen .back-btn {
+  display: none;
+}
+
+.reader-view:fullscreen .fullscreen-btn,
+.reader-view:-webkit-full-screen .fullscreen-btn {
+  position: fixed;
+  top: 25px;
+  right: 25px;
+  z-index: 10000;
+}
+
+.reader-view:fullscreen .reader-content,
+.reader-view:-webkit-full-screen .reader-content {
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  padding-left: 0;
+  padding-right: 20px;
+  font-size: 18px;
+}
+
+.reader-view:fullscreen .reader-title,
+.reader-view:-webkit-full-screen .reader-title {
+  font-size: 36px;
+}
+
+.reader-view:fullscreen .reader-header,
+.reader-view:-webkit-full-screen .reader-header {
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 40px;
+}
+
+.reader-view:fullscreen .reader-meta,
+.reader-view:-webkit-full-screen .reader-meta {
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 40px;
+  font-size: 15px;
+}
+
+.text-list-container {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.text-list-item {
+  width: 100%;
+}
+
+.document-area.grid-hidden .text-list-container { display: none; }
+body.reader-active .filter-sidebar { display: none; }
+
+@media (max-width: 768px) {
+  .filter-sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    position: relative;
+    top: 0;
+    border-right: none;
+    border-bottom: 2px solid var(--neon-green);
+  }
+  .filter-sidebar-items {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .document-area {
+    margin-left: 0 !important;
+  }
 }
 </style>
 </head>
@@ -1205,11 +1491,9 @@ var particles;
       const year = yearSelect.value;
       const items = (typeof contentData !== 'undefined' && contentData[category] && contentData[category][year]) ? contentData[category][year] : [];
 
-      // ONLY update the reading list container, leaving the main body untouched
       readingListContainer.innerHTML = '';
 
       items.forEach(item => {
-        // Reading List Item (Static text, thin green line)
         const rlItem = document.createElement('div');
         rlItem.className = 'reading-list-item';
         rlItem.innerHTML = `
@@ -1226,7 +1510,6 @@ var particles;
     categorySelect.addEventListener('change', renderReadingList);
     yearSelect.addEventListener('change', renderReadingList);
 
-    // Initial render
     renderReadingList();
   });
 </script>
@@ -1234,269 +1517,6 @@ var particles;
 <!-- ========================================== -->
 <!-- MAIN BODY: READER STYLES & LOGIC           -->
 <!-- ========================================== -->
-<style>
-  /* ========================================== */
-  /* FILTER SIDEBAR STYLES                      */
-  /* ========================================== */
-  .filter-sidebar {
-    position: fixed;
-    top: 110px;
-    left: 0;
-    width: 200px;
-    height: calc(100vh - 110px);
-    background: rgba(0, 15, 0, 0.9);
-    border-right: 2px solid var(--neon-green);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    z-index: 90;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
-  }
-
-  .filter-sidebar-header {
-    padding: 15px;
-    border-bottom: 1px solid rgba(0, 255, 65, 0.3);
-    color: var(--neon-green);
-    font-size: 15px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    text-shadow: 0 0 8px var(--neon-glow-green);
-    text-align: center;
-    font-family: 'Share Tech Mono', monospace;
-  }
-
-  .filter-sidebar-items {
-    flex: 1;
-    overflow-y: auto;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .filter-sidebar-items::-webkit-scrollbar { width: 6px; }
-  .filter-sidebar-items::-webkit-scrollbar-track { background: var(--deep-green); }
-  .filter-sidebar-items::-webkit-scrollbar-thumb { background: var(--mid-green); border-radius: 3px; }
-  .filter-sidebar-items::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
-
-  .genre-toggle {
-    background: rgba(0, 255, 65, 0.03);
-    border: 1px solid rgba(0, 255, 65, 0.2);
-    color: var(--text-dim);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    text-align: left;
-    width: 100%;
-  }
-
-  .genre-toggle:hover {
-    background: rgba(0, 255, 65, 0.1);
-    border-color: var(--neon-green);
-    color: var(--neon-green);
-    box-shadow: 0 0 8px var(--neon-glow-green);
-  }
-
-  .genre-toggle.active {
-    background: rgba(0, 255, 65, 0.15);
-    border-color: var(--neon-green);
-    color: var(--neon-green);
-    box-shadow: 0 0 12px var(--neon-glow-green);
-  }
-
-  /* ========================================== */
-  /* READER VIEW STYLES                         */
-  /* ========================================== */
-  .reader-view {
-    display: none;
-    flex-direction: column;
-    height: 100%;
-    animation: fadeIn 0.4s ease-out;
-  }
-  .reader-view.active { display: flex; }
-
-  .reader-header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 30px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid rgba(0, 255, 65, 0.3);
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .back-btn,
-  .fullscreen-btn {
-    background: transparent;
-    border: 1px solid var(--neon-green);
-    color: var(--neon-green);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 14px;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    flex-shrink: 0;
-  }
-  .back-btn:hover,
-  .fullscreen-btn:hover {
-    background: var(--neon-green);
-    color: var(--deep-green);
-    box-shadow: 0 0 15px var(--neon-glow-green);
-  }
-
-  .reader-title {
-    font-size: 28px;
-    color: var(--neon-green);
-    text-shadow: 0 0 10px var(--neon-glow-green);
-    margin: 0;
-    flex: 1;
-    text-align: center;
-  }
-
-  .reader-meta {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    font-size: 14px;
-    color: var(--text-dim);
-    margin-bottom: 30px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  .reader-meta span { display: flex; align-items: center; gap: 6px; }
-
-  .reader-content {
-    flex: 1;
-    overflow-y: auto;
-    padding-right: 15px;
-    font-size: 16px;
-    line-height: 1.8;
-    color: #d0ffd9;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  .reader-content p { margin-bottom: 20px; text-align: justify; }
-
-  .reader-content::-webkit-scrollbar { width: 6px; }
-  .reader-content::-webkit-scrollbar-track { background: var(--deep-green); }
-  .reader-content::-webkit-scrollbar-thumb { background: var(--mid-green); border-radius: 3px; }
-  .reader-content::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ========================================== */
-  /* FULLSCREEN MODE STYLES                     */
-  /* ========================================== */
-  .reader-view:fullscreen,
-  .reader-view:-webkit-full-screen {
-    background: linear-gradient(0deg, #000a00 0%, var(--deep-green) 100%);
-    padding: 50px 80px;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  /* Hide the back button in fullscreen */
-  .reader-view:fullscreen .back-btn,
-  .reader-view:-webkit-full-screen .back-btn {
-    display: none;
-  }
-
-  /* Float the exit fullscreen button to the top-right corner */
-  .reader-view:fullscreen .fullscreen-btn,
-  .reader-view:-webkit-full-screen .fullscreen-btn {
-    position: fixed;
-    top: 25px;
-    right: 25px;
-    z-index: 10000;
-  }
-
-  /* Center and widen the text for comfortable reading in fullscreen */
-  .reader-view:fullscreen .reader-content,
-  .reader-view:-webkit-full-screen .reader-content {
-    max-width: 800px;
-    width: 100%;
-    margin: 0 auto;
-    padding-left: 0;
-    padding-right: 20px;
-    font-size: 18px;
-  }
-
-  .reader-view:fullscreen .reader-title,
-  .reader-view:-webkit-full-screen .reader-title {
-    font-size: 36px;
-  }
-
-  .reader-view:fullscreen .reader-header,
-  .reader-view:-webkit-full-screen .reader-header {
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 40px;
-  }
-
-  .reader-view:fullscreen .reader-meta,
-  .reader-view:-webkit-full-screen .reader-meta {
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 40px;
-    font-size: 15px;
-  }
-
-  /* ========================================== */
-  /* BUTTON CONTAINER                           */
-  /* ========================================== */
-  .text-list-container {
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .text-list-item {
-    width: 100%;
-  }
-
-  /* Hide the main grid and filter sidebar when the reader is active */
-  .document-area.grid-hidden .text-list-container { display: none; }
-  body.reader-active .filter-sidebar { display: none; }
-
-  @media (max-width: 768px) {
-    .filter-sidebar {
-      width: 100%;
-      height: auto;
-      max-height: 200px;
-      position: relative;
-      top: 0;
-      border-right: none;
-      border-bottom: 2px solid var(--neon-green);
-    }
-    .filter-sidebar-items {
-      flex-direction: row;
-      flex-wrap: wrap;
-    }
-    .genre-toggle {
-      width: auto;
-      flex: 0 0 auto;
-    }
-    .document-area {
-      margin-left: 0 !important;
-    }
-  }
-</style>
-
 <!-- Load the writings data file -->
 <script src="js/writings.js"></script>
 
@@ -1510,59 +1530,204 @@ var particles;
     let activeGenres = new Set();
     let filterSidebar = null;
 
+    // Helper to generate unique SVG for each genre
+    function createRadioSVG(genre, index) {
+      return `
+      <svg class="radio-svg" viewBox="0 0 180 40" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="displace-${index}" primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB">
+            <feFlood flood-color="#00ff41" y="0%" height="7%" result="s0" />
+            <feFlood flood-color="#003300" y="7%" height="14%" result="s1" />
+            <feFlood flood-color="#00ff41" y="21%" height="6%" result="s2" />
+            <feFlood flood-color="#003300" y="27%" height="12%" result="s3" />
+            <feFlood flood-color="#00ff41" y="39%" height="8%" result="s4" />
+            <feFlood flood-color="#003300" y="47%" height="17%" result="s5" />
+            <feFlood flood-color="#00ff41" y="64%" height="5%" result="s6" />
+            <feFlood flood-color="#003300" y="69%" height="11%" result="s7" />
+            <feFlood flood-color="#00ff41" y="80%" height="9%" result="s8" />
+            <feFlood flood-color="#003300" y="89%" height="11%" result="s9" />
+            <feMerge result="bands">
+              <feMergeNode in="s0" /><feMergeNode in="s1" /><feMergeNode in="s2" />
+              <feMergeNode in="s3" /><feMergeNode in="s4" /><feMergeNode in="s5" />
+              <feMergeNode in="s6" /><feMergeNode in="s7" /><feMergeNode in="s8" /><feMergeNode in="s9" />
+            </feMerge>
+            <feDisplacementMap class="displace" in="SourceGraphic" in2="bands" scale="0" xChannelSelector="R" yChannelSelector="B" />
+          </filter>
+          <pattern id="scanline-pattern-${index}" class="scanline-pattern" patternUnits="userSpaceOnUse" width="5" height="10">
+            <rect class="scanline" x="0" y="0" width="5" height="1" />
+            <rect x="0" y="1" width="5" height="9" fill="none" />
+          </pattern>
+          <radialGradient id="fade-${index}" gradientUnits="userSpaceOnUse" cx="90" cy="20" r="40" gradientTransform="translate(90 20) scale(2 1) translate(-90 -20)">
+            <stop offset="0%" stop-color="#001a00" stop-opacity="0" />
+            <stop offset="60%" stop-color="#001a00" stop-opacity="0" />
+            <stop offset="100%" stop-color="#001a00" stop-opacity="1" />
+          </radialGradient>
+        </defs>
+        <g filter="url(#displace-${index})">
+          <rect x="0" y="12" width="100%" height="16" fill="url(#scanline-pattern-${index})" />
+          <polygon class="unchecked" points="18,9 25.8,13.5 25.8,22.5 18,27 10.2,22.5 10.2,13.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" transform="translate(12 4)" />
+          <polygon class="pink" points="18,9 25.8,13.5 25.8,22.5 18,27 10.2,22.5 10.2,13.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" transform="translate(20 4)" />
+          <polygon class="blue" points="18,9 25.8,13.5 25.8,22.5 18,27 10.2,22.5 10.2,13.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" transform="translate(4 4)" />
+          <text class="radio-text" x="50" y="20" dominant-baseline="middle">${genre}</text>
+        </g>
+        <rect width="180" height="40" fill="url(#fade-${index})" />
+      </svg>`;
+    }
+
     // 1. Create the filter sidebar on the left
     function createFilterSidebar() {
       if (typeof WRITINGS_DATA === 'undefined' || WRITINGS_DATA.length === 0) return;
 
-      // Extract unique genres
       const genres = [...new Set(WRITINGS_DATA.map(w => w.genre || 'Uncategorized'))].sort();
 
-      // Create sidebar element
       filterSidebar = document.createElement('aside');
       filterSidebar.className = 'filter-sidebar';
       filterSidebar.id = 'filter-sidebar';
 
-      // Header
       const header = document.createElement('div');
       header.className = 'filter-sidebar-header';
       header.textContent = 'Genre Filter';
       filterSidebar.appendChild(header);
 
-      // Items container
       const itemsContainer = document.createElement('div');
       itemsContainer.className = 'filter-sidebar-items';
 
-      // Create toggle for each genre
-      genres.forEach(genre => {
-        const toggle = document.createElement('button');
-        toggle.className = 'genre-toggle';
-        toggle.textContent = genre;
-        toggle.setAttribute('data-genre', genre);
+      genres.forEach((genre, index) => {
+        const group = document.createElement('div');
+        group.className = 'radio-btn-group';
 
-        toggle.addEventListener('click', () => {
-          if (activeGenres.has(genre)) {
-            activeGenres.delete(genre);
-            toggle.classList.remove('active');
-          } else {
-            activeGenres.add(genre);
-            toggle.classList.add('active');
-          }
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = 'genre-filter';
+        input.value = genre;
+        input.id = `genre-option-${index}`;
+
+        const label = document.createElement('label');
+        label.htmlFor = `genre-option-${index}`;
+        label.innerHTML = createRadioSVG(genre, index);
+
+        group.appendChild(input);
+        group.appendChild(label);
+        itemsContainer.appendChild(group);
+
+        input.addEventListener('change', () => {
+          activeGenres.clear();
+          activeGenres.add(genre);
           renderButtons();
         });
-
-        itemsContainer.appendChild(toggle);
       });
 
       filterSidebar.appendChild(itemsContainer);
-
-      // Insert sidebar into main-layout (before document-area)
       mainLayout.insertBefore(filterSidebar, documentArea);
-
-      // Adjust document-area margin to account for sidebar
       documentArea.style.marginLeft = '200px';
+
+      // Initialize GSAP animations for the new radio buttons
+      initRadioAnimations();
     }
 
-    // 2. Render the list of buttons (filtered)
+    // 2. Initialize Radio Button Animations
+    function initRadioAnimations() {
+      const radioBtnGroups = document.querySelectorAll(".radio-btn-group");
+
+      radioBtnGroups.forEach((group) => {
+        const scanlinePattern = group.querySelector(".scanline-pattern");
+        const scanline = group.querySelector(".scanline");
+        const displacement = group.querySelector(".displace");
+        const bluePolygon = group.querySelector(".blue");
+        const pinkPolygon = group.querySelector(".pink");
+        const radioBtn = group.querySelector("input[type='radio']");
+        const label = group.querySelector("label");
+
+        if (!scanlinePattern || !gsap) return;
+
+        const tlScanlineMotion = gsap.timeline({ paused: true });
+        const tlScanlineFlicker = gsap.timeline({ paused: true });
+        const tlScanlineDisplacement = gsap.timeline({ paused: true, repeat: -1, repeatDelay: 1 });
+        const tlBlueOpacity = gsap.timeline({ paused: true });
+        const tlPinkOpacity = gsap.timeline({ paused: true });
+
+        tlScanlineMotion.to(scanlinePattern, {
+          attr: { y: 10 },
+          duration: 0.35,
+          ease: "none",
+          repeat: -1
+        });
+
+        tlScanlineFlicker.to(scanline, {
+          fill: "#003300",
+          duration: 1,
+          ease: gsap.parseEase("rough") || "steps(4)",
+          repeat: -1,
+          yoyo: true
+        });
+
+        tlScanlineDisplacement
+          .to(displacement, {
+            attr: { scale: () => gsap.utils.random(0.02, 0.15) },
+            duration: 1,
+            ease: gsap.parseEase("rough") || "steps(4)",
+            repeatRefresh: true
+          })
+          .to(displacement, {
+            attr: { scale: 0 },
+            duration: 1,
+            ease: gsap.parseEase("rough") || "steps(4)"
+          });
+
+        tlBlueOpacity.to(bluePolygon, {
+          x: 25,
+          rotation: -1080,
+          transformOrigin: "center center",
+          opacity: 1,
+          ease: "power2.out",
+          duration: 1
+        });
+
+        tlPinkOpacity.to(pinkPolygon, {
+          x: 25,
+          rotation: 1080,
+          transformOrigin: "center center",
+          opacity: 1,
+          ease: "power2.out",
+          duration: 1
+        });
+
+        label.addEventListener("mouseenter", () => {
+          tlScanlineMotion.play();
+          tlScanlineFlicker.play();
+        });
+
+        label.addEventListener("mouseleave", () => {
+          tlScanlineMotion.pause(0);
+          tlScanlineFlicker.pause(0);
+        });
+
+        radioBtn.addEventListener("change", () => {
+          // Reset other groups
+          radioBtnGroups.forEach(otherGroup => {
+            if (otherGroup !== group) {
+              const otherBlue = otherGroup.querySelector(".blue");
+              const otherPink = otherGroup.querySelector(".pink");
+              const otherDisplacement = otherGroup.querySelector(".displace");
+              const otherFlicker = otherGroup.querySelector(".scanline");
+
+              gsap.to(otherBlue, { x: 0, rotation: 0, opacity: 0, duration: 0.5 });
+              gsap.to(otherPink, { x: 0, rotation: 0, opacity: 0, duration: 0.5 });
+              gsap.to(otherDisplacement, { attr: { scale: 0 }, duration: 0.2 });
+              gsap.to(otherFlicker, { fill: "#001a00", duration: 0.2 });
+            }
+          });
+
+          // Play current group animations
+          tlPinkOpacity.play();
+          tlBlueOpacity.play();
+          tlScanlineFlicker.play();
+          tlScanlineDisplacement.play();
+        });
+      });
+    }
+
+    // 3. Render the list of buttons (filtered)
     function renderButtons() {
       if (typeof WRITINGS_DATA === 'undefined' || WRITINGS_DATA.length === 0) {
         container.innerHTML = `<div style="color: var(--neon-green); padding: 20px; text-align: center;">⚠️ writings.js not found or empty.</div>`;
@@ -1571,13 +1736,12 @@ var particles;
 
       container.innerHTML = '';
 
-      // Filter writings based on active genres
       const filteredWritings = activeGenres.size === 0
         ? WRITINGS_DATA
         : WRITINGS_DATA.filter(w => activeGenres.has(w.genre || 'Uncategorized'));
 
       if (filteredWritings.length === 0) {
-        container.innerHTML = `<div style="color: var(--text-dim); padding: 20px; text-align: center;">No writings match the selected genres.</div>`;
+        container.innerHTML = `<div style="color: var(--text-dim); padding: 20px; text-align: center;">No writings match the selected genre.</div>`;
         return;
       }
 
@@ -1598,9 +1762,8 @@ var particles;
       });
     }
 
-    // 3. Open the Reader View
+    // 4. Open the Reader View
     function openReader(writing) {
-      // Create reader HTML if it doesn't exist yet
       if (!document.getElementById('reader-view')) {
         const reader = document.createElement('div');
         reader.id = 'reader-view';
@@ -1619,9 +1782,7 @@ var particles;
         `;
         documentArea.appendChild(reader);
 
-        // Back button logic
         document.getElementById('back-to-list').addEventListener('click', () => {
-          // Exit fullscreen if active before going back
           if (document.fullscreenElement || document.webkitFullscreenElement) {
             (document.exitFullscreen || document.webkitExitFullscreen).call(document);
           }
@@ -1630,11 +1791,9 @@ var particles;
           document.body.classList.remove('reader-active');
         });
 
-        // Fullscreen toggle logic
         const fsBtn = document.getElementById('fullscreen-toggle');
         fsBtn.addEventListener('click', toggleFullscreen);
 
-        // Sync button label when fullscreen state changes (e.g., user presses ESC)
         const syncFsButton = () => {
           const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
           fsBtn.textContent = isFs ? '⛶ Exit Fullscreen' : '⛶ Fullscreen';
@@ -1643,23 +1802,20 @@ var particles;
         document.addEventListener('webkitfullscreenchange', syncFsButton);
       }
 
-      // Populate data
       document.getElementById('reader-title').textContent = writing.title;
       document.getElementById('reader-author').textContent = writing.author;
       document.getElementById('reader-subtitle').textContent = writing.subtitle || '';
       document.getElementById('reader-content').innerHTML = writing.content;
 
-      // Switch views
       const readerView = document.getElementById('reader-view');
       readerView.classList.add('active');
       documentArea.classList.add('grid-hidden');
       document.body.classList.add('reader-active');
 
-      // Scroll to top of reader content
       document.getElementById('reader-content').scrollTop = 0;
     }
 
-    // 4. Fullscreen toggle function
+    // 5. Fullscreen toggle function
     function toggleFullscreen() {
       const readerView = document.getElementById('reader-view');
       if (!readerView) return;
@@ -1667,7 +1823,6 @@ var particles;
       const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement);
 
       if (!isFullscreen) {
-        // Enter fullscreen
         const requestFs = readerView.requestFullscreen || readerView.webkitRequestFullscreen;
         if (requestFs) {
           requestFs.call(readerView).catch(err => {
@@ -1675,7 +1830,6 @@ var particles;
           });
         }
       } else {
-        // Exit fullscreen
         const exitFs = document.exitFullscreen || document.webkitExitFullscreen;
         if (exitFs) exitFs.call(document);
       }
@@ -1686,8 +1840,5 @@ var particles;
     renderButtons();
   });
 </script>
-<!-- ========================================== -->
-<!-- End Main Body                              -->
-<!-- ========================================== -->
 </body>
 </html>
