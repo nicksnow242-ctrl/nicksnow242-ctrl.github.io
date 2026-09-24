@@ -1972,6 +1972,68 @@ var particles;
   50% { right: calc(100% - 30vw); top: calc(100% - 4vw); }
   60%, 80% { top: 100%; }
 }
+/* Compact Cyberpunk Toggle Styles (Neon Green Theme) */
+.cyber-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  border-radius: 6px;
+  background: rgba(0, 26, 0, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.cyber-toggle input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cyber-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.cyber-text {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+  font-weight: 400;
+  color: #00cc33;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+}
+
+.cyber-toggle:hover {
+  border-color: rgba(0, 255, 65, 0.7);
+  background: rgba(0, 255, 65, 0.1);
+}
+
+/* Active State */
+.cyber-toggle.active {
+  background: #000000;
+  border-color: #00ff41;
+  box-shadow: 0 0 12px rgba(0, 255, 65, 0.3), inset 0 0 10px rgba(0, 255, 65, 0.1);
+}
+
+.cyber-toggle.active .cyber-text {
+  color: #00ff41;
+  text-shadow: 0 0 8px rgba(0, 255, 65, 0.6);
+}
+
+.cyber-toggle.active .unchecked {
+  opacity: 0;
+}
+
+.cyber-toggle.active .glow-1,
+.cyber-toggle.active .glow-2 {
+  opacity: 1;
+}
 </style>
 
 <!-- Load the writings data file -->
@@ -2051,26 +2113,54 @@ var particles;
 
     genres.forEach((genre, index) => {
       const group = document.createElement('div');
-      group.className = 'radio-btn-group';
-
-      const input = document.createElement('input');
-      input.type = 'checkbox'; // CHANGED to checkbox to allow untoggling
-      input.name = 'genre-filter';
-      input.value = genre;
-      input.id = `genre-option-${index}`;
-
-      const label = document.createElement('label');
-      label.htmlFor = `genre-option-${index}`;
-      label.innerHTML = createRadioSVG(genre, index);
-
-      group.appendChild(input);
-      group.appendChild(label);
+      group.className = 'toggle-btn-group';
+      group.innerHTML = `
+        <label class="cyber-toggle" id="toggle-label-${index}">
+          <input type="checkbox" name="genre-filter" value="${genre}" id="genre-option-${index}" />
+          <svg class="cyber-icon" viewBox="0 0 24 24">
+            <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#004d00" />
+            <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#00ff41" opacity="0" />
+            <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#80ff80" opacity="0" />
+          </svg>
+          <span class="cyber-text">${genre}</span>
+        </label>
+      `;
       itemsContainer.appendChild(group);
+
+      const input = group.querySelector('input');
+      const label = group.querySelector('.cyber-toggle');
+      const glow1 = group.querySelector('.glow-1');
+      const glow2 = group.querySelector('.glow-2');
+      const unchecked = group.querySelector('.unchecked');
+
+      // Initial state setup for GSAP
+      gsap.set(glow1, { x: -5, rotation: -20, transformOrigin: "center center" });
+      gsap.set(glow2, { x: 5, rotation: 20, transformOrigin: "center center" });
 
       input.addEventListener('change', () => {
         if (input.checked) {
+          label.classList.add('active');
+
+          // Glitch in effect
+          gsap.fromTo(glow1,
+            { x: -10, rotation: -30, opacity: 0 },
+            { x: 0, rotation: 0, opacity: 1, duration: 0.4, ease: "elastic.out(1, 0.5)" }
+          );
+          gsap.fromTo(glow2,
+            { x: 10, rotation: 30, opacity: 0 },
+            { x: 0, rotation: 0, opacity: 1, duration: 0.4, delay: 0.05, ease: "elastic.out(1, 0.5)" }
+          );
+          gsap.to(unchecked, { opacity: 0, duration: 0.2 });
+
           activeGenres.add(genre);
         } else {
+          label.classList.remove('active');
+
+          // Glitch out effect
+          gsap.to(glow1, { x: -5, rotation: -20, opacity: 0, duration: 0.3, ease: "power2.in" });
+          gsap.to(glow2, { x: 5, rotation: 20, opacity: 0, duration: 0.3, ease: "power2.in" });
+          gsap.to(unchecked, { opacity: 1, duration: 0.2 });
+
           activeGenres.delete(genre);
         }
         renderButtons();
@@ -2080,110 +2170,6 @@ var particles;
     filterSidebar.appendChild(itemsContainer);
     mainLayout.insertBefore(filterSidebar, documentArea);
     documentArea.style.marginLeft = '200px';
-
-    // Initialize GSAP animations for the new buttons
-    initRadioAnimations();
-  }
-
-  // 2. Initialize Button Animations
-  function initRadioAnimations() {
-    const btnGroups = document.querySelectorAll(".radio-btn-group");
-
-    btnGroups.forEach((group) => {
-      const scanlinePattern = group.querySelector(".scanline-pattern");
-      const scanline = group.querySelector(".scanline");
-      const displacement = group.querySelector(".displace");
-      const bluePolygon = group.querySelector(".blue");
-      const pinkPolygon = group.querySelector(".pink");
-      const checkbox = group.querySelector("input[type='checkbox']");
-      const label = group.querySelector("label");
-
-      if (!scanlinePattern || !gsap) return;
-
-      const tlScanlineMotion = gsap.timeline({ paused: true });
-      const tlScanlineFlicker = gsap.timeline({ paused: true });
-      const tlScanlineDisplacement = gsap.timeline({ paused: true, repeat: -1, repeatDelay: 1 });
-      const tlBlueOpacity = gsap.timeline({ paused: true });
-      const tlPinkOpacity = gsap.timeline({ paused: true });
-
-      tlScanlineMotion.to(scanlinePattern, {
-        attr: { y: 10 },
-        duration: 0.35,
-        ease: "none",
-        repeat: -1
-      });
-
-      tlScanlineFlicker.to(scanline, {
-        fill: "#003300",
-        duration: 1,
-        ease: gsap.parseEase("rough") || "steps(4)",
-        repeat: -1,
-        yoyo: true
-      });
-
-      tlScanlineDisplacement
-        .to(displacement, {
-          attr: { scale: () => gsap.utils.random(0.02, 0.15) },
-          duration: 1,
-          ease: gsap.parseEase("rough") || "steps(4)",
-          repeatRefresh: true
-        })
-        .to(displacement, {
-          attr: { scale: 0 },
-          duration: 1,
-          ease: gsap.parseEase("rough") || "steps(4)"
-        });
-
-      tlBlueOpacity.to(bluePolygon, {
-        x: 25,
-        rotation: -1080,
-        transformOrigin: "center center",
-        opacity: 1,
-        ease: "power2.out",
-        duration: 0.5
-      });
-
-      tlPinkOpacity.to(pinkPolygon, {
-        x: 25,
-        rotation: 1080,
-        transformOrigin: "center center",
-        opacity: 1,
-        ease: "power2.out",
-        duration: 0.5
-      });
-
-      label.addEventListener("mouseenter", () => {
-        if (!checkbox.checked) {
-          tlScanlineMotion.play();
-          tlScanlineFlicker.play();
-        }
-      });
-
-      label.addEventListener("mouseleave", () => {
-        if (!checkbox.checked) {
-          tlScanlineMotion.pause(0);
-          tlScanlineFlicker.pause(0);
-        }
-      });
-
-      checkbox.addEventListener("change", () => {
-        if (checkbox.checked) {
-          // Play current group animations
-          tlPinkOpacity.play();
-          tlBlueOpacity.play();
-          tlScanlineFlicker.play();
-          tlScanlineDisplacement.play();
-        } else {
-          // FIXED: Reset current group animations when untoggled
-          gsap.to(bluePolygon, { x: 0, rotation: 0, opacity: 0, duration: 0.3 });
-          gsap.to(pinkPolygon, { x: 0, rotation: 0, opacity: 0, duration: 0.3 });
-          gsap.to(displacement, { attr: { scale: 0 }, duration: 0.2 });
-          gsap.to(scanline, { fill: "#001a00", duration: 0.2 });
-          tlScanlineMotion.pause(0);
-          tlScanlineFlicker.pause(0);
-        }
-      });
-    });
   }
 
     // 3. Render the list of buttons (filtered)
