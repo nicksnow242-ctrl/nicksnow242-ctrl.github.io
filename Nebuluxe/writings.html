@@ -1531,177 +1531,139 @@ var particles;
     let filterSidebar = null;
 
     // Helper to generate unique SVG for each genre
-    function createRadioSVG(genre, index) {
-      return `
-      <svg class="radio-svg" viewBox="0 0 180 40" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <filter id="displace-${index}" primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB">
-            <feFlood flood-color="#00ff41" y="0%" height="7%" result="s0" />
-            <feFlood flood-color="#003300" y="7%" height="14%" result="s1" />
-            <feFlood flood-color="#00ff41" y="21%" height="6%" result="s2" />
-            <feFlood flood-color="#003300" y="27%" height="12%" result="s3" />
-            <feFlood flood-color="#00ff41" y="39%" height="8%" result="s4" />
-            <feFlood flood-color="#003300" y="47%" height="17%" result="s5" />
-            <feFlood flood-color="#00ff41" y="64%" height="5%" result="s6" />
-            <feFlood flood-color="#003300" y="69%" height="11%" result="s7" />
-            <feFlood flood-color="#00ff41" y="80%" height="9%" result="s8" />
-            <feFlood flood-color="#003300" y="89%" height="11%" result="s9" />
-            <feMerge result="bands">
-              <feMergeNode in="s0" /><feMergeNode in="s1" /><feMergeNode in="s2" />
-              <feMergeNode in="s3" /><feMergeNode in="s4" /><feMergeNode in="s5" />
-              <feMergeNode in="s6" /><feMergeNode in="s7" /><feMergeNode in="s8" /><feMergeNode in="s9" />
-            </feMerge>
-            <feDisplacementMap class="displace" in="SourceGraphic" in2="bands" scale="0" xChannelSelector="R" yChannelSelector="B" />
-          </filter>
-          <pattern id="scanline-pattern-${index}" class="scanline-pattern" patternUnits="userSpaceOnUse" width="5" height="10">
-            <rect class="scanline" x="0" y="0" width="5" height="1" />
-            <rect x="0" y="1" width="5" height="9" fill="none" />
-          </pattern>
-          <radialGradient id="fade-${index}" gradientUnits="userSpaceOnUse" cx="90" cy="20" r="40" gradientTransform="translate(90 20) scale(2 1) translate(-90 -20)">
-            <stop offset="0%" stop-color="#001a00" stop-opacity="0" />
-            <stop offset="60%" stop-color="#001a00" stop-opacity="0" />
-            <stop offset="100%" stop-color="#001a00" stop-opacity="1" />
-          </radialGradient>
-        </defs>
-        <g filter="url(#displace-${index})">
-          <rect x="0" y="12" width="100%" height="16" fill="url(#scanline-pattern-${index})" />
-          <polygon class="unchecked" points="18,9 25.8,13.5 25.8,22.5 18,27 10.2,22.5 10.2,13.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" transform="translate(12 4)" />
-          <polygon class="pink" points="18,9 25.8,13.5 25.8,22.5 18,27 10.2,22.5 10.2,13.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" transform="translate(20 4)" />
-          <polygon class="blue" points="18,9 25.8,13.5 25.8,22.5 18,27 10.2,22.5 10.2,13.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" transform="translate(4 4)" />
-          <text class="radio-text" x="50" y="20" dominant-baseline="middle">${genre}</text>
-        </g>
-        <rect width="180" height="40" fill="url(#fade-${index})" />
-      </svg>`;
+function createRadioSVG(genre, index) {
+  return `
+  <svg class="radio-svg" viewBox="0 0 180 40" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="displace-${index}" primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB">
+        <feFlood flood-color="#00ff41" y="0%" height="7%" result="s0" />
+        <feFlood flood-color="#003300" y="7%" height="14%" result="s1" />
+        <feFlood flood-color="#00ff41" y="21%" height="6%" result="s2" />
+        <feFlood flood-color="#003300" y="27%" height="12%" result="s3" />
+        <feFlood flood-color="#00ff41" y="39%" height="8%" result="s4" />
+        <feFlood flood-color="#003300" y="47%" height="17%" result="s5" />
+        <feFlood flood-color="#00ff41" y="64%" height="5%" result="s6" />
+        <feFlood flood-color="#003300" y="69%" height="11%" result="s7" />
+        <feFlood flood-color="#00ff41" y="80%" height="9%" result="s8" />
+        <feFlood flood-color="#003300" y="89%" height="11%" result="s9" />
+        <feMerge result="bands">
+          <feMergeNode in="s0" /><feMergeNode in="s1" /><feMergeNode in="s2" />
+          <feMergeNode in="s3" /><feMergeNode in="s4" /><feMergeNode in="s5" />
+          <feMergeNode in="s6" /><feMergeNode in="s7" /><feMergeNode in="s8" /><feMergeNode in="s9" />
+        </feMerge>
+        <feDisplacementMap class="displace" in="SourceGraphic" in2="bands" scale="0" xChannelSelector="R" yChannelSelector="B" />
+      </filter>
+      <pattern id="scanline-pattern-${index}" class="scanline-pattern" patternUnits="userSpaceOnUse" width="5" height="10">
+        <rect class="scanline" x="0" y="0" width="5" height="1" />
+        <rect x="0" y="1" width="5" height="9" fill="none" />
+      </pattern>
+      <radialGradient id="fade-${index}" gradientUnits="userSpaceOnUse" cx="90" cy="20" r="40" gradientTransform="translate(90 20) scale(2 1) translate(-90 -20)">
+        <stop offset="0%" stop-color="#001a00" stop-opacity="0" />
+        <stop offset="60%" stop-color="#001a00" stop-opacity="0" />
+        <stop offset="100%" stop-color="#001a00" stop-opacity="1" />
+      </radialGradient>
+    </defs>
+    <g filter="url(#displace-${index})">
+      <rect x="0" y="12" width="100%" height="16" fill="url(#scanline-pattern-${index})" />
+      <polygon class="unchecked" points="18,9 25.8,13.5 25.8,22.5 18,27 10.2,22.5 10.2,13.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" transform="translate(12 4)" />
+      <polygon class="pink" points="18,9 25.8,13.5 25.8,22.5 18,27 10.2,22.5 10.2,13.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" transform="translate(20 4)" />
+      <polygon class="blue" points="18,9 25.8,13.5 25.8,22.5 18,27 10.2,22.5 10.2,13.5" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" transform="translate(4 4)" />
+      <text class="radio-text" x="50" y="20" dominant-baseline="middle">${genre}</text>
+    </g>
+    <rect width="180" height="40" fill="url(#fade-${index})" />
+  </svg>`;
+}
+
+// Initialize Radio Button Animations
+function initRadioAnimations() {
+  const radioBtnGroups = document.querySelectorAll(".radio-btn-group");
+
+  radioBtnGroups.forEach((group) => {
+    const scanlinePattern = group.querySelector(".scanline-pattern");
+    const scanline = group.querySelector(".scanline");
+    const displacement = group.querySelector(".displace");
+    const bluePolygon = group.querySelector(".blue");
+    const pinkPolygon = group.querySelector(".pink");
+    const radioBtn = group.querySelector("input[type='radio']");
+    const label = group.querySelector("label");
+
+    if (!scanlinePattern || !gsap) return;
+
+    // Ensure initial state is deactivated
+    gsap.set(displacement, { attr: { scale: 0 } });
+    gsap.set(bluePolygon, { x: 0, rotation: 0, opacity: 0 });
+    gsap.set(pinkPolygon, { x: 0, rotation: 0, opacity: 0 });
+
+    function activate() {
+      gsap.killTweensOf([displacement, bluePolygon, pinkPolygon]);
+      gsap.to(displacement, { attr: { scale: 0.15 }, duration: 0.3, ease: "steps(4)" });
+      gsap.to(bluePolygon, { x: 25, rotation: -1080, opacity: 1, duration: 0.6, ease: "back.out(1.7)" });
+      gsap.to(pinkPolygon, { x: 25, rotation: 1080, opacity: 1, duration: 0.6, ease: "back.out(1.7)" });
     }
 
-    // 1. Create the filter sidebar on the left
-    function createFilterSidebar() {
-      if (typeof WRITINGS_DATA === 'undefined' || WRITINGS_DATA.length === 0) return;
+    function deactivate() {
+      gsap.killTweensOf([displacement, bluePolygon, pinkPolygon]);
+      gsap.to(displacement, { attr: { scale: 0 }, duration: 0.2, ease: "power2.out" });
+      gsap.to(bluePolygon, { x: 0, rotation: 0, opacity: 0, duration: 0.3, ease: "power2.in" });
+      gsap.to(pinkPolygon, { x: 0, rotation: 0, opacity: 0, duration: 0.3, ease: "power2.in" });
+    }
 
-      const genres = [...new Set(WRITINGS_DATA.map(w => w.genre || 'Uncategorized'))].sort();
+    // Track if the user is attempting to check or uncheck
+    let isChecking = false;
+    label.addEventListener("pointerdown", () => {
+      isChecking = !radioBtn.checked;
+    });
 
-      filterSidebar = document.createElement('aside');
-      filterSidebar.className = 'filter-sidebar';
-      filterSidebar.id = 'filter-sidebar';
+    radioBtn.addEventListener("click", (e) => {
+      if (!isChecking) {
+        // Unchecking an already checked radio button
+        e.preventDefault();
+        radioBtn.checked = false;
+        deactivate();
+        activeGenres.clear();
+        renderButtons();
+        return;
+      }
 
-      const header = document.createElement('div');
-      header.className = 'filter-sidebar-header';
-      header.textContent = 'Genre Filter';
-      filterSidebar.appendChild(header);
+      // Checking a new radio button: deactivate all others first
+      radioBtnGroups.forEach(otherGroup => {
+        const otherRadio = otherGroup.querySelector("input[type='radio']");
+        if (otherRadio !== radioBtn && otherRadio.checked) {
+          otherRadio.checked = false;
+          const otherDisplacement = otherGroup.querySelector(".displace");
+          const otherBlue = otherGroup.querySelector(".blue");
+          const otherPink = otherGroup.querySelector(".pink");
 
-      const itemsContainer = document.createElement('div');
-      itemsContainer.className = 'filter-sidebar-items';
-
-      genres.forEach((genre, index) => {
-        const group = document.createElement('div');
-        group.className = 'radio-btn-group';
-
-        const input = document.createElement('input');
-        input.type = 'radio';
-        input.name = 'genre-filter';
-        input.value = genre;
-        input.id = `genre-option-${index}`;
-
-        const label = document.createElement('label');
-        label.htmlFor = `genre-option-${index}`;
-        label.innerHTML = createRadioSVG(genre, index);
-
-        group.appendChild(input);
-        group.appendChild(label);
-        itemsContainer.appendChild(group);
-
-        input.addEventListener('change', () => {
-          activeGenres.clear();
-          activeGenres.add(genre);
-          renderButtons();
-        });
+          gsap.killTweensOf([otherDisplacement, otherBlue, otherPink]);
+          gsap.to(otherDisplacement, { attr: { scale: 0 }, duration: 0.2, ease: "power2.out" });
+          gsap.to(otherBlue, { x: 0, rotation: 0, opacity: 0, duration: 0.3, ease: "power2.in" });
+          gsap.to(otherPink, { x: 0, rotation: 0, opacity: 0, duration: 0.3, ease: "power2.in" });
+        }
       });
 
-      filterSidebar.appendChild(itemsContainer);
-      mainLayout.insertBefore(filterSidebar, documentArea);
-      documentArea.style.marginLeft = '200px';
+      // Activate the clicked button
+      activate();
+      activeGenres.clear();
+      activeGenres.add(radioBtn.value);
+      renderButtons();
+    });
 
-      // Initialize GSAP animations for the new radio buttons
-      initRadioAnimations();
-    }
+    // Hover effects only trigger if the button is not currently active
+    label.addEventListener("mouseenter", () => {
+      if (!radioBtn.checked) {
+        gsap.to(scanlinePattern, { attr: { y: 10 }, duration: 0.35, ease: "none", repeat: -1 });
+        gsap.to(scanline, { fill: "#003300", duration: 0.5, ease: "steps(4)", repeat: -1, yoyo: true });
+      }
+    });
 
-    // 2. Initialize Radio Button Animations
-    function initRadioAnimations() {
-      const radioBtnGroups = document.querySelectorAll(".radio-btn-group");
-
-      radioBtnGroups.forEach((group) => {
-        const scanlinePattern = group.querySelector(".scanline-pattern");
-        const scanline = group.querySelector(".scanline");
-        const displacement = group.querySelector(".displace");
-        const bluePolygon = group.querySelector(".blue");
-        const pinkPolygon = group.querySelector(".pink");
-        const radioBtn = group.querySelector("input[type='radio']");
-        const label = group.querySelector("label");
-
-        if (!scanlinePattern || !gsap) return;
-
-        const tlScanlineMotion = gsap.timeline({ paused: true });
-        const tlScanlineFlicker = gsap.timeline({ paused: true });
-        const tlScanlineDisplacement = gsap.timeline({ paused: true, repeat: -1, repeatDelay: 1 });
-        const tlBlueOpacity = gsap.timeline({ paused: true });
-        const tlPinkOpacity = gsap.timeline({ paused: true });
-
-        tlScanlineMotion.to(scanlinePattern, {
-          attr: { y: 10 },
-          duration: 0.35,
-          ease: "none",
-          repeat: -1
-        });
-
-        tlScanlineFlicker.to(scanline, {
-          fill: "#003300",
-          duration: 1,
-          ease: gsap.parseEase("rough") || "steps(4)",
-          repeat: -1,
-          yoyo: true
-        });
-
-        tlScanlineDisplacement
-          .to(displacement, {
-            attr: { scale: () => gsap.utils.random(0.02, 0.15) },
-            duration: 1,
-            ease: gsap.parseEase("rough") || "steps(4)",
-            repeatRefresh: true
-          })
-          .to(displacement, {
-            attr: { scale: 0 },
-            duration: 1,
-            ease: gsap.parseEase("rough") || "steps(4)"
-          });
-
-        tlBlueOpacity.to(bluePolygon, {
-          x: 25,
-          rotation: -1080,
-          transformOrigin: "center center",
-          opacity: 1,
-          ease: "power2.out",
-          duration: 1
-        });
-
-        tlPinkOpacity.to(pinkPolygon, {
-          x: 25,
-          rotation: 1080,
-          transformOrigin: "center center",
-          opacity: 1,
-          ease: "power2.out",
-          duration: 1
-        });
-
-        label.addEventListener("mouseenter", () => {
-          tlScanlineMotion.play();
-          tlScanlineFlicker.play();
-        });
-
-        label.addEventListener("mouseleave", () => {
-          tlScanlineMotion.pause(0);
-          tlScanlineFlicker.pause(0);
-        });
-
+    label.addEventListener("mouseleave", () => {
+      gsap.killTweensOf(scanlinePattern);
+      gsap.killTweensOf(scanline);
+      gsap.set(scanlinePattern, { attr: { y: 0 } });
+      gsap.set(scanline, { fill: "#001a00" });
+    });
+  });
+}
         radioBtn.addEventListener("change", () => {
           // Reset other groups
           radioBtnGroups.forEach(otherGroup => {
@@ -1840,5 +1802,8 @@ var particles;
     renderButtons();
   });
 </script>
+<!-- ========================================== -->
+<!-- MAIN BODY: END           -->
+<!-- ========================================== -->
 </body>
 </html>
