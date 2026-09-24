@@ -1587,8 +1587,9 @@ var particles;
 
   /*
     THEME DEFINITIONS
-    The * selector ensures "everything" inside the fullscreen reader
-    inherits the new color scheme, font, and background.
+    The *:not(.style-orb) selector ensures "everything" inside the fullscreen reader
+    becomes transparent, allowing the main background to show through completely,
+    while preserving the visual colors of the orbs.
   */
 
   /* 1. Dark Style (Default) */
@@ -1598,25 +1599,12 @@ var particles;
     color: #00ff41 !important;
     font-family: 'Courier New', Courier, monospace !important;
   }
-  #reader-view.style-dark:fullscreen .reader-header,
-  #reader-view.style-dark:-webkit-full-screen .reader-header {
-    background-color: #0a0a0a !important;
-    border-bottom: 1px solid #00ff41 !important;
-  }
-  #reader-view.style-dark:fullscreen .reader-content,
-  #reader-view.style-dark:-webkit-full-screen .reader-content {
-    background-color: #000000 !important;
-  }
-  #reader-view.style-dark:fullscreen *,
-  #reader-view.style-dark:-webkit-full-screen * {
+  #reader-view.style-dark:fullscreen *:not(.style-orb),
+  #reader-view.style-dark:-webkit-full-screen *:not(.style-orb) {
     color: #00ff41 !important;
+    background: transparent !important;
     font-family: 'Courier New', Courier, monospace !important;
     border-color: #003300 !important;
-  }
-  /* Preserve orb appearances against the * selector */
-  #reader-view.style-dark:fullscreen .style-orb,
-  #reader-view.style-dark:-webkit-full-screen .style-orb {
-    border-width: 2px !important;
   }
 
   /* 2. Parchment Style */
@@ -1626,57 +1614,32 @@ var particles;
     color: #5b4636 !important;
     font-family: Georgia, 'Times New Roman', serif !important;
   }
-  #reader-view.style-parchment:fullscreen .reader-header,
-  #reader-view.style-parchment:-webkit-full-screen .reader-header {
-    background-color: #f0e6d2 !important;
-    border-bottom: 1px solid #d3c4a1 !important;
-  }
-  #reader-view.style-parchment:fullscreen .reader-content,
-  #reader-view.style-parchment:-webkit-full-screen .reader-content {
-    background-color: #fdf5e6 !important;
-  }
-  #reader-view.style-parchment:fullscreen *,
-  #reader-view.style-parchment:-webkit-full-screen * {
+  #reader-view.style-parchment:fullscreen *:not(.style-orb),
+  #reader-view.style-parchment:-webkit-full-screen *:not(.style-orb) {
     color: #5b4636 !important;
+    background: transparent !important;
     font-family: Georgia, 'Times New Roman', serif !important;
     border-color: #cbb692 !important;
-  }
-  #reader-view.style-parchment:fullscreen .style-orb,
-  #reader-view.style-parchment:-webkit-full-screen .style-orb {
-    border-width: 2px !important;
   }
 
   /* 3. Swirl Style */
   #reader-view.style-swirl:fullscreen,
   #reader-view.style-swirl:-webkit-full-screen {
-    background-color: #2d1b4e !important; /* Deep purple for readability */
-    color: #b4e2b4 !important; /* Pastel green text */
-    font-family: 'Verdana', 'Segoe UI', sans-serif !important;
-  }
-  #reader-view.style-swirl:fullscreen .reader-header,
-  #reader-view.style-swirl:-webkit-full-screen .reader-header {
-    background-color: #1a0b2e !important;
-    border-bottom: 1px solid #b4e2b4 !important;
-  }
-  #reader-view.style-swirl:fullscreen .reader-content,
-  #reader-view.style-swirl:-webkit-full-screen .reader-content {
     background-color: #2d1b4e !important;
-  }
-  #reader-view.style-swirl:fullscreen *,
-  #reader-view.style-swirl:-webkit-full-screen * {
     color: #b4e2b4 !important;
     font-family: 'Verdana', 'Segoe UI', sans-serif !important;
-    border-color: #d8b4e2 !important;
   }
-  #reader-view.style-swirl:fullscreen .style-orb,
-  #reader-view.style-swirl:-webkit-full-screen .style-orb {
-    border-width: 2px !important;
+  #reader-view.style-swirl:fullscreen *:not(.style-orb),
+  #reader-view.style-swirl:-webkit-full-screen *:not(.style-orb) {
+    color: #b4e2b4 !important;
+    background: transparent !important;
+    font-family: 'Verdana', 'Segoe UI', sans-serif !important;
+    border-color: #d8b4e2 !important;
   }
 
   /* Ensure buttons look clean in all themes */
   #reader-view:fullscreen button:not(.style-orb),
   #reader-view:-webkit-full-screen button:not(.style-orb) {
-    background: transparent !important;
     cursor: pointer !important;
   }
   #reader-view:fullscreen button:not(.style-orb):hover,
