@@ -1794,39 +1794,138 @@ var particles;
     }
   }
   /* 3. Swirl Style */
-  #reader-view.style-swirl:fullscreen,
-  #reader-view.style-swirl:-webkit-full-screen {
-    background: #2d1b4e !important;
-    color: #b4e2b4 !important;
-    font-family: 'Verdana', 'Segoe UI', sans-serif !important;
-  }
-  #reader-view.style-swirl:fullscreen .reader-header,
-  #reader-view.style-swirl:-webkit-full-screen .reader-header,
-  #reader-view.style-swirl:fullscreen .reader-meta,
-  #reader-view.style-swirl:-webkit-full-screen .reader-meta,
-  #reader-view.style-swirl:fullscreen .reader-content,
-  #reader-view.style-swirl:-webkit-full-screen .reader-content {
-    background: #2d1b4e !important;
-    color: #b4e2b4 !important;
-    font-family: 'Verdana', 'Segoe UI', sans-serif !important;
-    border-color: #d8b4e2 !important;
-  }
-  #reader-view.style-swirl:fullscreen *:not(.style-orb),
-  #reader-view.style-swirl:-webkit-full-screen *:not(.style-orb) {
-    color: #b4e2b4 !important;
-    font-family: 'Verdana', 'Segoe UI', sans-serif !important;
-    border-color: #d8b4e2 !important;
-  }
+#reader-view.style-swirl:fullscreen,
+#reader-view.style-swirl:-webkit-full-screen {
+  /* Very light pastel gradient background */
+  background: linear-gradient(70deg, #E8DFF5 0%, #D4EAC8 30%, #FFF5BA 60%, #F0E6EF 100%);
+  background-size: 300% 100%;
+  background-position: 50% 0%;
+  color: #3A2A5A !important; /* Deep purple for readability against light pastel */
+  font-family: 'Segoe UI', 'Verdana', sans-serif !important;
+  position: relative;
+  overflow: hidden;
+  animation: swirl-bg 12s infinite;
+}
 
-  /* Ensure buttons look clean in all themes */
-  #reader-view:fullscreen button:not(.style-orb),
-  #reader-view:-webkit-full-screen button:not(.style-orb) {
-    cursor: pointer !important;
-  }
-  #reader-view:fullscreen button:not(.style-orb):hover,
-  #reader-view:-webkit-full-screen button:not(.style-orb):hover {
-    background: rgba(255, 255, 255, 0.1) !important;
-  }
+/* Top Blob (Pastel Purple) */
+#reader-view.style-swirl:fullscreen::before,
+#reader-view.style-swirl:-webkit-full-screen::before {
+  content: '';
+  position: absolute;
+  border-radius: 100%;
+  filter: blur(10vw);
+  background: #F3E8FF; /* Very light pastel purple */
+  bottom: calc(100% - 3vw);
+  height: 150vw;
+  left: 50%;
+  margin-left: -75vw;
+  width: 150vw;
+  will-change: bottom;
+  animation: swirl-blob-1 12s infinite;
+  z-index: 0;
+}
+
+/* Bottom Blob (Pastel Green/Yellow) */
+#reader-view.style-swirl:fullscreen::after,
+#reader-view.style-swirl:-webkit-full-screen::after {
+  content: '';
+  position: absolute;
+  border-radius: 100%;
+  filter: blur(10vw);
+  background: #F0FDF4; /* Very light pastel green */
+  height: 70vw;
+  right: 30vw;
+  top: calc(100% - 4vw);
+  width: 70vw;
+  will-change: right, top;
+  animation: swirl-blob-2 12s infinite;
+  z-index: 0;
+}
+
+/* Ensure content sits above the animated blobs */
+#reader-view.style-swirl:fullscreen .reader-header,
+#reader-view.style-swirl:-webkit-full-screen .reader-header,
+#reader-view.style-swirl:fullscreen .reader-meta,
+#reader-view.style-swirl:-webkit-full-screen .reader-meta,
+#reader-view.style-swirl:fullscreen .reader-content,
+#reader-view.style-swirl:-webkit-full-screen .reader-content {
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+  color: #3A2A5A !important;
+  font-family: 'Segoe UI', 'Verdana', sans-serif !important;
+  border-color: rgba(180, 140, 220, 0.4) !important;
+}
+
+#reader-view.style-swirl:fullscreen *:not(.style-orb),
+#reader-view.style-swirl:-webkit-full-screen *:not(.style-orb) {
+  color: #3A2A5A !important;
+  font-family: 'Segoe UI', 'Verdana', sans-serif !important;
+  border-color: rgba(180, 140, 220, 0.4) !important;
+}
+
+/* Title glow adjusted to match pastel purple/yellow theme */
+#reader-view.style-swirl:fullscreen .reader-title,
+#reader-view.style-swirl:-webkit-full-screen .reader-title {
+  color: #3A2A5A !important;
+  text-shadow:
+    0 0 10px rgba(216, 180, 226, 0.8),
+    0 0 20px rgba(255, 245, 186, 0.6),
+    0 0 30px rgba(212, 234, 200, 0.4) !important;
+}
+
+/* Pastel-themed scrollbar */
+#reader-view.style-swirl:fullscreen ::-webkit-scrollbar,
+#reader-view.style-swirl:-webkit-full-screen ::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+#reader-view.style-swirl:fullscreen ::-webkit-scrollbar-track,
+#reader-view.style-swirl:-webkit-full-screen ::-webkit-scrollbar-track {
+  background: linear-gradient(90deg, #E8DFF5 0%, #D4EAC8 50%, #FFF5BA 100%);
+  border-radius: 0;
+  border-left: 1px solid rgba(180, 140, 220, 0.3);
+  border-right: 1px solid rgba(180, 140, 220, 0.3);
+}
+
+#reader-view.style-swirl:fullscreen ::-webkit-scrollbar-thumb,
+#reader-view.style-swirl:-webkit-full-screen ::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #D8B4E2 0%, #B4E2B4 100%);
+  border-radius: 7px;
+  border: 1px solid #C1A3D4;
+  box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.4);
+}
+
+#reader-view.style-swirl:fullscreen ::-webkit-scrollbar-thumb:hover,
+#reader-view.style-swirl:-webkit-full-screen ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, #E0C4EA 0%, #C4ECC4 100%);
+}
+
+#reader-view.style-swirl:fullscreen ::-webkit-scrollbar-corner,
+#reader-view.style-swirl:-webkit-full-screen ::-webkit-scrollbar-corner {
+  background: #E8DFF5;
+}
+
+/* Keyframes matching the provided SCSS logic */
+@keyframes swirl-bg {
+  0%, 100% { background-position: 50% 0%; }
+  25% { background-position: 0% 0%; }
+  75% { background-position: 100% 0%; }
+}
+
+@keyframes swirl-blob-1 {
+  0%, 100% { bottom: calc(100% - 3vw); }
+  50% { bottom: 100%; }
+}
+
+@keyframes swirl-blob-2 {
+  0%, 100% { right: -30vw; top: calc(100% - 4vw); }
+  25% { right: -10vw; top: 100%; }
+  40% { top: 100%; }
+  50% { right: calc(100% - 30vw); top: calc(100% - 4vw); }
+  60%, 80% { top: 100%; }
+}
 </style>
 
 <!-- Load the writings data file -->
