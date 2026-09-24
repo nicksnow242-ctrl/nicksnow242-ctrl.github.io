@@ -1515,7 +1515,7 @@ var particles;
 </script>
 <!-- Load the writings data file -->
 <script src="js/writings.js"></script>
-<!-- ========================================== -->
+<!<!-- ========================================== -->
 <!-- MAIN BODY: READER STYLES & LOGIC           -->
 <!-- ========================================== -->
 
@@ -1585,24 +1585,42 @@ var particles;
     box-shadow: 0 0 10px 2px #b4e2b4;
   }
 
+  /* Ensure reader-view fills the entire screen */
+  #reader-view:fullscreen,
+  #reader-view:-webkit-full-screen {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: auto !important;
+  }
+
   /*
     THEME DEFINITIONS
-    The *:not(.style-orb) selector ensures "everything" inside the fullscreen reader
-    becomes transparent, allowing the main background to show through completely,
-    while preserving the visual colors of the orbs.
+    Explicitly target all major child elements to force background changes
   */
 
   /* 1. Dark Style (Default) */
   #reader-view.style-dark:fullscreen,
   #reader-view.style-dark:-webkit-full-screen {
-    background-color: #000000 !important;
+    background: #000000 !important;
     color: #00ff41 !important;
     font-family: 'Courier New', Courier, monospace !important;
+  }
+  #reader-view.style-dark:fullscreen .reader-header,
+  #reader-view.style-dark:-webkit-full-screen .reader-header,
+  #reader-view.style-dark:fullscreen .reader-meta,
+  #reader-view.style-dark:-webkit-full-screen .reader-meta,
+  #reader-view.style-dark:fullscreen .reader-content,
+  #reader-view.style-dark:-webkit-full-screen .reader-content {
+    background: #000000 !important;
+    color: #00ff41 !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    border-color: #003300 !important;
   }
   #reader-view.style-dark:fullscreen *:not(.style-orb),
   #reader-view.style-dark:-webkit-full-screen *:not(.style-orb) {
     color: #00ff41 !important;
-    background: transparent !important;
     font-family: 'Courier New', Courier, monospace !important;
     border-color: #003300 !important;
   }
@@ -1610,14 +1628,24 @@ var particles;
   /* 2. Parchment Style */
   #reader-view.style-parchment:fullscreen,
   #reader-view.style-parchment:-webkit-full-screen {
-    background-color: #fdf5e6 !important;
+    background: #fdf5e6 !important;
     color: #5b4636 !important;
     font-family: Georgia, 'Times New Roman', serif !important;
+  }
+  #reader-view.style-parchment:fullscreen .reader-header,
+  #reader-view.style-parchment:-webkit-full-screen .reader-header,
+  #reader-view.style-parchment:fullscreen .reader-meta,
+  #reader-view.style-parchment:-webkit-full-screen .reader-meta,
+  #reader-view.style-parchment:fullscreen .reader-content,
+  #reader-view.style-parchment:-webkit-full-screen .reader-content {
+    background: #fdf5e6 !important;
+    color: #5b4636 !important;
+    font-family: Georgia, 'Times New Roman', serif !important;
+    border-color: #cbb692 !important;
   }
   #reader-view.style-parchment:fullscreen *:not(.style-orb),
   #reader-view.style-parchment:-webkit-full-screen *:not(.style-orb) {
     color: #5b4636 !important;
-    background: transparent !important;
     font-family: Georgia, 'Times New Roman', serif !important;
     border-color: #cbb692 !important;
   }
@@ -1625,14 +1653,24 @@ var particles;
   /* 3. Swirl Style */
   #reader-view.style-swirl:fullscreen,
   #reader-view.style-swirl:-webkit-full-screen {
-    background-color: #2d1b4e !important;
+    background: #2d1b4e !important;
     color: #b4e2b4 !important;
     font-family: 'Verdana', 'Segoe UI', sans-serif !important;
+  }
+  #reader-view.style-swirl:fullscreen .reader-header,
+  #reader-view.style-swirl:-webkit-full-screen .reader-header,
+  #reader-view.style-swirl:fullscreen .reader-meta,
+  #reader-view.style-swirl:-webkit-full-screen .reader-meta,
+  #reader-view.style-swirl:fullscreen .reader-content,
+  #reader-view.style-swirl:-webkit-full-screen .reader-content {
+    background: #2d1b4e !important;
+    color: #b4e2b4 !important;
+    font-family: 'Verdana', 'Segoe UI', sans-serif !important;
+    border-color: #d8b4e2 !important;
   }
   #reader-view.style-swirl:fullscreen *:not(.style-orb),
   #reader-view.style-swirl:-webkit-full-screen *:not(.style-orb) {
     color: #b4e2b4 !important;
-    background: transparent !important;
     font-family: 'Verdana', 'Segoe UI', sans-serif !important;
     border-color: #d8b4e2 !important;
   }
