@@ -1519,116 +1519,169 @@ var particles;
 <!-- MAIN BODY: READER STYLES & LOGIC           -->
 <!-- ========================================== -->
 
-<!-- FULLSCREEN READER THEMES -->
+<!-- FULLSCREEN READER THEMES & ORBS -->
 <style>
   /* Group controls nicely in the header */
   .reader-header-controls {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
   }
 
-  /* Hide style selector by default (non-fullscreen) */
-  .style-selector {
+  /* Hide style orbs by default (non-fullscreen) */
+  .style-orbs {
     display: none;
+    align-items: center;
+    gap: 12px;
   }
 
-  /* Show style selector ONLY when the reader is in fullscreen */
-  #reader-view:fullscreen .style-selector,
-  #reader-view:-webkit-full-screen .style-selector {
-    display: inline-block;
-    padding: 6px 10px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
+  /* Show style orbs ONLY when the reader is in fullscreen */
+  #reader-view:fullscreen .style-orbs,
+  #reader-view:-webkit-full-screen .style-orbs {
+    display: flex;
+  }
+
+  /* Orb Base Styles */
+  .style-orb {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid transparent;
     cursor: pointer;
-    font-size: 14px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+  }
+
+  .style-orb:hover {
+    transform: scale(1.15);
+  }
+
+  .style-orb.active {
+    transform: scale(1.1);
+  }
+
+  /* Orb Specific Colors */
+  .orb-dark {
+    background-color: #000000;
+    border-color: #00ff41;
+  }
+  .orb-dark.active {
+    box-shadow: 0 0 10px 2px #00ff41;
+  }
+
+  .orb-parchment {
+    background-color: #fdf5e6;
+    border-color: #8b4513;
+  }
+  .orb-parchment.active {
+    box-shadow: 0 0 10px 2px #8b4513;
+  }
+
+  .orb-swirl {
+    background-color: #d8b4e2;
+    border-color: #b4e2b4;
+  }
+  .orb-swirl.active {
+    box-shadow: 0 0 10px 2px #b4e2b4;
   }
 
   /*
     THEME DEFINITIONS
-    Note: The :fullscreen pseudo-class ensures these styles
-    ONLY apply while in fullscreen mode.
+    The * selector ensures "everything" inside the fullscreen reader
+    inherits the new color scheme, font, and background.
   */
 
-  /* 1. Default Style (Inherits your existing site styles seamlessly) */
-  #reader-view.style-default:fullscreen .reader-content,
-  #reader-view.style-default:-webkit-full-screen .reader-content {
-    /* Inherits current site styles */
-  }
-
-  /* 2. Dark Style */
+  /* 1. Dark Style (Default) */
   #reader-view.style-dark:fullscreen,
   #reader-view.style-dark:-webkit-full-screen {
-    background-color: #121212 !important;
-    color: #e0e0e0 !important;
-  }
-  #reader-view.style-dark:fullscreen .reader-header,
-  #reader-view.style-dark:-webkit-full-screen .reader-header {
-    background-color: #1e1e1e !important;
-    color: #e0e0e0 !important;
-    border-bottom: 1px solid #333333 !important;
-  }
-  #reader-view.style-dark:fullscreen .reader-content,
-  #reader-view.style-dark:-webkit-full-screen .reader-content {
-    background-color: #121212 !important;
-    color: #e0e0e0 !important;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-  }
-  #reader-view.style-dark:fullscreen .style-selector,
-  #reader-view.style-dark:-webkit-full-screen .style-selector {
-    background-color: #2c2c2c !important;
-    color: #e0e0e0 !important;
-    border-color: #444444 !important;
-  }
-
-  /* 3. Sepia Style (Easy on the eyes, classic book feel) */
-  #reader-view.style-sepia:fullscreen,
-  #reader-view.style-sepia:-webkit-full-screen {
-    background-color: #f4ecd8 !important;
-    color: #5b4636 !important;
-  }
-  #reader-view.style-sepia:fullscreen .reader-header,
-  #reader-view.style-sepia:-webkit-full-screen .reader-header {
-    background-color: #e9dfc5 !important;
-    color: #5b4636 !important;
-    border-bottom: 1px solid #d3c4a1 !important;
-  }
-  #reader-view.style-sepia:fullscreen .reader-content,
-  #reader-view.style-sepia:-webkit-full-screen .reader-content {
-    background-color: #f4ecd8 !important;
-    color: #5b4636 !important;
-    font-family: Georgia, 'Times New Roman', serif !important;
-  }
-  #reader-view.style-sepia:fullscreen .style-selector,
-  #reader-view.style-sepia:-webkit-full-screen .style-selector {
-    background-color: #e9dfc5 !important;
-    color: #5b4636 !important;
-    border-color: #cbb692 !important;
-  }
-
-  /* 4. Matrix Style (High contrast, monospace) */
-  #reader-view.style-matrix:fullscreen,
-  #reader-view.style-matrix:-webkit-full-screen {
-    background-color: #000000 !important;
-    color: #00ff41 !important;
-  }
-  #reader-view.style-matrix:fullscreen .reader-header,
-  #reader-view.style-matrix:-webkit-full-screen .reader-header {
-    background-color: #001a00 !important;
-    color: #00ff41 !important;
-    border-bottom: 1px solid #00ff41 !important;
-  }
-  #reader-view.style-matrix:fullscreen .reader-content,
-  #reader-view.style-matrix:-webkit-full-screen .reader-content {
     background-color: #000000 !important;
     color: #00ff41 !important;
     font-family: 'Courier New', Courier, monospace !important;
   }
-  #reader-view.style-matrix:fullscreen .style-selector,
-  #reader-view.style-matrix:-webkit-full-screen .style-selector {
-    background-color: #001a00 !important;
+  #reader-view.style-dark:fullscreen .reader-header,
+  #reader-view.style-dark:-webkit-full-screen .reader-header {
+    background-color: #0a0a0a !important;
+    border-bottom: 1px solid #00ff41 !important;
+  }
+  #reader-view.style-dark:fullscreen .reader-content,
+  #reader-view.style-dark:-webkit-full-screen .reader-content {
+    background-color: #000000 !important;
+  }
+  #reader-view.style-dark:fullscreen *,
+  #reader-view.style-dark:-webkit-full-screen * {
     color: #00ff41 !important;
-    border-color: #00ff41 !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    border-color: #003300 !important;
+  }
+  /* Preserve orb appearances against the * selector */
+  #reader-view.style-dark:fullscreen .style-orb,
+  #reader-view.style-dark:-webkit-full-screen .style-orb {
+    border-width: 2px !important;
+  }
+
+  /* 2. Parchment Style */
+  #reader-view.style-parchment:fullscreen,
+  #reader-view.style-parchment:-webkit-full-screen {
+    background-color: #fdf5e6 !important;
+    color: #5b4636 !important;
+    font-family: Georgia, 'Times New Roman', serif !important;
+  }
+  #reader-view.style-parchment:fullscreen .reader-header,
+  #reader-view.style-parchment:-webkit-full-screen .reader-header {
+    background-color: #f0e6d2 !important;
+    border-bottom: 1px solid #d3c4a1 !important;
+  }
+  #reader-view.style-parchment:fullscreen .reader-content,
+  #reader-view.style-parchment:-webkit-full-screen .reader-content {
+    background-color: #fdf5e6 !important;
+  }
+  #reader-view.style-parchment:fullscreen *,
+  #reader-view.style-parchment:-webkit-full-screen * {
+    color: #5b4636 !important;
+    font-family: Georgia, 'Times New Roman', serif !important;
+    border-color: #cbb692 !important;
+  }
+  #reader-view.style-parchment:fullscreen .style-orb,
+  #reader-view.style-parchment:-webkit-full-screen .style-orb {
+    border-width: 2px !important;
+  }
+
+  /* 3. Swirl Style */
+  #reader-view.style-swirl:fullscreen,
+  #reader-view.style-swirl:-webkit-full-screen {
+    background-color: #2d1b4e !important; /* Deep purple for readability */
+    color: #b4e2b4 !important; /* Pastel green text */
+    font-family: 'Verdana', 'Segoe UI', sans-serif !important;
+  }
+  #reader-view.style-swirl:fullscreen .reader-header,
+  #reader-view.style-swirl:-webkit-full-screen .reader-header {
+    background-color: #1a0b2e !important;
+    border-bottom: 1px solid #b4e2b4 !important;
+  }
+  #reader-view.style-swirl:fullscreen .reader-content,
+  #reader-view.style-swirl:-webkit-full-screen .reader-content {
+    background-color: #2d1b4e !important;
+  }
+  #reader-view.style-swirl:fullscreen *,
+  #reader-view.style-swirl:-webkit-full-screen * {
+    color: #b4e2b4 !important;
+    font-family: 'Verdana', 'Segoe UI', sans-serif !important;
+    border-color: #d8b4e2 !important;
+  }
+  #reader-view.style-swirl:fullscreen .style-orb,
+  #reader-view.style-swirl:-webkit-full-screen .style-orb {
+    border-width: 2px !important;
+  }
+
+  /* Ensure buttons look clean in all themes */
+  #reader-view:fullscreen button:not(.style-orb),
+  #reader-view:-webkit-full-screen button:not(.style-orb) {
+    background: transparent !important;
+    cursor: pointer !important;
+  }
+  #reader-view:fullscreen button:not(.style-orb):hover,
+  #reader-view:-webkit-full-screen button:not(.style-orb):hover {
+    background: rgba(255, 255, 255, 0.1) !important;
   }
 </style>
 
@@ -1882,19 +1935,18 @@ var particles;
       if (!document.getElementById('reader-view')) {
         const reader = document.createElement('div');
         reader.id = 'reader-view';
-        reader.className = 'reader-view style-default'; // Start with default style
+        reader.className = 'reader-view style-dark'; // Start with Dark as default
 
         reader.innerHTML = `
           <div class="reader-header">
             <button class="back-btn" id="back-to-list">← Back</button>
             <h2 class="reader-title" id="reader-title"></h2>
             <div class="reader-header-controls">
-              <select id="style-selector" class="style-selector" title="Change Reading Style">
-                <option value="default">Default</option>
-                <option value="dark">Dark</option>
-                <option value="sepia">Sepia</option>
-                <option value="matrix">Matrix</option>
-              </select>
+              <div class="style-orbs">
+                <button class="style-orb orb-dark active" data-style="dark" title="Dark"></button>
+                <button class="style-orb orb-parchment" data-style="parchment" title="Parchment"></button>
+                <button class="style-orb orb-swirl" data-style="swirl" title="Swirl"></button>
+              </div>
               <button class="fullscreen-btn" id="fullscreen-toggle" title="Toggle Fullscreen">⛶ Fullscreen</button>
             </div>
           </div>
@@ -1906,12 +1958,19 @@ var particles;
         `;
         documentArea.appendChild(reader);
 
-        // Style selector logic
-        const styleSelector = document.getElementById('style-selector');
-        styleSelector.addEventListener('change', (e) => {
-          // Remove any existing style classes and add the newly selected one
-          reader.classList.remove('style-default', 'style-dark', 'style-sepia', 'style-matrix');
-          reader.classList.add('style-' + e.target.value);
+        // Orb style selector logic
+        const orbs = reader.querySelectorAll('.style-orb');
+        orbs.forEach(orb => {
+          orb.addEventListener('click', () => {
+            // Update active state visually
+            orbs.forEach(o => o.classList.remove('active'));
+            orb.classList.add('active');
+
+            // Update reader theme class
+            const selectedStyle = orb.getAttribute('data-style');
+            reader.classList.remove('style-dark', 'style-parchment', 'style-swirl');
+            reader.classList.add('style-' + selectedStyle);
+          });
         });
 
         document.getElementById('back-to-list').addEventListener('click', () => {
