@@ -2032,157 +2032,159 @@ var particles;
     }
 
     // 1. Create the filter sidebar on the left
-    function createFilterSidebar() {
-      if (typeof WRITINGS_DATA === 'undefined' || WRITINGS_DATA.length === 0) return;
+  function createFilterSidebar() {
+    if (typeof WRITINGS_DATA === 'undefined' || WRITINGS_DATA.length === 0) return;
 
-      const genres = [...new Set(WRITINGS_DATA.map(w => w.genre || 'Uncategorized'))].sort();
+    const genres = [...new Set(WRITINGS_DATA.map(w => w.genre || 'Uncategorized'))].sort();
 
-      filterSidebar = document.createElement('aside');
-      filterSidebar.className = 'filter-sidebar';
-      filterSidebar.id = 'filter-sidebar';
+    filterSidebar = document.createElement('aside');
+    filterSidebar.className = 'filter-sidebar';
+    filterSidebar.id = 'filter-sidebar';
 
-      const header = document.createElement('div');
-      header.className = 'filter-sidebar-header';
-      header.textContent = 'Genre Filter';
-      filterSidebar.appendChild(header);
+    const header = document.createElement('div');
+    header.className = 'filter-sidebar-header';
+    header.textContent = 'Genre Filter';
+    filterSidebar.appendChild(header);
 
-      const itemsContainer = document.createElement('div');
-      itemsContainer.className = 'filter-sidebar-items';
+    const itemsContainer = document.createElement('div');
+    itemsContainer.className = 'filter-sidebar-items';
 
-      genres.forEach((genre, index) => {
-        const group = document.createElement('div');
-        group.className = 'radio-btn-group';
+    genres.forEach((genre, index) => {
+      const group = document.createElement('div');
+      group.className = 'radio-btn-group';
 
-        const input = document.createElement('input');
-        input.type = 'radio';
-        input.name = 'genre-filter';
-        input.value = genre;
-        input.id = `genre-option-${index}`;
+      const input = document.createElement('input');
+      input.type = 'checkbox'; // CHANGED to checkbox to allow untoggling
+      input.name = 'genre-filter';
+      input.value = genre;
+      input.id = `genre-option-${index}`;
 
-        const label = document.createElement('label');
-        label.htmlFor = `genre-option-${index}`;
-        label.innerHTML = createRadioSVG(genre, index);
+      const label = document.createElement('label');
+      label.htmlFor = `genre-option-${index}`;
+      label.innerHTML = createRadioSVG(genre, index);
 
-        group.appendChild(input);
-        group.appendChild(label);
-        itemsContainer.appendChild(group);
+      group.appendChild(input);
+      group.appendChild(label);
+      itemsContainer.appendChild(group);
 
-        input.addEventListener('change', () => {
-          activeGenres.clear();
+      input.addEventListener('change', () => {
+        if (input.checked) {
           activeGenres.add(genre);
-          renderButtons();
-        });
+        } else {
+          activeGenres.delete(genre);
+        }
+        renderButtons();
+      });
+    });
+
+    filterSidebar.appendChild(itemsContainer);
+    mainLayout.insertBefore(filterSidebar, documentArea);
+    documentArea.style.marginLeft = '200px';
+
+    // Initialize GSAP animations for the new buttons
+    initRadioAnimations();
+  }
+
+  // 2. Initialize Button Animations
+  function initRadioAnimations() {
+    const btnGroups = document.querySelectorAll(".radio-btn-group");
+
+    btnGroups.forEach((group) => {
+      const scanlinePattern = group.querySelector(".scanline-pattern");
+      const scanline = group.querySelector(".scanline");
+      const displacement = group.querySelector(".displace");
+      const bluePolygon = group.querySelector(".blue");
+      const pinkPolygon = group.querySelector(".pink");
+      const checkbox = group.querySelector("input[type='checkbox']");
+      const label = group.querySelector("label");
+
+      if (!scanlinePattern || !gsap) return;
+
+      const tlScanlineMotion = gsap.timeline({ paused: true });
+      const tlScanlineFlicker = gsap.timeline({ paused: true });
+      const tlScanlineDisplacement = gsap.timeline({ paused: true, repeat: -1, repeatDelay: 1 });
+      const tlBlueOpacity = gsap.timeline({ paused: true });
+      const tlPinkOpacity = gsap.timeline({ paused: true });
+
+      tlScanlineMotion.to(scanlinePattern, {
+        attr: { y: 10 },
+        duration: 0.35,
+        ease: "none",
+        repeat: -1
       });
 
-      filterSidebar.appendChild(itemsContainer);
-      mainLayout.insertBefore(filterSidebar, documentArea);
-      documentArea.style.marginLeft = '200px';
+      tlScanlineFlicker.to(scanline, {
+        fill: "#003300",
+        duration: 1,
+        ease: gsap.parseEase("rough") || "steps(4)",
+        repeat: -1,
+        yoyo: true
+      });
 
-      // Initialize GSAP animations for the new radio buttons
-      initRadioAnimations();
-    }
-
-    // 2. Initialize Radio Button Animations
-    function initRadioAnimations() {
-      const radioBtnGroups = document.querySelectorAll(".radio-btn-group");
-
-      radioBtnGroups.forEach((group) => {
-        const scanlinePattern = group.querySelector(".scanline-pattern");
-        const scanline = group.querySelector(".scanline");
-        const displacement = group.querySelector(".displace");
-        const bluePolygon = group.querySelector(".blue");
-        const pinkPolygon = group.querySelector(".pink");
-        const radioBtn = group.querySelector("input[type='radio']");
-        const label = group.querySelector("label");
-
-        if (!scanlinePattern || !gsap) return;
-
-        const tlScanlineMotion = gsap.timeline({ paused: true });
-        const tlScanlineFlicker = gsap.timeline({ paused: true });
-        const tlScanlineDisplacement = gsap.timeline({ paused: true, repeat: -1, repeatDelay: 1 });
-        const tlBlueOpacity = gsap.timeline({ paused: true });
-        const tlPinkOpacity = gsap.timeline({ paused: true });
-
-        tlScanlineMotion.to(scanlinePattern, {
-          attr: { y: 10 },
-          duration: 0.35,
-          ease: "none",
-          repeat: -1
-        });
-
-        tlScanlineFlicker.to(scanline, {
-          fill: "#003300",
+      tlScanlineDisplacement
+        .to(displacement, {
+          attr: { scale: () => gsap.utils.random(0.02, 0.15) },
           duration: 1,
           ease: gsap.parseEase("rough") || "steps(4)",
-          repeat: -1,
-          yoyo: true
+          repeatRefresh: true
+        })
+        .to(displacement, {
+          attr: { scale: 0 },
+          duration: 1,
+          ease: gsap.parseEase("rough") || "steps(4)"
         });
 
-        tlScanlineDisplacement
-          .to(displacement, {
-            attr: { scale: () => gsap.utils.random(0.02, 0.15) },
-            duration: 1,
-            ease: gsap.parseEase("rough") || "steps(4)",
-            repeatRefresh: true
-          })
-          .to(displacement, {
-            attr: { scale: 0 },
-            duration: 1,
-            ease: gsap.parseEase("rough") || "steps(4)"
-          });
+      tlBlueOpacity.to(bluePolygon, {
+        x: 25,
+        rotation: -1080,
+        transformOrigin: "center center",
+        opacity: 1,
+        ease: "power2.out",
+        duration: 0.5
+      });
 
-        tlBlueOpacity.to(bluePolygon, {
-          x: 25,
-          rotation: -1080,
-          transformOrigin: "center center",
-          opacity: 1,
-          ease: "power2.out",
-          duration: 1
-        });
+      tlPinkOpacity.to(pinkPolygon, {
+        x: 25,
+        rotation: 1080,
+        transformOrigin: "center center",
+        opacity: 1,
+        ease: "power2.out",
+        duration: 0.5
+      });
 
-        tlPinkOpacity.to(pinkPolygon, {
-          x: 25,
-          rotation: 1080,
-          transformOrigin: "center center",
-          opacity: 1,
-          ease: "power2.out",
-          duration: 1
-        });
-
-        label.addEventListener("mouseenter", () => {
+      label.addEventListener("mouseenter", () => {
+        if (!checkbox.checked) {
           tlScanlineMotion.play();
           tlScanlineFlicker.play();
-        });
+        }
+      });
 
-        label.addEventListener("mouseleave", () => {
+      label.addEventListener("mouseleave", () => {
+        if (!checkbox.checked) {
           tlScanlineMotion.pause(0);
           tlScanlineFlicker.pause(0);
-        });
+        }
+      });
 
-        radioBtn.addEventListener("change", () => {
-          // Reset other groups
-          radioBtnGroups.forEach(otherGroup => {
-            if (otherGroup !== group) {
-              const otherBlue = otherGroup.querySelector(".blue");
-              const otherPink = otherGroup.querySelector(".pink");
-              const otherDisplacement = otherGroup.querySelector(".displace");
-              const otherFlicker = otherGroup.querySelector(".scanline");
-
-              gsap.to(otherBlue, { x: 0, rotation: 0, opacity: 0, duration: 0.5 });
-              gsap.to(otherPink, { x: 0, rotation: 0, opacity: 0, duration: 0.5 });
-              gsap.to(otherDisplacement, { attr: { scale: 0 }, duration: 0.2 });
-              gsap.to(otherFlicker, { fill: "#001a00", duration: 0.2 });
-            }
-          });
-
+      checkbox.addEventListener("change", () => {
+        if (checkbox.checked) {
           // Play current group animations
           tlPinkOpacity.play();
           tlBlueOpacity.play();
           tlScanlineFlicker.play();
           tlScanlineDisplacement.play();
-        });
+        } else {
+          // FIXED: Reset current group animations when untoggled
+          gsap.to(bluePolygon, { x: 0, rotation: 0, opacity: 0, duration: 0.3 });
+          gsap.to(pinkPolygon, { x: 0, rotation: 0, opacity: 0, duration: 0.3 });
+          gsap.to(displacement, { attr: { scale: 0 }, duration: 0.2 });
+          gsap.to(scanline, { fill: "#001a00", duration: 0.2 });
+          tlScanlineMotion.pause(0);
+          tlScanlineFlicker.pause(0);
+        }
       });
-    }
+    });
+  }
 
     // 3. Render the list of buttons (filtered)
     function renderButtons() {
