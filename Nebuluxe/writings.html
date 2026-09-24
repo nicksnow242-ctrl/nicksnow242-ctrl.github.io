@@ -1626,30 +1626,105 @@ var particles;
   }
 
   /* 2. Parchment Style */
-  #reader-view.style-parchment:fullscreen,
-  #reader-view.style-parchment:-webkit-full-screen {
-    background: #fdf5e6 !important;
-    color: #5b4636 !important;
-    font-family: Georgia, 'Times New Roman', serif !important;
-  }
-  #reader-view.style-parchment:fullscreen .reader-header,
-  #reader-view.style-parchment:-webkit-full-screen .reader-header,
-  #reader-view.style-parchment:fullscreen .reader-meta,
-  #reader-view.style-parchment:-webkit-full-screen .reader-meta,
-  #reader-view.style-parchment:fullscreen .reader-content,
-  #reader-view.style-parchment:-webkit-full-screen .reader-content {
-    background: #fdf5e6 !important;
-    color: #5b4636 !important;
-    font-family: Georgia, 'Times New Roman', serif !important;
-    border-color: #cbb692 !important;
-  }
-  #reader-view.style-parchment:fullscreen *:not(.style-orb),
-  #reader-view.style-parchment:-webkit-full-screen *:not(.style-orb) {
-    color: #5b4636 !important;
-    font-family: Georgia, 'Times New Roman', serif !important;
-    border-color: #cbb692 !important;
-  }
+  /* 2. Parchment Style */
+#reader-view.style-parchment:fullscreen,
+#reader-view.style-parchment:-webkit-full-screen {
+  background:
+    /* Aged stains and spots */
+    radial-gradient(ellipse at 20% 30%, rgba(139, 69, 19, 0.15) 0%, transparent 40%),
+    radial-gradient(ellipse at 80% 70%, rgba(139, 69, 19, 0.12) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 50%, rgba(160, 82, 45, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 10% 80%, rgba(139, 69, 19, 0.1) 0%, transparent 35%),
+    radial-gradient(ellipse at 90% 20%, rgba(160, 82, 45, 0.1) 0%, transparent 40%),
+    /* Base parchment color with variation */
+    linear-gradient(135deg, #fdf5e6 0%, #f5e6d3 25%, #fdf5e6 50%, #f0e0c8 75%, #fdf5e6 100%);
+  color: #5b4636 !important;
+  font-family: Georgia, 'Times New Roman', serif !important;
+  position: relative;
+  animation: candlelight-flicker 3s ease-in-out infinite;
+}
 
+/* Texture overlay using SVG filter */
+#reader-view.style-parchment:fullscreen::before,
+#reader-view.style-parchment:-webkit-full-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.15'/%3E%3C/svg%3E");
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  opacity: 0.4;
+}
+
+/* Vignette effect for aged edges */
+#reader-view.style-parchment:fullscreen::after,
+#reader-view.style-parchment:-webkit-full-screen::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(ellipse at center, transparent 0%, transparent 60%, rgba(139, 69, 19, 0.2) 100%);
+  pointer-events: none;
+}
+
+#reader-view.style-parchment:fullscreen .reader-header,
+#reader-view.style-parchment:-webkit-full-screen .reader-header,
+#reader-view.style-parchment:fullscreen .reader-meta,
+#reader-view.style-parchment:-webkit-full-screen .reader-meta,
+#reader-view.style-parchment:fullscreen .reader-content,
+#reader-view.style-parchment:-webkit-full-screen .reader-content {
+  background: transparent !important;
+  color: #5b4636 !important;
+  font-family: Georgia, 'Times New Roman', serif !important;
+  border-color: rgba(139, 69, 19, 0.3) !important;
+}
+
+#reader-view.style-parchment:fullscreen *:not(.style-orb),
+#reader-view.style-parchment:-webkit-full-screen *:not(.style-orb) {
+  color: #5b4636 !important;
+  font-family: Georgia, 'Times New Roman', serif !important;
+  border-color: rgba(139, 69, 19, 0.3) !important;
+}
+
+/* Candlelight flickering animation */
+@keyframes candlelight-flicker {
+  0%, 100% {
+    filter: brightness(1) contrast(1);
+  }
+  10% {
+    filter: brightness(0.98) contrast(1.02);
+  }
+  20% {
+    filter: brightness(1.02) contrast(0.99);
+  }
+  30% {
+    filter: brightness(0.97) contrast(1.01);
+  }
+  40% {
+    filter: brightness(1.01) contrast(1);
+  }
+  50% {
+    filter: brightness(0.99) contrast(1.01);
+  }
+  60% {
+    filter: brightness(1.03) contrast(0.98);
+  }
+  70% {
+    filter: brightness(0.98) contrast(1.02);
+  }
+  80% {
+    filter: brightness(1.01) contrast(1);
+  }
+  90% {
+    filter: brightness(0.99) contrast(1.01);
+  }
+}
   /* 3. Swirl Style */
   #reader-view.style-swirl:fullscreen,
   #reader-view.style-swirl:-webkit-full-screen {
