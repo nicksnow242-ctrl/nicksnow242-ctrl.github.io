@@ -940,13 +940,15 @@ html, body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.reader-view:fullscreen,
-.reader-view:-webkit-full-screen {
-  background: linear-gradient(0deg, #000a00 0%, var(--deep-green) 100%);
-  padding: 50px 80px;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+/* Ensure reader-view fills the entire screen */
+#reader-view:fullscreen,
+#reader-view:-webkit-full-screen {
+  margin: 0 !important;
+  padding: 15px 0 0 0 !important; /* Changed from padding: 0 to add 15px top padding */
+  width: 100% !important;
+  height: 100% !important;
+  overflow: auto !important;
+  box-sizing: border-box !important; /* Ensures padding doesn't break the 100% width/height */
 }
 
 .reader-view:fullscreen .back-btn,
@@ -1522,26 +1524,37 @@ var particles;
 <!-- FULLSCREEN READER THEMES & ORBS -->
 <style>
   /* Group controls nicely in the header */
+  /* Group controls nicely in the header */
   .reader-header-controls {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
   }
 
-  /* Hide style orbs by default (non-fullscreen) */
-  .style-orbs {
+  /* Stack color and size orbs vertically */
+  .settings-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Hide BOTH orb groups by default (non-fullscreen) */
+  .style-orbs, .size-orbs {
     display: none;
     align-items: center;
+    justify-content: center;
     gap: 12px;
   }
 
-  /* Show style orbs ONLY when the reader is in fullscreen */
+  /* Show BOTH orb groups ONLY when the reader is in fullscreen */
   #reader-view:fullscreen .style-orbs,
-  #reader-view:-webkit-full-screen .style-orbs {
+  #reader-view:-webkit-full-screen .style-orbs,
+  #reader-view:fullscreen .size-orbs,
+  #reader-view:-webkit-full-screen .size-orbs {
     display: flex;
   }
 
-  /* Orb Base Styles */
+  /* Orb Base Styles (Color Orbs) */
   .style-orb {
     width: 26px;
     height: 26px;
@@ -1551,13 +1564,41 @@ var particles;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     position: relative;
   }
+  .style-orb:hover { transform: scale(1.15); }
+  .style-orb.active { transform: scale(1.1); }
 
-  .style-orb:hover {
-    transform: scale(1.15);
+  /* Size Orb Base Styles */
+  .size-orb {
+    border-radius: 50%;
+    background: transparent;
+    border: 2px solid currentColor; /* Automatically matches theme text color */
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    padding: 0;
+  }
+  .size-orb:hover { transform: scale(1.15); }
+  .size-orb.active {
+    background: currentColor;
+    box-shadow: 0 0 8px 2px currentColor;
   }
 
-  .style-orb.active {
-    transform: scale(1.1);
+  /* Varying sizes to represent text scale */
+  .size-small { width: 12px; height: 12px; }
+  .size-medium { width: 18px; height: 18px; }
+  .size-large { width: 24px; height: 24px; }
+
+  /* Font Size Overrides for Main Text */
+  #reader-view.font-small .reader-content {
+    font-size: 16px !important;
+    line-height: 1.5 !important;
+  }
+  #reader-view.font-medium .reader-content {
+    font-size: 20px !important;
+    line-height: 1.6 !important;
+  }
+  #reader-view.font-large .reader-content {
+    font-size: 26px !important;
+    line-height: 1.7 !important;
   }
 
   /* Orb Specific Colors */
@@ -2181,24 +2222,31 @@ var particles;
         reader.className = 'reader-view style-dark'; // Start with Dark as default
 
         reader.innerHTML = `
-          <div class="reader-header">
-            <button class="back-btn" id="back-to-list">← Back</button>
-            <h2 class="reader-title" id="reader-title"></h2>
-            <div class="reader-header-controls">
-              <div class="style-orbs">
-                <button class="style-orb orb-dark active" data-style="dark" title="Dark"></button>
-                <button class="style-orb orb-parchment" data-style="parchment" title="Parchment"></button>
-                <button class="style-orb orb-swirl" data-style="swirl" title="Swirl"></button>
-              </div>
-              <button class="fullscreen-btn" id="fullscreen-toggle" title="Toggle Fullscreen">⛶ Fullscreen</button>
-            </div>
-          </div>
-          <div class="reader-meta">
-            <span>✍️ <strong id="reader-author"></strong></span>
-            <span>📖 <strong id="reader-subtitle"></strong></span>
-          </div>
-          <div class="reader-content" id="reader-content"></div>
-        `;
+  <div class="reader-header">
+    <button class="back-btn" id="back-to-list">← Back</button>
+    <h2 class="reader-title" id="reader-title"></h2>
+    <div class="reader-header-controls">
+      <div class="settings-group">
+        <div class="style-orbs">
+          <button class="style-orb orb-dark active" data-style="dark" title="Dark"></button>
+          <button class="style-orb orb-parchment" data-style="parchment" title="Parchment"></button>
+          <button class="style-orb orb-swirl" data-style="swirl" title="Swirl"></button>
+        </div>
+        <div class="size-orbs">
+          <button class="size-orb size-small" data-size="small" title="Small Text"></button>
+          <button class="size-orb size-medium active" data-size="medium" title="Medium Text"></button>
+          <button class="size-orb size-large" data-size="large" title="Large Text"></button>
+        </div>
+      </div>
+      <button class="fullscreen-btn" id="fullscreen-toggle" title="Toggle Fullscreen">⛶ Fullscreen</button>
+    </div>
+  </div>
+  <div class="reader-meta">
+    <span>✍️ <strong id="reader-author"></strong></span>
+    <span>📖 <strong id="reader-subtitle"></strong></span>
+  </div>
+  <div class="reader-content" id="reader-content"></div>
+`;
         documentArea.appendChild(reader);
 
         // Orb style selector logic
@@ -2208,6 +2256,21 @@ var particles;
             // Update active state visually
             orbs.forEach(o => o.classList.remove('active'));
             orb.classList.add('active');
+            
+            // Size orb selector logic
+            const sizeOrbs = reader.querySelectorAll('.size-orb');
+            sizeOrbs.forEach(orb => {
+              orb.addEventListener('click', () => {
+                // Update active state visually
+                sizeOrbs.forEach(o => o.classList.remove('active'));
+                orb.classList.add('active');
+
+                // Update reader font class
+                const selectedSize = orb.getAttribute('data-size');
+                reader.classList.remove('font-small', 'font-medium', 'font-large');
+                reader.classList.add('font-' + selectedSize);
+              });
+            });
 
             // Update reader theme class
             const selectedStyle = orb.getAttribute('data-style');
