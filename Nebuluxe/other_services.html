@@ -1249,7 +1249,7 @@ var particles;
   .gallery-modal {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(74, 64, 54, 0.5); /* Warm dark brown overlay */
+    background: rgba(74, 64, 54, 0.5);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     z-index: 2000;
@@ -1416,7 +1416,7 @@ var particles;
     flex-direction: column;
     padding: 24px;
     gap: 12px;
-    overflow: hidden;
+    overflow: hidden; /* Contains the scrolling description */
     min-width: 0;
   }
 
@@ -1445,7 +1445,7 @@ var particles;
   }
 
   .gallery-card-title {
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 600;
     color: #4A4036;
     margin: 0;
@@ -1465,7 +1465,7 @@ var particles;
   }
 
   .gallery-card-price {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: bold;
     color: #C07A5F;
     margin-top: 4px;
@@ -1474,14 +1474,15 @@ var particles;
 
   .gallery-card-desc {
     font-size: 14px;
-    line-height: 1.6;
+    line-height: 1.5;
     color: #4A4036;
     overflow-y: auto;
-    flex: 1;
+    flex: 1; /* Allows this section to scroll while keeping footer visible */
     padding-right: 10px;
     border-top: 1px solid rgba(192, 122, 95, 0.2);
     padding-top: 12px;
     margin-top: 4px;
+    min-height: 60px;
   }
 
   .gallery-card-desc::-webkit-scrollbar { width: 6px; }
@@ -1489,26 +1490,27 @@ var particles;
   .gallery-card-desc::-webkit-scrollbar-thumb { background: rgba(192, 122, 95, 0.4); border-radius: 3px; }
 
   .gallery-card-footer {
-    padding-top: 16px;
-    margin-top: auto;
+    padding-top: 12px;
+    margin-top: auto; /* Pushes button to the bottom */
   }
 
   .inquire-btn {
     display: block;
     width: 100%;
-    padding: 14px;
+    padding: 10px 20px; /* Reduced padding for a more compact fit */
     background: #C07A5F;
     color: #FDFBF7;
     text-align: center;
     text-decoration: none;
     border-radius: 8px;
     font-weight: 600;
-    font-size: 16px;
-    letter-spacing: 0.5px;
+    font-size: 14px; /* Reduced font size */
+    letter-spacing: 0.3px;
     transition: background 0.2s, transform 0.1s;
     border: none;
     cursor: pointer;
     font-family: inherit;
+    box-sizing: border-box; /* Ensures padding doesn't cause overflow */
   }
 
   .inquire-btn:hover {
@@ -1527,7 +1529,7 @@ var particles;
     .gallery-card-image-container { flex: none; max-height: 40vh; padding: 12px; border-right: none; border-bottom: 1px solid rgba(192, 122, 95, 0.2); }
     .gallery-card-image { max-height: 35vh; }
     .gallery-card-content { flex: 1; padding: 16px; }
-    .gallery-card-title { font-size: 22px; }
+    .gallery-card-title { font-size: 20px; }
     .carousel-arrow { opacity: 1; pointer-events: auto; width: 36px; height: 36px; font-size: 14px; }
     .carousel-dots { opacity: 1; pointer-events: auto; }
     .carousel-prev { left: 10px; }
@@ -1611,7 +1613,6 @@ var particles;
       if (index < candidates.length) {
         img.src = candidates[index++];
       } else if (fallbackCandidates && fallbackCandidates.length > 0) {
-        // If primary candidates fail, try fallback candidates
         let fbIndex = 0;
         function tryFallback() {
           if (fbIndex < fallbackCandidates.length) {
@@ -1667,7 +1668,6 @@ var particles;
       const img = card.querySelector('.boho-service-image');
       attachSmartLoader(img, candidates, []);
 
-      // Attach modal open event
       const btn = card.querySelector('.boho-service-btn');
       btn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -1697,6 +1697,27 @@ var particles;
   let currentImages = [];
   let currentImageIndex = 0;
 
+  // Dynamically build array from fullsizesrc1, fullsizesrc2, fullsizesrc3, etc.
+  function buildImageArray(item) {
+    const images = [];
+    // Check for fullsizesrc1, fallback to fullsizesrc, or src
+    const primary = item.fullsizesrc1 || item.fullsizesrc || item.fullSizeSrc || item.src;
+    if (primary) images.push(primary);
+
+    let i = 2;
+    while (true) {
+      // Supports both correct spelling and the potential typo "fullsizescr"
+      const nextImage = item[`fullsizesrc${i}`] || item[`fullsizescr${i}`];
+      if (nextImage) {
+        images.push(nextImage);
+        i++;
+      } else {
+        break;
+      }
+    }
+    return images;
+  }
+
   function openModal(item) {
     if (!item) return;
 
@@ -1709,7 +1730,6 @@ var particles;
     const primaryBase = currentImages[0] || item.src;
     const primaryCandidates = buildImageCandidates(primaryBase);
 
-    // Set initial image with smart loader
     modalImage.style.opacity = '0';
     setTimeout(() => {
       attachSmartLoader(modalImage, primaryCandidates, []);
@@ -1721,7 +1741,6 @@ var particles;
     document.getElementById('modal-price').textContent = priceDisplay;
     document.getElementById('modal-availability').textContent = availabilityText;
 
-    // Handle size dynamically (hide if not in data)
     const sizeRow = document.querySelector('.modal-size-row');
     if (item.size) {
       document.getElementById('modal-size').textContent = item.size;
@@ -1749,19 +1768,6 @@ var particles;
 
   function closeModal() {
     modal.classList.remove('is-open');
-  }
-
-  function buildImageArray(item) {
-    const images = [];
-    const primary = item.fullsizesrc || item.fullSizeSrc || item.src;
-    if (primary) images.push(primary);
-
-    let i = 2;
-    while (item[`fullsizesrc${i}`]) {
-      images.push(item[`fullsizesrc${i}`]);
-      i++;
-    }
-    return images;
   }
 
   function renderCarouselDots() {
