@@ -2,8 +2,8 @@ window.other_services = [
     {
         id: 1,
         src: 'Images/other_services/test1.jpg',
-        fullsizesrc1:'Images/Fullsize/DSC18470.jpg',
-        fullsizesrc2:'Images/Fullsize/DSC19440.jpg',
+        fullsizesrc1:'/Nebuluxe/Images/Fullsize/DSC18470.jpg',
+        fullsizesrc2:'/Nebuluxe/Images/Fullsize/DSC19440.jpg',
         alt: 'A thief came in the night',
         name: 'Magnets',
         pricerange: '$4-$50',
@@ -13,8 +13,8 @@ window.other_services = [
     {
         id: 2,
         src: 'Images/other_services/test2.JPG',
-        fullsizesrc1:'Images/Fullsize/DSC18470.jpg',
-        fullsizesrc2:'Images/Fullsize/DSC19440.jpg',
+        fullsizesrc1:'/Nebuluxe/Images/Fullsize/DSC18470.jpg',
+        fullsizesrc2:'/Nebuluxe/Images/Fullsize/DSC19440.jpg',
         alt: 'A thief came in the night',
         name: 'Kits',
         pricerange: '$4-$50',
