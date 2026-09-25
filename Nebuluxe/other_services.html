@@ -1416,7 +1416,7 @@ var particles;
     flex-direction: column;
     padding: 24px;
     gap: 12px;
-    overflow: hidden; /* Contains the scrolling description */
+    overflow: hidden;
     min-width: 0;
   }
 
@@ -1477,7 +1477,7 @@ var particles;
     line-height: 1.5;
     color: #4A4036;
     overflow-y: auto;
-    flex: 1; /* Allows this section to scroll while keeping footer visible */
+    flex: 1;
     padding-right: 10px;
     border-top: 1px solid rgba(192, 122, 95, 0.2);
     padding-top: 12px;
@@ -1491,26 +1491,26 @@ var particles;
 
   .gallery-card-footer {
     padding-top: 12px;
-    margin-top: auto; /* Pushes button to the bottom */
+    margin-top: auto;
   }
 
   .inquire-btn {
     display: block;
     width: 100%;
-    padding: 10px 20px; /* Reduced padding for a more compact fit */
+    padding: 10px 20px;
     background: #C07A5F;
     color: #FDFBF7;
     text-align: center;
     text-decoration: none;
     border-radius: 8px;
     font-weight: 600;
-    font-size: 14px; /* Reduced font size */
+    font-size: 14px;
     letter-spacing: 0.3px;
     transition: background 0.2s, transform 0.1s;
     border: none;
     cursor: pointer;
     font-family: inherit;
-    box-sizing: border-box; /* Ensures padding doesn't cause overflow */
+    box-sizing: border-box;
   }
 
   .inquire-btn:hover {
@@ -1551,6 +1551,7 @@ var particles;
         <button class="carousel-arrow carousel-prev" id="carousel-prev" aria-label="Previous image">
           <i class="fas fa-chevron-left"></i>
         </button>
+        <!-- FIX 1: Removed src="" to prevent premature browser error -->
         <img id="modal-full-image" class="gallery-card-image" alt="Full size artwork">
         <button class="carousel-arrow carousel-next" id="carousel-next" aria-label="Next image">
           <i class="fas fa-chevron-right"></i>
@@ -1578,11 +1579,8 @@ var particles;
 <!-- Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- Load data file -->
-<script src="js/other_services.js" onload="renderBohoServices()" onerror="handleServicesLoadError()"></script>
-
+<!-- FIX 2: Main Logic Script MUST come BEFORE the data file -->
 <script>
-  // Self-contained boho-themed SVG fallback
   const BOHO_FALLBACK_IMG = "data:image/svg+xml;utf8," + encodeURIComponent(`
     <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200'>
       <defs>
@@ -1609,6 +1607,8 @@ var particles;
 
   function attachSmartLoader(img, candidates, fallbackCandidates) {
     let index = 0;
+    img.onerror = null; // Clear existing handlers to prevent conflicts
+
     function tryNext() {
       if (index < candidates.length) {
         img.src = candidates[index++];
@@ -1627,6 +1627,7 @@ var particles;
         img.src = BOHO_FALLBACK_IMG;
       }
     }
+
     img.addEventListener('error', tryNext);
     img.addEventListener('load', () => console.log('✓ Image loaded:', img.src));
     tryNext();
@@ -1679,7 +1680,7 @@ var particles;
   function handleServicesLoadError() {
     const grid = document.getElementById('services-grid');
     if (!grid) return;
-    grid.innerHTML = `<div class="boho-gallery-error" style="grid-column: 1 / -1;"><strong>Couldn't load services data.</strong><br>The file <code>js/other_services.js</code> could not be found. Please verify the file path and that the file contains valid JavaScript (ending with <code>];</code>).</div>`;
+    grid.innerHTML = `<div class="boho-gallery-error" style="grid-column: 1 / -1;"><strong>Couldn't load services data.</strong><br>The file <code>js/other_services.js</code> could not be found. Please verify the file path.</div>`;
     console.error('Failed to load js/other_services.js');
   }
 
@@ -1697,16 +1698,13 @@ var particles;
   let currentImages = [];
   let currentImageIndex = 0;
 
-  // Dynamically build array from fullsizesrc1, fullsizesrc2, fullsizesrc3, etc.
   function buildImageArray(item) {
     const images = [];
-    // Check for fullsizesrc1, fallback to fullsizesrc, or src
     const primary = item.fullsizesrc1 || item.fullsizesrc || item.fullSizeSrc || item.src;
     if (primary) images.push(primary);
 
     let i = 2;
     while (true) {
-      // Supports both correct spelling and the potential typo "fullsizescr"
       const nextImage = item[`fullsizesrc${i}`] || item[`fullsizescr${i}`];
       if (nextImage) {
         images.push(nextImage);
@@ -1719,57 +1717,74 @@ var particles;
   }
 
   function openModal(item) {
-  if (!item) return;
+    if (!item) return;
 
-  currentImages = buildImageArray(item);
-  currentImageIndex = 0;
+    currentImages = buildImageArray(item);
+    currentImageIndex = 0;
 
-  const priceDisplay = item.pricerange || "Price N/A";
-  const availabilityText = item.type || "Available";
+    const priceDisplay = item.pricerange || "Price N/A";
+    const availabilityText = item.type || "Available";
 
-  const primaryBase = currentImages[0] || item.src;
-  const primaryCandidates = buildImageCandidates(primaryBase);
+    const primaryBase = currentImages[0] || item.src;
+    const primaryCandidates = buildImageCandidates(primaryBase);
 
-  // FIX: Provide the original item.src as a fallback if the full-size image fails to load
-  const fallbackBase = item.src;
-  const fallbackCandidates = fallbackBase ? buildImageCandidates(fallbackBase) : [];
+    // FIX 3: Provide the original item.src as a fallback if the full-size image fails
+    const fallbackBase = item.src;
+    const fallbackCandidates = fallbackBase ? buildImageCandidates(fallbackBase) : [];
 
-  modalImage.style.opacity = '0';
-  setTimeout(() => {
-    // FIX: Pass fallbackCandidates instead of an empty array []
-    attachSmartLoader(modalImage, primaryCandidates, fallbackCandidates);
-    modalImage.alt = item.alt || item.name || 'Artwork';
-    modalImage.style.opacity = '1';
-  }, 200);
+    modalImage.style.opacity = '0';
+    setTimeout(() => {
+      attachSmartLoader(modalImage, primaryCandidates, fallbackCandidates);
+      modalImage.alt = item.alt || item.name || 'Artwork';
+      modalImage.style.opacity = '1';
+    }, 200);
 
-  document.getElementById('modal-title').textContent = item.name || 'Untitled';
-  document.getElementById('modal-price').textContent = priceDisplay;
-  document.getElementById('modal-availability').textContent = availabilityText;
+    document.getElementById('modal-title').textContent = item.name || 'Untitled';
+    document.getElementById('modal-price').textContent = priceDisplay;
+    document.getElementById('modal-availability').textContent = availabilityText;
 
-  const sizeRow = document.querySelector('.modal-size-row');
-  if (item.size) {
-    document.getElementById('modal-size').textContent = item.size;
-    sizeRow.style.display = 'block';
-  } else {
-    sizeRow.style.display = 'none';
+    const sizeRow = document.querySelector('.modal-size-row');
+    if (item.size) {
+      document.getElementById('modal-size').textContent = item.size;
+      sizeRow.style.display = 'block';
+    } else {
+      sizeRow.style.display = 'none';
+    }
+
+    document.getElementById('modal-description').textContent = item.description || 'No description available.';
+
+    const email = "nebuluxeart@gmail.com";
+    const subject = encodeURIComponent(`Inquiry about: ${item.name}`);
+    const body = encodeURIComponent(`Hello,\n\nI am interested in learning more about "${item.name}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`);
+    document.getElementById('modal-inquire-btn').href = `mailto:${email}?subject=${subject}&body=${body}`;
+
+    renderCarouselDots();
+    if (currentImages.length <= 1) {
+      carouselContainer.classList.add('single-image');
+    } else {
+      carouselContainer.classList.remove('single-image');
+    }
+
+    modal.classList.add('is-open');
   }
 
-  document.getElementById('modal-description').textContent = item.description || 'No description available.';
-
-  const email = "nebuluxeart@gmail.com";
-  const subject = encodeURIComponent(`Inquiry about: ${item.name}`);
-  const body = encodeURIComponent(`Hello,\n\nI am interested in learning more about "${item.name}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`);
-  document.getElementById('modal-inquire-btn').href = `mailto:${email}?subject=${subject}&body=${body}`;
-
-  renderCarouselDots();
-  if (currentImages.length <= 1) {
-    carouselContainer.classList.add('single-image');
-  } else {
-    carouselContainer.classList.remove('single-image');
+  function closeModal() {
+    modal.classList.remove('is-open');
   }
 
-  modal.classList.add('is-open');
-}
+  function renderCarouselDots() {
+    carouselDots.innerHTML = '';
+    currentImages.forEach((_, index) => {
+      const dot = document.createElement('button');
+      dot.className = 'carousel-dot' + (index === currentImageIndex ? ' active' : '');
+      dot.setAttribute('aria-label', `Go to image ${index + 1}`);
+      dot.addEventListener('click', (e) => {
+        e.stopPropagation();
+        goToImage(index);
+      });
+      carouselDots.appendChild(dot);
+    });
+  }
 
   function updateActiveDot() {
     const dots = carouselDots.querySelectorAll('.carousel-dot');
@@ -1842,6 +1857,9 @@ var particles;
     renderBohoServices();
   }
 </script>
+
+<!-- FIX 4: Load data file LAST so the onload handler can safely find the functions -->
+<script src="js/other_services.js" onload="if (typeof renderBohoServices === 'function') renderBohoServices();" onerror="if (typeof handleServicesLoadError === 'function') handleServicesLoadError();"></script>
 <!-- ========================================== -->
 <!-- END BOHO SERVICES GALLERY & MODAL -->
 <!-- ========================================== -->
