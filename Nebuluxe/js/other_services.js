@@ -1,7 +1,7 @@
 window.other_services = [
     {
         id: 1,
-        src: 'Images/other_services/test1',
+        src: 'Images/other_services/test1.jpg',
         fullsizesrc:'Images/Images/Fullsize/DSC1847.jpg',
         fullsizesrc2:'Images/Images/Fullsize/DSC1944.jpg',
         alt: 'A thief came in the night',
@@ -12,8 +12,8 @@ window.other_services = [
     },
     {
         id: 2,
-        src: 'Images/other_services/test2',
-        fullsizesrc:'Images/Images/Fullsize/DSC1847.jpg',
+        src: 'Images/other_services/test2.JPG',
+        fullsizesrc:'Images/Images/Fullsize/DSC1847.JPG',
         fullsizesrc2:'Images/Images/Fullsize/DSC1944.jpg',
         alt: 'A thief came in the night',
         name: 'Kits',
@@ -23,7 +23,7 @@ window.other_services = [
     },
     {
         id: 3,
-        src: 'Images/other_services/test3',
+        src: 'Images/other_services/test3.JPG',
         fullsizesrc:'Images/Images/Fullsize/DSC1847.jpg',
         fullsizesrc2:'Images/Images/Fullsize/DSC1944.jpg',
         alt: 'A thief came in the night',
