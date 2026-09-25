@@ -1551,7 +1551,7 @@ var particles;
         <button class="carousel-arrow carousel-prev" id="carousel-prev" aria-label="Previous image">
           <i class="fas fa-chevron-left"></i>
         </button>
-        <img id="modal-full-image" class="gallery-card-image" src="" alt="Full size artwork">
+        <img id="modal-full-image" class="gallery-card-image" alt="Full size artwork">
         <button class="carousel-arrow carousel-next" id="carousel-next" aria-label="Next image">
           <i class="fas fa-chevron-right"></i>
         </button>
@@ -1698,98 +1698,78 @@ var particles;
   let currentImageIndex = 0;
 
   // Dynamically build array from fullsizesrc1, fullsizesrc2, fullsizesrc3, etc.
-  buildImageArray(item) {
+  function buildImageArray(item) {
     const images = [];
-    // Prioritize fullsizesrc1, then fall back to fullsizesrc, fullSizeSrc, or src
-    const primarySrc = item.fullsizesrc1 || item.fullsizesrc || item.fullSizeSrc || item.src;
-    if (primarySrc) {
-        images.push(primarySrc);
-    }
+    // Check for fullsizesrc1, fallback to fullsizesrc, or src
+    const primary = item.fullsizesrc1 || item.fullsizesrc || item.fullSizeSrc || item.src;
+    if (primary) images.push(primary);
 
-    // Iterate through fullsizesrc2, fullsizesrc3, etc. (also catches the 'fullsizescr' typo)
     let i = 2;
     while (true) {
-        const nextImage = item[`fullsizesrc${i}`] || item[`fullsizescr${i}`];
-        if (nextImage) {
-            images.push(nextImage);
-            i++;
-        } else {
-            break;
-        }
+      // Supports both correct spelling and the potential typo "fullsizescr"
+      const nextImage = item[`fullsizesrc${i}`] || item[`fullsizescr${i}`];
+      if (nextImage) {
+        images.push(nextImage);
+        i++;
+      } else {
+        break;
+      }
     }
     return images;
-}
-
-openModal(item) {
-  if (!item) return;
-
-  this.currentItem = item;
-
-  // Build the carousel image array
-  this.currentImages = this.buildImageArray(item);
-  this.currentImageIndex = 0;
-
-  // Handle both old gallery data (suggestedprice) and new data (pricerange)
-  const priceDisplay = item.pricerange || ((item.suggestedprice === 0) ? "Price N/A" : `Suggested Price - $${((item.suggestedprice || 0) * (item.pricemultiplier || 1)).toFixed(2)}`);
-
-  // Handle both new data (type) and old data (inStock/remakecustom)
-  let availability = "Available";
-  if (item.type) {
-      availability = item.type;
-  } else {
-      availability = item.inStock ? "Currently available" : "Not on hand";
-      if (item.remakecustom) availability += ", would remake in new colors.";
-      else availability += ", will not remake.";
   }
 
-  // Set initial image (no fade for first load)
-  const primarySrc = this.currentImages[0] || item.src;
-  this.modalImage.src = primarySrc;
-  this.modalImage.alt = item.alt || item.name || item.title || 'Artwork';
-  this.modalImage.style.opacity = '1';
-  this.modalImage.onerror = () => {
-      console.warn(`Failed to load fullsize image: ${primarySrc}. Falling back to thumbnail.`);
-      this.modalImage.src = item.src;
-  };
+  function openModal(item) {
+  if (!item) return;
 
-  // Use item.name OR item.title to support both data structures
-  const itemName = item.name || item.title || 'Untitled';
+  currentImages = buildImageArray(item);
+  currentImageIndex = 0;
 
-  document.getElementById('modal-title').textContent = itemName;
+  const priceDisplay = item.pricerange || "Price N/A";
+  const availabilityText = item.type || "Available";
+
+  const primaryBase = currentImages[0] || item.src;
+  const primaryCandidates = buildImageCandidates(primaryBase);
+
+  // FIX: Provide the original item.src as a fallback if the full-size image fails to load
+  const fallbackBase = item.src;
+  const fallbackCandidates = fallbackBase ? buildImageCandidates(fallbackBase) : [];
+
+  modalImage.style.opacity = '0';
+  setTimeout(() => {
+    // FIX: Pass fallbackCandidates instead of an empty array []
+    attachSmartLoader(modalImage, primaryCandidates, fallbackCandidates);
+    modalImage.alt = item.alt || item.name || 'Artwork';
+    modalImage.style.opacity = '1';
+  }, 200);
+
+  document.getElementById('modal-title').textContent = item.name || 'Untitled';
   document.getElementById('modal-price').textContent = priceDisplay;
-  document.getElementById('modal-availability').textContent = availability;
-  document.getElementById('modal-size').textContent = `${item.length || '?'} x ${item.width || '?'}`;
+  document.getElementById('modal-availability').textContent = availabilityText;
+
+  const sizeRow = document.querySelector('.modal-size-row');
+  if (item.size) {
+    document.getElementById('modal-size').textContent = item.size;
+    sizeRow.style.display = 'block';
+  } else {
+    sizeRow.style.display = 'none';
+  }
+
   document.getElementById('modal-description').textContent = item.description || 'No description available.';
 
   const email = "nebuluxeart@gmail.com";
-  const subject = encodeURIComponent(`Inquiry about: ${itemName}`);
-  const body = encodeURIComponent(`Hello,\n\nI am interested in learning more about "${itemName}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`);
+  const subject = encodeURIComponent(`Inquiry about: ${item.name}`);
+  const body = encodeURIComponent(`Hello,\n\nI am interested in learning more about "${item.name}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`);
   document.getElementById('modal-inquire-btn').href = `mailto:${email}?subject=${subject}&body=${body}`;
 
-  // Update carousel UI
-  this.renderCarouselDots();
-  if (this.currentImages.length <= 1) {
-      this.carouselContainer.classList.add('single-image');
+  renderCarouselDots();
+  if (currentImages.length <= 1) {
+    carouselContainer.classList.add('single-image');
   } else {
-      this.carouselContainer.classList.remove('single-image');
+    carouselContainer.classList.remove('single-image');
   }
 
-  this.modal.classList.add('is-open');
+  modal.classList.add('is-open');
 }
-
-  function renderCarouselDots() {
-    carouselDots.innerHTML = '';
-    currentImages.forEach((_, index) => {
-      const dot = document.createElement('button');
-      dot.className = 'carousel-dot' + (index === currentImageIndex ? ' active' : '');
-      dot.setAttribute('aria-label', `Go to image ${index + 1}`);
-      dot.addEventListener('click', (e) => {
-        e.stopPropagation();
-        goToImage(index);
-      });
-      carouselDots.appendChild(dot);
-    });
-  }
 
   function updateActiveDot() {
     const dots = carouselDots.querySelectorAll('.carousel-dot');
