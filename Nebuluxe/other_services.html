@@ -1080,7 +1080,7 @@ var particles;
 <!-- END CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- ========================================== -->
 <!-- ========================================== -->
-<!-- BOHO SERVICES GALLERY -->
+<!-- BOHO SERVICES GALLERY (DYNAMIC) -->
 <!-- ========================================== -->
 <style>
   .boho-gallery-section {
@@ -1114,7 +1114,7 @@ var particles;
 
   .boho-gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 32px;
   }
 
@@ -1153,6 +1153,23 @@ var particles;
     transform: scale(1.05);
   }
 
+  .boho-service-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: rgba(253, 251, 247, 0.9);
+    backdrop-filter: blur(4px);
+    color: #6B5B4F;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    z-index: 2;
+    border: 1px solid rgba(192, 122, 95, 0.2);
+  }
+
   .boho-service-content {
     padding: 28px;
     flex-grow: 1;
@@ -1160,11 +1177,29 @@ var particles;
     flex-direction: column;
   }
 
+  .boho-service-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    gap: 12px;
+  }
+
   .boho-service-title {
     font-size: 1.3rem;
     color: #4A4036;
-    margin: 0 0 12px 0;
+    margin: 0;
     font-weight: 600;
+  }
+
+  .boho-service-price {
+    font-size: 0.95rem;
+    color: #C07A5F;
+    font-weight: 600;
+    white-space: nowrap;
+    background: rgba(192, 122, 95, 0.08);
+    padding: 4px 12px;
+    border-radius: 12px;
   }
 
   .boho-service-desc {
@@ -1211,64 +1246,57 @@ var particles;
   }
 </style>
 
+<!-- Load the data file first -->
+<script src="js/other_services.js"></script>
+
 <section class="boho-gallery-section">
   <h2 class="boho-gallery-title">Our Services</h2>
   <p class="boho-gallery-subtitle">Discover our curated offerings, designed with care, creativity, and a touch of earthy elegance to bring your unique vision to life.</p>
 
-  <div class="boho-gallery-grid">
-    <!-- Service 1 -->
-    <article class="boho-service-card">
-      <div class="boho-service-image-wrapper">
-        <!-- Replace src with your actual image: Images/other_services/your-image-1.jpg -->
-        <img src="Images/other_services/service1.jpg" alt="Custom Art Commissions" class="boho-service-image" onerror="this.src='https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=600&q=80'">
-      </div>
-      <div class="boho-service-content">
-        <h3 class="boho-service-title">Custom Art Commissions</h3>
-        <p class="boho-service-desc">Bespoke illustrations and digital art tailored to your unique aesthetic, blending modern trends with timeless boho charm.</p>
-        <a href="#" class="boho-service-btn">View Details</a>
-      </div>
-    </article>
-
-    <!-- Service 2 -->
-    <article class="boho-service-card">
-      <div class="boho-service-image-wrapper">
-        <!-- Replace src with your actual image: Images/other_services/your-image-2.jpg -->
-        <img src="Images/other_services/service2.jpg" alt="Brand Identity Design" class="boho-service-image" onerror="this.src='https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=600&q=80'">
-      </div>
-      <div class="boho-service-content">
-        <h3 class="boho-service-title">Brand Identity Design</h3>
-        <p class="boho-service-desc">Crafting cohesive, earthy, and memorable brand visuals that resonate with your audience and stand out in the digital space.</p>
-        <a href="#" class="boho-service-btn">View Details</a>
-      </div>
-    </article>
-
-    <!-- Service 3 -->
-    <article class="boho-service-card">
-      <div class="boho-service-image-wrapper">
-        <!-- Replace src with your actual image: Images/other_services/your-image-3.jpg -->
-        <img src="Images/other_services/service3.jpg" alt="Web Development" class="boho-service-image" onerror="this.src='https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80'">
-      </div>
-      <div class="boho-service-content">
-        <h3 class="boho-service-title">Web Development</h3>
-        <p class="boho-service-desc">Responsive, beautifully coded websites that provide seamless user experiences while reflecting your organic brand identity.</p>
-        <a href="#" class="boho-service-btn">View Details</a>
-      </div>
-    </article>
-
-    <!-- Service 4 -->
-    <article class="boho-service-card">
-      <div class="boho-service-image-wrapper">
-        <!-- Replace src with your actual image: Images/other_services/your-image-4.jpg -->
-        <img src="Images/other_services/service4.jpg" alt="Photography Sessions" class="boho-service-image" onerror="this.src='https://images.unsplash.com/photo-1554048612-387768052bf7?auto=format&fit=crop&w=600&q=80'">
-      </div>
-      <div class="boho-service-content">
-        <h3 class="boho-service-title">Photography Sessions</h3>
-        <p class="boho-service-desc">Warm, natural-light photography that captures authentic moments, perfect for portfolios, brands, or personal memories.</p>
-        <a href="#" class="boho-service-btn">View Details</a>
-      </div>
-    </article>
+  <!-- Grid container to be populated by JavaScript -->
+  <div class="boho-gallery-grid" id="services-grid">
+    <!-- Cards will be injected here -->
   </div>
 </section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const grid = document.getElementById('services-grid');
+
+    // Ensure the data exists before trying to render
+    if (!grid || typeof window.other_services === 'undefined') {
+      console.warn('Services data not found. Please ensure js/other_services.js is loaded correctly.');
+      return;
+    }
+
+    // Fallback image in case local paths are broken or still being set up
+    const fallbackImg = 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=600&q=80';
+
+    grid.innerHTML = window.other_services.map(service => {
+      // Smart path helper: appends .jpg if the src string doesn't already have an image extension
+      const imgSrc = /\.(jpg|jpeg|png|webp|gif)$/i.test(service.src)
+        ? service.src
+        : `${service.src}.jpg`;
+
+      return `
+        <article class="boho-service-card">
+          <div class="boho-service-image-wrapper">
+            <span class="boho-service-badge">${service.type}</span>
+            <img src="${imgSrc}" alt="${service.alt || service.name}" class="boho-service-image" onerror="this.src='${fallbackImg}'">
+          </div>
+          <div class="boho-service-content">
+            <div class="boho-service-header">
+              <h3 class="boho-service-title">${service.name}</h3>
+              <span class="boho-service-price">${service.pricerange}</span>
+            </div>
+            <p class="boho-service-desc">${service.description}</p>
+            <a href="#" class="boho-service-btn" data-id="${service.id}">View Details</a>
+          </div>
+        </article>
+      `;
+    }).join('');
+  });
+</script>
 <!-- ========================================== -->
 <!-- END BOHO SERVICES GALLERY -->
 <!-- ========================================== -->
