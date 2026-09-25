@@ -1068,9 +1068,9 @@ body.reader-active .filter-sidebar { display: none; }
     <div class="reading-list-header">
       <span>My</span>
       <select id="category-select" class="header-dropdown">
-        <option value="Reading">Reading</option>
-        <option value="Film">Film</option>
-        <option value="Pod">Pod</option>
+        <option value="Reading">Books</option>
+        <option value="Film">Films</option>
+        <option value="Pod">Pods</option>
         <option value="Articles">Articles</option>
       </select>
       <span>List</span>
@@ -2105,7 +2105,7 @@ var particles;
 
     const header = document.createElement('div');
     header.className = 'filter-sidebar-header';
-    header.textContent = 'Genre Filter';
+    header.textContent = 'Doc Type';
     filterSidebar.appendChild(header);
 
     const itemsContainer = document.createElement('div');
