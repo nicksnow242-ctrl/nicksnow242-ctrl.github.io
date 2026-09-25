@@ -1080,9 +1080,12 @@ var particles;
 <!-- END CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- ========================================== -->
 <!-- ========================================== -->
-<!-- BOHO SERVICES GALLERY (DYNAMIC) -->
+<!-- BOHO SERVICES GALLERY & MODAL (DYNAMIC) -->
 <!-- ========================================== -->
 <style>
+  /* ============================================================
+     GALLERY STYLES
+     ============================================================ */
   .boho-gallery-section {
     margin-top: 110px;
     height: calc(100vh - 110px);
@@ -1096,24 +1099,10 @@ var particles;
     z-index: 10;
   }
 
-  /* Custom scrollbar for the gallery */
-  .boho-gallery-section::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  .boho-gallery-section::-webkit-scrollbar-track {
-    background: rgba(253, 251, 247, 0.2);
-    border-radius: 4px;
-  }
-
-  .boho-gallery-section::-webkit-scrollbar-thumb {
-    background: rgba(192, 122, 95, 0.4);
-    border-radius: 4px;
-  }
-
-  .boho-gallery-section::-webkit-scrollbar-thumb:hover {
-    background: rgba(192, 122, 95, 0.6);
-  }
+  .boho-gallery-section::-webkit-scrollbar { width: 8px; }
+  .boho-gallery-section::-webkit-scrollbar-track { background: rgba(253, 251, 247, 0.2); border-radius: 4px; }
+  .boho-gallery-section::-webkit-scrollbar-thumb { background: rgba(192, 122, 95, 0.4); border-radius: 4px; }
+  .boho-gallery-section::-webkit-scrollbar-thumb:hover { background: rgba(192, 122, 95, 0.6); }
 
   .boho-gallery-grid {
     display: grid;
@@ -1129,9 +1118,7 @@ var particles;
     border-radius: 16px;
     overflow: hidden;
     transition: transform 0.4s cubic-bezier(0.25, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease, background 0.4s ease;
-    box-shadow:
-      0 4px 16px rgba(74, 64, 54, 0.08),
-      inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(74, 64, 54, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.5);
     display: flex;
     flex-direction: column;
   }
@@ -1140,9 +1127,7 @@ var particles;
     transform: translateY(-6px);
     background: rgba(253, 251, 247, 0.5);
     border-color: rgba(255, 255, 255, 0.7);
-    box-shadow:
-      0 10px 28px rgba(192, 122, 95, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    box-shadow: 0 10px 28px rgba(192, 122, 95, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.7);
   }
 
   .boho-service-image-wrapper {
@@ -1160,14 +1145,11 @@ var particles;
     transition: transform 0.6s cubic-bezier(0.25, 1, 0.3, 1);
   }
 
-  .boho-service-card:hover .boho-service-image {
-    transform: scale(1.05);
-  }
+  .boho-service-card:hover .boho-service-image { transform: scale(1.05); }
 
   .boho-service-badge {
     position: absolute;
-    top: 8px;
-    left: 8px;
+    top: 8px; left: 8px;
     background: rgba(253, 251, 247, 0.75);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
@@ -1257,24 +1239,348 @@ var particles;
   }
 
   @media (max-width: 768px) {
-    .boho-gallery-section {
-      padding: 30px 5% 40px;
-    }
-    .boho-gallery-grid {
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 12px;
-    }
+    .boho-gallery-section { padding: 30px 5% 40px; }
+    .boho-gallery-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+  }
+
+  /* ============================================================
+     MODAL STYLES
+     ============================================================ */
+  .gallery-modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(74, 64, 54, 0.5); /* Warm dark brown overlay */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .gallery-modal.is-open {
+    display: flex;
+    opacity: 1;
+  }
+
+  .gallery-card {
+    background: #FDFBF7;
+    border: 1px solid rgba(192, 122, 95, 0.3);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 900px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 50px rgba(74, 64, 54, 0.2);
+    position: relative;
+    overflow: hidden;
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .gallery-modal.is-open .gallery-card {
+    transform: scale(1);
+  }
+
+  .gallery-card-layout {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+  }
+
+  /* Carousel */
+  .gallery-card-image-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(253, 251, 247, 0.5);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    padding: 20px;
+    min-width: 0;
+    border-right: 1px solid rgba(192, 122, 95, 0.2);
+    position: relative;
+  }
+
+  .gallery-card-image {
+    display: block;
+    max-width: 100%;
+    max-height: calc(90vh - 40px);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    transition: opacity 0.25s ease;
+  }
+
+  .carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(253, 251, 247, 0.85);
+    border: 1px solid rgba(192, 122, 95, 0.4);
+    color: #C07A5F;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .gallery-card-image-container:hover .carousel-arrow {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .carousel-arrow:hover {
+    background: #C07A5F;
+    color: #FDFBF7;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 4px 12px rgba(192, 122, 95, 0.3);
+  }
+
+  .carousel-prev { left: 15px; }
+  .carousel-next { right: 15px; }
+
+  .carousel-dots {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 5;
+    padding: 6px 12px;
+    background: rgba(253, 251, 247, 0.7);
+    border-radius: 20px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(192, 122, 95, 0.2);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .gallery-card-image-container:hover .carousel-dots {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .carousel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(192, 122, 95, 0.35);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.2s ease;
+  }
+
+  .carousel-dot:hover {
+    background: rgba(192, 122, 95, 0.7);
+    transform: scale(1.2);
+  }
+
+  .carousel-dot.active {
+    background: #C07A5F;
+    width: 20px;
+    border-radius: 4px;
+    box-shadow: 0 0 6px rgba(192, 122, 95, 0.5);
+  }
+
+  .gallery-card-image-container.single-image .carousel-arrow,
+  .gallery-card-image-container.single-image .carousel-dots {
+    display: none;
+  }
+
+  /* Card Content */
+  .gallery-card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    gap: 12px;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  .gallery-card-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(253, 251, 247, 0.9);
+    border: 1px solid rgba(192, 122, 95, 0.4);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #4A4036;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s ease;
+  }
+
+  .gallery-card-close:hover {
+    background: #C07A5F;
+    color: #FDFBF7;
+  }
+
+  .gallery-card-title {
+    font-size: 26px;
+    font-weight: 600;
+    color: #4A4036;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .gallery-card-meta {
+    font-size: 14px;
+    color: #6B5B4F;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .gallery-card-meta strong {
+    color: #4A4036;
+  }
+
+  .gallery-card-price {
+    font-size: 22px;
+    font-weight: bold;
+    color: #C07A5F;
+    margin-top: 4px;
+    margin-bottom: 8px;
+  }
+
+  .gallery-card-desc {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #4A4036;
+    overflow-y: auto;
+    flex: 1;
+    padding-right: 10px;
+    border-top: 1px solid rgba(192, 122, 95, 0.2);
+    padding-top: 12px;
+    margin-top: 4px;
+  }
+
+  .gallery-card-desc::-webkit-scrollbar { width: 6px; }
+  .gallery-card-desc::-webkit-scrollbar-track { background: transparent; }
+  .gallery-card-desc::-webkit-scrollbar-thumb { background: rgba(192, 122, 95, 0.4); border-radius: 3px; }
+
+  .gallery-card-footer {
+    padding-top: 16px;
+    margin-top: auto;
+  }
+
+  .inquire-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: #C07A5F;
+    color: #FDFBF7;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    transition: background 0.2s, transform 0.1s;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .inquire-btn:hover {
+    background: #A6684F;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(192, 122, 95, 0.3);
+  }
+
+  .inquire-btn:active {
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    .gallery-card { max-height: 95vh; max-width: 95vw; }
+    .gallery-card-layout { flex-direction: column; overflow-y: auto; }
+    .gallery-card-image-container { flex: none; max-height: 40vh; padding: 12px; border-right: none; border-bottom: 1px solid rgba(192, 122, 95, 0.2); }
+    .gallery-card-image { max-height: 35vh; }
+    .gallery-card-content { flex: 1; padding: 16px; }
+    .gallery-card-title { font-size: 22px; }
+    .carousel-arrow { opacity: 1; pointer-events: auto; width: 36px; height: 36px; font-size: 14px; }
+    .carousel-dots { opacity: 1; pointer-events: auto; }
+    .carousel-prev { left: 10px; }
+    .carousel-next { right: 10px; }
   }
 </style>
 
+<!-- Gallery Section -->
 <section class="boho-gallery-section">
   <div class="boho-gallery-grid" id="services-grid"></div>
 </section>
 
+<!-- Modal Structure -->
+<div id="gallery-modal" class="gallery-modal">
+  <div class="gallery-card">
+    <button class="gallery-card-close" id="modal-close-btn" aria-label="Close">&times;</button>
+    <div class="gallery-card-layout">
+      <div id="carousel-container" class="gallery-card-image-container">
+        <button class="carousel-arrow carousel-prev" id="carousel-prev" aria-label="Previous image">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <img id="modal-full-image" class="gallery-card-image" src="" alt="Full size artwork">
+        <button class="carousel-arrow carousel-next" id="carousel-next" aria-label="Next image">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+        <div class="carousel-dots" id="carousel-dots"></div>
+      </div>
+      <div class="gallery-card-content">
+        <h2 id="modal-title" class="gallery-card-title">Artwork Title</h2>
+        <div class="gallery-card-meta">
+          <div id="modal-price" class="gallery-card-price">Price N/A</div>
+          <div><strong>Category:</strong> <span id="modal-availability">Checking...</span></div>
+          <div class="modal-size-row" style="display: none;"><strong>Size:</strong> <span id="modal-size">0 x 0</span></div>
+        </div>
+        <div id="modal-description" class="gallery-card-desc">
+          Description goes here.
+        </div>
+        <div class="gallery-card-footer">
+          <a id="modal-inquire-btn" class="inquire-btn" href="#" target="_blank">Inquire About This</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Load data file -->
 <script src="js/other_services.js" onload="renderBohoServices()" onerror="handleServicesLoadError()"></script>
 
 <script>
-  // Self-contained boho-themed SVG fallback (no internet required, always loads)
+  // Self-contained boho-themed SVG fallback
   const BOHO_FALLBACK_IMG = "data:image/svg+xml;utf8," + encodeURIComponent(`
     <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200'>
       <defs>
@@ -1291,32 +1597,37 @@ var particles;
     </svg>
   `);
 
-  // Try multiple extensions in order until one works
   const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
 
   function buildImageCandidates(src) {
-    // If src already has an extension, try it first, then fall back to swapping it
-    if (/\.(jpg|jpeg|png|webp|gif)$/i.test(src)) {
-      return [src];
-    }
-    // Otherwise, generate candidates for each extension
+    if (!src) return [];
+    if (/\.(jpg|jpeg|png|webp|gif)$/i.test(src)) return [src];
     return IMAGE_EXTENSIONS.map(ext => `${src}${ext}`);
   }
 
-  // Attach a smart loader that tries each candidate in sequence
-  function attachSmartLoader(img, candidates, fallback) {
+  function attachSmartLoader(img, candidates, fallbackCandidates) {
     let index = 0;
     function tryNext() {
       if (index < candidates.length) {
         img.src = candidates[index++];
+      } else if (fallbackCandidates && fallbackCandidates.length > 0) {
+        // If primary candidates fail, try fallback candidates
+        let fbIndex = 0;
+        function tryFallback() {
+          if (fbIndex < fallbackCandidates.length) {
+            img.src = fallbackCandidates[fbIndex++];
+          } else {
+            img.src = BOHO_FALLBACK_IMG;
+          }
+        }
+        img.onerror = tryFallback;
+        tryFallback();
       } else {
-        img.src = fallback;
+        img.src = BOHO_FALLBACK_IMG;
       }
     }
     img.addEventListener('error', tryNext);
-    img.addEventListener('load', () => {
-      console.log('✓ Image loaded:', img.src);
-    });
+    img.addEventListener('load', () => console.log('✓ Image loaded:', img.src));
     tryNext();
   }
 
@@ -1325,12 +1636,7 @@ var particles;
     if (!grid) return;
 
     if (typeof window.other_services === 'undefined' || !Array.isArray(window.other_services) || window.other_services.length === 0) {
-      grid.innerHTML = `
-        <div class="boho-gallery-error" style="grid-column: 1 / -1;">
-          <strong>No services found.</strong><br>
-          Please check that <code>js/other_services.js</code> defines <code>window.other_services</code> as a non-empty array.
-        </div>
-      `;
+      grid.innerHTML = `<div class="boho-gallery-error" style="grid-column: 1 / -1;"><strong>No services found.</strong><br>Please check that <code>js/other_services.js</code> defines <code>window.other_services</code> as a non-empty array.</div>`;
       return;
     }
 
@@ -1353,34 +1659,198 @@ var particles;
             <h3 class="boho-service-title">${service.name || 'Untitled Service'}</h3>
             ${priceTag}
           </div>
-          <a href="#" class="boho-service-btn" data-id="${service.id}">View Details</a>
+          <button class="boho-service-btn" data-id="${service.id}">View Details</button>
         </div>
       `;
       grid.appendChild(card);
 
       const img = card.querySelector('.boho-service-image');
-      attachSmartLoader(img, candidates, BOHO_FALLBACK_IMG);
+      attachSmartLoader(img, candidates, []);
+
+      // Attach modal open event
+      const btn = card.querySelector('.boho-service-btn');
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openModal(service);
+      });
     });
   }
 
   function handleServicesLoadError() {
     const grid = document.getElementById('services-grid');
     if (!grid) return;
-    grid.innerHTML = `
-      <div class="boho-gallery-error" style="grid-column: 1 / -1;">
-        <strong>Couldn't load services data.</strong><br>
-        The file <code>js/other_services.js</code> could not be found. Please verify the file path and that the file contains valid JavaScript (ending with <code>];</code>).
-      </div>
-    `;
-    console.error('Failed to load js/other_services.js — check the file path and syntax.');
+    grid.innerHTML = `<div class="boho-gallery-error" style="grid-column: 1 / -1;"><strong>Couldn't load services data.</strong><br>The file <code>js/other_services.js</code> could not be found. Please verify the file path and that the file contains valid JavaScript (ending with <code>];</code>).</div>`;
+    console.error('Failed to load js/other_services.js');
   }
 
+  // ============================================================
+  // MODAL LOGIC
+  // ============================================================
+  const modal = document.getElementById('gallery-modal');
+  const closeModalBtn = document.getElementById('modal-close-btn');
+  const carouselContainer = document.getElementById('carousel-container');
+  const modalImage = document.getElementById('modal-full-image');
+  const carouselPrev = document.getElementById('carousel-prev');
+  const carouselNext = document.getElementById('carousel-next');
+  const carouselDots = document.getElementById('carousel-dots');
+
+  let currentImages = [];
+  let currentImageIndex = 0;
+
+  function openModal(item) {
+    if (!item) return;
+
+    currentImages = buildImageArray(item);
+    currentImageIndex = 0;
+
+    const priceDisplay = item.pricerange || "Price N/A";
+    const availabilityText = item.type || "Available";
+
+    const primaryBase = currentImages[0] || item.src;
+    const primaryCandidates = buildImageCandidates(primaryBase);
+
+    // Set initial image with smart loader
+    modalImage.style.opacity = '0';
+    setTimeout(() => {
+      attachSmartLoader(modalImage, primaryCandidates, []);
+      modalImage.alt = item.alt || item.name || 'Artwork';
+      modalImage.style.opacity = '1';
+    }, 200);
+
+    document.getElementById('modal-title').textContent = item.name || 'Untitled';
+    document.getElementById('modal-price').textContent = priceDisplay;
+    document.getElementById('modal-availability').textContent = availabilityText;
+
+    // Handle size dynamically (hide if not in data)
+    const sizeRow = document.querySelector('.modal-size-row');
+    if (item.size) {
+      document.getElementById('modal-size').textContent = item.size;
+      sizeRow.style.display = 'block';
+    } else {
+      sizeRow.style.display = 'none';
+    }
+
+    document.getElementById('modal-description').textContent = item.description || 'No description available.';
+
+    const email = "nebuluxeart@gmail.com";
+    const subject = encodeURIComponent(`Inquiry about: ${item.name}`);
+    const body = encodeURIComponent(`Hello,\n\nI am interested in learning more about "${item.name}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`);
+    document.getElementById('modal-inquire-btn').href = `mailto:${email}?subject=${subject}&body=${body}`;
+
+    renderCarouselDots();
+    if (currentImages.length <= 1) {
+      carouselContainer.classList.add('single-image');
+    } else {
+      carouselContainer.classList.remove('single-image');
+    }
+
+    modal.classList.add('is-open');
+  }
+
+  function closeModal() {
+    modal.classList.remove('is-open');
+  }
+
+  function buildImageArray(item) {
+    const images = [];
+    const primary = item.fullsizesrc || item.fullSizeSrc || item.src;
+    if (primary) images.push(primary);
+
+    let i = 2;
+    while (item[`fullsizesrc${i}`]) {
+      images.push(item[`fullsizesrc${i}`]);
+      i++;
+    }
+    return images;
+  }
+
+  function renderCarouselDots() {
+    carouselDots.innerHTML = '';
+    currentImages.forEach((_, index) => {
+      const dot = document.createElement('button');
+      dot.className = 'carousel-dot' + (index === currentImageIndex ? ' active' : '');
+      dot.setAttribute('aria-label', `Go to image ${index + 1}`);
+      dot.addEventListener('click', (e) => {
+        e.stopPropagation();
+        goToImage(index);
+      });
+      carouselDots.appendChild(dot);
+    });
+  }
+
+  function updateActiveDot() {
+    const dots = carouselDots.querySelectorAll('.carousel-dot');
+    dots.forEach((dot, index) => {
+      dot.classList.toggle('active', index === currentImageIndex);
+    });
+  }
+
+  function updateCarouselImage() {
+    const baseSrc = currentImages[currentImageIndex];
+    const fallbackBase = currentImages[0];
+
+    modalImage.style.opacity = '0';
+
+    setTimeout(() => {
+      const candidates = buildImageCandidates(baseSrc);
+      const fallbackCandidates = buildImageCandidates(fallbackBase);
+      attachSmartLoader(modalImage, candidates, fallbackCandidates);
+      modalImage.style.opacity = '1';
+    }, 200);
+
+    updateActiveDot();
+  }
+
+  function nextImage() {
+    if (currentImages.length <= 1) return;
+    currentImageIndex = (currentImageIndex + 1) % currentImages.length;
+    updateCarouselImage();
+  }
+
+  function prevImage() {
+    if (currentImages.length <= 1) return;
+    currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length;
+    updateCarouselImage();
+  }
+
+  function goToImage(index) {
+    if (index === currentImageIndex) return;
+    currentImageIndex = index;
+    updateCarouselImage();
+  }
+
+  // Event listeners
+  closeModalBtn.addEventListener('click', closeModal);
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  carouselPrev.addEventListener('click', (e) => {
+    e.stopPropagation();
+    prevImage();
+  });
+
+  carouselNext.addEventListener('click', (e) => {
+    e.stopPropagation();
+    nextImage();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (modal.classList.contains('is-open')) {
+      if (e.key === 'Escape') closeModal();
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prevImage(); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); nextImage(); }
+    }
+  });
+
+  // Safety net: if the script somehow loaded before this code ran
   if (typeof window.other_services !== 'undefined') {
     renderBohoServices();
   }
 </script>
 <!-- ========================================== -->
-<!-- END BOHO SERVICES GALLERY -->
+<!-- END BOHO SERVICES GALLERY & MODAL -->
 <!-- ========================================== -->
 </body>
 </html>
