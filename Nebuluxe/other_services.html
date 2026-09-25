@@ -14,8 +14,8 @@ html, body {
   padding: 0;
   margin: 0;
   overflow: hidden;
-  background: #e6e2d3;
-  background: linear-gradient(0deg, #e6e2d3 0%, #dac292 100%);
+  background: #F7F5F0;
+  background: linear-gradient(0deg, #F7F5F0 0%, #E8DFD0 100%);
   background-attachment: fixed;
   font-family: 'Segoe UI', system-ui, sans-serif;
 }
@@ -43,10 +43,10 @@ html, body {
   align-items: center;
   padding: 0 30px;
   z-index: 100;
-  background: rgba(230, 226, 211, 0.65);
+  background: rgba(247, 245, 240, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(185, 147, 108, 0.3);
+  border-bottom: 1px solid rgba(192, 122, 95, 0.3);
 }
 
 .banner-title {
@@ -55,8 +55,8 @@ html, body {
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #b9936c;
-  text-shadow: 0 0 10px rgba(185, 147, 108, 0.4);
+  color: #C07A5F;
+  text-shadow: 0 0 10px rgba(192, 122, 95, 0.3);
   margin: 0;
 }
 
@@ -81,32 +81,32 @@ html, body {
   width: 100%;
   height: auto;
   display: block;
-  filter: drop-shadow(0 0 8px rgba(185, 147, 108, 0.7))
-          drop-shadow(0 0 15px rgba(185, 147, 108, 0.5))
-          drop-shadow(0 0 30px rgba(218, 194, 146, 0.4));
+  filter: drop-shadow(0 0 8px rgba(192, 122, 95, 0.7))
+          drop-shadow(0 0 15px rgba(138, 154, 123, 0.5))
+          drop-shadow(0 0 30px rgba(212, 163, 115, 0.3));
   animation: logo-glow-pulse 4s ease-in-out infinite alternate;
   transition: filter 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .glowing-logo-wrapper:hover .glowing-logo-svg {
   animation-play-state: paused;
-  filter: drop-shadow(0 0 15px rgba(218, 194, 146, 0.8))
-          drop-shadow(0 0 35px rgba(185, 147, 108, 0.9))
-          drop-shadow(0 0 70px rgba(218, 194, 146, 0.6))
-          drop-shadow(0 0 100px rgba(230, 226, 211, 0.5));
+  filter: drop-shadow(0 0 15px rgba(212, 163, 115, 1))
+          drop-shadow(0 0 35px rgba(192, 122, 95, 1))
+          drop-shadow(0 0 70px rgba(138, 154, 123, 0.8))
+          drop-shadow(0 0 100px rgba(212, 163, 115, 0.6));
   transform: scale(1.08);
 }
 
 @keyframes logo-glow-pulse {
   0% {
-    filter: drop-shadow(0 0 8px rgba(185, 147, 108, 0.7))
-            drop-shadow(0 0 15px rgba(185, 147, 108, 0.5))
-            drop-shadow(0 0 30px rgba(218, 194, 146, 0.4));
+    filter: drop-shadow(0 0 8px rgba(192, 122, 95, 0.7))
+            drop-shadow(0 0 15px rgba(138, 154, 123, 0.5))
+            drop-shadow(0 0 30px rgba(212, 163, 115, 0.3));
   }
   100% {
-    filter: drop-shadow(0 0 12px rgba(185, 147, 108, 0.9))
-            drop-shadow(0 0 25px rgba(185, 147, 108, 0.7))
-            drop-shadow(0 0 45px rgba(218, 194, 146, 0.6));
+    filter: drop-shadow(0 0 12px rgba(192, 122, 95, 0.9))
+            drop-shadow(0 0 25px rgba(192, 122, 95, 0.7))
+            drop-shadow(0 0 45px rgba(212, 163, 115, 0.5));
   }
 }
 
@@ -137,16 +137,16 @@ html, body {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: sepia(0.3) saturate(1.2)
-          drop-shadow(0 0 10px rgba(185, 147, 108, 0.6))
-          drop-shadow(0 4px 8px rgba(196, 183, 166, 0.5));
+  filter: sepia(0.2) saturate(1.1)
+          drop-shadow(0 0 10px rgba(192, 122, 95, 0.5))
+          drop-shadow(0 4px 8px rgba(74, 64, 54, 0.3));
   transition: filter 0.3s ease, transform 0.3s ease;
 }
 
 .mascot-gif-wrapper:hover .mascot-gif {
-  filter: sepia(0.4) saturate(1.3)
-          drop-shadow(0 0 18px rgba(185, 147, 108, 0.9))
-          drop-shadow(0 6px 12px rgba(196, 183, 166, 0.6));
+  filter: sepia(0.3) saturate(1.2)
+          drop-shadow(0 0 18px rgba(192, 122, 95, 0.8))
+          drop-shadow(0 6px 12px rgba(74, 64, 54, 0.4));
   transform: scale(1.08);
 }
 
@@ -162,8 +162,8 @@ html, body {
   width: 80%;
   height: 12px;
   background: radial-gradient(ellipse at center,
-              rgba(185, 147, 108, 1) 0%,
-              rgba(218, 194, 146, 1) 70%);
+              rgba(192, 122, 95, 0.8) 0%,
+              rgba(212, 163, 115, 0.8) 70%);
   border-radius: 50%;
   filter: blur(4px);
   animation: glowPulse 2.5s ease-in-out infinite;
@@ -186,12 +186,12 @@ html, body {
   left: 0;
   margin-bottom: 10px;
   width: 280px;
-  background: rgba(230, 226, 211, 0.95);
-  border: 1px solid rgba(185, 147, 108, 0.5);
+  background: rgba(253, 252, 248, 0.95);
+  border: 1px solid rgba(192, 122, 95, 0.4);
   border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(185, 147, 108, 0.2),
-              0 0 20px rgba(230, 226, 211, 0.6);
-  color: #b9936c;
+  box-shadow: 0 10px 30px rgba(192, 122, 95, 0.15),
+              0 0 20px rgba(247, 245, 240, 0.5);
+  color: #4A4036;
   pointer-events: auto;
   opacity: 0;
   transform: translateY(10px) scale(0.95);
@@ -204,8 +204,8 @@ html, body {
   opacity: 1;
   transform: translateY(0) scale(1);
   visibility: visible;
-  box-shadow: 0 15px 40px rgba(185, 147, 108, 0.3),
-              0 0 30px rgba(218, 194, 146, 0.4);
+  box-shadow: 0 15px 40px rgba(192, 122, 95, 0.25),
+              0 0 30px rgba(212, 163, 115, 0.3);
 }
 
 .speech-content {
@@ -216,7 +216,7 @@ html, body {
   margin: 0;
   font-size: 14px;
   line-height: 1.6;
-  color: #b9936c;
+  color: #4A4036;
   min-height: 44px;
 }
 
@@ -226,10 +226,10 @@ html, body {
   width: 4px;
   height: 12px;
   margin-left: 2px;
-  background: #b9936c;
+  background: #C07A5F;
   vertical-align: middle;
   animation: caretBlink 1s steps(2) infinite;
-  box-shadow: 0 0 6px rgba(185, 147, 108, 0.8);
+  box-shadow: 0 0 6px rgba(192, 122, 95, 0.6);
 }
 
 @keyframes caretBlink {
@@ -242,14 +242,14 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  border-top: 1px solid rgba(185, 147, 108, 0.3);
+  border-top: 1px solid rgba(192, 122, 95, 0.2);
   padding-top: 12px;
 }
 
 .speech-option {
   background: none;
   border: none;
-  color: #c4b7a6;
+  color: #6B5B4F;
   font-family: inherit;
   font-size: 13px;
   text-align: left;
@@ -262,20 +262,20 @@ html, body {
 
 .speech-option::before {
   content: '> ';
-  color: rgba(185, 147, 108, 0.7);
+  color: rgba(192, 122, 95, 0.6);
   font-weight: bold;
   transition: all 0.25s ease;
 }
 
 .speech-option:hover {
-  color: #b9936c;
-  background: rgba(185, 147, 108, 0.15);
+  color: #4A4036;
+  background: rgba(192, 122, 95, 0.1);
   transform: translateX(4px);
 }
 
 .speech-option:hover::before {
-  color: #b9936c;
-  text-shadow: 0 0 8px rgba(185, 147, 108, 0.6);
+  color: #C07A5F;
+  text-shadow: 0 0 8px rgba(192, 122, 95, 0.4);
 }
 
 .speech-tail {
@@ -284,9 +284,9 @@ html, body {
   left: 40px;
   width: 20px;
   height: 20px;
-  background: rgba(230, 226, 211, 0.95);
-  border-right: 1px solid rgba(185, 147, 108, 0.5);
-  border-bottom: 1px solid rgba(185, 147, 108, 0.5);
+  background: rgba(253, 252, 248, 0.95);
+  border-right: 1px solid rgba(192, 122, 95, 0.4);
+  border-bottom: 1px solid rgba(192, 122, 95, 0.4);
   transform: rotate(45deg);
   z-index: 0;
 }
@@ -298,7 +298,7 @@ html, body {
   left: 38px;
   width: 24px;
   height: 3px;
-  background: rgba(230, 226, 211, 0.95);
+  background: rgba(253, 252, 248, 0.95);
   z-index: 2;
 }
 
@@ -602,7 +602,7 @@ html, body {
 <header class="top-banner">
   <a href="index.html" class="glowing-logo-wrapper" aria-label="Go to Home">
     <svg class="glowing-logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1767 1270">
-      <g fill="#b9936c">
+      <g fill="#C07A5F">
         <path d="M972 225zl-6 62q-4 36-14 75-8 28-17 49-12 30-26 55-11 22-25 40v2q38 48 93 77l9 3h1l9-10q26-34 28-78c2-22-4-44-21-58l-10-6q-3-1-1-4l2-2q18 4 28 20c13 19 13 45 10 67q-4 21-12 38a125 125 0 0 1-26 37l1 1 19 8 26 10q48 15 101 22 53 8 111 8h316a3 3 0 0 1 3 4q-1 4-5 4h-302q-59 1-119-8-47-6-96-19a411 411 0 0 1-61-22l-13 12-28 18q-14 7-31 12-32 8-65 2-25-5-48-18-15-8-28-20l-5-7h-2a602 602 0 0 1-221 48l-52 2H194q-3 0-4-3a3 3 0 0 1 3-4h113l174-1q36 0 80-3 79-5 155-29l39-13 7-3v-1q-38-42-37-99c1-20 9-48 27-59q7-4 14-4a2 2 0 0 1 2 3q0 2-2 3-17 8-24 24-6 14-7 29c-4 37 11 72 35 100h2q13-6 24-13l31-23q25-20 43-46l2-1v-1l-20-30q-29-50-44-103-13-44-18-100l-1-33v-12h-1l-3 4-14 23-5 8q-26 39-58 80-23 27-52 57-34 35-73 63-53 38-116 60l-32 9q-39 9-85 7l-39-1H4q-3 0-4-3l3-3 24-1h348q34 0 65-9a438 438 0 0 0 188-109q21-19 42-41l38-45q29-37 52-73l19-31 19-31q21-38 36-72l21-49q13-32 23-66l1-3h1q2-1 4 2l3 11 13 41a955 955 0 0 0 91 185q24 39 51 75 42 54 94 100 44 40 97 70 30 17 64 29 23 8 46 12l11 3h2l407 1 2 2v3a2 2 0 0 1-3 2h-383q-12 1-27-1-32-6-54-13-39-13-81-38l-16-10-16-10q-38-27-66-53-39-36-74-80-27-34-54-75zM882 24q-12 36-29 75l-17 37-42 84q0 17 2 32 2 36 8 68l4 20 7 30q16 52 42 98 9 16 20 30h1q6-7 13-19l14-26q8-15 19-42 15-36 24-75 4-15 7-37 5-37 8-75 1-11-4-20l-24-46-24-50q-18-41-29-84M777 595zq12 13 27 22 24 14 53 19 30 4 59-5a149 149 0 0 0 62-37c-37-16-69-43-95-73l-6-8h-1l-11 14q-19 21-40 37-15 13-37 25zM530 865zc24 1 40 21 33 44q-9 23-33 26l-14 1q-17-2-24-1h-20l-1-1 1-1c9-1 17-1 17-12v-97q1-8-6-11l-11-1-1-1 1-1h31q13-1 27 1 18 3 22 19 2 22-15 31zm-28 1c12 0 25 0 32-10q7-11 5-23-3-17-19-19h-13q-5 4-5 10zm0 5v48l1 8c4 7 19 6 25 6q21-4 22-25 2-24-19-35a69 69 0 0 0-29-2M68 826v88q-1 8 3 15 4 5 12 5h1v1l-1 1H47v-1l1-1 5-1c11-3 10-16 10-26v-87q-7-6-15-7l-1-1 1-1h25q2 0 3 2l7 9 76 93v-77l-1-16q-3-8-13-9l-1-1v-1l20 1 15-1 1 1-1 2c-14 0-15 11-15 22v102a1 1 0 0 1-3 1zM309 874v47c0 10 6 11 15 11h16c15-1 22-12 25-25l1-1 1 1-1 27-2 2h-85l-1-1 1-1 9-1c8-1 8-8 8-15v-92c0-12-7-13-17-13l-1-1 1-1h81l1 1v25l-1 1-1-1-1-6q-3-11-13-15l-13-1h-12q-12 1-11 13v41h28l7-2q7-4 7-12l1-1h1v36h-1l-1-1v-5q-4-11-17-11zM776 918zq-23 23-54 21c-21-2-38-16-38-38v-73q2-9-6-13l-11-1-1-1 1-1h47v1l-1 1-8 1c-8 2-8 8-8 14v64q0 39 39 41 24-3 41-19v-93c-2-8-10-8-16-8h-1v-1l1-1h45a1 1 0 0 1 2 1l-1 1-9 1q-8 2-8 12v97q0 10 9 10l8 1 1 1-1 1h-28l-1-1-1-3zM907 812l1-1h45l2 1-1 1-9 1q-9 2-8 12v94q0 13 14 12h23q8 0 14-3 12-9 14-23l1-1 1 1-2 28-2 2h-93v-1l1-1c7-1 15 0 16-10v-94l-1-10c-1-7-10-7-16-7zM1207 918zq-23 23-54 21c-21-2-38-16-38-38v-73q2-9-6-12l-10-2a1 1 0 0 1-2-1l1-1h47v2h-1l-8 1c-8 2-8 8-8 14v64q0 39 39 41 23-3 41-19v-93c-2-8-10-8-16-8h-1v-1l1-1h45a1 1 0 0 1 2 1v1h-1l-9 1q-9 2-8 12v97q0 9 9 10l8 1 1 1-1 1h-28l-1-1-1-4zM1398 866zl24-34c3-5 8-15-1-17l-6-1-1-1 2-1h37l1 1v1h-1q-17 4-26 19l-27 36v2q27 42 33 49 6 11 16 14l7 1 1 1-1 1h-43l-1-1 1-1 8-1 2-2-2-4-30-47h-1l-26 38-3 4c-3 10 4 11 11 12l1 1-1 1h-38l-1-1 1-1q16-3 25-16l29-41v-1l-34-51q-7-11-19-12l-1-1v-1h42l1 1v1h-1c-4 0-13 1-8 8zM1586 873zv47c0 10 6 11 15 11h16c15-1 22-12 25-25l1-1 1 1-1 27-2 2h-85l-1-1 1-1 9-1c8-1 8-8 8-15v-92c0-12-7-13-17-13l-1-1 1-1h81l1 1v25l-1 1-1-1-1-6q-3-11-13-15l-13-1h-12q-11 1-11 13v41h28l7-2q7-4 7-12l1-1h1v36h-1l-1-1v-5q-4-11-17-11zM1766 1063v3l-1 1-1763-1-1-1v-4l1-1 1763-1 1 1zM989 1215q11 0 12-4l1-7v-54l-1-7c-1-3-10-3-13-3q-15 3-16 17l-1 1v-1l2-22q2 3 5 3h56q4 0 6-3h1l-2 23h-1l-1-8q-3-10-12-10h-10q-5 1-5 6v63c1 6 8 5 12 6v1h-32zM749 1215q7-1 10-6l6-10 26-62a1 1 0 0 1 2 0v2l31 65q3 9 13 11l-2 1h-26l-1-1h1q8-1 8-3 1-3-1-6l-14-31h-25l-10 26q-5 14 11 14l-1 1h-27zm30-43h21v-1l-10-22h-1ZM951 1215l-1 1h-12q-7 1-10-5l-27-35h-11l-1 1v31c0 7 6 6 11 7v1h-29l-1-1q5 0 8-2 3-1 3-6v-57q1-10-6-10l-4-1-1-1h29c9-1 19 2 22 11q2 15-12 23v1q10 17 22 30 7 9 19 12zm-61-42c8 1 20 1 22-9 2-6 1-16-4-21q-7-5-15-3l-3 2-1 7z"/>
         <path d="m2 1205-1-1v-5h9l324-1q44 0 84 8l33 7 13 3 16 5 42 13 60 18q44 10 92 10h416l33-1 32-4 44-9 60-16 22-7 72-18q22-5 47-7 30-3 64-2h301v8h-344q-23 0-42 3l-21 4-56 13-34 9-64 18q-26 8-56 12-36 5-75 5H890l-214-1-44-2q-33-3-67-13l-70-22q-21-7-47-13l-44-9q-24-4-47-5H2"/>
       </g>
@@ -757,15 +757,15 @@ var ParticleEngine = (function() {
 		this.totalHeight = this.canvasHeight = document.getElementById(canvas_id).height = document.getElementById(canvas_id).offsetHeight;
 		this.compositeStyle = "source-over";
 		this.particleSettings = [
-			{id:"small", num:300, fromX:0, toX:this.totalWidth, ballwidth:3, alphamax:0.6, areaHeight:.5, color:"#dac292", fill:false},
-			{id:"medium", num:100, fromX:0, toX:this.totalWidth, ballwidth:8, alphamax:0.5, areaHeight:1, color:"#c4b7a6", fill:true},
-			{id:"large", num:10, fromX:0, toX:this.totalWidth, ballwidth:30, alphamax:0.4, areaHeight:1, color:"#b9936c", fill:true}
+			{id:"small", num:300, fromX:0, toX:this.totalWidth, ballwidth:3, alphamax:0.6, areaHeight:.5, color:"#D4C5B2", fill:false},
+			{id:"medium", num:100, fromX:0, toX:this.totalWidth, ballwidth:8, alphamax:0.5, areaHeight:1, color:"#B59B84", fill:true},
+			{id:"large", num:10, fromX:0, toX:this.totalWidth, ballwidth:30, alphamax:0.4, areaHeight:1, color:"#8A9A7B", fill:true}
 		];
 		this.particleArray = [];
 		this.lights = [
-			{ellipseWidth:400, ellipseHeight:100, alpha:0.6, offsetX:0, offsetY:0, color:"#e6e2d3"},
-			{ellipseWidth:350, ellipseHeight:250, alpha:0.4, offsetX:-50, offsetY:0, color:"#dac292"},
-			{ellipseWidth:100, ellipseHeight:80, alpha:0.3, offsetX:80, offsetY:-50, color:"#e6e2d3"}
+			{ellipseWidth:400, ellipseHeight:100, alpha:0.6, offsetX:0, offsetY:0, color:"#E8DFD0"},
+			{ellipseWidth:350, ellipseHeight:250, alpha:0.4, offsetX:-50, offsetY:0, color:"#D4C5B2"},
+			{ellipseWidth:100, ellipseHeight:80, alpha:0.3, offsetX:80, offsetY:-50, color:"#9CAF88"}
 		];
 		this.stage.compositeOperation = _ParticleEngine.compositeStyle;
 
