@@ -1084,32 +1084,12 @@ var particles;
 <!-- ========================================== -->
 <style>
   .boho-gallery-section {
-    padding: 80px 20px;
+    padding: 60px 20px 80px;
     max-width: 1200px;
     margin: 0 auto;
     font-family: 'Segoe UI', system-ui, sans-serif;
     position: relative;
     z-index: 10;
-  }
-
-  .boho-gallery-title {
-    text-align: center;
-    font-size: 2.5rem;
-    color: #4A4036;
-    margin-bottom: 12px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-  }
-
-  .boho-gallery-subtitle {
-    text-align: center;
-    color: #8A7355;
-    margin-bottom: 50px;
-    font-size: 1.1rem;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 1.6;
   }
 
   .boho-gallery-grid {
@@ -1232,12 +1212,20 @@ var particles;
     box-shadow: 0 4px 16px rgba(192, 122, 95, 0.3);
   }
 
+  .boho-gallery-error {
+    text-align: center;
+    padding: 40px 20px;
+    background: rgba(192, 122, 95, 0.08);
+    border: 1px dashed rgba(192, 122, 95, 0.4);
+    border-radius: 16px;
+    color: #6B5B4F;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
   @media (max-width: 768px) {
     .boho-gallery-section {
-      padding: 60px 16px;
-    }
-    .boho-gallery-title {
-      font-size: 2rem;
+      padding: 40px 16px 60px;
     }
     .boho-gallery-grid {
       grid-template-columns: 1fr;
@@ -1246,56 +1234,81 @@ var particles;
   }
 </style>
 
-<!-- Load the data file first -->
-<script src="js/other_services.js"></script>
-
 <section class="boho-gallery-section">
-  <h2 class="boho-gallery-title">Our Services</h2>
-  <p class="boho-gallery-subtitle">Discover our curated offerings, designed with care, creativity, and a touch of earthy elegance to bring your unique vision to life.</p>
-
   <!-- Grid container to be populated by JavaScript -->
-  <div class="boho-gallery-grid" id="services-grid">
-    <!-- Cards will be injected here -->
-  </div>
+  <div class="boho-gallery-grid" id="services-grid"></div>
 </section>
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const grid = document.getElementById('services-grid');
+<!-- Load data file with explicit load/error handlers -->
+<script
+  src="js/other_services.js"
+  onload="renderBohoServices()"
+  onerror="handleServicesLoadError()">
+</script>
 
-    // Ensure the data exists before trying to render
-    if (!grid || typeof window.other_services === 'undefined') {
-      console.warn('Services data not found. Please ensure js/other_services.js is loaded correctly.');
+<script>
+  // Fallback image used when a service's local image fails to load
+  const BOHO_FALLBACK_IMG = 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=600&q=80';
+
+  function renderBohoServices() {
+    const grid = document.getElementById('services-grid');
+    if (!grid) return;
+
+    if (typeof window.other_services === 'undefined' || !Array.isArray(window.other_services) || window.other_services.length === 0) {
+      grid.innerHTML = `
+        <div class="boho-gallery-error" style="grid-column: 1 / -1;">
+          <strong>No services found.</strong><br>
+          Please check that <code>js/other_services.js</code> defines <code>window.other_services</code> as a non-empty array.
+        </div>
+      `;
       return;
     }
 
-    // Fallback image in case local paths are broken or still being set up
-    const fallbackImg = 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=600&q=80';
-
     grid.innerHTML = window.other_services.map(service => {
-      // Smart path helper: appends .jpg if the src string doesn't already have an image extension
+      // Smart path helper: appends .jpg if the src doesn't already have an image extension
       const imgSrc = /\.(jpg|jpeg|png|webp|gif)$/i.test(service.src)
         ? service.src
         : `${service.src}.jpg`;
 
+      const typeBadge = service.type ? `<span class="boho-service-badge">${service.type}</span>` : '';
+      const priceTag = service.pricerange ? `<span class="boho-service-price">${service.pricerange}</span>` : '';
+
       return `
         <article class="boho-service-card">
           <div class="boho-service-image-wrapper">
-            <span class="boho-service-badge">${service.type}</span>
-            <img src="${imgSrc}" alt="${service.alt || service.name}" class="boho-service-image" onerror="this.src='${fallbackImg}'">
+            ${typeBadge}
+            <img src="${imgSrc}" alt="${service.alt || service.name || 'Service image'}" class="boho-service-image" onerror="this.onerror=null; this.src='${BOHO_FALLBACK_IMG}'">
           </div>
           <div class="boho-service-content">
             <div class="boho-service-header">
-              <h3 class="boho-service-title">${service.name}</h3>
-              <span class="boho-service-price">${service.pricerange}</span>
+              <h3 class="boho-service-title">${service.name || 'Untitled Service'}</h3>
+              ${priceTag}
             </div>
-            <p class="boho-service-desc">${service.description}</p>
+            <p class="boho-service-desc">${service.description || ''}</p>
             <a href="#" class="boho-service-btn" data-id="${service.id}">View Details</a>
           </div>
         </article>
       `;
     }).join('');
-  });
+  }
+
+  function handleServicesLoadError() {
+    const grid = document.getElementById('services-grid');
+    if (!grid) return;
+    grid.innerHTML = `
+      <div class="boho-gallery-error" style="grid-column: 1 / -1;">
+        <strong>Couldn't load services data.</strong><br>
+        The file <code>js/other_services.js</code> could not be found. Please verify the file path and that the file contains valid JavaScript (ending with <code>];</code>).
+      </div>
+    `;
+    console.error('Failed to load js/other_services.js — check the file path and syntax.');
+  }
+
+  // Safety net: if the script somehow loaded before this code ran (e.g. cached),
+  // try to render now.
+  if (typeof window.other_services !== 'undefined') {
+    renderBohoServices();
+  }
 </script>
 <!-- ========================================== -->
 <!-- END BOHO SERVICES GALLERY -->
