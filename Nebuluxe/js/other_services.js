@@ -32,3 +32,4 @@ window.other_services = [
         description: 'loren ipsum',
         type: 'No Collection'
     }
+]
