@@ -1698,77 +1698,84 @@ var particles;
   let currentImageIndex = 0;
 
   // Dynamically build array from fullsizesrc1, fullsizesrc2, fullsizesrc3, etc.
-  function buildImageArray(item) {
+  buildImageArray(item) {
     const images = [];
-    // Check for fullsizesrc1, fallback to fullsizesrc, or src
-    const primary = item.fullsizesrc1 || item.fullsizesrc || item.fullSizeSrc || item.src;
-    if (primary) images.push(primary);
+    // Prioritize fullsizesrc1, then fall back to fullsizesrc, fullSizeSrc, or src
+    const primarySrc = item.fullsizesrc1 || item.fullsizesrc || item.fullSizeSrc || item.src;
+    if (primarySrc) {
+        images.push(primarySrc);
+    }
 
+    // Iterate through fullsizesrc2, fullsizesrc3, etc. (also catches the 'fullsizescr' typo)
     let i = 2;
     while (true) {
-      // Supports both correct spelling and the potential typo "fullsizescr"
-      const nextImage = item[`fullsizesrc${i}`] || item[`fullsizescr${i}`];
-      if (nextImage) {
-        images.push(nextImage);
-        i++;
-      } else {
-        break;
-      }
+        const nextImage = item[`fullsizesrc${i}`] || item[`fullsizescr${i}`];
+        if (nextImage) {
+            images.push(nextImage);
+            i++;
+        } else {
+            break;
+        }
     }
     return images;
+}
+
+openModal(item) {
+  if (!item) return;
+
+  this.currentItem = item;
+
+  // Build the carousel image array
+  this.currentImages = this.buildImageArray(item);
+  this.currentImageIndex = 0;
+
+  // Handle both old gallery data (suggestedprice) and new data (pricerange)
+  const priceDisplay = item.pricerange || ((item.suggestedprice === 0) ? "Price N/A" : `Suggested Price - $${((item.suggestedprice || 0) * (item.pricemultiplier || 1)).toFixed(2)}`);
+
+  // Handle both new data (type) and old data (inStock/remakecustom)
+  let availability = "Available";
+  if (item.type) {
+      availability = item.type;
+  } else {
+      availability = item.inStock ? "Currently available" : "Not on hand";
+      if (item.remakecustom) availability += ", would remake in new colors.";
+      else availability += ", will not remake.";
   }
 
-  function openModal(item) {
-    if (!item) return;
+  // Set initial image (no fade for first load)
+  const primarySrc = this.currentImages[0] || item.src;
+  this.modalImage.src = primarySrc;
+  this.modalImage.alt = item.alt || item.name || item.title || 'Artwork';
+  this.modalImage.style.opacity = '1';
+  this.modalImage.onerror = () => {
+      console.warn(`Failed to load fullsize image: ${primarySrc}. Falling back to thumbnail.`);
+      this.modalImage.src = item.src;
+  };
 
-    currentImages = buildImageArray(item);
-    currentImageIndex = 0;
+  // Use item.name OR item.title to support both data structures
+  const itemName = item.name || item.title || 'Untitled';
 
-    const priceDisplay = item.pricerange || "Price N/A";
-    const availabilityText = item.type || "Available";
+  document.getElementById('modal-title').textContent = itemName;
+  document.getElementById('modal-price').textContent = priceDisplay;
+  document.getElementById('modal-availability').textContent = availability;
+  document.getElementById('modal-size').textContent = `${item.length || '?'} x ${item.width || '?'}`;
+  document.getElementById('modal-description').textContent = item.description || 'No description available.';
 
-    const primaryBase = currentImages[0] || item.src;
-    const primaryCandidates = buildImageCandidates(primaryBase);
+  const email = "nebuluxeart@gmail.com";
+  const subject = encodeURIComponent(`Inquiry about: ${itemName}`);
+  const body = encodeURIComponent(`Hello,\n\nI am interested in learning more about "${itemName}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`);
+  document.getElementById('modal-inquire-btn').href = `mailto:${email}?subject=${subject}&body=${body}`;
 
-    modalImage.style.opacity = '0';
-    setTimeout(() => {
-      attachSmartLoader(modalImage, primaryCandidates, []);
-      modalImage.alt = item.alt || item.name || 'Artwork';
-      modalImage.style.opacity = '1';
-    }, 200);
-
-    document.getElementById('modal-title').textContent = item.name || 'Untitled';
-    document.getElementById('modal-price').textContent = priceDisplay;
-    document.getElementById('modal-availability').textContent = availabilityText;
-
-    const sizeRow = document.querySelector('.modal-size-row');
-    if (item.size) {
-      document.getElementById('modal-size').textContent = item.size;
-      sizeRow.style.display = 'block';
-    } else {
-      sizeRow.style.display = 'none';
-    }
-
-    document.getElementById('modal-description').textContent = item.description || 'No description available.';
-
-    const email = "nebuluxeart@gmail.com";
-    const subject = encodeURIComponent(`Inquiry about: ${item.name}`);
-    const body = encodeURIComponent(`Hello,\n\nI am interested in learning more about "${item.name}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`);
-    document.getElementById('modal-inquire-btn').href = `mailto:${email}?subject=${subject}&body=${body}`;
-
-    renderCarouselDots();
-    if (currentImages.length <= 1) {
-      carouselContainer.classList.add('single-image');
-    } else {
-      carouselContainer.classList.remove('single-image');
-    }
-
-    modal.classList.add('is-open');
+  // Update carousel UI
+  this.renderCarouselDots();
+  if (this.currentImages.length <= 1) {
+      this.carouselContainer.classList.add('single-image');
+  } else {
+      this.carouselContainer.classList.remove('single-image');
   }
 
-  function closeModal() {
-    modal.classList.remove('is-open');
-  }
+  this.modal.classList.add('is-open');
+}
 
   function renderCarouselDots() {
     carouselDots.innerHTML = '';
