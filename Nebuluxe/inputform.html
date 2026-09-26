@@ -1120,33 +1120,15 @@ var particles;
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
-  /* Scoped wrapper to prevent overriding your existing page styles */
+  /* Scoped wrapper - NO background, allows natural page scrolling */
   .neon-inquiry-section {
     min-height: 100vh;
     width: 100%;
     display: flex;
-    align-items: center;
     justify-content: center;
-    color: #fff;
-    padding: 20px;
+    padding: 40px 20px;
     position: relative;
-    overflow: hidden;
     font-family: 'Orbitron', sans-serif;
-  }
-
-  .neon-inquiry-section .particle {
-    position: absolute;
-    width: 3px;
-    height: 3px;
-    background: cyan;
-    opacity: 0.6;
-    animation: float 12s linear infinite;
-    pointer-events: none;
-  }
-
-  @keyframes float {
-    from { transform: translateY(100vh) translateX(0); }
-    to { transform: translateY(-10vh) translateX(80px); }
   }
 
   .neon-inquiry-section .inquiry-box {
@@ -1160,6 +1142,7 @@ var particles;
     border: 1px solid rgba(0, 255, 255, 0.4);
     animation: fadeIn 1.2s ease;
     z-index: 10;
+    margin: auto;
   }
 
   @keyframes fadeIn {
@@ -1175,7 +1158,7 @@ var particles;
     background: linear-gradient(45deg, cyan, magenta, cyan);
     z-index: -1;
     filter: blur(18px);
-    animation: glow 6s linear infinite;
+    animation: glow 12s linear infinite; /* Slowed from 6s to 12s */
   }
 
   @keyframes glow {
@@ -1193,7 +1176,8 @@ var particles;
   .neon-inquiry-section .inquiry-box > p {
     text-align: center;
     font-size: 11px;
-    opacity: 0.7;
+    color: #fff;
+    opacity: 0.8;
     margin-bottom: 35px;
     letter-spacing: 1px;
   }
@@ -1210,7 +1194,7 @@ var particles;
     background: transparent;
     border: none;
     outline: none;
-    color: cyan;
+    color: #fff;
     border-bottom: 2px solid rgba(0, 255, 255, 0.3);
     font-size: 14px;
     font-family: 'Orbitron', sans-serif;
@@ -1230,7 +1214,8 @@ var particles;
   }
 
   .neon-inquiry-section .field input[readonly] {
-    color: rgba(0, 255, 255, 0.4);
+    color: #fff;
+    opacity: 0.6;
     border-bottom-color: rgba(0, 255, 255, 0.1);
     cursor: not-allowed;
   }
@@ -1241,7 +1226,8 @@ var particles;
     top: 50%;
     transform: translateY(-50%);
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.5);
+    color: #fff;
+    opacity: 0.5;
     pointer-events: none;
     transition: 0.3s;
     letter-spacing: 1px;
@@ -1258,11 +1244,13 @@ var particles;
   .neon-inquiry-section .field textarea:not(:placeholder-shown) + label {
     top: -6px;
     font-size: 10px;
-    color: cyan;
+    color: #fff;
+    opacity: 1;
   }
 
   .neon-inquiry-section .field input[readonly] + label {
-    color: rgba(0, 255, 255, 0.4);
+    color: #fff;
+    opacity: 0.6;
   }
 
   .neon-inquiry-section .form-actions {
@@ -1277,7 +1265,7 @@ var particles;
     background: transparent;
     border: 2px solid cyan;
     border-radius: 12px;
-    color: cyan;
+    color: #fff;
     cursor: pointer;
     letter-spacing: 2px;
     font-size: 13px;
@@ -1314,7 +1302,7 @@ var particles;
 
   .neon-inquiry-section .neon-btn.secondary {
     border-color: magenta;
-    color: magenta;
+    color: #fff;
   }
 
   .neon-inquiry-section .neon-btn.secondary::before {
@@ -1332,7 +1320,8 @@ var particles;
   }
 
   .neon-inquiry-section .back-link {
-    color: rgba(0, 255, 255, 0.6);
+    color: #fff;
+    opacity: 0.8;
     text-decoration: none;
     font-size: 11px;
     letter-spacing: 1px;
@@ -1340,8 +1329,9 @@ var particles;
   }
 
   .neon-inquiry-section .back-link:hover {
-    color: cyan;
-    text-shadow: 0 0 10px cyan;
+    color: #fff;
+    opacity: 1;
+    text-shadow: 0 0 10px #fff;
   }
 
   @media (max-width: 480px) {
@@ -1357,7 +1347,7 @@ var particles;
   }
 </style>
 
-<div class="neon-inquiry-section" id="neon-inquiry-wrapper">
+<div class="neon-inquiry-section">
   <div class="inquiry-box">
     <h2>INQUIRY</h2>
     <p>Remember, you are talking to a person. I will get back to you promptly.</p>
@@ -1396,8 +1386,6 @@ var particles;
 </div>
 
 <script>
-
-
   // Read URL parameters and pre-fill the form
   function getQueryParam(param) {
     const urlParams = new URLSearchParams(window.location.search);
