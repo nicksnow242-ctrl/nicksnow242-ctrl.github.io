@@ -1120,7 +1120,6 @@ var particles;
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
-  /* Scoped wrapper - NO background, allows natural page scrolling */
   .neon-inquiry-section {
     min-height: 100vh;
     width: 100%;
@@ -1143,6 +1142,8 @@ var particles;
     animation: fadeIn 1.2s ease;
     z-index: 10;
     margin: auto;
+    max-height: 90vh; /* Added: Limits height to 90% of viewport */
+    overflow-y: auto; /* Added: Makes the card scrollable */
   }
 
   @keyframes fadeIn {
@@ -1158,7 +1159,7 @@ var particles;
     background: linear-gradient(45deg, cyan, magenta, cyan);
     z-index: -1;
     filter: blur(18px);
-    animation: glow 12s linear infinite; /* Slowed from 6s to 12s */
+    animation: glow 12s linear infinite;
   }
 
   @keyframes glow {
@@ -1386,13 +1387,11 @@ var particles;
 </div>
 
 <script>
-  // Read URL parameters and pre-fill the form
   function getQueryParam(param) {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
   }
 
-  // Pre-fill fields on page load
   window.addEventListener('DOMContentLoaded', () => {
     const itemName = getQueryParam('name');
     const itemPrice = getQueryParam('price');
@@ -1405,12 +1404,10 @@ var particles;
       document.getElementById('item-price').value = decodeURIComponent(itemPrice);
     }
 
-    // Set default message
     const defaultMessage = `Hello,\n\nI am interested in learning more about "${itemName || 'this item'}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`;
     document.getElementById('message').value = defaultMessage;
   });
 
-  // Handle form submission
   document.getElementById('inquiry-form').addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -1419,7 +1416,6 @@ var particles;
     const userEmail = document.getElementById('user-email').value;
     const message = document.getElementById('message').value;
 
-    // Build mailto link
     const subject = encodeURIComponent(`Inquiry about: ${itemName}`);
     const body = encodeURIComponent(
       `From: ${userEmail}\n\n` +
@@ -1430,10 +1426,8 @@ var particles;
 
     const mailtoLink = `mailto:nebuluxeart@gmail.com?subject=${subject}&body=${body}`;
 
-    // Open mail client
     window.location.href = mailtoLink;
 
-    // Optional: Show confirmation or redirect
     setTimeout(() => {
       alert('Thank you for your inquiry! Your email client should open shortly.');
       window.location.href = 'other_services.html';
