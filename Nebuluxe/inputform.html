@@ -203,14 +203,14 @@ html, body {
   left: 0;
   margin-bottom: 10px;
   width: 280px;
-  background: rgba(0, 0, 0, 0.3); /* 30% opacity black background */
+  background: rgba(0, 0, 0, 0.3);
   border: 2px solid transparent;
   border-radius: 16px;
   background-clip: padding-box;
   box-shadow: 0 0 15px rgba(255, 0, 255, 0.4), 0 0 30px rgba(0, 255, 255, 0.2);
-  color: #ffffff; /* White text */
+  color: #ffffff;
   pointer-events: auto;
-  opacity: 1; /* Ensures the container itself doesn't fade the child text */
+  opacity: 1;
   transform: translateY(10px) scale(0.95);
   transform-origin: bottom left;
   transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
@@ -246,7 +246,7 @@ html, body {
   margin: 0;
   font-size: 14px;
   line-height: 1.6;
-  color: #ffffff; /* Changed to white */
+  color: #ffffff;
   min-height: 44px;
 }
 
@@ -279,7 +279,7 @@ html, body {
 .speech-option {
   background: none;
   border: 1px solid transparent;
-  color: #ffffff; /* Changed to white */
+  color: #ffffff;
   font-family: inherit;
   font-size: 13px;
   text-align: left;
@@ -292,12 +292,11 @@ html, body {
 
 .speech-option::before {
   content: '> ';
-  color: #ffffff; /* Changed to white */
+  color: #ffffff;
   font-weight: bold;
   transition: all 0.25s ease;
 }
 
-/* Optional: Ensure hover state text remains white */
 .speech-option:hover {
   color: #ffffff;
   background: rgba(255, 255, 255, 0.1);
@@ -627,6 +626,242 @@ html, body {
   .music-player-container { top: 10px; right: 10px; }
   .mecha-panel { width: 280px; }
   .oval-frame { width: 130px; height: 130px; }
+}
+
+/* ========================================== */
+/* COMPACT INPUT FORM STYLES (NO SCROLL) */
+/* ========================================== */
+.neon-inquiry-section {
+  min-height: calc(100vh - 110px);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Perfectly centers the form in remaining space */
+  padding: 10px 20px;
+  position: relative;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.neon-inquiry-section .inquiry-box {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  padding: 15px 30px 20px 30px; /* Compact, fixed padding */
+  background: rgba(0, 0, 0, 0.75);
+  border-radius: 18px;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.25), inset 0 0 20px rgba(0, 255, 255, 0.15);
+  border: 1px solid rgba(0, 255, 255, 0.4);
+  animation: fadeIn 1.2s ease;
+  z-index: 10;
+  /* REMOVED max-height and overflow-y: auto to prevent scrolling */
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.neon-inquiry-section .inquiry-box::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 20px;
+  background: linear-gradient(45deg, cyan, magenta, cyan);
+  z-index: -1;
+  filter: blur(18px);
+  animation: glow 12s linear infinite;
+}
+
+@keyframes glow {
+  0% { filter: blur(18px) hue-rotate(0deg); }
+  100% { filter: blur(18px) hue-rotate(360deg); }
+}
+
+.neon-inquiry-section .inquiry-box h2 {
+  text-align: center;
+  margin-bottom: 4px;
+  letter-spacing: 3px;
+  color: #fff;
+}
+
+.neon-inquiry-section .inquiry-box > p {
+  text-align: center;
+  font-size: 11px;
+  color: #fff;
+  opacity: 0.8;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.neon-inquiry-section .field {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.neon-inquiry-section .field input,
+.neon-inquiry-section .field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  border-bottom: 2px solid rgba(0, 255, 255, 0.3);
+  font-size: 14px;
+  font-family: 'Orbitron', sans-serif;
+  transition: 0.3s;
+}
+
+.neon-inquiry-section .field textarea {
+  min-height: 50px; /* Reduced for compactness */
+  padding-top: 18px;
+  resize: vertical;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-radius: 8px;
+}
+
+.neon-inquiry-section .field input:focus,
+.neon-inquiry-section .field textarea:focus {
+  border-bottom-color: cyan;
+  box-shadow: 0 8px 20px rgba(0, 255, 255, 0.15);
+}
+
+.neon-inquiry-section .field input[readonly] {
+  color: #fff;
+  opacity: 0.9;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  cursor: not-allowed;
+  background: #000;
+  border-radius: 8px;
+}
+
+.neon-inquiry-section .field label {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: #fff;
+  opacity: 0.5;
+  pointer-events: none;
+  transition: 0.3s;
+  letter-spacing: 1px;
+}
+
+.neon-inquiry-section .field textarea + label {
+  top: -16px;
+  left: 0;
+  font-size: 10px;
+  color: #fff;
+  opacity: 1;
+  transform: none;
+}
+
+.neon-inquiry-section .field input:focus + label,
+.neon-inquiry-section .field input:not(:placeholder-shown) + label {
+  top: -6px;
+  font-size: 10px;
+  color: #fff;
+  opacity: 1;
+}
+
+.neon-inquiry-section .field input[readonly] + label {
+  color: #fff;
+  opacity: 0.6;
+}
+
+.neon-inquiry-section .form-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.neon-inquiry-section .neon-btn {
+  flex: 1;
+  padding: 10px;
+  background: transparent;
+  border: 2px solid cyan;
+  border-radius: 12px;
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: 2px;
+  font-size: 13px;
+  font-family: 'Orbitron', sans-serif;
+  transition: 0.4s;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.neon-inquiry-section .neon-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: cyan;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: 0.4s;
+  z-index: -1;
+}
+
+.neon-inquiry-section .neon-btn:hover::before {
+  transform: scaleX(1);
+}
+
+.neon-inquiry-section .neon-btn:hover {
+  color: #000;
+  box-shadow: 0 0 25px cyan;
+}
+
+.neon-inquiry-section .neon-btn.secondary {
+  border-color: magenta;
+  color: #fff;
+}
+
+.neon-inquiry-section .neon-btn.secondary::before {
+  background: magenta;
+}
+
+.neon-inquiry-section .neon-btn.secondary:hover {
+  color: #000;
+  box-shadow: 0 0 25px magenta;
+}
+
+.neon-inquiry-section .footer {
+  margin-top: 8px;
+  text-align: center;
+}
+
+.neon-inquiry-section .back-link {
+  color: #fff;
+  opacity: 0.8;
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: 1px;
+  transition: 0.3s;
+}
+
+.neon-inquiry-section .back-link:hover {
+  color: #fff;
+  opacity: 1;
+  text-shadow: 0 0 10px #fff;
+}
+
+@media (max-width: 480px) {
+  .neon-inquiry-section .inquiry-box {
+    padding: 15px 20px 20px 20px;
+  }
+  .neon-inquiry-section .form-actions {
+    flex-direction: column;
+  }
+  .neon-inquiry-section .inquiry-box h2 {
+    font-size: 20px;
+  }
 }
 </style>
 </head>
@@ -1113,248 +1348,11 @@ var particles;
 <!-- ========================================== -->
 <!-- END CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- ========================================== -->
+
 <!-- ========================================== -->
 <!-- Start Input Form -->
 <!-- ========================================== -->
-<!-- Paste this entire block into your HTML <body> -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
-
-<style>
-  .neon-inquiry-section {
-    min-height: calc(100vh - 110px); /* Fits under 110px banner */
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 20px 20px 15px 20px;
-    position: relative;
-    font-family: 'Orbitron', sans-serif;
-  }
-
-  .neon-inquiry-section .inquiry-box {
-    position: relative;
-    width: 100%;
-    max-width: 500px;
-    padding: 10px 30px 5% 30px; /* Reduced padding */
-    background: rgba(0, 0, 0, 0.75);
-    border-radius: 18px;
-    box-shadow: 0 0 30px rgba(0, 255, 255, 0.25), inset 0 0 20px rgba(0, 255, 255, 0.15);
-    border: 1px solid rgba(0, 255, 255, 0.4);
-    animation: fadeIn 1.2s ease;
-    z-index: 10;
-    margin: auto;
-    max-height: calc(100vh - 110px); /* Fits under 110px banner */
-    overflow-y: auto;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
-  }
-
-  .neon-inquiry-section .inquiry-box::before {
-    content: "";
-    position: absolute;
-    inset: -2px;
-    border-radius: 20px;
-    background: linear-gradient(45deg, cyan, magenta, cyan);
-    z-index: -1;
-    filter: blur(18px);
-    animation: glow 12s linear infinite;
-  }
-
-  @keyframes glow {
-    0% { filter: blur(18px) hue-rotate(0deg); }
-    100% { filter: blur(18px) hue-rotate(360deg); }
-  }
-
-  .neon-inquiry-section .inquiry-box h2 {
-    text-align: center;
-    margin-bottom: 6px;
-    letter-spacing: 3px;
-    color: #fff;
-  }
-
-  .neon-inquiry-section .inquiry-box > p {
-    text-align: center;
-    font-size: 11px;
-    color: #fff;
-    opacity: 0.8;
-    margin-bottom: 15px; /* Reduced from 20px */
-    letter-spacing: 1px;
-  }
-
-  .neon-inquiry-section .field {
-    position: relative;
-    margin-bottom: 15px; /* Reduced from 20px */
-  }
-
-  .neon-inquiry-section .field input,
-  .neon-inquiry-section .field textarea {
-    width: 100%;
-    padding: 12px; /* Reduced from 14px */
-    background: transparent;
-    border: none;
-    outline: none;
-    color: #fff;
-    border-bottom: 2px solid rgba(0, 255, 255, 0.3);
-    font-size: 14px;
-    font-family: 'Orbitron', sans-serif;
-    transition: 0.3s;
-  }
-
-  .neon-inquiry-section .field textarea {
-    min-height: 60px; /* Reduced from 80px */
-    padding-top: 20px;
-    resize: vertical;
-    background: rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(0, 255, 255, 0.3);
-    border-radius: 8px;
-  }
-
-  .neon-inquiry-section .field input:focus,
-  .neon-inquiry-section .field textarea:focus {
-    border-bottom-color: cyan;
-    box-shadow: 0 8px 20px rgba(0, 255, 255, 0.15);
-  }
-
-  .neon-inquiry-section .field input[readonly] {
-    color: #fff;
-    opacity: 0.9;
-    border: 1px solid rgba(0, 255, 255, 0.3);
-    cursor: not-allowed;
-    background: #000;
-    border-radius: 8px;
-  }
-
-  .neon-inquiry-section .field label {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 12px;
-    color: #fff;
-    opacity: 0.5;
-    pointer-events: none;
-    transition: 0.3s;
-    letter-spacing: 1px;
-  }
-
-  /* MESSAGE label sits ABOVE the textarea */
-  .neon-inquiry-section .field textarea + label {
-    top: -18px; /* Positions label above the textarea */
-    left: 0;
-    font-size: 10px;
-    color: #fff;
-    opacity: 1;
-    transform: none;
-  }
-
-  .neon-inquiry-section .field input:focus + label,
-  .neon-inquiry-section .field input:not(:placeholder-shown) + label {
-    top: -6px;
-    font-size: 10px;
-    color: #fff;
-    opacity: 1;
-  }
-
-  .neon-inquiry-section .field input[readonly] + label {
-    color: #fff;
-    opacity: 0.6;
-  }
-
-  .neon-inquiry-section .form-actions {
-    display: flex;
-    gap: 15px;
-    margin-top: 15px; /* Reduced from 20px */
-  }
-
-  .neon-inquiry-section .neon-btn {
-    flex: 1;
-    padding: 10px; /* Reduced from 12px */
-    background: transparent;
-    border: 2px solid cyan;
-    border-radius: 12px;
-    color: #fff;
-    cursor: pointer;
-    letter-spacing: 2px;
-    font-size: 13px;
-    font-family: 'Orbitron', sans-serif;
-    transition: 0.4s;
-    position: relative;
-    overflow: hidden;
-    text-align: center;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .neon-inquiry-section .neon-btn::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: cyan;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: 0.4s;
-    z-index: -1;
-  }
-
-  .neon-inquiry-section .neon-btn:hover::before {
-    transform: scaleX(1);
-  }
-
-  .neon-inquiry-section .neon-btn:hover {
-    color: #000;
-    box-shadow: 0 0 25px cyan;
-  }
-
-  .neon-inquiry-section .neon-btn.secondary {
-    border-color: magenta;
-    color: #fff;
-  }
-
-  .neon-inquiry-section .neon-btn.secondary::before {
-    background: magenta;
-  }
-
-  .neon-inquiry-section .neon-btn.secondary:hover {
-    color: #000;
-    box-shadow: 0 0 25px magenta;
-  }
-
-  .neon-inquiry-section .footer {
-    margin-top: 10px; /* Reduced from 15px */
-    text-align: center;
-  }
-
-  .neon-inquiry-section .back-link {
-    color: #fff;
-    opacity: 0.8;
-    text-decoration: none;
-    font-size: 11px;
-    letter-spacing: 1px;
-    transition: 0.3s;
-  }
-
-  .neon-inquiry-section .back-link:hover {
-    color: #fff;
-    opacity: 1;
-    text-shadow: 0 0 10px #fff;
-  }
-
-  @media (max-width: 480px) {
-    .neon-inquiry-section .inquiry-box {
-      padding: 10px 20px 15px 20px;
-    }
-    .neon-inquiry-section .form-actions {
-      flex-direction: column;
-    }
-    .neon-inquiry-section .inquiry-box h2 {
-      font-size: 20px;
-    }
-  }
-</style>
 
 <div class="neon-inquiry-section">
   <div class="inquiry-box">
