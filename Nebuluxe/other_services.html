@@ -1716,6 +1716,7 @@ var particles;
     return images;
   }
 
+  // ✨ NEW: Preloads all carousel images in the background for instant switching
   function preloadCarouselImages() {
     currentImages.forEach(src => {
       const candidates = buildImageCandidates(src);
@@ -1732,7 +1733,7 @@ var particles;
   currentImages = buildImageArray(item);
   currentImageIndex = 0;
 
-  // ✨ NEW: Preload all carousel images immediately
+  // ✨ Preload all carousel images immediately for instant switching
   preloadCarouselImages();
 
   const priceDisplay = item.pricerange || "Price N/A";
@@ -1745,7 +1746,6 @@ var particles;
 
   modalImage.style.opacity = '0';
 
-  // Reduced from 200ms to 50ms for a snappier initial modal open
   setTimeout(() => {
     attachSmartLoader(modalImage, primaryCandidates, fallbackCandidates);
     modalImage.alt = item.alt || item.name || 'Artwork';
@@ -1803,21 +1803,23 @@ var particles;
   }
 
   function updateCarouselImage() {
-    const baseSrc = currentImages[currentImageIndex];
-    const candidates = buildImageCandidates(baseSrc);
+  const baseSrc = currentImages[currentImageIndex];
+  const candidates = buildImageCandidates(baseSrc);
 
-    // 1. Fade out the current image
-    modalImage.style.opacity = '0';
+  // 1. Fade out the current image
+  modalImage.style.opacity = '0';
 
-    // 2. Wait exactly 250ms (matching your CSS 'opacity 0.25s ease'), then swap and fade in
-    setTimeout(() => {
-      // Because of preloading, this image is already in the browser cache!
-      attachSmartLoader(modalImage, candidates, []);
-      modalImage.style.opacity = '1';
-    }, 250);
+  // 2. Wait exactly 250ms (matching your CSS opacity transition), then swap and fade in
+  setTimeout(() => {
+    if (candidates.length > 0) {
+      modalImage.src = candidates[0];
+    }
+    // Because we preloaded the images, this pulls instantly from the browser cache.
+    modalImage.style.opacity = '1';
+  }, 250);
 
-    updateActiveDot();
-  }
+  updateActiveDot();
+}
 
   function nextImage() {
     if (currentImages.length <= 1) return;
