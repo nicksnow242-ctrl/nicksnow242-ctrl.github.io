@@ -643,7 +643,7 @@ html, body {
     </svg>
   </a>
 
-  <h1 class="banner-title">Gallery</h1>
+  <h1 class="banner-title">Send Me a Message</h1>
   <div></div>
 </header>
 
@@ -1121,11 +1121,11 @@ var particles;
 
 <style>
   .neon-inquiry-section {
-    min-height: calc(100vh - 120px); /* Fixed syntax */
+    min-height: calc(100vh - 110px); /* Fits under 110px banner */
     width: 100%;
     display: flex;
     justify-content: center;
-    padding: 40px 20px 15px 20px;
+    padding: 20px 20px 15px 20px;
     position: relative;
     font-family: 'Orbitron', sans-serif;
   }
@@ -1134,7 +1134,7 @@ var particles;
     position: relative;
     width: 100%;
     max-width: 500px;
-    padding: 10px 40px 30px 40px;
+    padding: 10px 30px 20px 30px; /* Reduced padding */
     background: rgba(0, 0, 0, 0.75);
     border-radius: 18px;
     box-shadow: 0 0 30px rgba(0, 255, 255, 0.25), inset 0 0 20px rgba(0, 255, 255, 0.15);
@@ -1142,7 +1142,7 @@ var particles;
     animation: fadeIn 1.2s ease;
     z-index: 10;
     margin: auto;
-    max-height: calc(100vh - 120px); /* Ensures it fits within your adjusted height */
+    max-height: calc(100vh - 110px); /* Fits under 110px banner */
     overflow-y: auto;
   }
 
@@ -1169,7 +1169,7 @@ var particles;
 
   .neon-inquiry-section .inquiry-box h2 {
     text-align: center;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     letter-spacing: 3px;
     color: #fff;
   }
@@ -1179,19 +1179,19 @@ var particles;
     font-size: 11px;
     color: #fff;
     opacity: 0.8;
-    margin-bottom: 20px;
+    margin-bottom: 15px; /* Reduced from 20px */
     letter-spacing: 1px;
   }
 
   .neon-inquiry-section .field {
     position: relative;
-    margin-bottom: 20px; /* Reduced from 28px to help it fit */
+    margin-bottom: 15px; /* Reduced from 20px */
   }
 
   .neon-inquiry-section .field input,
   .neon-inquiry-section .field textarea {
     width: 100%;
-    padding: 14px;
+    padding: 12px; /* Reduced from 14px */
     background: transparent;
     border: none;
     outline: none;
@@ -1203,11 +1203,11 @@ var particles;
   }
 
   .neon-inquiry-section .field textarea {
-    min-height: 80px; /* Reduced from 100px */
-    padding-top: 24px;
+    min-height: 60px; /* Reduced from 80px */
+    padding-top: 20px;
     resize: vertical;
-    background: rgba(0, 0, 0, 0.1); /* 10% blacker */
-    border: 1px solid rgba(0, 255, 255, 0.3); /* Full border for box look */
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 255, 255, 0.3);
     border-radius: 8px;
   }
 
@@ -1220,15 +1220,15 @@ var particles;
   .neon-inquiry-section .field input[readonly] {
     color: #fff;
     opacity: 0.9;
-    border: 1px solid rgba(0, 255, 255, 0.3); /* Full border for box look */
+    border: 1px solid rgba(0, 255, 255, 0.3);
     cursor: not-allowed;
-    background: #000; /* Solid black box */
+    background: #000;
     border-radius: 8px;
   }
 
   .neon-inquiry-section .field label {
     position: absolute;
-    left: 14px; /* Aligned with input padding */
+    left: 12px;
     top: 50%;
     transform: translateY(-50%);
     font-size: 12px;
@@ -1239,15 +1239,18 @@ var particles;
     letter-spacing: 1px;
   }
 
+  /* MESSAGE label sits ABOVE the textarea */
   .neon-inquiry-section .field textarea + label {
-    top: 24px;
-    transform: translateY(0);
+    top: -18px; /* Positions label above the textarea */
+    left: 0;
+    font-size: 10px;
+    color: #fff;
+    opacity: 1;
+    transform: none;
   }
 
   .neon-inquiry-section .field input:focus + label,
-  .neon-inquiry-section .field input:not(:placeholder-shown) + label,
-  .neon-inquiry-section .field textarea:focus + label,
-  .neon-inquiry-section .field textarea:not(:placeholder-shown) + label {
+  .neon-inquiry-section .field input:not(:placeholder-shown) + label {
     top: -6px;
     font-size: 10px;
     color: #fff;
@@ -1262,12 +1265,12 @@ var particles;
   .neon-inquiry-section .form-actions {
     display: flex;
     gap: 15px;
-    margin-top: 20px; /* Reduced from 35px */
+    margin-top: 15px; /* Reduced from 20px */
   }
 
   .neon-inquiry-section .neon-btn {
     flex: 1;
-    padding: 12px;
+    padding: 10px; /* Reduced from 12px */
     background: transparent;
     border: 2px solid cyan;
     border-radius: 12px;
@@ -1321,7 +1324,7 @@ var particles;
   }
 
   .neon-inquiry-section .footer {
-    margin-top: 15px; /* Reduced from 25px */
+    margin-top: 10px; /* Reduced from 15px */
     text-align: center;
   }
 
@@ -1342,7 +1345,7 @@ var particles;
 
   @media (max-width: 480px) {
     .neon-inquiry-section .inquiry-box {
-      padding: 10px 25px 25px 25px;
+      padding: 10px 20px 15px 20px;
     }
     .neon-inquiry-section .form-actions {
       flex-direction: column;
