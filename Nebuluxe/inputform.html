@@ -1121,7 +1121,7 @@ var particles;
 
 <style>
   .neon-inquiry-section {
-    min-height: 100vh-120px;
+    min-height: calc(100vh - 120px); /* Fixed syntax */
     width: 100%;
     display: flex;
     justify-content: center;
@@ -1134,7 +1134,7 @@ var particles;
     position: relative;
     width: 100%;
     max-width: 500px;
-    padding: 10px 40px 45px 40px;
+    padding: 10px 40px 30px 40px;
     background: rgba(0, 0, 0, 0.75);
     border-radius: 18px;
     box-shadow: 0 0 30px rgba(0, 255, 255, 0.25), inset 0 0 20px rgba(0, 255, 255, 0.15);
@@ -1142,7 +1142,7 @@ var particles;
     animation: fadeIn 1.2s ease;
     z-index: 10;
     margin: auto;
-    max-height: 90vh;
+    max-height: calc(100vh - 120px); /* Ensures it fits within your adjusted height */
     overflow-y: auto;
   }
 
@@ -1179,13 +1179,13 @@ var particles;
     font-size: 11px;
     color: #fff;
     opacity: 0.8;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     letter-spacing: 1px;
   }
 
   .neon-inquiry-section .field {
     position: relative;
-    margin-bottom: 28px;
+    margin-bottom: 20px; /* Reduced from 28px to help it fit */
   }
 
   .neon-inquiry-section .field input,
@@ -1203,9 +1203,12 @@ var particles;
   }
 
   .neon-inquiry-section .field textarea {
-    min-height: 100px;
+    min-height: 80px; /* Reduced from 100px */
     padding-top: 24px;
     resize: vertical;
+    background: rgba(0, 0, 0, 0.1); /* 10% blacker */
+    border: 1px solid rgba(0, 255, 255, 0.3); /* Full border for box look */
+    border-radius: 8px;
   }
 
   .neon-inquiry-section .field input:focus,
@@ -1216,14 +1219,16 @@ var particles;
 
   .neon-inquiry-section .field input[readonly] {
     color: #fff;
-    opacity: 0.6;
-    border-bottom-color: rgba(0, 255, 255, 0.1);
+    opacity: 0.9;
+    border: 1px solid rgba(0, 255, 255, 0.3); /* Full border for box look */
     cursor: not-allowed;
+    background: #000; /* Solid black box */
+    border-radius: 8px;
   }
 
   .neon-inquiry-section .field label {
     position: absolute;
-    left: 0;
+    left: 14px; /* Aligned with input padding */
     top: 50%;
     transform: translateY(-50%);
     font-size: 12px;
@@ -1257,12 +1262,12 @@ var particles;
   .neon-inquiry-section .form-actions {
     display: flex;
     gap: 15px;
-    margin-top: 35px;
+    margin-top: 20px; /* Reduced from 35px */
   }
 
   .neon-inquiry-section .neon-btn {
     flex: 1;
-    padding: 14px;
+    padding: 12px;
     background: transparent;
     border: 2px solid cyan;
     border-radius: 12px;
@@ -1316,7 +1321,7 @@ var particles;
   }
 
   .neon-inquiry-section .footer {
-    margin-top: 25px;
+    margin-top: 15px; /* Reduced from 25px */
     text-align: center;
   }
 
@@ -1337,7 +1342,7 @@ var particles;
 
   @media (max-width: 480px) {
     .neon-inquiry-section .inquiry-box {
-      padding: 10px 25px 35px 25px;
+      padding: 10px 25px 25px 25px;
     }
     .neon-inquiry-section .form-actions {
       flex-direction: column;
@@ -1397,7 +1402,6 @@ var particles;
     const titleParam = getQueryParam('title');
     const itemPrice = getQueryParam('price');
 
-    // Check for 'name' first, then 'title', default to 'Custom Request'
     let itemName = 'Custom Request';
     if (nameParam) {
       itemName = decodeURIComponent(nameParam);
