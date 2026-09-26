@@ -203,14 +203,14 @@ html, body {
   left: 0;
   margin-bottom: 10px;
   width: 280px;
-  background: #000000;
+  background: rgba(0, 0, 0, 0.3); /* 30% opacity black background */
   border: 2px solid transparent;
   border-radius: 16px;
   background-clip: padding-box;
   box-shadow: 0 0 15px rgba(255, 0, 255, 0.4), 0 0 30px rgba(0, 255, 255, 0.2);
-  color: #ffffff;
+  color: #ffffff; /* White text */
   pointer-events: auto;
-  opacity: 0;
+  opacity: 1; /* Ensures the container itself doesn't fade the child text */
   transform: translateY(10px) scale(0.95);
   transform-origin: bottom left;
   transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
@@ -246,7 +246,7 @@ html, body {
   margin: 0;
   font-size: 14px;
   line-height: 1.6;
-  color: #ffffff;
+  color: #ffffff; /* Changed to white */
   min-height: 44px;
 }
 
@@ -279,7 +279,7 @@ html, body {
 .speech-option {
   background: none;
   border: 1px solid transparent;
-  color: #00ffff;
+  color: #ffffff; /* Changed to white */
   font-family: inherit;
   font-size: 13px;
   text-align: left;
@@ -292,11 +292,12 @@ html, body {
 
 .speech-option::before {
   content: '> ';
-  color: #ff00ff;
+  color: #ffffff; /* Changed to white */
   font-weight: bold;
   transition: all 0.25s ease;
 }
 
+/* Optional: Ensure hover state text remains white */
 .speech-option:hover {
   color: #ffffff;
   background: rgba(255, 255, 255, 0.1);
@@ -1123,7 +1124,6 @@ var particles;
   .neon-inquiry-section {
     min-height: 100vh;
     width: 100%;
-    background: radial-gradient(circle at top, #0f2027, #000);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1396,16 +1396,7 @@ var particles;
 </div>
 
 <script>
-  // Generate particles inside the wrapper to avoid polluting the whole page
-  const wrapper = document.getElementById('neon-inquiry-wrapper');
-  for (let i = 0; i < 50; i++) {
-    const p = document.createElement("div");
-    p.className = "particle";
-    p.style.left = Math.random() * 100 + "%";
-    p.style.animationDuration = (6 + Math.random() * 10) + "s";
-    p.style.animationDelay = (Math.random() * 5) + "s";
-    wrapper.appendChild(p);
-  }
+
 
   // Read URL parameters and pre-fill the form
   function getQueryParam(param) {
