@@ -1125,7 +1125,6 @@ var particles;
     width: 100%;
     display: flex;
     justify-content: center;
-    /* 15px padding at the bottom of the page/scroll area */
     padding: 40px 20px 15px 20px;
     position: relative;
     font-family: 'Orbitron', sans-serif;
@@ -1135,7 +1134,6 @@ var particles;
     position: relative;
     width: 100%;
     max-width: 500px;
-    /* 10px top padding, 40px sides, 45px bottom */
     padding: 10px 40px 45px 40px;
     background: rgba(0, 0, 0, 0.75);
     border-radius: 18px;
@@ -1358,7 +1356,7 @@ var particles;
     <form id="inquiry-form">
       <div class="field">
         <input type="text" id="item-name" name="item-name" readonly placeholder=" ">
-        <label>ITEM NAME</label>
+        <label>SUBJECT</label>
       </div>
 
       <div class="field">
@@ -1395,18 +1393,25 @@ var particles;
   }
 
   window.addEventListener('DOMContentLoaded', () => {
-    const itemName = getQueryParam('name');
+    const nameParam = getQueryParam('name');
+    const titleParam = getQueryParam('title');
     const itemPrice = getQueryParam('price');
 
-    if (itemName) {
-      document.getElementById('item-name').value = decodeURIComponent(itemName);
+    // Check for 'name' first, then 'title', default to 'Custom Request'
+    let itemName = 'Custom Request';
+    if (nameParam) {
+      itemName = decodeURIComponent(nameParam);
+    } else if (titleParam) {
+      itemName = decodeURIComponent(titleParam);
     }
+
+    document.getElementById('item-name').value = itemName;
 
     if (itemPrice) {
       document.getElementById('item-price').value = decodeURIComponent(itemPrice);
     }
 
-    const defaultMessage = `Hello,\n\nI am interested in learning more about "${itemName || 'this item'}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`;
+    const defaultMessage = `Hello,\n\nI am interested in learning more about "${itemName}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`;
     document.getElementById('message').value = defaultMessage;
   });
 
@@ -1415,11 +1420,10 @@ var particles;
 
     const userEmail = document.getElementById('user-email').value;
 
-    // Email Validation Check
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(userEmail)) {
       alert('Please enter a valid email address.');
-      return; // Stop the form from submitting
+      return;
     }
 
     const itemName = document.getElementById('item-name').value;
