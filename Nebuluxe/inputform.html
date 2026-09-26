@@ -1125,7 +1125,8 @@ var particles;
     width: 100%;
     display: flex;
     justify-content: center;
-    padding: 40px 20px;
+    /* 15px padding at the bottom of the page/scroll area */
+    padding: 40px 20px 15px 20px;
     position: relative;
     font-family: 'Orbitron', sans-serif;
   }
@@ -1134,7 +1135,8 @@ var particles;
     position: relative;
     width: 100%;
     max-width: 500px;
-    padding: 45px 40px;
+    /* 10px top padding, 40px sides, 45px bottom */
+    padding: 10px 40px 45px 40px;
     background: rgba(0, 0, 0, 0.75);
     border-radius: 18px;
     box-shadow: 0 0 30px rgba(0, 255, 255, 0.25), inset 0 0 20px rgba(0, 255, 255, 0.15);
@@ -1142,8 +1144,8 @@ var particles;
     animation: fadeIn 1.2s ease;
     z-index: 10;
     margin: auto;
-    max-height: 90vh; /* Added: Limits height to 90% of viewport */
-    overflow-y: auto; /* Added: Makes the card scrollable */
+    max-height: 90vh;
+    overflow-y: auto;
   }
 
   @keyframes fadeIn {
@@ -1179,7 +1181,7 @@ var particles;
     font-size: 11px;
     color: #fff;
     opacity: 0.8;
-    margin-bottom: 35px;
+    margin-bottom: 25px;
     letter-spacing: 1px;
   }
 
@@ -1337,7 +1339,7 @@ var particles;
 
   @media (max-width: 480px) {
     .neon-inquiry-section .inquiry-box {
-      padding: 35px 25px;
+      padding: 10px 25px 35px 25px;
     }
     .neon-inquiry-section .form-actions {
       flex-direction: column;
@@ -1411,9 +1413,17 @@ var particles;
   document.getElementById('inquiry-form').addEventListener('submit', (e) => {
     e.preventDefault();
 
+    const userEmail = document.getElementById('user-email').value;
+
+    // Email Validation Check
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(userEmail)) {
+      alert('Please enter a valid email address.');
+      return; // Stop the form from submitting
+    }
+
     const itemName = document.getElementById('item-name').value;
     const itemPrice = document.getElementById('item-price').value;
-    const userEmail = document.getElementById('user-email').value;
     const message = document.getElementById('message').value;
 
     const subject = encodeURIComponent(`Inquiry about: ${itemName}`);
