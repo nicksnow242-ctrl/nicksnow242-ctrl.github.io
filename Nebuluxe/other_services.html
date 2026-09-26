@@ -1716,61 +1716,70 @@ var particles;
     return images;
   }
 
+  function preloadCarouselImages() {
+    currentImages.forEach(src => {
+      const candidates = buildImageCandidates(src);
+      candidates.forEach(url => {
+        const img = new Image();
+        img.src = url; // Triggers background download and caching
+      });
+    });
+  }
+
   function openModal(item) {
-    if (!item) return;
-console.log('🔍 Modal Data Received:', item);
-    currentImages = buildImageArray(item);
-    currentImageIndex = 0;
+  if (!item) return;
 
-    const priceDisplay = item.pricerange || "Price N/A";
-    const availabilityText = item.type || "Available";
+  currentImages = buildImageArray(item);
+  currentImageIndex = 0;
 
-    const primaryBase = currentImages[0] || item.src;
-    const primaryCandidates = buildImageCandidates(primaryBase);
+  // ✨ NEW: Preload all carousel images immediately
+  preloadCarouselImages();
 
-    // FIX 3: Provide the original item.src as a fallback if the full-size image fails
-    const fallbackBase = item.src;
-    const fallbackCandidates = fallbackBase ? buildImageCandidates(fallbackBase) : [];
+  const priceDisplay = item.pricerange || "Price N/A";
+  const availabilityText = item.type || "Available";
 
-    modalImage.style.opacity = '0';
-    setTimeout(() => {
-      attachSmartLoader(modalImage, primaryCandidates, fallbackCandidates);
-      modalImage.alt = item.alt || item.name || 'Artwork';
-      modalImage.style.opacity = '1';
-    }, 200);
+  const primaryBase = currentImages[0] || item.src;
+  const primaryCandidates = buildImageCandidates(primaryBase);
+  const fallbackBase = item.src;
+  const fallbackCandidates = fallbackBase ? buildImageCandidates(fallbackBase) : [];
 
-    document.getElementById('modal-title').textContent = item.name || 'Untitled';
-    document.getElementById('modal-price').textContent = priceDisplay;
-    document.getElementById('modal-availability').textContent = availabilityText;
+  modalImage.style.opacity = '0';
 
-    const sizeRow = document.querySelector('.modal-size-row');
-    if (item.size) {
-      document.getElementById('modal-size').textContent = item.size;
-      sizeRow.style.display = 'block';
-    } else {
-      sizeRow.style.display = 'none';
-    }
+  // Reduced from 200ms to 50ms for a snappier initial modal open
+  setTimeout(() => {
+    attachSmartLoader(modalImage, primaryCandidates, fallbackCandidates);
+    modalImage.alt = item.alt || item.name || 'Artwork';
+    modalImage.style.opacity = '1';
+  }, 50);
 
-    document.getElementById('modal-description').textContent = item.description || 'No description available.';
+  document.getElementById('modal-title').textContent = item.name || 'Untitled';
+  document.getElementById('modal-price').textContent = priceDisplay;
+  document.getElementById('modal-availability').textContent = availabilityText;
 
-    const email = "nebuluxeart@gmail.com";
-    const subject = encodeURIComponent(`Inquiry about: ${item.name}`);
-    const body = encodeURIComponent(`Hello,\n\nI am interested in learning more about "${item.name}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`);
-    document.getElementById('modal-inquire-btn').href = `mailto:${email}?subject=${subject}&body=${body}`;
-
-    renderCarouselDots();
-    if (currentImages.length <= 1) {
-      carouselContainer.classList.add('single-image');
-    } else {
-      carouselContainer.classList.remove('single-image');
-    }
-
-    modal.classList.add('is-open');
+  const sizeRow = document.querySelector('.modal-size-row');
+  if (item.size) {
+    document.getElementById('modal-size').textContent = item.size;
+    sizeRow.style.display = 'block';
+  } else {
+    sizeRow.style.display = 'none';
   }
 
-  function closeModal() {
-    modal.classList.remove('is-open');
+  document.getElementById('modal-description').textContent = item.description || 'No description available.';
+
+  const email = "nebuluxeart@gmail.com";
+  const subject = encodeURIComponent(`Inquiry about: ${item.name}`);
+  const body = encodeURIComponent(`Hello,\n\nI am interested in learning more about "${item.name}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`);
+  document.getElementById('modal-inquire-btn').href = `mailto:${email}?subject=${subject}&body=${body}`;
+
+  renderCarouselDots();
+  if (currentImages.length <= 1) {
+    carouselContainer.classList.add('single-image');
+  } else {
+    carouselContainer.classList.remove('single-image');
   }
+
+  modal.classList.add('is-open');
+}
 
   function renderCarouselDots() {
     carouselDots.innerHTML = '';
@@ -1795,16 +1804,17 @@ console.log('🔍 Modal Data Received:', item);
 
   function updateCarouselImage() {
     const baseSrc = currentImages[currentImageIndex];
-    const fallbackBase = currentImages[0];
+    const candidates = buildImageCandidates(baseSrc);
 
+    // 1. Fade out the current image
     modalImage.style.opacity = '0';
 
+    // 2. Wait exactly 250ms (matching your CSS 'opacity 0.25s ease'), then swap and fade in
     setTimeout(() => {
-      const candidates = buildImageCandidates(baseSrc);
-      const fallbackCandidates = buildImageCandidates(fallbackBase);
-      attachSmartLoader(modalImage, candidates, fallbackCandidates);
+      // Because of preloading, this image is already in the browser cache!
+      attachSmartLoader(modalImage, candidates, []);
       modalImage.style.opacity = '1';
-    }, 200);
+    }, 250);
 
     updateActiveDot();
   }
