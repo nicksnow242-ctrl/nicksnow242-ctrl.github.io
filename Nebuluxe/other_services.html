@@ -1294,7 +1294,6 @@ var particles;
     overflow: hidden;
   }
 
-  /* Carousel */
   .gallery-card-image-container {
     flex: 1;
     display: flex;
@@ -1319,6 +1318,7 @@ var particles;
     transition: opacity 0.25s ease;
   }
 
+  /* FIX: Removed pointer-events: none to guarantee clickability */
   .carousel-arrow {
     position: absolute;
     top: 50%;
@@ -1334,24 +1334,15 @@ var particles;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 5;
+    z-index: 10;
     transition: all 0.2s ease;
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
     opacity: 0;
-    pointer-events: none;
   }
 
   .gallery-card-image-container:hover .carousel-arrow {
     opacity: 1;
-    pointer-events: auto;
-  }
-
-  .carousel-arrow:hover {
-    background: #C07A5F;
-    color: #FDFBF7;
-    transform: translateY(-50%) scale(1.1);
-    box-shadow: 0 4px 12px rgba(192, 122, 95, 0.3);
   }
 
   .carousel-prev { left: 15px; }
@@ -1364,7 +1355,7 @@ var particles;
     transform: translateX(-50%);
     display: flex;
     gap: 8px;
-    z-index: 5;
+    z-index: 10;
     padding: 6px 12px;
     background: rgba(253, 251, 247, 0.7);
     border-radius: 20px;
@@ -1372,13 +1363,11 @@ var particles;
     -webkit-backdrop-filter: blur(6px);
     border: 1px solid rgba(192, 122, 95, 0.2);
     opacity: 0;
-    pointer-events: none;
     transition: opacity 0.2s ease;
   }
 
   .gallery-card-image-container:hover .carousel-dots {
     opacity: 1;
-    pointer-events: auto;
   }
 
   .carousel-dot {
@@ -1409,7 +1398,6 @@ var particles;
     display: none;
   }
 
-  /* Card Content */
   .gallery-card-content {
     flex: 1;
     display: flex;
@@ -1530,8 +1518,9 @@ var particles;
     .gallery-card-image { max-height: 35vh; }
     .gallery-card-content { flex: 1; padding: 16px; }
     .gallery-card-title { font-size: 20px; }
-    .carousel-arrow { opacity: 1; pointer-events: auto; width: 36px; height: 36px; font-size: 14px; }
-    .carousel-dots { opacity: 1; pointer-events: auto; }
+    /* FIX: Always show arrows and dots on mobile so they are clickable */
+    .carousel-arrow { opacity: 1; width: 36px; height: 36px; font-size: 14px; }
+    .carousel-dots { opacity: 1; }
     .carousel-prev { left: 10px; }
     .carousel-next { right: 10px; }
   }
@@ -1551,7 +1540,6 @@ var particles;
         <button class="carousel-arrow carousel-prev" id="carousel-prev" aria-label="Previous image">
           <i class="fas fa-chevron-left"></i>
         </button>
-        <!-- FIX 1: Removed src="" to prevent premature browser error -->
         <img id="modal-full-image" class="gallery-card-image" alt="Full size artwork">
         <button class="carousel-arrow carousel-next" id="carousel-next" aria-label="Next image">
           <i class="fas fa-chevron-right"></i>
@@ -1579,7 +1567,7 @@ var particles;
 <!-- Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- FIX 2: Main Logic Script MUST come BEFORE the data file -->
+<!-- Main Logic Script -->
 <script>
   const BOHO_FALLBACK_IMG = "data:image/svg+xml;utf8," + encodeURIComponent(`
     <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200'>
@@ -1607,7 +1595,7 @@ var particles;
 
   function attachSmartLoader(img, candidates, fallbackCandidates) {
     let index = 0;
-    img.onerror = null; // Clear existing handlers to prevent conflicts
+    img.onerror = null;
 
     function tryNext() {
       if (index < candidates.length) {
@@ -1680,7 +1668,7 @@ var particles;
   function handleServicesLoadError() {
     const grid = document.getElementById('services-grid');
     if (!grid) return;
-    grid.innerHTML = `<div class="boho-gallery-error" style="grid-column: 1 / -1;"><strong>Couldn't load services data.</strong><br>The file <code>js/other_services.js</code> could not be found. Please verify the file path.</div>`;
+    grid.innerHTML = `<div class="boho-gallery-error" style="grid-column: 1 / -1;"><strong>Couldn't load services data.</strong><br>The file <code>js/other_services.js</code> could not be found.</div>`;
     console.error('Failed to load js/other_services.js');
   }
 
@@ -1716,70 +1704,75 @@ var particles;
     return images;
   }
 
-  // ✨ NEW: Preloads all carousel images in the background for instant switching
   function preloadCarouselImages() {
     currentImages.forEach(src => {
       const candidates = buildImageCandidates(src);
       candidates.forEach(url => {
         const img = new Image();
-        img.src = url; // Triggers background download and caching
+        img.src = url;
       });
     });
   }
 
   function openModal(item) {
-  if (!item) return;
+    if (!item) return;
 
-  currentImages = buildImageArray(item);
-  currentImageIndex = 0;
+    currentImages = buildImageArray(item);
+    currentImageIndex = 0;
 
-  // ✨ Preload all carousel images immediately for instant switching
-  preloadCarouselImages();
+    // DEBUG: Check console to verify exactly how many images were found
+    console.log('🔍 Modal opened. Images found:', currentImages);
 
-  const priceDisplay = item.pricerange || "Price N/A";
-  const availabilityText = item.type || "Available";
+    preloadCarouselImages();
 
-  const primaryBase = currentImages[0] || item.src;
-  const primaryCandidates = buildImageCandidates(primaryBase);
-  const fallbackBase = item.src;
-  const fallbackCandidates = fallbackBase ? buildImageCandidates(fallbackBase) : [];
+    const priceDisplay = item.pricerange || "Price N/A";
+    const availabilityText = item.type || "Available";
 
-  modalImage.style.opacity = '0';
+    const primaryBase = currentImages[0] || item.src;
+    const primaryCandidates = buildImageCandidates(primaryBase);
+    const fallbackBase = item.src;
+    const fallbackCandidates = fallbackBase ? buildImageCandidates(fallbackBase) : [];
 
-  setTimeout(() => {
-    attachSmartLoader(modalImage, primaryCandidates, fallbackCandidates);
-    modalImage.alt = item.alt || item.name || 'Artwork';
-    modalImage.style.opacity = '1';
-  }, 50);
+    modalImage.style.opacity = '0';
 
-  document.getElementById('modal-title').textContent = item.name || 'Untitled';
-  document.getElementById('modal-price').textContent = priceDisplay;
-  document.getElementById('modal-availability').textContent = availabilityText;
+    setTimeout(() => {
+      attachSmartLoader(modalImage, primaryCandidates, fallbackCandidates);
+      modalImage.alt = item.alt || item.name || 'Artwork';
+      modalImage.style.opacity = '1';
+    }, 50);
 
-  const sizeRow = document.querySelector('.modal-size-row');
-  if (item.size) {
-    document.getElementById('modal-size').textContent = item.size;
-    sizeRow.style.display = 'block';
-  } else {
-    sizeRow.style.display = 'none';
+    document.getElementById('modal-title').textContent = item.name || 'Untitled';
+    document.getElementById('modal-price').textContent = priceDisplay;
+    document.getElementById('modal-availability').textContent = availabilityText;
+
+    const sizeRow = document.querySelector('.modal-size-row');
+    if (item.size) {
+      document.getElementById('modal-size').textContent = item.size;
+      sizeRow.style.display = 'block';
+    } else {
+      sizeRow.style.display = 'none';
+    }
+
+    document.getElementById('modal-description').textContent = item.description || 'No description available.';
+
+    const email = "nebuluxeart@gmail.com";
+    const subject = encodeURIComponent(`Inquiry about: ${item.name}`);
+    const body = encodeURIComponent(`Hello,\n\nI am interested in learning more about "${item.name}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`);
+    document.getElementById('modal-inquire-btn').href = `mailto:${email}?subject=${subject}&body=${body}`;
+
+    renderCarouselDots();
+    if (currentImages.length <= 1) {
+      carouselContainer.classList.add('single-image');
+    } else {
+      carouselContainer.classList.remove('single-image');
+    }
+
+    modal.classList.add('is-open');
   }
 
-  document.getElementById('modal-description').textContent = item.description || 'No description available.';
-
-  const email = "nebuluxeart@gmail.com";
-  const subject = encodeURIComponent(`Inquiry about: ${item.name}`);
-  const body = encodeURIComponent(`Hello,\n\nI am interested in learning more about "${item.name}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`);
-  document.getElementById('modal-inquire-btn').href = `mailto:${email}?subject=${subject}&body=${body}`;
-
-  renderCarouselDots();
-  if (currentImages.length <= 1) {
-    carouselContainer.classList.add('single-image');
-  } else {
-    carouselContainer.classList.remove('single-image');
+  function closeModal() {
+    modal.classList.remove('is-open');
   }
-
-  modal.classList.add('is-open');
-}
 
   function renderCarouselDots() {
     carouselDots.innerHTML = '';
@@ -1803,23 +1796,20 @@ var particles;
   }
 
   function updateCarouselImage() {
-  const baseSrc = currentImages[currentImageIndex];
-  const candidates = buildImageCandidates(baseSrc);
+    const baseSrc = currentImages[currentImageIndex];
+    const candidates = buildImageCandidates(baseSrc);
 
-  // 1. Fade out the current image
-  modalImage.style.opacity = '0';
+    modalImage.style.opacity = '0';
 
-  // 2. Wait exactly 250ms (matching your CSS opacity transition), then swap and fade in
-  setTimeout(() => {
-    if (candidates.length > 0) {
-      modalImage.src = candidates[0];
-    }
-    // Because we preloaded the images, this pulls instantly from the browser cache.
-    modalImage.style.opacity = '1';
-  }, 250);
+    setTimeout(() => {
+      if (candidates.length > 0) {
+        modalImage.src = candidates[0];
+      }
+      modalImage.style.opacity = '1';
+    }, 250);
 
-  updateActiveDot();
-}
+    updateActiveDot();
+  }
 
   function nextImage() {
     if (currentImages.length <= 1) return;
@@ -1864,13 +1854,12 @@ var particles;
     }
   });
 
-  // Safety net: if the script somehow loaded before this code ran
   if (typeof window.other_services !== 'undefined') {
     renderBohoServices();
   }
 </script>
 
-<!-- FIX 4: Load data file LAST so the onload handler can safely find the functions -->
+<!-- Load data file LAST -->
 <script src="js/other_services.js" onload="if (typeof renderBohoServices === 'function') renderBohoServices();" onerror="if (typeof handleServicesLoadError === 'function') handleServicesLoadError();"></script>
 <!-- ========================================== -->
 <!-- END BOHO SERVICES GALLERY & MODAL -->
