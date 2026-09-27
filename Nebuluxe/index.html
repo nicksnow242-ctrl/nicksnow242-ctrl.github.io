@@ -376,17 +376,15 @@ html, body {
   border-bottom: none;
   border-radius: 16px 16px 0 0;
   box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 255, 0.1);
-  transition: transform 0.5s cubic-bezier(0.25, 1, 0.3, 1), box-shadow 0.5s ease, opacity 0.3s ease;
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.3, 1), box-shadow 0.5s ease, visibility 0.3s ease;
   cursor: pointer;
   color: #E0FFFF;
   font-family: 'Segoe UI', system-ui, sans-serif;
-  opacity: 0;
-  pointer-events: none;
+  visibility: hidden;
 }
 
 .about-pulldown.is-visible {
-  opacity: 1;
-  pointer-events: auto;
+  visibility: visible;
 }
 
 .about-pulldown:hover {
@@ -462,14 +460,12 @@ html, body {
   z-index: 9999;
   font-family: 'Share Tech Mono', monospace;
   perspective: 1000px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
+  visibility: hidden;
+  transition: visibility 0.3s ease;
 }
 
 .music-player-container.is-visible {
-  opacity: 1;
-  pointer-events: auto;
+  visibility: visible;
 }
 
 .pullout-tab {
@@ -1020,12 +1016,12 @@ html, body {
   width: 110px;
   font-family: 'Segoe UI', system-ui, sans-serif;
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  visibility: hidden;
+  transition: visibility 0.3s ease;
 }
 
 .mascot-popup.is-visible {
-  opacity: 1;
+  visibility: visible;
   pointer-events: auto;
 }
 
@@ -1927,22 +1923,19 @@ if (aboutPulldown) {
 }
 
 // Scroll-based visibility for UI elements
-const aboutPulldownEl = document.getElementById('aboutPulldown');
-const playerContainerEl = document.getElementById('player-container');
-const mascotPopupEl = document.getElementById('mascotPopup');
-
-window.addEventListener('scroll', () => {
+window.addEventListener('scroll', function() {
   const scrollY = window.scrollY || window.pageYOffset;
-  const threshold = window.innerHeight * 0.5;
+  const vh = window.innerHeight;
 
-  if (scrollY > threshold) {
-    aboutPulldownEl.classList.add('is-visible');
-    playerContainerEl.classList.add('is-visible');
-    mascotPopupEl.classList.add('is-visible');
+  // Show elements when scrolled past 80% of viewport height
+  if (scrollY > vh * 0.8) {
+    document.getElementById('aboutPulldown').classList.add('is-visible');
+    document.getElementById('player-container').classList.add('is-visible');
+    document.getElementById('mascotPopup').classList.add('is-visible');
   } else {
-    aboutPulldownEl.classList.remove('is-visible');
-    playerContainerEl.classList.remove('is-visible');
-    mascotPopupEl.classList.remove('is-visible');
+    document.getElementById('aboutPulldown').classList.remove('is-visible');
+    document.getElementById('player-container').classList.remove('is-visible');
+    document.getElementById('mascotPopup').classList.remove('is-visible');
   }
 });
 
