@@ -1957,7 +1957,92 @@ if (aboutPulldown) {
   });
 }
 
+// ========== SMOOTH SCROLL SNAP BETWEEN SECTIONS ==========
+(function() {
+  const hero = document.querySelector('.hero-section');
+  const wheelSection = document.querySelector('.ccm-11');
+  const scrollIndicator = document.getElementById('scrollIndicator');
+  let isAnimating = false;
 
+  function smoothScrollTo(target) {
+    isAnimating = true;
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(function() {
+      isAnimating = false;
+    }, 1000);
+  }
+
+  // Mouse wheel / trackpad
+  window.addEventListener('wheel', function(e) {
+    if (isAnimating) {
+      e.preventDefault();
+      return;
+    }
+
+    var scrollY = window.scrollY || window.pageYOffset;
+    var heroHeight = hero.offsetHeight;
+
+    if (scrollY < heroHeight * 0.5) {
+      // On hero — any scroll down snaps to wheel section
+      if (e.deltaY > 0) {
+        e.preventDefault();
+        smoothScrollTo(wheelSection);
+      }
+    } else {
+      // On wheel section — scroll up snaps back to hero
+      if (e.deltaY < 0 && scrollY < heroHeight * 1.5) {
+        e.preventDefault();
+        smoothScrollTo(hero);
+      }
+    }
+  }, { passive: false });
+
+  // Touch support (swipe up/down)
+  var touchStartY = 0;
+  window.addEventListener('touchstart', function(e) {
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  window.addEventListener('touchend', function(e) {
+    if (isAnimating) return;
+
+    var touchEndY = e.changedTouches[0].clientY;
+    var diff = touchStartY - touchEndY;
+    var scrollY = window.scrollY || window.pageYOffset;
+    var heroHeight = hero.offsetHeight;
+
+    if (scrollY < heroHeight * 0.5 && diff > 30) {
+      // Swiped up on hero — go to wheel
+      smoothScrollTo(wheelSection);
+    } else if (scrollY > heroHeight * 0.5 && diff < -30) {
+      // Swiped down on wheel — go back to hero
+      smoothScrollTo(hero);
+    }
+  }, { passive: true });
+
+  // Click arrow to scroll down
+  if (scrollIndicator) {
+    scrollIndicator.addEventListener('click', function() {
+      smoothScrollTo(wheelSection);
+    });
+  }
+
+  // Keyboard: arrow keys / page down
+  window.addEventListener('keydown', function(e) {
+    if (isAnimating) return;
+
+    var scrollY = window.scrollY || window.pageYOffset;
+    var heroHeight = hero.offsetHeight;
+
+    if ((e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') && scrollY < heroHeight * 0.5) {
+      e.preventDefault();
+      smoothScrollTo(wheelSection);
+    } else if ((e.key === 'ArrowUp' || e.key === 'PageUp') && scrollY > heroHeight * 0.5) {
+      e.preventDefault();
+      smoothScrollTo(hero);
+    }
+  });
+})();
 
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
