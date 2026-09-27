@@ -1756,7 +1756,7 @@ var particles;
                         Description goes here.
                     </div>
                     <div class="gallery-card-footer">
-                        <a id="modal-inquire-btn" class="inquire-btn" href="#" target="_blank">Inquire About This</a>
+                        <a id="modal-inquire-btn" class="inquire-btn" href="#">Inquire About This</a>
                     </div>
                 </div>
             </div>
@@ -2587,18 +2587,19 @@ createBadgeCanvas(img, item) {
     };
 
     // Use item.name OR item.title to support both data structures
-    const itemName = item.name || item.title || 'Untitled';
+    // Use item.name OR item.title to support both data structures
+const itemName = item.name || item.title || 'Untitled';
 
-    document.getElementById('modal-title').textContent = itemName;
-    document.getElementById('modal-price').textContent = priceDisplay;
-    document.getElementById('modal-availability').textContent = availability;
-    document.getElementById('modal-size').textContent = `${item.length || '?'} x ${item.width || '?'}`;
-    document.getElementById('modal-description').textContent = item.description || 'No description available.';
+document.getElementById('modal-title').textContent = itemName;
+document.getElementById('modal-price').textContent = priceDisplay;
+document.getElementById('modal-availability').textContent = availability;
+document.getElementById('modal-size').textContent = `${item.length || '?'} x ${item.width || '?'}`;
+document.getElementById('modal-description').textContent = item.description || 'No description available.';
 
-    // Redirect to inputform.html, passing the artwork title and ID in the URL
-const inquireUrl = `inputform.html?artwork=${encodeURIComponent(item.title)}&id=${item.id || 'unknown'}`;
+// Redirect to inputform.html, passing 'name' and 'price' to match your form page's expected URL parameters
+const inquireUrl = `inputform.html?name=${encodeURIComponent(itemName)}&price=${encodeURIComponent(priceDisplay)}`;
 
-// If you have the inquire button inside the modal container, target it safely:
+// Target the inquire button safely and update its href
 const inquireBtn = this.container.querySelector('#modal-inquire-btn') || document.getElementById('modal-inquire-btn');
 if (inquireBtn) {
     inquireBtn.href = inquireUrl;
