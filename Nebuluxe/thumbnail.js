@@ -14,7 +14,7 @@ window.thumbnails = [
         retired: true,
         remakecustom: true,
         pricemultiplier: 1,
-        featured: false,
+        featured: True,
         suggestedprice: 100,
         description: 'loren ipsum',
         type: 'No Collection'
@@ -32,7 +32,7 @@ window.thumbnails = [
         area:1152,
         retired: false,
         remakecustom: true,
-        pricemultiplier: 1,
+        pricemultiplier: .8,
         featured: false,
         suggestedprice: 200,
         description: 'loren ipsum',
@@ -51,8 +51,8 @@ window.thumbnails = [
         area:80,
         retired: false,
         remakecustom: true,
-        pricemultiplier: 1,
-        featured: false,
+        pricemultiplier: .6,
+        featured: True,
         suggestedprice: 80,
         description: 'loren ipsum',
         type: 'No Collection'
