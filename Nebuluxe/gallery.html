@@ -1748,7 +1748,7 @@ var particles;
                 <div class="gallery-card-content">
                     <h2 id="modal-title" class="gallery-card-title">Artwork Title</h2>
                     <div class="gallery-card-meta">
-                        <div id="modal-price" class="gallery-card-price">Suggested Price - $0.00</div>
+                        <div id="modal-price" class="gallery-card-price">$0.00</div>
                         <div><strong>Availability:</strong> <span id="modal-availability">Checking...</span></div>
                         <div><strong>Size:</strong> <span id="modal-size">0 x 0</span></div>
                     </div>
@@ -2564,7 +2564,7 @@ createBadgeCanvas(img, item) {
            }
 
     // Handle both old gallery data (suggestedprice) and new data (pricerange)
-    const priceDisplay = item.pricerange || ((item.suggestedprice === 0) ? "Price N/A" : `Suggested Price - $${((item.suggestedprice || 0) * (item.pricemultiplier || 1)).toFixed(2)}`);
+    const priceDisplay = item.pricerange || ((item.suggestedprice === 0) ? "Price N/A" : `$${((item.suggestedprice || 0) * (item.pricemultiplier || 1)).toFixed(2)}`);
 
     // Handle both new data (type) and old data (inStock/remakecustom)
     let availability = "Available";
@@ -3308,7 +3308,7 @@ if (inquireBtn) {
                <div class="gallery-card-content">
                  <h2 id="modal-title" class="gallery-card-title">Artwork Title</h2>
                  <div class="gallery-card-meta">
-                   <div id="modal-price" class="gallery-card-price">Suggested Price - $0.00</div>
+                   <div id="modal-price" class="gallery-card-price">$0.00</div>
                    <div><strong>Availability:</strong> <span id="modal-availability">Checking...</span></div>
                    <div><strong>Size:</strong> <span id="modal-size">0 x 0</span></div>
                  </div>
