@@ -376,15 +376,10 @@ html, body {
   border-bottom: none;
   border-radius: 16px 16px 0 0;
   box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 255, 0.1);
-  transition: transform 0.5s cubic-bezier(0.25, 1, 0.3, 1), box-shadow 0.5s ease, visibility 0.3s ease;
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.3, 1), box-shadow 0.5s ease;
   cursor: pointer;
   color: #E0FFFF;
   font-family: 'Segoe UI', system-ui, sans-serif;
-  visibility: hidden;
-}
-
-.about-pulldown.is-visible {
-  visibility: visible;
 }
 
 .about-pulldown:hover {
@@ -460,13 +455,8 @@ html, body {
   z-index: 9999;
   font-family: 'Share Tech Mono', monospace;
   perspective: 1000px;
-  visibility: hidden;
-  transition: visibility 0.3s ease;
 }
 
-.music-player-container.is-visible {
-  visibility: visible;
-}
 
 .pullout-tab {
   position: absolute;
@@ -629,9 +619,10 @@ html, body {
   align-items: center;
   justify-content: center;
   position: relative;
-  z-index: 5;
+  z-index: 99999; /* Higher than all UI elements */
   padding: 10vh 0;
   box-sizing: border-box;
+  background: linear-gradient(0deg, #191d1e 50%, #283139 100%); /* Solid background to cover elements */
 }
 
 .glowing-logo-wrapper {
@@ -1016,14 +1007,8 @@ html, body {
   width: 110px;
   font-family: 'Segoe UI', system-ui, sans-serif;
   pointer-events: none;
-  visibility: hidden;
-  transition: visibility 0.3s ease;
 }
 
-.mascot-popup.is-visible {
-  visibility: visible;
-  pointer-events: auto;
-}
 
 .mascot-gif-wrapper {
   position: relative;
@@ -1922,22 +1907,7 @@ if (aboutPulldown) {
   });
 }
 
-// Scroll-based visibility for UI elements
-window.addEventListener('scroll', function() {
-  const scrollY = window.scrollY || window.pageYOffset;
-  const vh = window.innerHeight;
 
-  // Show elements when scrolled past 80% of viewport height
-  if (scrollY > vh * 0.8) {
-    document.getElementById('aboutPulldown').classList.add('is-visible');
-    document.getElementById('player-container').classList.add('is-visible');
-    document.getElementById('mascotPopup').classList.add('is-visible');
-  } else {
-    document.getElementById('aboutPulldown').classList.remove('is-visible');
-    document.getElementById('player-container').classList.remove('is-visible');
-    document.getElementById('mascotPopup').classList.remove('is-visible');
-  }
-});
 
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
