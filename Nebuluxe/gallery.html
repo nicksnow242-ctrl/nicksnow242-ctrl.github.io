@@ -1664,6 +1664,38 @@ var particles;
   .carousel-prev { left: 10px; }
   .carousel-next { right: 10px; }
 }
+/* Badge Base Styles */
+.boho-service-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    z-index: 10; /* Ensures it sits above carousel arrows */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+/* On Sale Badge (Red) - Takes priority */
+.badge-sale {
+    background: rgba(220, 53, 69, 0.9);
+    color: #ffffff;
+}
+
+/* Featured Badge (Green with Star) */
+.badge-featured {
+    background: rgba(40, 167, 69, 0.9);
+    color: #ffffff;
+}
 </style>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -2396,6 +2428,19 @@ class InfinitePortraitGallery {
         this.updateCarouselImage();
     }
 
+    getThumbnailBadge(item) {
+        // Priority 1: On Sale (pricemultiplier < 1)
+        if (item.pricemultiplier < 1) {
+            return `<span class="boho-service-badge badge-sale">On Sale</span>`;
+        }
+        // Priority 2: Featured
+        if (item.featured === true) {
+            return `<span class="boho-service-badge badge-featured"><i class="fas fa-star"></i></span>`;
+        }
+        // Neither: Return empty string (no badge)
+        return '';
+    }
+
     openModal(item) {
     if (!item) return;
 
@@ -2404,6 +2449,20 @@ class InfinitePortraitGallery {
     // Build the carousel image array
     this.currentImages = this.buildImageArray(item);
     this.currentImageIndex = 0;
+
+    // ==========================================
+           // NEW: Generate and inject the badge
+           // ==========================================
+           const carouselContainer = this.container.querySelector('#carousel-container');
+
+           // Remove any existing badge first to prevent duplicates when switching items
+           const existingBadge = carouselContainer.querySelector('.boho-service-badge');
+           if (existingBadge) existingBadge.remove();
+
+           const badgeHTML = this.getThumbnailBadge(item);
+           if (badgeHTML) {
+               carouselContainer.insertAdjacentHTML('afterbegin', badgeHTML);
+           }
 
     // Handle both old gallery data (suggestedprice) and new data (pricerange)
     const priceDisplay = item.pricerange || ((item.suggestedprice === 0) ? "Price N/A" : `Suggested Price - $${((item.suggestedprice || 0) * (item.pricemultiplier || 1)).toFixed(2)}`);
