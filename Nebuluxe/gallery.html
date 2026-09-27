@@ -1696,6 +1696,19 @@ var particles;
     background: rgba(40, 167, 69, 0.9);
     color: #ffffff;
 }
+/* Price Strike-through Styles */
+.price-original {
+    text-decoration: line-through;
+    color: #8A7355;
+    font-size: 0.8em;
+    font-weight: normal;
+    margin-right: 8px;
+    opacity: 0.8;
+}
+.price-sale {
+    color: #dc3545; /* Red to match your "On Sale" badge */
+    font-weight: bold;
+}
 </style>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -2563,35 +2576,34 @@ createBadgeCanvas(img, item) {
                carouselContainer.insertAdjacentHTML('afterbegin', badgeHTML);
            }
 
-    // Handle both old gallery data (suggestedprice) and new data (pricerange)
-    const priceDisplay = item.pricerange || ((item.suggestedprice === 0) ? "Price N/A" : `$${((item.suggestedprice || 0) * (item.pricemultiplier || 1)).toFixed(2)}`);
+           // Handle both old gallery data (suggestedprice) and new data (pricerange)
+       const priceDisplay = item.pricerange || ((item.suggestedprice === 0) ? "Price N/A" : `$${((item.suggestedprice || 0) * (item.pricemultiplier || 1)).toFixed(2)}`);
 
-    // Handle both new data (type) and old data (inStock/remakecustom)
-    let availability = "Available";
-    if (item.type) {
-        availability = item.type;
-    } else {
-        availability = item.inStock ? "Currently available" : "Not on hand";
-        if (item.remakecustom) availability += ", would remake in new colors.";
-        else availability += ", will not remake.";
-    }
+       // Handle both new data (type) and old data (inStock/remakecustom)
+       let availability = "Available";
+       if (item.type) {
+           availability = item.type;
+       } else {
+           availability = item.inStock ? "Currently available" : "Not on hand";
+           if (item.remakecustom) availability += ", would remake in new colors.";
+           else availability += ", will not remake.";
+       }
 
-    // Set initial image (no fade for first load)
-    const primarySrc = this.currentImages[0] || item.src;
-    this.modalImage.src = primarySrc;
-    this.modalImage.alt = item.alt || item.name || item.title || 'Artwork';
-    this.modalImage.style.opacity = '1';
-    this.modalImage.onerror = () => {
-        console.warn(`Failed to load fullsize image: ${primarySrc}. Falling back to thumbnail.`);
-        this.modalImage.src = item.src;
-    };
+       // Set initial image (no fade for first load)
+       const primarySrc = this.currentImages[0] || item.src;
+       this.modalImage.src = primarySrc;
+       this.modalImage.alt = item.alt || item.name || item.title || 'Artwork';
+       this.modalImage.style.opacity = '1';
+       this.modalImage.onerror = () => {
+           console.warn(`Failed to load fullsize image: ${primarySrc}. Falling back to thumbnail.`);
+           this.modalImage.src = item.src;
+       };
 
-    // Use item.name OR item.title to support both data structures
-    // Use item.name OR item.title to support both data structures
-const itemName = item.name || item.title || 'Untitled';
+       // Use item.name OR item.title to support both data structures
+       const itemName = item.name || item.title || 'Untitled';
 
-document.getElementById('modal-title').textContent = itemName;
-document.getElementById('modal-price').textContent = priceDisplay;
+       document.getElementById('modal-title').textContent = itemName;
+       document.getElementById('modal-price').textContent = priceDisplay;
 document.getElementById('modal-availability').textContent = availability;
 document.getElementById('modal-size').textContent = `${item.length || '?'} x ${item.width || '?'}`;
 document.getElementById('modal-description').textContent = item.description || 'No description available.';
