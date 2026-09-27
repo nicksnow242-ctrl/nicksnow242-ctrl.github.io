@@ -2496,10 +2496,14 @@ class InfinitePortraitGallery {
     document.getElementById('modal-size').textContent = `${item.length || '?'} x ${item.width || '?'}`;
     document.getElementById('modal-description').textContent = item.description || 'No description available.';
 
-    const email = "nebuluxeart@gmail.com";
-    const subject = encodeURIComponent(`Inquiry about: ${itemName}`);
-    const body = encodeURIComponent(`Hello,\n\nI am interested in learning more about "${itemName}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`);
-    document.getElementById('modal-inquire-btn').href = `mailto:${email}?subject=${subject}&body=${body}`;
+    // Redirect to inputform.html, passing the artwork title and ID in the URL
+const inquireUrl = `inputform.html?artwork=${encodeURIComponent(item.title)}&id=${item.id || 'unknown'}`;
+
+// If you have the inquire button inside the modal container, target it safely:
+const inquireBtn = this.container.querySelector('#modal-inquire-btn') || document.getElementById('modal-inquire-btn');
+if (inquireBtn) {
+    inquireBtn.href = inquireUrl;
+}
 
     // Update carousel UI
     this.renderCarouselDots();
