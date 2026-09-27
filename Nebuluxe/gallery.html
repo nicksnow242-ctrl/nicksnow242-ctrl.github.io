@@ -1709,6 +1709,7 @@ var particles;
     color: #dc3545; /* Red to match your "On Sale" badge */
     font-weight: bold;
 }
+
 </style>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -2563,78 +2564,84 @@ createBadgeCanvas(img, item) {
     this.currentImageIndex = 0;
 
     // ==========================================
-           // NEW: Generate and inject the badge
-           // ==========================================
-           const carouselContainer = this.container.querySelector('#carousel-container');
+    // Generate and inject the badge
+    // ==========================================
+    const carouselContainer = this.container.querySelector('#carousel-container');
 
-           // Remove any existing badge first to prevent duplicates when switching items
-           const existingBadge = carouselContainer.querySelector('.boho-service-badge');
-           if (existingBadge) existingBadge.remove();
+    // Remove any existing badge first to prevent duplicates when switching items
+    const existingBadge = carouselContainer.querySelector('.boho-service-badge');
+    if (existingBadge) existingBadge.remove();
 
-           const badgeHTML = this.getThumbnailBadge(item);
-           if (badgeHTML) {
-               carouselContainer.insertAdjacentHTML('afterbegin', badgeHTML);
-           }
+    const badgeHTML = this.getThumbnailBadge(item);
+    if (badgeHTML) {
+        carouselContainer.insertAdjacentHTML('afterbegin', badgeHTML);
+    }
 
-           // Handle price display (with strikethrough for sales)
-         let priceHTML = '';
-         if (item.pricerange) {
-             priceHTML = item.pricerange;
-         } else if (item.suggestedprice === 0 || !item.suggestedprice) {
-             priceHTML = "Price N/A";
-         } else {
-             const originalPrice = item.suggestedprice || 0;
-             const multiplier = item.pricemultiplier || 1;
-             const discountedPrice = (originalPrice * multiplier).toFixed(2);
+    // ==========================================
+    // Safe Price Calculation with Strikethrough
+    // ==========================================
+    let priceHTML = "Price N/A";
 
-             if (multiplier < 1) {
-                 // On Sale: Crossed out original + Red sale price
-                 priceHTML = `<span class="price-original">$${originalPrice.toFixed(2)}</span> <span class="price-sale">$${discountedPrice}</span>`;
-             } else {
-                 // Regular Price
-                 priceHTML = `Suggested Price - $${discountedPrice}`;
-             }
-         }
+    if (item.pricerange) {
+        priceHTML = item.pricerange;
+    } else if (item.suggestedprice !== undefined && item.suggestedprice !== null && item.suggestedprice !== "") {
+        // Use parseFloat to safely handle numbers or strings
+        const originalPrice = parseFloat(item.suggestedprice) || 0;
+        const multiplier = parseFloat(item.pricemultiplier) || 1;
 
-         // Handle both new data (type) and old data (inStock/remakecustom)
-         let availability = "Available";
-         if (item.type) {
-             availability = item.type;
-         } else {
-             availability = item.inStock ? "Currently available" : "Not on hand";
-             if (item.remakecustom) availability += ", would remake in new colors.";
-             else availability += ", will not remake.";
-         }
+        if (originalPrice > 0 && multiplier < 1) {
+            // On Sale: Crossed out original + Red sale price
+            const discountedPrice = (originalPrice * multiplier).toFixed(2);
+            priceHTML = `<span class="price-original">$${originalPrice.toFixed(2)}</span> <span class="price-sale">$${discountedPrice}</span>`;
+        } else if (originalPrice > 0) {
+            // Regular Price
+            priceHTML = `Suggested Price - $${(originalPrice * multiplier).toFixed(2)}`;
+        }
+    }
 
-         // Set initial image (no fade for first load)
-         const primarySrc = this.currentImages[0] || item.src;
-         this.modalImage.src = primarySrc;
-         this.modalImage.alt = item.alt || item.name || item.title || 'Artwork';
-         this.modalImage.style.opacity = '1';
-         this.modalImage.onerror = () => {
-             console.warn(`Failed to load fullsize image: ${primarySrc}. Falling back to thumbnail.`);
-             this.modalImage.src = item.src;
-         };
+    // Handle availability
+    let availability = "Available";
+    if (item.type) {
+        availability = item.type;
+    } else {
+        availability = item.inStock ? "Currently available" : "Not on hand";
+        if (item.remakecustom) {
+            availability += ", would remake in new colors.";
+        } else {
+            availability += ", will not remake.";
+        }
+    }
 
-         // Use item.name OR item.title to support both data structures
-         const itemName = item.name || item.title || 'Untitled';
+    // Set initial image (no fade for first load)
+    const primarySrc = this.currentImages[0] || item.src;
+    this.modalImage.src = primarySrc;
+    this.modalImage.alt = item.alt || item.name || item.title || 'Artwork';
+    this.modalImage.style.opacity = '1';
+    this.modalImage.onerror = () => {
+        console.warn(`Failed to load fullsize image: ${primarySrc}. Falling back to thumbnail.`);
+        this.modalImage.src = item.src;
+    };
 
-         document.getElementById('modal-title').textContent = itemName;
+    // Use item.name OR item.title to support both data structures
+    const itemName = item.name || item.title || 'Untitled';
 
-         // IMPORTANT: Changed from .textContent to .innerHTML so the HTML tags render
-         document.getElementById('modal-price').innerHTML = priceHTML; 
-document.getElementById('modal-availability').textContent = availability;
-document.getElementById('modal-size').textContent = `${item.length || '?'} x ${item.width || '?'}`;
-document.getElementById('modal-description').textContent = item.description || 'No description available.';
+    // Update DOM elements
+    document.getElementById('modal-title').textContent = itemName;
 
-// Redirect to inputform.html, passing 'name' and 'price' to match your form page's expected URL parameters
-const inquireUrl = `inputform.html?name=${encodeURIComponent(itemName)}&price=${encodeURIComponent(priceDisplay)}`;
+    // IMPORTANT: Use innerHTML here so the <span> tags render correctly
+    document.getElementById('modal-price').innerHTML = priceHTML;
 
-// Target the inquire button safely and update its href
-const inquireBtn = this.container.querySelector('#modal-inquire-btn') || document.getElementById('modal-inquire-btn');
-if (inquireBtn) {
-    inquireBtn.href = inquireUrl;
-}
+    document.getElementById('modal-availability').textContent = availability;
+    document.getElementById('modal-size').textContent = `${item.length || '?'} x ${item.width || '?'}`;
+    document.getElementById('modal-description').textContent = item.description || 'No description available.';
+
+    // Redirect to inputform.html, passing 'name' and 'price'
+    const inquireUrl = `inputform.html?name=${encodeURIComponent(itemName)}&price=${encodeURIComponent(priceHTML.replace(/<[^>]*>/g, ''))}`; // Strips HTML tags for the URL
+
+    const inquireBtn = this.container.querySelector('#modal-inquire-btn') || document.getElementById('modal-inquire-btn');
+    if (inquireBtn) {
+        inquireBtn.href = inquireUrl;
+    }
 
     // Update carousel UI
     this.renderCarouselDots();
