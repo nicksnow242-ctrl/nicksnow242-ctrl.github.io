@@ -1365,6 +1365,13 @@ var particles;
   padding: 10px 20px;
   position: relative;
   font-family: 'Orbitron', sans-serif;
+  box-sizing: border-box; /* ADD THIS */
+  overflow-x: hidden;
+}
+
+.neon-inquiry-section,
+.neon-inquiry-section * {
+  box-sizing: border-box;
 }
 
 .neon-inquiry-section .inquiry-box {
@@ -1381,6 +1388,7 @@ var particles;
   /* Re-enabled internal scrolling */
   max-height: calc(90vh - 130px); /* Accounts for 110px banner + 20px buffer */
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* Custom Neon Scrollbar */
