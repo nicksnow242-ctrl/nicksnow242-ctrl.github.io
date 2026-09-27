@@ -1999,25 +1999,41 @@ class InfinitePortraitGallery {
         img.src = item.src;
 
         const promise = new Promise((resolve) => {
-            img.onload = () => {
-                let w = img.naturalWidth;
-                let h = img.naturalHeight;
-                if (w > h) {
-                    h = (h / w) * this.maxDimension;
-                    w = this.maxDimension;
-                } else {
-                    w = (w / h) * this.maxDimension;
-                    h = this.maxDimension;
-                }
-                this.imageData.push({
-                    img: img,
-                    texture: this.createTexture(img),
-                    width: w,
-                    height: h,
-                    thumbnailItem: item
-                });
-                resolve();
-            };
+    img.onload = () => {
+        // Apply badge to thumbnail if applicable
+        const finalImg = this.createBadgeCanvas(img, item);
+
+        // Wait for badge canvas to be ready if it was created
+        const processImage = () => {
+            let w = finalImg.naturalWidth || finalImg.width;
+            let h = finalImg.naturalHeight || finalImg.height;
+
+            if (w > h) {
+                h = (h / w) * this.maxDimension;
+                w = this.maxDimension;
+            } else {
+                w = (w / h) * this.maxDimension;
+                h = this.maxDimension;
+            }
+
+            this.imageData.push({
+                img: finalImg,
+                texture: this.createTexture(finalImg),
+                width: w,
+                height: h,
+                thumbnailItem: item
+            });
+            resolve();
+        };
+
+        // If badge was applied, wait for the new image to load
+        if (finalImg !== img) {
+            finalImg.onload = processImage;
+            finalImg.onerror = processImage; // Fallback if badge fails
+        } else {
+            processImage();
+        }
+    };
             img.onerror = () => {
                 // Cycle through Default1, Default2, Default3, Default4 based on the index
                 const fallbackIndex = (i % 4) + 1;
@@ -2064,6 +2080,89 @@ class InfinitePortraitGallery {
         }, 500);
     }
 }
+
+createBadgeCanvas(img, item) {
+    // Determine which badge to show
+    let badgeText = '';
+    let badgeColor = '';
+
+    // Priority 1: On Sale (pricemultiplier < 1)
+    if (item.pricemultiplier < 1) {
+        const percentOff = Math.round((1 - item.pricemultiplier) * 100);
+        badgeText = `On Sale - ${percentOff}% Off`;
+        badgeColor = 'rgba(220, 53, 69, 0.9)'; // Red
+    }
+    // Priority 2: Featured
+    else if (item.featured === true) {
+        badgeText = '★'; // Star symbol
+        badgeColor = 'rgba(40, 167, 69, 0.9)'; // Green
+    }
+    // Neither: Return original image
+    else {
+        return img;
+    }
+
+    // Create a 2D canvas to composite the badge onto the image
+    const canvas = document.createElement('canvas');
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    const ctx = canvas.getContext('2d');
+
+    // Draw the original image
+    ctx.drawImage(img, 0, 0);
+
+    // Calculate badge size relative to image
+    const fontSize = Math.max(12, Math.min(24, img.naturalWidth * 0.08));
+    const padding = fontSize * 0.6;
+    const borderRadius = fontSize * 0.8;
+
+    // Measure text
+    ctx.font = `bold ${fontSize}px 'Segoe UI', system-ui, sans-serif`;
+    const textMetrics = ctx.measureText(badgeText);
+    const textWidth = textMetrics.width;
+    const textHeight = fontSize;
+
+    // Badge dimensions
+    const badgeWidth = textWidth + (padding * 2);
+    const badgeHeight = textHeight + (padding * 2);
+
+    // Position (top-left with margin)
+    const margin = fontSize * 0.5;
+    const x = margin;
+    const y = margin;
+
+    // Draw badge background with rounded corners
+    ctx.fillStyle = badgeColor;
+    ctx.beginPath();
+    ctx.moveTo(x + borderRadius, y);
+    ctx.lineTo(x + badgeWidth - borderRadius, y);
+    ctx.quadraticCurveTo(x + badgeWidth, y, x + badgeWidth, y + borderRadius);
+    ctx.lineTo(x + badgeWidth, y + badgeHeight - borderRadius);
+    ctx.quadraticCurveTo(x + badgeWidth, y + badgeHeight, x + badgeWidth - borderRadius, y + badgeHeight);
+    ctx.lineTo(x + borderRadius, y + badgeHeight);
+    ctx.quadraticCurveTo(x, y + badgeHeight, x, y + badgeHeight - borderRadius);
+    ctx.lineTo(x, y + borderRadius);
+    ctx.quadraticCurveTo(x, y, x + borderRadius, y);
+    ctx.closePath();
+    ctx.fill();
+
+    // Draw subtle border
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Draw text
+    ctx.fillStyle = '#ffffff';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(badgeText, x + padding, y + (badgeHeight / 2));
+
+    // Create a new Image object from the canvas
+    const badgeImg = new Image();
+    badgeImg.src = canvas.toDataURL();
+
+    return badgeImg;
+}
+
 
     createTexture(img) {
         const tex = this.gl.createTexture();
