@@ -9,35 +9,37 @@
 <style>
 html, body {
   width: 100%;
-  min-height: 100%; /* Changed from height: 100% */
+  min-height: 100%;
   padding: 0;
   margin: 0;
   overflow-x: hidden;
-  overflow-y: auto; /* Changed from overflow: hidden to allow scrolling */
+  overflow-y: auto; /* Allows vertical scrolling */
   background: #191d1e;
   background: linear-gradient(0deg, #191d1e 50%, #283139 100%);
   background-attachment: fixed;
 }
 
+/* 2. KEEP PARTICLES FIXED TO VIEWPORT */
 #projector {
-  position: fixed; /* Changed from absolute so it covers the whole scroll experience */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   z-index: 0;
-  pointer-events: none; /* Lets clicks pass through to content */
+  pointer-events: none;
 }
-/* 3. ADD: New Hero Section Wrapper */
+
+/* 3. HERO SECTION (Logo with 10% padding) */
 .hero-section {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   z-index: 5;
-  padding: 10vh 0; /* 10% padding at top and bottom */
+  padding: 10vh 0; /* 10% padding top and bottom */
   box-sizing: border-box;
 }
 
@@ -51,10 +53,10 @@ html, body {
 }
 
 .ccm-11 {
-  position: relative;
+  position: relative; /* CRITICAL: This traps absolute children inside it */
   z-index: 1;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh; /* Changed from height to min-height */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1342,22 +1344,22 @@ if (aboutPulldown) {
 
   /* --- SONAR WAVES (Positioned via JavaScript at icon center) --- */
   .sonar-container {
-  position: absolute; /* Changed from fixed */
-  top: 30px; /* Matches the music player top offset */
-  right: 30px; /* Matches the music player right offset */
+  position: absolute;
+  top: 30px;
+  right: 30px;
   width: 60px;
   height: 60px;
   z-index: 10000;
   pointer-events: none;
   display: flex;
   align-items: center;
-  justify-content: center; /* Centers the waves perfectly on the icon */
+  justify-content: center;
 }
 
 .sonar-wave {
   position: absolute;
-  top: 50%; /* Center vertically */
-  left: 50%; /* Center horizontally */
+  top: 50%;
+  left: 50%;
   width: 30px;
   height: 30px;
   border: 2px solid var(--neon-orange);
@@ -1717,7 +1719,7 @@ if (aboutPulldown) {
   const pauseIcon = document.getElementById('pause-icon');
   const sonarContainer = document.getElementById('sonar-container');
 
-  
+
 
   function updateUI() {
     playIcon.style.display = isPlaying ? 'none' : 'block';
