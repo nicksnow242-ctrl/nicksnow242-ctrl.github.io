@@ -2644,14 +2644,36 @@ createBadgeCanvas(img, item) {
     }
 
     // Update carousel UI
-    this.renderCarouselDots();
-    if (this.currentImages.length <= 1) {
-        this.carouselContainer.classList.add('single-image');
-    } else {
-        this.carouselContainer.classList.remove('single-image');
-    }
+this.renderCarouselDots();
+if (this.currentImages.length <= 1) {
+    this.carouselContainer.classList.add('single-image');
+} else {
+    this.carouselContainer.classList.remove('single-image');
+}
 
-    this.modal.classList.add('is-open');
+// ==========================================
+// Detect default images and hide content panel
+// ==========================================
+const contentPanel = this.container.querySelector('.gallery-card-content');
+const isDefaultImage = item.title && item.title.startsWith('Default Artwork');
+
+if (isDefaultImage) {
+    // Hide the entire content panel for default images
+    if (contentPanel) {
+        contentPanel.style.display = 'none';
+    }
+    // Make the image container take full width
+    this.carouselContainer.style.flex = '1';
+} else {
+    // Show the content panel for regular images
+    if (contentPanel) {
+        contentPanel.style.display = 'flex';
+    }
+    // Reset the image container flex
+    this.carouselContainer.style.flex = '';
+}
+
+this.modal.classList.add('is-open');
 }
 
     closeModal() {
