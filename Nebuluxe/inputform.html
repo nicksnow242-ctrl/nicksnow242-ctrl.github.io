@@ -1379,7 +1379,17 @@ var particles;
   box-sizing: border-box; /* ADD THIS */
   overflow-x: hidden;
 }
+@media (max-width: 768px) {
+  .neon-inquiry-section {
+    justify-content: flex-end; /* Aligns box to the right */
+    padding: 10px 15px;
+  }
 
+  .neon-inquiry-section .inquiry-box {
+    width: 85%; /* Makes it slightly narrower so it doesn't touch the edge */
+    max-width: 400px;
+  }
+}
 .neon-inquiry-section,
 .neon-inquiry-section * {
   box-sizing: border-box;
