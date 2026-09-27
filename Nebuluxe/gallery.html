@@ -2576,34 +2576,53 @@ createBadgeCanvas(img, item) {
                carouselContainer.insertAdjacentHTML('afterbegin', badgeHTML);
            }
 
-           // Handle both old gallery data (suggestedprice) and new data (pricerange)
-       const priceDisplay = item.pricerange || ((item.suggestedprice === 0) ? "Price N/A" : `$${((item.suggestedprice || 0) * (item.pricemultiplier || 1)).toFixed(2)}`);
+           // Handle price display (with strikethrough for sales)
+         let priceHTML = '';
+         if (item.pricerange) {
+             priceHTML = item.pricerange;
+         } else if (item.suggestedprice === 0 || !item.suggestedprice) {
+             priceHTML = "Price N/A";
+         } else {
+             const originalPrice = item.suggestedprice || 0;
+             const multiplier = item.pricemultiplier || 1;
+             const discountedPrice = (originalPrice * multiplier).toFixed(2);
 
-       // Handle both new data (type) and old data (inStock/remakecustom)
-       let availability = "Available";
-       if (item.type) {
-           availability = item.type;
-       } else {
-           availability = item.inStock ? "Currently available" : "Not on hand";
-           if (item.remakecustom) availability += ", would remake in new colors.";
-           else availability += ", will not remake.";
-       }
+             if (multiplier < 1) {
+                 // On Sale: Crossed out original + Red sale price
+                 priceHTML = `<span class="price-original">$${originalPrice.toFixed(2)}</span> <span class="price-sale">$${discountedPrice}</span>`;
+             } else {
+                 // Regular Price
+                 priceHTML = `Suggested Price - $${discountedPrice}`;
+             }
+         }
 
-       // Set initial image (no fade for first load)
-       const primarySrc = this.currentImages[0] || item.src;
-       this.modalImage.src = primarySrc;
-       this.modalImage.alt = item.alt || item.name || item.title || 'Artwork';
-       this.modalImage.style.opacity = '1';
-       this.modalImage.onerror = () => {
-           console.warn(`Failed to load fullsize image: ${primarySrc}. Falling back to thumbnail.`);
-           this.modalImage.src = item.src;
-       };
+         // Handle both new data (type) and old data (inStock/remakecustom)
+         let availability = "Available";
+         if (item.type) {
+             availability = item.type;
+         } else {
+             availability = item.inStock ? "Currently available" : "Not on hand";
+             if (item.remakecustom) availability += ", would remake in new colors.";
+             else availability += ", will not remake.";
+         }
 
-       // Use item.name OR item.title to support both data structures
-       const itemName = item.name || item.title || 'Untitled';
+         // Set initial image (no fade for first load)
+         const primarySrc = this.currentImages[0] || item.src;
+         this.modalImage.src = primarySrc;
+         this.modalImage.alt = item.alt || item.name || item.title || 'Artwork';
+         this.modalImage.style.opacity = '1';
+         this.modalImage.onerror = () => {
+             console.warn(`Failed to load fullsize image: ${primarySrc}. Falling back to thumbnail.`);
+             this.modalImage.src = item.src;
+         };
 
-       document.getElementById('modal-title').textContent = itemName;
-       document.getElementById('modal-price').textContent = priceDisplay;
+         // Use item.name OR item.title to support both data structures
+         const itemName = item.name || item.title || 'Untitled';
+
+         document.getElementById('modal-title').textContent = itemName;
+
+         // IMPORTANT: Changed from .textContent to .innerHTML so the HTML tags render
+         document.getElementById('modal-price').innerHTML = priceHTML; 
 document.getElementById('modal-availability').textContent = availability;
 document.getElementById('modal-size').textContent = `${item.length || '?'} x ${item.width || '?'}`;
 document.getElementById('modal-description').textContent = item.description || 'No description available.';
