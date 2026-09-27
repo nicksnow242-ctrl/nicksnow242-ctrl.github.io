@@ -637,9 +637,15 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: center; /* Perfectly centers the form in remaining space */
-  padding: 20px 10px;
+  padding: 10px 10px;
   position: relative;
   font-family: 'Orbitron', sans-serif;
+}
+/* ADD THIS - adjusts padding on mobile */
+@media (max-width: 768px) {
+  .neon-inquiry-section {
+    padding: 10px 10px 10px 30px; /* Less padding on right (10px), more on left (30px) */
+  }
 }
 
 .neon-inquiry-section .inquiry-box {
