@@ -1234,13 +1234,13 @@ var particles;
   outline: none;
   color: #fff;
   border-bottom: 2px solid rgba(0, 255, 255, 0.3);
-  font-size: 14px;
+  font-size: 11px;
   font-family: 'Orbitron', sans-serif;
   transition: 0.3s;
 }
 
 .neon-inquiry-section .field textarea {
-  min-height: 120px;
+  min-height: 150px;
   padding-top: 18px;
   resize: vertical;
   background: rgba(0, 0, 0, 0.1);
@@ -1500,27 +1500,42 @@ var particles;
   }
 
   window.addEventListener('DOMContentLoaded', () => {
-    const nameParam = getQueryParam('name');
-    const titleParam = getQueryParam('title');
-    const itemPrice = getQueryParam('price');
+  const nameParam = getQueryParam('name');
+  const titleParam = getQueryParam('title');
+  const itemPrice = getQueryParam('price');
 
-    let itemName = 'Custom Request';
-    if (nameParam) {
-      itemName = decodeURIComponent(nameParam);
-    } else if (titleParam) {
-      itemName = decodeURIComponent(titleParam);
-    }
+  // 1. Set the defaults for when NO specific item is passed
+  let itemName = 'Commission/Request/Rebuttal'; // (Fixed typo from "Commisson" to "Commission")
+  let priceValue = '???';
 
-    document.getElementById('item-name').value = itemName;
+  let defaultMessage = `Hello,
+
+I have an idea for something work I would like from you. Here is what I was thinking:
+
+[Please Describe your vision. If you have hard constraints for me please include them. These could be timelines, price, specific subject matter, or something else.]
+
+How would this look like on your end?
+
+-Thanks
+[I would love to know who I am talking to :)]`;
+
+  // 2. If a specific .js item IS being pulled in, override the defaults and keep old behavior
+  if (nameParam || titleParam) {
+    itemName = nameParam ? decodeURIComponent(nameParam) : decodeURIComponent(titleParam);
 
     if (itemPrice) {
-      document.getElementById('item-price').value = decodeURIComponent(itemPrice);
+      priceValue = decodeURIComponent(itemPrice);
     }
 
-    const defaultMessage = `Hello,\n\nI am interested in learning more about "${itemName}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`;
-    document.getElementById('message').value = defaultMessage;
-  });
+    // Revert to the item-specific message
+    defaultMessage = `Hello,\n\nI am interested in learning more about "${itemName}".\n\nCould you please provide more information regarding availability and purchasing?\n\nThank you.`;
+  }
 
+  // 3. Apply the values to the form
+  document.getElementById('item-name').value = itemName;
+  document.getElementById('item-price').value = priceValue;
+  document.getElementById('message').value = defaultMessage;
+});
   // ... (Keep your existing getQueryParam and DOMContentLoaded code exactly as is) ...
 
   document.getElementById('inquiry-form').addEventListener('submit', async (e) => {
@@ -1569,10 +1584,10 @@ var particles;
         document.getElementById('inquiry-form').reset();
 
         // Show success alert (true = cyan theme + triggers redirect on close)
-        showCustomAlert('Your words have been sent to me like some digital dove. Expect a reply from nebuluxeart@gmail.com.', true);
+        showCustomAlert('Like a digital dove sent into a hurricane, your message has been sent to me. Expect a reply from nebuluxeart@gmail.com.', true);
 
       } else {
-        throw new Error(result.message || 'For some reason our communication has broken down :( your message has not gone through.');
+        throw new Error(result.message || 'For some reason our communication has short circuited :( your message has not gone through.');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -1617,7 +1632,7 @@ var particles;
       // If it was a success, trigger the redirect after closing
       if (isSuccess) {
         setTimeout(() => {
-          window.location.href = 'other_services.html';
+          window.history.back();
         }, 300);
       }
     };
