@@ -713,7 +713,7 @@ html, body {
 }
 
 .neon-inquiry-section .field textarea {
-  min-height: 50px; /* Reduced for compactness */
+  min-height: 120px; /* Reduced for compactness */
   padding-top: 18px;
   resize: vertical;
   background: rgba(0, 0, 0, 0.1);
@@ -1670,11 +1670,11 @@ document.getElementById('inquiry-form').addEventListener('submit', async (e) => 
   // --- WEB3FORMS INTEGRATION STARTS HERE ---
 
   // 1. Get your free Access Key from https://web3forms.com
-  const WEB3FORMS_ACCESS_KEY = '0108ebc0-9be2-4a94-ba74-9a19ea1cdcf7'; 
+  const WEB3FORMS_ACCESS_KEY = '0108ebc0-9be2-4a94-ba74-9a19ea1cdcf7';
 
   const formData = {
     access_key: WEB3FORMS_ACCESS_KEY,
-    subject: `Inquiry about: ${itemName}`,
+    subject: `Message From the Ether: ${itemName}`,
     from_name: "Nebuluxe Inquiry Form",
     email: userEmail,
     message: `Item: ${itemName}\nPrice: ${itemPrice}\n\nMessage:\n${message}`
