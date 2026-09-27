@@ -641,10 +641,15 @@ html, body {
   position: relative;
   font-family: 'Orbitron', sans-serif;
 }
-/* ADD THIS - adjusts padding on mobile */
 @media (max-width: 768px) {
   .neon-inquiry-section {
-    padding: 10px 10px 10px 30px; /* Less padding on right (10px), more on left (30px) */
+    justify-content: flex-end; /* Aligns box to the right */
+    padding: 10px 15px;
+  }
+
+  .neon-inquiry-section .inquiry-box {
+    width: 85%; /* Makes it slightly narrower so it doesn't touch the edge */
+    max-width: 400px;
   }
 }
 
