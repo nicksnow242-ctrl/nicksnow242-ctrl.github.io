@@ -1225,27 +1225,18 @@ html, body {
   cursor: pointer;
 }
 
-.scroll-indicator__label {
-  color: rgba(0, 255, 255, 0.6);
-  font-size: 10px;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  text-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
-}
-
 .scroll-indicator__arrow {
-  width: 28px;
-  height: 28px;
+  width: 160px;   /* Much wider */
+  height: 28px;   /* Same height */
   animation: arrow-bob 2.2s ease-in-out infinite;
-  filter: drop-shadow(0 0 6px rgba(0, 255, 255, 0.7))
-          drop-shadow(0 0 14px rgba(0, 255, 255, 0.3));
+  filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.7))
+          drop-shadow(0 0 14px rgba(255, 215, 0, 0.3));
 }
 
 .scroll-indicator__arrow svg {
   width: 100%;
   height: 100%;
-  stroke: #00FFFF;
+  stroke: #d4af37;
   fill: none;
 }
 
@@ -1268,9 +1259,8 @@ html, body {
     </svg>
   </div>
   <div class="scroll-indicator" id="scrollIndicator">
-  <span class="scroll-indicator__label">scroll</span>
   <div class="scroll-indicator__arrow">
-    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <svg viewBox="0 0 24 24" preserveAspectRatio="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <polyline points="6 9 12 15 18 9"></polyline>
     </svg>
   </div>
