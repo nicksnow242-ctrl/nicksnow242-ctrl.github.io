@@ -2249,7 +2249,21 @@ if (aboutPulldown) {
         options: []
       }
     };
+    document.addEventListener('DOMContentLoaded', function() {
+      const logoLink = document.querySelector('.glowing-logo-wrapper');
 
+      if (logoLink) {
+        logoLink.addEventListener('click', function(e) {
+          e.preventDefault(); // Prevent immediate navigation
+          const href = this.getAttribute('href');
+
+          // Wait 2 seconds, then navigate
+          setTimeout(() => {
+            window.location.href = href;
+          }, 2000);
+        });
+      }
+    });
     function showNode(key) {
       const node = dialogue[key];
       if (!node) return;
