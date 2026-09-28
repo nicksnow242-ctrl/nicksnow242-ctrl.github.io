@@ -1293,7 +1293,7 @@ html, body {
         <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="tools.html" data-label="Tools">Tools</button></li>
         <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="events.html" data-label="Events">Events</button></li>
         <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="my-consumption.html" data-label="Reading List">My<br>Consumption</button></li>
-        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="inputform.html" data-label="Commissions">Commissions</button></li>
+        <li><button type="button" class="ccm-11__stop" aria-pressed="false" data-url="inputform.html" data-label="Commissions">Commissions/Contact</button></li>
       </ul>
       <div class="ccm-11__face">
         <em>consider:</em>
@@ -1625,7 +1625,7 @@ var particles;
     const label = stops[active].dataset.label;
     current.textContent = label;
 
-    if (label === 'Other Services' || label === 'Reading List') {
+    if (label === 'Other Services' || label === 'Commissions') {
       current.classList.add('ccm-11__current--small');
     } else {
       current.classList.remove('ccm-11__current--small');
@@ -1938,7 +1938,7 @@ const handleEnter = () => {
     // 2-second delay before navigating
     setTimeout(() => {
       window.location.href = url;
-    }, 2000);
+    }, 1500);
   }
 };
 enterBtn.addEventListener('click', handleEnter);
