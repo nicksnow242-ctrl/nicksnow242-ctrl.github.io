@@ -1915,27 +1915,33 @@ var particles;
   document.addEventListener('pointercancel', onPointerCancel);
 
   stops.forEach((s, k) => {
-    s.addEventListener('click', () => {
-      if (suppressNextClick) {
-        suppressNextClick = false;
-        return;
-      }
-      goTo(k);
-      window.location.href = s.dataset.url;
-    });
-  });
-
-  machine.querySelector('.ccm-11__prev').addEventListener('click', () => goTo(active - 1));
-  machine.querySelector('.ccm-11__next').addEventListener('click', () => goTo(active + 1));
-
-  const handleEnter = () => {
-    const activeStop = stops[active];
-    const url = activeStop.getAttribute('data-url');
-    if (url) {
-      window.location.href = url;
+  s.addEventListener('click', () => {
+    if (suppressNextClick) {
+      suppressNextClick = false;
+      return;
     }
-  };
-  enterBtn.addEventListener('click', handleEnter);
+    goTo(k);
+    // 2-second delay before navigating
+    setTimeout(() => {
+      window.location.href = s.dataset.url;
+    }, 2000);
+  });
+});
+
+machine.querySelector('.ccm-11__prev').addEventListener('click', () => goTo(active - 1));
+machine.querySelector('.ccm-11__next').addEventListener('click', () => goTo(active + 1));
+
+const handleEnter = () => {
+  const activeStop = stops[active];
+  const url = activeStop.getAttribute('data-url');
+  if (url) {
+    // 2-second delay before navigating
+    setTimeout(() => {
+      window.location.href = url;
+    }, 2000);
+  }
+};
+enterBtn.addEventListener('click', handleEnter);
 
   startGlitchLoop();
 })();
@@ -2297,28 +2303,7 @@ if (aboutPulldown) {
       if (e.key === 'Escape') bubble.classList.remove('is-open');
     });
   });
-  // Delayed navigation for the logo link
-  (function() {
-    const logoLink = document.querySelector('.glowing-logo-wrapper');
 
-    if (logoLink) {
-      // Clone and replace to strip any existing click handlers
-      const newLink = logoLink.cloneNode(true);
-      logoLink.parentNode.replaceChild(newLink, logoLink);
-
-      newLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        const href = this.getAttribute('href');
-
-        // 2 second pause, then navigate
-        setTimeout(function() {
-          window.location.href = href;
-        }, 2000);
-      });
-    }
-  })();
 </script>
 
 </body>
