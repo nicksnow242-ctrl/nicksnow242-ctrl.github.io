@@ -2249,21 +2249,7 @@ if (aboutPulldown) {
         options: []
       }
     };
-    document.addEventListener('DOMContentLoaded', function() {
-      const logoLink = document.querySelector('.glowing-logo-wrapper');
 
-      if (logoLink) {
-        logoLink.addEventListener('click', function(e) {
-          e.preventDefault(); // Prevent immediate navigation
-          const href = this.getAttribute('href');
-
-          // Wait 2 seconds, then navigate
-          setTimeout(() => {
-            window.location.href = href;
-          }, 2000);
-        });
-      }
-    });
     function showNode(key) {
       const node = dialogue[key];
       if (!node) return;
@@ -2311,6 +2297,29 @@ if (aboutPulldown) {
       if (e.key === 'Escape') bubble.classList.remove('is-open');
     });
   });
+  // Delayed navigation for the logo link
+  (function() {
+    const logoLink = document.querySelector('.glowing-logo-wrapper');
+
+    if (logoLink) {
+      // Clone and replace to strip any existing click handlers
+      const newLink = logoLink.cloneNode(true);
+      logoLink.parentNode.replaceChild(newLink, logoLink);
+
+      newLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const href = this.getAttribute('href');
+
+        // 2 second pause, then navigate
+        setTimeout(function() {
+          window.location.href = href;
+        }, 2000);
+      });
+    }
+  })();
 </script>
+
 </body>
 </html>
