@@ -1,0 +1,1135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eldritch Cave Background</title>
+
+  <style>
+    :root {
+      --aqua: #28f5de;
+      --green: #7dff5e;
+      --purple: #b46bff;
+      --orange: #ff9d3c;
+
+      --portal-a: #5fffe3;
+      --portal-b: #c07bff;
+
+      --stone-dark: #020406;
+      --stone-mid: #111a20;
+      --bone: #ccc5b3;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: #000;
+    }
+
+    body {
+      background: var(--stone-dark);
+      color: #c9d7d4;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+    }
+
+    .content {
+      position: relative;
+      z-index: 10;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .content h1 {
+      margin: 0;
+      font-size: clamp(1.4rem, 4vw, 3.2rem);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(210, 255, 245, 0.92);
+      text-shadow:
+        0 0 12px rgba(70, 255, 220, 0.35),
+        0 0 42px rgba(160, 90, 255, 0.22);
+    }
+
+    /* =====================================================
+       CAVE SCENE WRAPPER
+       ===================================================== */
+
+    .cave {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      isolation: isolate;
+    }
+
+    .cave > div {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    /* =====================================================
+       1. BACKGROUND CAVE WALL + MIST
+       ===================================================== */
+
+    .bg {
+      z-index: 0;
+      background:
+        radial-gradient(
+          90vmax 60vmax at 50% 118%,
+          #0d1b18 0%,
+          #071013 34%,
+          #030608 64%,
+          #010203 100%
+        ),
+        radial-gradient(
+          42vmax 30vmax at 16% 18%,
+          rgba(24, 63, 56, 0.26),
+          transparent 62%
+        ),
+        radial-gradient(
+          36vmax 28vmax at 84% 20%,
+          rgba(58, 22, 74, 0.22),
+          transparent 60%
+        ),
+        radial-gradient(
+          28vmax 22vmax at 70% 75%,
+          rgba(18, 65, 55, 0.18),
+          transparent 68%
+        ),
+        linear-gradient(
+          to bottom,
+          #020406,
+          #04080a 38%,
+          #030507 68%,
+          #010203
+        );
+    }
+
+    .bg::before {
+      content: "";
+      position: absolute;
+      inset: -18%;
+      background:
+        radial-gradient(
+          42vmax 30vmax at 22% 72%,
+          rgba(83, 255, 214, 0.055),
+          transparent 62%
+        ),
+        radial-gradient(
+          36vmax 26vmax at 78% 68%,
+          rgba(180, 110, 255, 0.05),
+          transparent 60%
+        ),
+        radial-gradient(
+          24vmax 20vmax at 50% 88%,
+          rgba(255, 157, 60, 0.03),
+          transparent 70%
+        );
+      mix-blend-mode: screen;
+      animation: mistDrift 28s ease-in-out infinite alternate;
+    }
+
+    /* =====================================================
+       2. AMBIENT BLINKING EYES
+       ===================================================== */
+
+    .eyes {
+      z-index: 1;
+      mix-blend-mode: screen;
+      opacity: 0.92;
+    }
+
+    .eyes::before,
+    .eyes::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0.28rem;
+      height: 0.16rem;
+      border-radius: 50%;
+      background: transparent;
+      filter:
+        drop-shadow(0 0 0.35rem currentColor)
+        drop-shadow(0 0 1.1rem currentColor);
+      animation: eyeBlink var(--speed, 7s) ease-in-out infinite;
+    }
+
+    .eyes::after {
+      animation-duration: calc(var(--speed, 7s) * 1.4);
+      animation-delay: calc(var(--delay, -2s) - 1.7s);
+    }
+
+    .eyes-aqua {
+      color: var(--aqua);
+      --speed: 6.8s;
+      --delay: -1.4s;
+    }
+
+    .eyes-green {
+      color: var(--green);
+      --speed: 8.4s;
+      --delay: -3.1s;
+    }
+
+    .eyes-purple {
+      color: var(--purple);
+      --speed: 7.6s;
+      --delay: -0.7s;
+    }
+
+    .eyes-orange {
+      color: var(--orange);
+      --speed: 9.2s;
+      --delay: -2.2s;
+    }
+
+    .eyes-aqua::before {
+      box-shadow:
+        7vw 16vh 0 0 currentColor,
+        8.1vw 16vh 0 0 currentColor,
+        24vw 10vh 0 0 currentColor,
+        25.1vw 10.2vh 0 0 currentColor,
+        65vw 13vh 0 0 currentColor,
+        66.1vw 13vh 0 0 currentColor,
+        86vw 22vh 0 0 currentColor,
+        87vw 22.2vh 0 0 currentColor,
+        44vw 7vh 0 0 currentColor,
+        45vw 7.1vh 0 0 currentColor;
+    }
+
+    .eyes-aqua::after {
+      box-shadow:
+        14vw 30vh 0 0 currentColor,
+        15vw 30vh 0 0 currentColor,
+        32vw 17vh 0 0 currentColor,
+        33vw 17.2vh 0 0 currentColor,
+        57vw 9vh 0 0 currentColor,
+        58vw 9vh 0 0 currentColor,
+        77vw 18vh 0 0 currentColor,
+        78vw 18.2vh 0 0 currentColor,
+        91vw 12vh 0 0 currentColor,
+        92vw 12.2vh 0 0 currentColor;
+    }
+
+    .eyes-green::before {
+      box-shadow:
+        10vw 24vh 0 0 currentColor,
+        11vw 24vh 0 0 currentColor,
+        19vw 8vh 0 0 currentColor,
+        20vw 8.1vh 0 0 currentColor,
+        37vw 12vh 0 0 currentColor,
+        38vw 12vh 0 0 currentColor,
+        70vw 20vh 0 0 currentColor,
+        71vw 20.2vh 0 0 currentColor,
+        83vw 9vh 0 0 currentColor,
+        84vw 9vh 0 0 currentColor;
+    }
+
+    .eyes-green::after {
+      box-shadow:
+        6vw 11vh 0 0 currentColor,
+        7vw 11vh 0 0 currentColor,
+        28vw 25vh 0 0 currentColor,
+        29vw 25.1vh 0 0 currentColor,
+        51vw 6vh 0 0 currentColor,
+        52vw 6.1vh 0 0 currentColor,
+        62vw 27vh 0 0 currentColor,
+        63vw 27vh 0 0 currentColor,
+        94vw 30vh 0 0 currentColor,
+        95vw 30.1vh 0 0 currentColor;
+    }
+
+    .eyes-purple::before {
+      box-shadow:
+        16vw 13vh 0 0 currentColor,
+        17vw 13vh 0 0 currentColor,
+        26vw 29vh 0 0 currentColor,
+        27vw 29vh 0 0 currentColor,
+        41vw 21vh 0 0 currentColor,
+        42vw 21vh 0 0 currentColor,
+        73vw 8vh 0 0 currentColor,
+        74vw 8.1vh 0 0 currentColor,
+        89vw 17vh 0 0 currentColor,
+        90vw 17.1vh 0 0 currentColor;
+    }
+
+    .eyes-purple::after {
+      box-shadow:
+        4vw 32vh 0 0 currentColor,
+        5vw 32vh 0 0 currentColor,
+        34vw 7vh 0 0 currentColor,
+        35vw 7vh 0 0 currentColor,
+        55vw 15vh 0 0 currentColor,
+        56vw 15.1vh 0 0 currentColor,
+        67vw 31vh 0 0 currentColor,
+        68vw 31vh 0 0 currentColor,
+        81vw 28vh 0 0 currentColor,
+        82vw 28.2vh 0 0 currentColor;
+    }
+
+    .eyes-orange::before {
+      box-shadow:
+        12vw 7vh 0 0 currentColor,
+        13vw 7vh 0 0 currentColor,
+        22vw 18vh 0 0 currentColor,
+        23vw 18.2vh 0 0 currentColor,
+        48vw 11vh 0 0 currentColor,
+        49vw 11.1vh 0 0 currentColor,
+        75vw 26vh 0 0 currentColor,
+        76vw 26vh 0 0 currentColor,
+        93vw 21vh 0 0 currentColor,
+        94vw 21vh 0 0 currentColor;
+    }
+
+    .eyes-orange::after {
+      box-shadow:
+        8vw 28vh 0 0 currentColor,
+        9vw 28vh 0 0 currentColor,
+        30vw 9vh 0 0 currentColor,
+        31vw 9vh 0 0 currentColor,
+        58vw 22vh 0 0 currentColor,
+        59vw 22.1vh 0 0 currentColor,
+        69vw 6vh 0 0 currentColor,
+        70vw 6.1vh 0 0 currentColor,
+        87vw 33vh 0 0 currentColor,
+        88vw 33vh 0 0 currentColor;
+    }
+
+    /* =====================================================
+       3. CAVE FLOOR
+       ===================================================== */
+
+    .floor {
+      z-index: 2;
+    }
+
+    .floor::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 26vh;
+      background:
+        radial-gradient(
+          120vw 42vh at 50% 115%,
+          rgba(23, 36, 36, 0.95) 0%,
+          rgba(9, 15, 16, 0.98) 38%,
+          rgba(3, 6, 7, 1) 70%,
+          transparent 72%
+        ),
+        linear-gradient(
+          to top,
+          rgba(10, 18, 19, 0.96),
+          rgba(6, 11, 12, 0.82) 42%,
+          transparent
+        );
+      clip-path: polygon(
+        0% 100%,
+        0% 56%,
+        5% 63%,
+        11% 47%,
+        18% 59%,
+        26% 45%,
+        34% 60%,
+        42% 49%,
+        50% 58%,
+        58% 47%,
+        66% 61%,
+        74% 46%,
+        82% 58%,
+        90% 47%,
+        100% 59%,
+        100% 100%
+      );
+    }
+
+    /* =====================================================
+       4. PORTAL SCENE
+       ===================================================== */
+
+    .portal-scene {
+      z-index: 3;
+    }
+
+    .stairs {
+      position: absolute;
+      left: 50%;
+      bottom: 8vh;
+      width: min(46vmin, 460px);
+      height: 11vmin;
+      transform: translateX(-50%);
+      background:
+        linear-gradient(
+          to top,
+          #2b353b,
+          #131a1e 45%,
+          #273137 70%,
+          #0d1316
+        );
+      clip-path: polygon(
+        0% 100%,
+        0% 72%,
+        14% 72%,
+        14% 46%,
+        30% 46%,
+        30% 22%,
+        70% 22%,
+        70% 46%,
+        86% 46%,
+        86% 72%,
+        100% 72%,
+        100% 100%
+      );
+      filter: drop-shadow(0 -0.6vmin 2vmin rgba(0, 0, 0, 0.55));
+    }
+
+    .stairs::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(
+          90deg,
+          transparent,
+          rgba(120, 255, 230, 0.08),
+          transparent
+        ),
+        repeating-linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.035) 0 1px,
+          transparent 1px 7%;
+        );
+      mix-blend-mode: screen;
+      opacity: 0.8;
+    }
+
+    .pedestal {
+      position: absolute;
+      left: 50%;
+      bottom: calc(8vh + 9.5vmin);
+      width: min(21vmin, 220px);
+      height: 11vmin;
+      transform: translateX(-50%);
+      background:
+        radial-gradient(
+          220% 120% at 50% 0%,
+          rgba(120, 255, 230, 0.08),
+          transparent 38%
+        ),
+        linear-gradient(
+          to top,
+          #10161a,
+          #36434b 30%,
+          #1a242a 68%,
+          #090e11
+        );
+      clip-path: polygon(
+        12% 0%,
+        88% 0%,
+        100% 16%,
+        88% 30%,
+        94% 100%,
+        6% 100%,
+        12% 30%,
+        0% 16%
+      );
+      filter: drop-shadow(0 1vmin 2vmin rgba(0, 0, 0, 0.65));
+    }
+
+    .portal {
+      position: absolute;
+      left: 50%;
+      bottom: calc(8vh + 18.5vmin);
+      width: min(38vmin, 420px);
+      aspect-ratio: 1;
+      transform: translateX(-50%);
+      filter:
+        drop-shadow(0 0 2.5vmin rgba(90, 255, 230, 0.18))
+        drop-shadow(0 0 6vmin rgba(170, 100, 255, 0.12));
+    }
+
+    .portal > * {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+    }
+
+    .halo {
+      inset: -16%;
+      background:
+        radial-gradient(
+          circle,
+          rgba(43, 255, 214, 0.18),
+          rgba(150, 80, 255, 0.12) 36%,
+          transparent 68%
+        );
+      filter: blur(1.2vmin);
+      mix-blend-mode: screen;
+      animation: haloPulse 7s ease-in-out infinite;
+    }
+
+    .ring-outer {
+      border: 0.8vmin solid rgba(120, 255, 235, 0.22);
+      box-shadow:
+        inset 0 0 2vmin rgba(70, 255, 230, 0.2),
+        0 0 2.5vmin rgba(120, 255, 235, 0.16);
+    }
+
+    .ring-inner {
+      inset: 9%;
+      border: 0.5vmin solid rgba(186, 120, 255, 0.28);
+      box-shadow:
+        inset 0 0 1.5vmin rgba(186, 120, 255, 0.2),
+        0 0 2vmin rgba(186, 120, 255, 0.14);
+    }
+
+    .runes-a,
+    .runes-b {
+      mix-blend-mode: screen;
+      opacity: 0.95;
+    }
+
+    .runes-a {
+      inset: 3%;
+      background: repeating-conic-gradient(
+        from 0deg,
+        transparent 0deg 5deg,
+        rgba(92, 255, 228, 0.95) 5deg 5.7deg,
+        transparent 5.7deg 11deg,
+        rgba(92, 255, 228, 0.55) 11deg 11.4deg,
+        transparent 11.4deg 18deg
+      );
+      -webkit-mask: radial-gradient(
+        circle,
+        transparent 61%,
+        #000 62% 68%,
+        transparent 69%
+      );
+      mask: radial-gradient(
+        circle,
+        transparent 61%,
+        #000 62% 68%,
+        transparent 69%
+      );
+      filter: drop-shadow(0 0 0.8vmin rgba(84, 255, 220, 0.35));
+      animation: spin 30s linear infinite;
+    }
+
+    .runes-b {
+      inset: 12%;
+      background: repeating-conic-gradient(
+        from 8deg,
+        transparent 0deg 7deg,
+        rgba(204, 122, 255, 0.9) 7deg 7.5deg,
+        transparent 7.5deg 14deg,
+        rgba(204, 122, 255, 0.55) 14deg 14.35deg,
+        transparent 14.35deg 21deg
+      );
+      -webkit-mask: radial-gradient(
+        circle,
+        transparent 68%,
+        #000 69% 74%,
+        transparent 75%
+      );
+      mask: radial-gradient(
+        circle,
+        transparent 68%,
+        #000 69% 74%,
+        transparent 75%
+      );
+      filter: drop-shadow(0 0 0.7vmin rgba(204, 122, 255, 0.3));
+      animation: spinReverse 18s linear infinite;
+    }
+
+    .core {
+      inset: 19%;
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 30% 25%,
+          rgba(255, 255, 255, 0.16),
+          transparent 18%
+        ),
+        radial-gradient(
+          circle at 70% 68%,
+          rgba(173, 255, 240, 0.16),
+          transparent 26%
+        ),
+        conic-gradient(
+          from 0deg,
+          #021518,
+          #0a4e54 18%,
+          #07131b 33%,
+          #47105e 52%,
+          #092226 70%,
+          #021518
+        );
+      box-shadow:
+        inset 0 0 3vmin rgba(0, 0, 0, 0.85),
+        inset 0 0 8vmin rgba(69, 255, 225, 0.12),
+        0 0 3vmin rgba(69, 255, 225, 0.25);
+      animation: corePulse 6s ease-in-out infinite;
+    }
+
+    .core::before {
+      content: "";
+      position: absolute;
+      inset: -22%;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 0deg,
+        transparent 0 12%,
+        rgba(110, 255, 235, 0.16) 16%,
+        transparent 22% 40%,
+        rgba(191, 123, 255, 0.14) 46%,
+        transparent 52% 76%,
+        rgba(255, 157, 60, 0.12) 81%,
+        transparent 88%
+      );
+      mix-blend-mode: screen;
+      animation: spin 9s linear infinite;
+    }
+
+    .core::after {
+      content: "";
+      position: absolute;
+      inset: 26%;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        rgba(2, 8, 10, 0.9),
+        transparent 70%
+      );
+    }
+
+    /* =====================================================
+       5. BONES
+       ===================================================== */
+
+    .ground-props {
+      z-index: 4;
+    }
+
+    .bones,
+    .mushrooms {
+      position: absolute;
+      inset: 0;
+    }
+
+    .bone {
+      position: absolute;
+      display: block;
+      width: 5.5vmin;
+      height: 0.7vmin;
+      color: var(--bone);
+      background: currentColor;
+      border-radius: 999px;
+      opacity: 0.92;
+      box-shadow: 0 0.3vmin 0.8vmin rgba(0, 0, 0, 0.5);
+      filter: drop-shadow(0 0 0.6vmin rgba(120, 255, 220, 0.08));
+    }
+
+    .bone::before,
+    .bone::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 1.1vmin;
+      height: 1.1vmin;
+      border-radius: 50%;
+      background: currentColor;
+      transform: translateY(-50%);
+      box-shadow: 0 0.28vmin 0 currentColor;
+    }
+
+    .bone::before {
+      left: -0.55vmin;
+    }
+
+    .bone::after {
+      right: -0.55vmin;
+    }
+
+    .b1 {
+      left: 16%;
+      bottom: 9vh;
+      transform: rotate(18deg) scale(0.9);
+    }
+
+    .b2 {
+      left: 24%;
+      bottom: 7vh;
+      transform: rotate(-32deg) scale(1.15);
+    }
+
+    .b3 {
+      right: 18%;
+      bottom: 8vh;
+      transform: rotate(74deg) scale(0.8);
+    }
+
+    .b4 {
+      right: 28%;
+      bottom: 11vh;
+      transform: rotate(-12deg) scale(1.05);
+    }
+
+    .b5 {
+      left: 44%;
+      bottom: 5.5vh;
+      transform: rotate(40deg) scale(0.7);
+      opacity: 0.65;
+    }
+
+    /* =====================================================
+       6. GLOWING MUSHROOMS
+       ===================================================== */
+
+    .mushroom {
+      position: absolute;
+      display: block;
+      width: 4.2vmin;
+      height: 5vmin;
+      transform-origin: bottom center;
+      animation: mushroomPulse 5s ease-in-out infinite;
+    }
+
+    .mushroom::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 23%;
+      height: 58%;
+      transform: translateX(-50%);
+      background: linear-gradient(
+        to top,
+        #5c6c61,
+        #b8c9ba
+      );
+      border-radius: 0.5vmin 0.5vmin 0.8vmin 0.8vmin;
+      box-shadow: inset -0.3vmin 0 0.5vmin rgba(0, 0, 0, 0.3);
+    }
+
+    .mushroom::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 55%;
+      background:
+        radial-gradient(
+          circle at 22% 30%,
+          rgba(255, 255, 255, 0.65) 0 8%,
+          transparent 9%
+        ),
+        radial-gradient(
+          circle at 68% 42%,
+          rgba(255, 255, 255, 0.5) 0 6%,
+          transparent 7%
+        ),
+        radial-gradient(
+          circle at 50% 20%,
+          color-mix(in srgb, var(--glow) 85%, white 15%) 0 62%,
+          color-mix(in srgb, var(--glow) 35%, black 65%) 100%
+        );
+      border-radius: 50% 50% 42% 42% / 100% 100% 28% 28%;
+      box-shadow:
+        inset 0 -0.7vmin 0.9vmin rgba(0, 0, 0, 0.35),
+        inset 0 0.5vmin 0.9vmin rgba(255, 255, 255, 0.15);
+    }
+
+    .m1 {
+      left: 20%;
+      bottom: 8.5vh;
+      --glow: #3df5c9;
+      transform: rotate(-8deg) scale(1.1);
+    }
+
+    .m2 {
+      left: 27%;
+      bottom: 6.5vh;
+      --glow: #83ff5d;
+      transform: rotate(6deg) scale(0.72);
+      animation-delay: 1.2s;
+    }
+
+    .m3 {
+      right: 22%;
+      bottom: 7.5vh;
+      --glow: #b26bff;
+      transform: rotate(10deg) scale(0.95);
+      animation-delay: 0.4s;
+    }
+
+    .m4 {
+      right: 30%;
+      bottom: 10vh;
+      --glow: #38f2ff;
+      transform: rotate(-14deg) scale(0.65);
+      animation-delay: 2s;
+    }
+
+    .m5 {
+      left: 48%;
+      bottom: 5.8vh;
+      --glow: #ff9d3c;
+      transform: rotate(3deg) scale(0.58);
+      animation-delay: 0.9s;
+    }
+
+    /* =====================================================
+       7. FOREGROUND ROCKS / STALACTITES / STALAGMITES
+       ===================================================== */
+
+    .rocks-top,
+    .rocks-bottom,
+    .rocks-left,
+    .rocks-right {
+      z-index: 6;
+    }
+
+    .rocks-top {
+      inset: 0 0 auto 0;
+      height: 17vh;
+      background: linear-gradient(
+        to bottom,
+        #000,
+        #081014 55%,
+        #030607
+      );
+      clip-path: polygon(
+        0% 0%,
+        100% 0%,
+        100% 38%,
+        95% 78%,
+        90% 34%,
+        84% 88%,
+        79% 30%,
+        73% 72%,
+        68% 22%,
+        61% 80%,
+        55% 18%,
+        49% 68%,
+        43% 24%,
+        37% 84%,
+        31% 30%,
+        25% 74%,
+        20% 26%,
+        14% 82%,
+        9% 34%,
+        4% 70%,
+        0% 28%
+      );
+      filter: drop-shadow(0 2vmin 3vmin rgba(0, 0, 0, 0.6));
+      opacity: 0.97;
+    }
+
+    .rocks-bottom {
+      inset: auto 0 0 0;
+      height: 20vh;
+      background: linear-gradient(
+        to top,
+        #000,
+        #091114 48%,
+        #030506
+      );
+      clip-path: polygon(
+        0% 100%,
+        0% 60%,
+        5% 22%,
+        10% 68%,
+        16% 30%,
+        22% 76%,
+        28% 34%,
+        35% 80%,
+        41% 38%,
+        48% 72%,
+        55% 28%,
+        61% 74%,
+        68% 36%,
+        74% 82%,
+        80% 32%,
+        86% 70%,
+        92% 28%,
+        100% 64%,
+        100% 100%
+      );
+      filter: drop-shadow(0 -2vmin 3vmin rgba(0, 0, 0, 0.55));
+      opacity: 0.97;
+    }
+
+    .rocks-left,
+    .rocks-right {
+      z-index: 7;
+      opacity: 0.96;
+    }
+
+    .rocks-left {
+      inset: 0 auto 0 0;
+      width: 14vw;
+      background: linear-gradient(
+        100deg,
+        #000 25%,
+        #0a1216 65%,
+        transparent
+      );
+      clip-path: polygon(
+        0% 0%,
+        62% 0%,
+        44% 12%,
+        72% 22%,
+        38% 34%,
+        64% 46%,
+        32% 58%,
+        58% 70%,
+        28% 82%,
+        48% 92%,
+        12% 100%,
+        0% 100%
+      );
+    }
+
+    .rocks-right {
+      inset: 0 0 0 auto;
+      width: 14vw;
+      background: linear-gradient(
+        -100deg,
+        #000 25%,
+        #0a1216 65%,
+        transparent
+      );
+      clip-path: polygon(
+        100% 0%,
+        38% 0%,
+        56% 12%,
+        28% 22%,
+        62% 34%,
+        36% 46%,
+        68% 58%,
+        42% 70%,
+        72% 82%,
+        52% 92%,
+        88% 100%,
+        100% 100%
+      );
+    }
+
+    /* =====================================================
+       8. VIGNETTE
+       ===================================================== */
+
+    .vignette {
+      z-index: 8;
+      background: radial-gradient(
+        120% 100% at 50% 45%,
+        transparent 48%,
+        rgba(0, 0, 0, 0.38) 74%,
+        rgba(0, 0, 0, 0.82) 100%
+      );
+    }
+
+    /* =====================================================
+       ANIMATIONS
+       ===================================================== */
+
+    @keyframes mistDrift {
+      from {
+        transform: translate3d(-1%, 0, 0) scale(1.02);
+      }
+      to {
+        transform: translate3d(2%, -2%, 0) scale(1.07);
+      }
+    }
+
+    @keyframes eyeBlink {
+      0%,
+      7%,
+      13%,
+      39%,
+      47%,
+      78%,
+      86%,
+      100% {
+        opacity: 1;
+      }
+
+      9%,
+      43%,
+      82% {
+        opacity: 0.05;
+      }
+
+      23% {
+        opacity: 0.65;
+      }
+
+      60% {
+        opacity: 0.3;
+      }
+
+      70% {
+        opacity: 0.9;
+      }
+    }
+
+    @keyframes haloPulse {
+      0%,
+      100% {
+        opacity: 0.75;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.06);
+      }
+    }
+
+    @keyframes corePulse {
+      0%,
+      100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.02);
+      }
+    }
+
+    @keyframes mushroomPulse {
+      0%,
+      100% {
+        opacity: 0.8;
+        filter:
+          drop-shadow(0 0 0.8vmin var(--glow))
+          drop-shadow(
+            0 0 2vmin
+            color-mix(in srgb, var(--glow) 45%, transparent)
+          );
+      }
+      50% {
+        opacity: 1;
+        filter:
+          drop-shadow(0 0 1.8vmin var(--glow))
+          drop-shadow(
+            0 0 4.5vmin
+            color-mix(in srgb, var(--glow) 60%, transparent)
+          );
+      }
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes spinReverse {
+      to {
+        transform: rotate(-360deg);
+      }
+    }
+
+    /* =====================================================
+       RESPONSIVE + ACCESSIBILITY
+       ===================================================== */
+
+    @media (max-width: 720px) {
+      .rocks-left,
+      .rocks-right {
+        width: 20vw;
+        opacity: 0.88;
+      }
+
+      .portal {
+        width: min(58vmin, 320px);
+      }
+
+      .stairs {
+        width: min(64vmin, 340px);
+      }
+
+      .bone {
+        width: 7vmin;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cave *,
+      .cave *::before,
+      .cave *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+  <body>
+    <div class="cave" aria-hidden="true">
+      <div class="bg"></div>
+
+      <div class="eyes eyes-aqua"></div>
+      <div class="eyes eyes-green"></div>
+      <div class="eyes eyes-purple"></div>
+      <div class="eyes eyes-orange"></div>
+
+      <div class="floor"></div>
+
+      <div class="portal-scene">
+        <div class="stairs"></div>
+        <div class="pedestal"></div>
+
+        <div class="portal">
+          <div class="halo"></div>
+          <div class="ring-outer"></div>
+          <div class="ring-inner"></div>
+          <div class="runes-a"></div>
+          <div class="runes-b"></div>
+          <div class="core"></div>
+        </div>
+      </div>
+
+      <div class="ground-props">
+        <div class="bones">
+          <i class="bone b1"></i>
+          <i class="bone b2"></i>
+          <i class="bone b3"></i>
+          <i class="bone b4"></i>
+          <i class="bone b5"></i>
+        </div>
+
+        <div class="mushrooms">
+          <i class="mushroom m1"></i>
+          <i class="mushroom m2"></i>
+          <i class="mushroom m3"></i>
+          <i class="mushroom m4"></i>
+          <i class="mushroom m5"></i>
+        </div>
+      </div>
+
+      <div class="rocks-top"></div>
+      <div class="rocks-bottom"></div>
+      <div class="rocks-left"></div>
+      <div class="rocks-right"></div>
+
+      <div class="vignette"></div>
+    </div>
+
+    <main class="content">
+      <h1>Enter the Hollow</h1>
+    </main>
+  </body>
+</html>
