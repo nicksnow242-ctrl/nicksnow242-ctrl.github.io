@@ -1,7 +1,7 @@
 window.thumbnails = [
     {
         id: 1,
-        src: 'Images/Thumbnails/DSC1847.png',
+        src: 'Images/Thumbnails/DSC1943.jpg',
         fullsizesrc: '/Nebuluxe/Images/Fullsize/DSC18470.jpg',
         fullsizesrc2:'/Nebuluxe/Images/Fullsize/DSC19440.jpg',
         alt: 'A thief came in the night',
@@ -21,7 +21,7 @@ window.thumbnails = [
     },
     {
         id: 2,
-        src: 'Images/Thumbnails/DSC1930.png',
+        src: 'DSC2002v2.jpg',
         fullsizesrc:'Images/Fullsize/DSC1930.jpg',
         alt: 'A thief came in the night',
         title: 'Divergence',
@@ -40,7 +40,7 @@ window.thumbnails = [
     },
     {
         id: 3,
-        src: 'Images/Thumbnails/DSC1942.png',
+        src: 'Images/Thumbnails/DSC1979v3.jpg',
         fullsizesrc:'Images/Fullsize/DSC1942.jpg',
         alt: 'A thief came in the night',
         title: 'Liminal Fountain',
@@ -59,7 +59,7 @@ window.thumbnails = [
     },
     {
         id: 4,
-        src: 'Images/Thumbnails/DSC1943.png',
+        src: 'Images/Thumbnails/7v2.jpg',
         fullsizesrc:'Images/Fullsize/DSC1943.jpg',
         alt: 'A thief came in the night',
         title: 'Liminal Fountain',
@@ -78,7 +78,7 @@ window.thumbnails = [
     },
     {
         id: 5,
-        src: 'Images/Thumbnails/Kayakertest.png',
+        src: 'Images/Thumbnails/DSC1929v2.jpg',
         fullsizesrc:'Images/Fullsize/DSC1948.jpg',
         fullsizesrc2:'Images/Fullsize/DSC1944.jpg',
         alt: 'A thief came in the night',
