@@ -60,7 +60,7 @@ window.thumbnails = [
     {
         id: 4,
         src: 'Images/Thumbnails/7v2.jpg',
-        fullsizesrc:'Images/Fullsize/DSC1943.jpg',
+        fullsizesrc:'Images/Fullsize/DSC2002v2.jpg',
         alt: 'A thief came in the night',
         title: 'Liminal Fountain',
         dateCreated: '01-01-23',
