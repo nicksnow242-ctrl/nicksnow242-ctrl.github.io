@@ -2139,11 +2139,11 @@ createBadgeCanvas(img, item) {
         badgeText = `On Sale - ${percentOff}% Off`;
         badgeColor = 'rgba(220, 53, 69, 0.9)'; // Red
     }
-    // Priority 2: Featured (handle boolean true, string "TRUE", or string "true")
-  else if (item.featured === true || item.featured === "TRUE" || item.featured === "true") {
-      badgeText = '★'; // Star symbol
-      badgeColor = 'rgba(40, 167, 69, 0.9)'; // Green
-  }
+    // Priority 2: Featured (case-insensitive check)
+     else if (item.featured === true || String(item.featured).toLowerCase() === "true") {
+         badgeText = '★'; // Star symbol
+         badgeColor = 'rgba(40, 167, 69, 0.9)'; // Green
+     }
     // Neither: Return original image
     else {
         return img;
@@ -3319,7 +3319,7 @@ this.modal.classList.add('is-open');
          let statusMatch = false;
 
          // Featured: handle boolean true, string "TRUE", or string "true"
-         if (statuses.has('featured') && (item.featured === true || item.featured === "TRUE" || item.featured === "true")) statusMatch = true;
+         if (statuses.has('featured') && (item.featured === true || item.featured === "TRUE" || item.featured === "true"|| item.featured === "True")) statusMatch = true;
 
          // On Sale: check if pricemultiplier exists and is less than 1
          if (statuses.has('onsale') && item.pricemultiplier !== undefined && parseFloat(item.pricemultiplier) < 1) statusMatch = true;

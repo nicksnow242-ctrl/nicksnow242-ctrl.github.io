@@ -295,7 +295,7 @@ window.thumbnails = [
     "remakecustom": "TRUE",
     "pricemultiplier": 0.85,
     "featured": "FALSE",
-    "suggestedprice": 400,
+    "suggestedprice": 300,
     "description": "The leaves are so slippery at times",
     "type": "Abstract",
     "src": "/Nebuluxe/Images/Thumbnails/DSC27242.jpg",
