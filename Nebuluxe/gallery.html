@@ -2138,7 +2138,7 @@ createBadgeCanvas(img, item) {
             badgeType = 'sale';
         }
         // Priority 2: Featured (case-insensitive check)
-        else if (item.featured === true || String(item.featured).toLowerCase() === 'true') {
+        else if (item.featured === true || String(item.featured).toLowerCase() === 'true'||item.featured === "TRUE") {
             badgeType = 'featured';
         }
         // Neither: Return original image
