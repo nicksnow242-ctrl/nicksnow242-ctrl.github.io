@@ -2142,7 +2142,7 @@ createBadgeCanvas(img, item) {
     if (!isNaN(multiplier) && multiplier < 1) {
         badgeType = 'sale';
     }
-    // Priority 2: Featured (now properly normalized to a boolean)
+    // Priority 2: Featured
     else if (item.featured === true) {
         badgeType = 'featured';
     }
@@ -2163,38 +2163,37 @@ createBadgeCanvas(img, item) {
     // Calculate badge size relative to image
     const fontSize = Math.max(12, Math.min(24, img.naturalWidth * 0.08));
     const padding = fontSize * 0.6;
-    const borderRadius = fontSize * 0.8;
 
     let badgeText = '';
     let badgeColor = '';
+    let badgeWidth = 0;
+    let badgeHeight = 0;
+    let borderRadius = fontSize * 0.8;
 
     if (badgeType === 'sale') {
         const percentOff = Math.round((1 - multiplier) * 100);
         badgeText = `On Sale - ${percentOff}% Off`;
         badgeColor = 'rgba(220, 53, 69, 0.9)';
+
+        ctx.font = `bold ${fontSize}px 'Segoe UI', system-ui, sans-serif`;
+        const textMetrics = ctx.measureText(badgeText);
+        badgeWidth = textMetrics.width + (padding * 2);
+        badgeHeight = fontSize + (padding * 2);
     } else if (badgeType === 'featured') {
-        badgeText = 'Featured';
         badgeColor = 'rgba(40, 167, 69, 0.9)';
+        // Make it a perfect circle for just the star
+        const starSize = fontSize * 1.4;
+        badgeWidth = starSize + (padding * 2);
+        badgeHeight = starSize + (padding * 2);
+        borderRadius = badgeWidth / 2; // This makes the rounded rectangle a perfect circle
     }
-
-    // Measure text
-    ctx.font = `bold ${fontSize}px 'Segoe UI', system-ui, sans-serif`;
-    const textMetrics = ctx.measureText(badgeText);
-    const textWidth = textMetrics.width;
-    const textHeight = fontSize;
-
-    // Badge dimensions
-    const starSize = badgeType === 'featured' ? fontSize * 1.2 : 0;
-    const starGap = badgeType === 'featured' ? fontSize * 0.4 : 0;
-    const badgeWidth = textWidth + (padding * 2) + starSize + starGap;
-    const badgeHeight = textHeight + (padding * 2);
 
     // Position (top-left with margin)
     const margin = fontSize * 0.5;
     const x = margin;
     const y = margin;
 
-    // Draw badge background with rounded corners
+    // Draw badge background with rounded corners (or circle for featured)
     ctx.fillStyle = badgeColor;
     ctx.beginPath();
     ctx.moveTo(x + borderRadius, y);
@@ -2214,11 +2213,11 @@ createBadgeCanvas(img, item) {
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    // Draw star shape for featured badge
+    // Draw star shape for featured badge (centered in the circle)
     if (badgeType === 'featured') {
-        const starCenterX = x + padding + (starSize / 2);
+        const starCenterX = x + (badgeWidth / 2);
         const starCenterY = y + (badgeHeight / 2);
-        const outerRadius = starSize / 2;
+        const outerRadius = (badgeWidth / 2) - padding;
         const innerRadius = outerRadius * 0.4;
         const spikes = 5;
 
@@ -2239,12 +2238,13 @@ createBadgeCanvas(img, item) {
         ctx.fill();
     }
 
-    // Draw text
-    ctx.fillStyle = '#ffffff';
-    ctx.font = `bold ${fontSize}px 'Segoe UI', system-ui, sans-serif`;
-    ctx.textBaseline = 'middle';
-    const textX = badgeType === 'featured' ? x + padding + starSize + starGap : x + padding;
-    ctx.fillText(badgeText, textX, y + (badgeHeight / 2));
+    // Draw text (only for 'sale' badge)
+    if (badgeText) {
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `bold ${fontSize}px 'Segoe UI', system-ui, sans-serif`;
+        ctx.textBaseline = 'middle';
+        ctx.fillText(badgeText, x + padding, y + (badgeHeight / 2));
+    }
 
     // Create a new Image object from the canvas
     const badgeImg = new Image();
