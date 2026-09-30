@@ -3315,27 +3315,58 @@ this.modal.classList.add('is-open');
          }
 
          // Status Check
-if (statuses.size > 0) {
-  let statusMatch = false;
-  if (statuses.has('featured') && item.featured === true) statusMatch = true;
-  if (statuses.has('onsale') && item.pricemultiplier < 1) statusMatch = true;
-  if (statuses.has('onhand') && item.inStock === true) statusMatch = true;
-  if (statuses.has('available') && item.remakecustom === true) statusMatch = true;
+       if (statuses.size > 0) {
+         let statusMatch = false;
 
-  if (statuses.has('recent')) {
-    const parts = item.dateCreated.split('-');
-    if (parts.length === 3) {
-      const year = 2000 + parseInt(parts[2], 10);
-      const month = parseInt(parts[0], 10) - 1;
-      const day = parseInt(parts[1], 10);
-      const dateCreated = new Date(year, month, day);
-      const oneYearAgo = new Date();
-      oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-      if (dateCreated >= oneYearAgo) statusMatch = true;
-    }
-  }
-  if (!statusMatch) return false;
-}
+         // Featured: handle boolean true, string "TRUE", or string "true"
+         if (statuses.has('featured') && (item.featured === true || item.featured === "TRUE" || item.featured === "true")) statusMatch = true;
+
+         // On Sale: check if pricemultiplier exists and is less than 1
+         if (statuses.has('onsale') && item.pricemultiplier !== undefined && parseFloat(item.pricemultiplier) < 1) statusMatch = true;
+
+         // On Hand: handle boolean true, string "TRUE", or string "true"
+         if (statuses.has('onhand') && (item.inStock === true || item.inStock === "TRUE" || item.inStock === "true")) statusMatch = true;
+
+         // Available: handle boolean true, string "TRUE", or string "true"
+         if (statuses.has('available') && (item.remakecustom === true || item.remakecustom === "TRUE" || item.remakecustom === "true")) statusMatch = true;
+
+         // Recent: handle both "MM-DD-YY" and "M/DD/YY" date formats
+         if (statuses.has('recent')) {
+           let dateCreated = null;
+
+           // Try to parse the date in multiple formats
+           if (item.dateCreated) {
+             // Format: "6/23/24" (M/DD/YY)
+             if (item.dateCreated.includes('/')) {
+               const parts = item.dateCreated.split('/');
+               if (parts.length === 3) {
+                 const year = 2000 + parseInt(parts[2], 10);
+                 const month = parseInt(parts[0], 10) - 1; // JS months are 0-indexed
+                 const day = parseInt(parts[1], 10);
+                 dateCreated = new Date(year, month, day);
+               }
+             }
+             // Format: "01-03-23" (MM-DD-YY)
+             else if (item.dateCreated.includes('-')) {
+               const parts = item.dateCreated.split('-');
+               if (parts.length === 3) {
+                 const year = 2000 + parseInt(parts[2], 10);
+                 const month = parseInt(parts[0], 10) - 1;
+                 const day = parseInt(parts[1], 10);
+                 dateCreated = new Date(year, month, day);
+               }
+             }
+           }
+
+           if (dateCreated) {
+             const oneYearAgo = new Date();
+             oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+             if (dateCreated >= oneYearAgo) statusMatch = true;
+           }
+         }
+
+         if (!statusMatch) return false;
+       }
 
          // Collection Check
          if (collection !== 'All' && item.type !== collection) {
