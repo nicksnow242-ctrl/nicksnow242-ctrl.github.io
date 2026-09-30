@@ -2129,86 +2129,124 @@ while (rawItem[`fullsizesrc${extraIdx}`]) {
 }
 
 createBadgeCanvas(img, item) {
-    // Determine which badge to show
-    let badgeText = '';
-    let badgeColor = '';
+        // Determine which badge to show
+        let badgeType = '';
 
-    // Priority 1: On Sale (pricemultiplier < 1)
-    if (item.pricemultiplier < 1) {
-        const percentOff = Math.round((1 - item.pricemultiplier) * 100);
-        badgeText = `On Sale - ${percentOff}% Off`;
-        badgeColor = 'rgba(220, 53, 69, 0.9)'; // Red
+        // Priority 1: On Sale (pricemultiplier < 1)
+        const multiplier = parseFloat(item.pricemultiplier);
+        if (!isNaN(multiplier) && multiplier < 1) {
+            badgeType = 'sale';
+        }
+        // Priority 2: Featured (case-insensitive check)
+        else if (item.featured === true || String(item.featured).toLowerCase() === 'true') {
+            badgeType = 'featured';
+        }
+        // Neither: Return original image
+        else {
+            return img;
+        }
+
+        // Create a 2D canvas to composite the badge onto the image
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext('2d');
+
+        // Draw the original image
+        ctx.drawImage(img, 0, 0);
+
+        // Calculate badge size relative to image
+        const fontSize = Math.max(12, Math.min(24, img.naturalWidth * 0.08));
+        const padding = fontSize * 0.6;
+        const borderRadius = fontSize * 0.8;
+
+        let badgeText = '';
+        let badgeColor = '';
+
+        if (badgeType === 'sale') {
+            const percentOff = Math.round((1 - multiplier) * 100);
+            badgeText = `On Sale - ${percentOff}% Off`;
+            badgeColor = 'rgba(220, 53, 69, 0.9)';
+        } else if (badgeType === 'featured') {
+            badgeText = 'Featured';
+            badgeColor = 'rgba(40, 167, 69, 0.9)';
+        }
+
+        // Measure text
+        ctx.font = `bold ${fontSize}px 'Segoe UI', system-ui, sans-serif`;
+        const textMetrics = ctx.measureText(badgeText);
+        const textWidth = textMetrics.width;
+        const textHeight = fontSize;
+
+        // Badge dimensions
+        const starSize = badgeType === 'featured' ? fontSize * 1.2 : 0;
+        const starGap = badgeType === 'featured' ? fontSize * 0.4 : 0;
+        const badgeWidth = textWidth + (padding * 2) + starSize + starGap;
+        const badgeHeight = textHeight + (padding * 2);
+
+        // Position (top-left with margin)
+        const margin = fontSize * 0.5;
+        const x = margin;
+        const y = margin;
+
+        // Draw badge background with rounded corners
+        ctx.fillStyle = badgeColor;
+        ctx.beginPath();
+        ctx.moveTo(x + borderRadius, y);
+        ctx.lineTo(x + badgeWidth - borderRadius, y);
+        ctx.quadraticCurveTo(x + badgeWidth, y, x + badgeWidth, y + borderRadius);
+        ctx.lineTo(x + badgeWidth, y + badgeHeight - borderRadius);
+        ctx.quadraticCurveTo(x + badgeWidth, y + badgeHeight, x + badgeWidth - borderRadius, y + badgeHeight);
+        ctx.lineTo(x + borderRadius, y + badgeHeight);
+        ctx.quadraticCurveTo(x, y + badgeHeight, x, y + badgeHeight - borderRadius);
+        ctx.lineTo(x, y + borderRadius);
+        ctx.quadraticCurveTo(x, y, x + borderRadius, y);
+        ctx.closePath();
+        ctx.fill();
+
+        // Draw subtle border
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Draw star shape for featured badge
+        if (badgeType === 'featured') {
+            const starCenterX = x + padding + (starSize / 2);
+            const starCenterY = y + (badgeHeight / 2);
+            const outerRadius = starSize / 2;
+            const innerRadius = outerRadius * 0.4;
+            const spikes = 5;
+
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            for (let i = 0; i < spikes * 2; i++) {
+                const radius = i % 2 === 0 ? outerRadius : innerRadius;
+                const angle = (Math.PI / spikes) * i - (Math.PI / 2);
+                const sx = starCenterX + Math.cos(angle) * radius;
+                const sy = starCenterY + Math.sin(angle) * radius;
+                if (i === 0) {
+                    ctx.moveTo(sx, sy);
+                } else {
+                    ctx.lineTo(sx, sy);
+                }
+            }
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        // Draw text
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `bold ${fontSize}px 'Segoe UI', system-ui, sans-serif`;
+        ctx.textBaseline = 'middle';
+        const textX = badgeType === 'featured' ? x + padding + starSize + starGap : x + padding;
+        ctx.fillText(badgeText, textX, y + (badgeHeight / 2));
+
+        // Create a new Image object from the canvas
+        const badgeImg = new Image();
+        badgeImg.src = canvas.toDataURL();
+
+        return badgeImg;
     }
-    // Priority 2: Featured (case-insensitive check)
-     else if (item.featured === true || String(item.featured).toLowerCase() === "true") {
-         badgeText = 'test'; // Star symbol
-         badgeColor = 'rgba(40, 167, 69, 0.9)'; // Green
-     }
-    // Neither: Return original image
-    else {
-        return img;
-    }
-
-    // Create a 2D canvas to composite the badge onto the image
-    const canvas = document.createElement('canvas');
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
-    const ctx = canvas.getContext('2d');
-
-    // Draw the original image
-    ctx.drawImage(img, 0, 0);
-
-    // Calculate badge size relative to image
-    const fontSize = Math.max(12, Math.min(24, img.naturalWidth * 0.08));
-    const padding = fontSize * 0.6;
-    const borderRadius = fontSize * 0.8;
-
-    // Measure text
-    ctx.font = `bold ${fontSize}px 'Segoe UI', system-ui, sans-serif`;
-    const textMetrics = ctx.measureText(badgeText);
-    const textWidth = textMetrics.width;
-    const textHeight = fontSize;
-
-    // Badge dimensions
-    const badgeWidth = textWidth + (padding * 2);
-    const badgeHeight = textHeight + (padding * 2);
-
-    // Position (top-left with margin)
-    const margin = fontSize * 0.5;
-    const x = margin;
-    const y = margin;
-
-    // Draw badge background with rounded corners
-    ctx.fillStyle = badgeColor;
-    ctx.beginPath();
-    ctx.moveTo(x + borderRadius, y);
-    ctx.lineTo(x + badgeWidth - borderRadius, y);
-    ctx.quadraticCurveTo(x + badgeWidth, y, x + badgeWidth, y + borderRadius);
-    ctx.lineTo(x + badgeWidth, y + badgeHeight - borderRadius);
-    ctx.quadraticCurveTo(x + badgeWidth, y + badgeHeight, x + badgeWidth - borderRadius, y + badgeHeight);
-    ctx.lineTo(x + borderRadius, y + badgeHeight);
-    ctx.quadraticCurveTo(x, y + badgeHeight, x, y + badgeHeight - borderRadius);
-    ctx.lineTo(x, y + borderRadius);
-    ctx.quadraticCurveTo(x, y, x + borderRadius, y);
-    ctx.closePath();
-    ctx.fill();
-
-    // Draw subtle border
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // Draw text
-    ctx.fillStyle = '#ffffff';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(badgeText, x + padding, y + (badgeHeight / 2));
-
-    // Create a new Image object from the canvas
-    const badgeImg = new Image();
-    badgeImg.src = canvas.toDataURL();
-
-    return badgeImg;
-}
 
 
     createTexture(img) {
