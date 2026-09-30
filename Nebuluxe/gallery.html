@@ -1990,20 +1990,22 @@ class InfinitePortraitGallery {
     let sourceItems = [];
     if (typeof window.thumbnails !== 'undefined' && Array.isArray(window.thumbnails) && window.thumbnails.length > 0) {
         sourceItems = window.thumbnails;
-    } else {
-        console.warn("window.thumbnails not found or empty. Using Images/Misc gifs as fallback.");
-        sourceItems = [1, 2, 3, 4].map(id => ({
-            title: `Default Artwork ${id}`,
-            src: `Images/Misc/Default${id}.gif`,
-            fullsizesrc: `Images/Misc/Default${id}.gif`,
-            suggestedprice: 0,
-            inStock: true,
-            remakecustom: false,
-            length: 'N/A',
-            width: 'N/A',
-            description: 'Default artwork display.'
-        }));
-    }
+      } else {
+      console.warn("window.thumbnails not found or empty. Using Images/Misc gifs as fallback.");
+      sourceItems = [1, 2, 3, 4].map(id => ({
+          title: `Default Artwork ${id}`,
+          src: `Images/Misc/Default${id}.gif`,
+          fullsizesrc: `Images/Misc/Default${id}.gif`,
+          suggestedprice: 0,
+          pricemultiplier: 1,
+          inStock: true,
+          remakecustom: false,
+          featured: false,
+          length: 'N/A',
+          width: 'N/A',
+          description: 'Default artwork display.'
+      }));
+  }
 
     const imageCount = Math.max(50, sourceItems.length);
     const loadPromises = [];
@@ -2011,29 +2013,32 @@ class InfinitePortraitGallery {
     for (let i = 0; i < imageCount; i++) {
       const rawItem = sourceItems[i % sourceItems.length];
 
-// Normalize JSON-style data to match what the gallery expects
-const item = {
-  title: rawItem.title || rawItem.Title || 'Untitled',
-  alt: rawItem.alt || rawItem.title || rawItem.Title || '',
-  src: rawItem.src,
-  fullsizesrc: rawItem.fullsizesrc || rawItem.fullSizeSrc,
-  fullsizesrc2: rawItem.fullsizesrc2,
-  fullsizesrc3: rawItem.fullsizesrc3,
-  fullsizesrc4: rawItem.fullsizesrc4,
-  fullsizesrc5: rawItem.fullsizesrc5,
-  suggestedprice: Number(rawItem.suggestedprice) || 0,
-  pricemultiplier: Number(rawItem.pricemultiplier) || 1,
-  length: rawItem.length != null ? String(rawItem.length) + '"' : '?',
-  width: rawItem.width != null ? String(rawItem.width) + '"' : '?',
-  description: rawItem.description || '',
-  // Convert "TRUE"/"FALSE" strings to real booleans (handles both formats)
-  inStock: typeof rawItem.inStock === 'string'
-      ? rawItem.inStock.toUpperCase() === 'TRUE'
-      : Boolean(rawItem.inStock),
-  remakecustom: typeof rawItem.remakecustom === 'string'
-      ? rawItem.remakecustom.toUpperCase() === 'TRUE'
-      : Boolean(rawItem.remakecustom)
-};
+      // Normalize JSON-style data to match what the gallery expects
+      const item = {
+        title: rawItem.title || rawItem.Title || 'Untitled',
+        alt: rawItem.alt || rawItem.title || rawItem.Title || '',
+        src: rawItem.src,
+        fullsizesrc: rawItem.fullsizesrc || rawItem.fullSizeSrc,
+        fullsizesrc2: rawItem.fullsizesrc2,
+        fullsizesrc3: rawItem.fullsizesrc3,
+        fullsizesrc4: rawItem.fullsizesrc4,
+        fullsizesrc5: rawItem.fullsizesrc5,
+        suggestedprice: Number(rawItem.suggestedprice) || 0,
+        pricemultiplier: Number(rawItem.pricemultiplier) || 1,
+        length: rawItem.length != null ? String(rawItem.length) + '"' : '?',
+        width: rawItem.width != null ? String(rawItem.width) + '"' : '?',
+        description: rawItem.description || '',
+        // Convert "TRUE"/"FALSE" strings to real booleans (handles both formats)
+        inStock: typeof rawItem.inStock === 'string'
+            ? rawItem.inStock.toUpperCase() === 'TRUE'
+            : Boolean(rawItem.inStock),
+        remakecustom: typeof rawItem.remakecustom === 'string'
+            ? rawItem.remakecustom.toUpperCase() === 'TRUE'
+            : Boolean(rawItem.remakecustom),
+        featured: typeof rawItem.featured === 'string'
+            ? rawItem.featured.toUpperCase() === 'TRUE'
+            : Boolean(rawItem.featured)
+      };
 
 // Also copy over any additional fullsizesrc fields (fullsizesrc6, 7, etc.)
 let extraIdx = 6;
@@ -2129,46 +2134,22 @@ while (rawItem[`fullsizesrc${extraIdx}`]) {
 }
 
 createBadgeCanvas(img, item) {
-    console.log('=== createBadgeCanvas called ===');
-    console.log('All item keys:', Object.keys(item));
-    console.log('item.featured:', item.featured);
-    console.log('item.Featured:', item.Featured);
-    console.log('item.isFeatured:', item.isFeatured);
-    console.log('item.pricemultiplier:', item.pricemultiplier);
-
     // Determine which badge to show
     let badgeType = '';
 
     // Priority 1: On Sale (pricemultiplier < 1)
     const multiplier = parseFloat(item.pricemultiplier);
-
     if (!isNaN(multiplier) && multiplier < 1) {
         badgeType = 'sale';
-        console.log('→ Setting badgeType to: sale');
     }
-    // Priority 2: Featured - check multiple possible field names
-    else {
-        // Check for featured field with various capitalizations
-        const featuredValue = item.featured !== undefined ? item.featured :
-                             item.Featured !== undefined ? item.Featured :
-                             item.isFeatured !== undefined ? item.isFeatured :
-                             null;
-
-        console.log('Featured value found:', featuredValue);
-
-        if (featuredValue === true || String(featuredValue).toLowerCase() === 'true') {
-            badgeType = 'featured';
-            console.log('→ Setting badgeType to: featured');
-        }
+    // Priority 2: Featured (now properly normalized to a boolean)
+    else if (item.featured === true) {
+        badgeType = 'featured';
     }
-
     // Neither: Return original image
-    if (!badgeType) {
-        console.log('→ No badge, returning original image');
+    else {
         return img;
     }
-
-    console.log('Creating badge canvas for type:', badgeType);
 
     // Create a 2D canvas to composite the badge onto the image
     const canvas = document.createElement('canvas');
@@ -2268,8 +2249,6 @@ createBadgeCanvas(img, item) {
     // Create a new Image object from the canvas
     const badgeImg = new Image();
     badgeImg.src = canvas.toDataURL();
-
-    console.log('Badge canvas created, returning badgeImg');
 
     return badgeImg;
 }
