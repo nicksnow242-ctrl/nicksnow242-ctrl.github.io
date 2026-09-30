@@ -2009,7 +2009,38 @@ class InfinitePortraitGallery {
     const loadPromises = [];
 
     for (let i = 0; i < imageCount; i++) {
-        const item = sourceItems[i % sourceItems.length];
+      const rawItem = sourceItems[i % sourceItems.length];
+
+// Normalize JSON-style data to match what the gallery expects
+const item = {
+  title: rawItem.title || rawItem.Title || 'Untitled',
+  alt: rawItem.alt || rawItem.title || rawItem.Title || '',
+  src: rawItem.src,
+  fullsizesrc: rawItem.fullsizesrc || rawItem.fullSizeSrc,
+  fullsizesrc2: rawItem.fullsizesrc2,
+  fullsizesrc3: rawItem.fullsizesrc3,
+  fullsizesrc4: rawItem.fullsizesrc4,
+  fullsizesrc5: rawItem.fullsizesrc5,
+  suggestedprice: Number(rawItem.suggestedprice) || 0,
+  pricemultiplier: Number(rawItem.pricemultiplier) || 1,
+  length: rawItem.length != null ? String(rawItem.length) + '"' : '?',
+  width: rawItem.width != null ? String(rawItem.width) + '"' : '?',
+  description: rawItem.description || '',
+  // Convert "TRUE"/"FALSE" strings to real booleans (handles both formats)
+  inStock: typeof rawItem.inStock === 'string'
+      ? rawItem.inStock.toUpperCase() === 'TRUE'
+      : Boolean(rawItem.inStock),
+  remakecustom: typeof rawItem.remakecustom === 'string'
+      ? rawItem.remakecustom.toUpperCase() === 'TRUE'
+      : Boolean(rawItem.remakecustom)
+};
+
+// Also copy over any additional fullsizesrc fields (fullsizesrc6, 7, etc.)
+let extraIdx = 6;
+while (rawItem[`fullsizesrc${extraIdx}`]) {
+  item[`fullsizesrc${extraIdx}`] = rawItem[`fullsizesrc${extraIdx}`];
+  extraIdx++;
+}
         const img = new Image();
         img.crossOrigin = 'Anonymous';
         img.src = item.src;
