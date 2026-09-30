@@ -2139,11 +2139,11 @@ createBadgeCanvas(img, item) {
         badgeText = `On Sale - ${percentOff}% Off`;
         badgeColor = 'rgba(220, 53, 69, 0.9)'; // Red
     }
-    // Priority 2: Featured
-    else if (item.featured === true) {
-        badgeText = '★'; // Star symbol
-        badgeColor = 'rgba(40, 167, 69, 0.9)'; // Green
-    }
+    // Priority 2: Featured (handle boolean true, string "TRUE", or string "true")
+  else if (item.featured === true || item.featured === "TRUE" || item.featured === "true") {
+      badgeText = '★'; // Star symbol
+      badgeColor = 'rgba(40, 167, 69, 0.9)'; // Green
+  }
     // Neither: Return original image
     else {
         return img;
@@ -3361,7 +3361,7 @@ this.modal.classList.add('is-open');
            if (dateCreated) {
              const oneYearAgo = new Date();
              oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-             if (dateCreated <= oneYearAgo) statusMatch = true;
+             if (dateCreated >= oneYearAgo) statusMatch = true;
            }
          }
 
