@@ -3296,12 +3296,13 @@ this.modal.classList.add('is-open');
 
        const filtered = sourceData.filter(item => {
          // Search Check (Substring match on Title, case-insensitive)
-         if (searchTerm) {
-           const title = (item.title || '').toLowerCase();
-           if (!title.includes(searchTerm)) {
-             return false;
-           }
-         }
+   if (searchTerm) {
+     // Check multiple possible title field names to handle case variations
+     const title = (item.title || item.Title || item.name || item.Name || '').toLowerCase();
+     if (!title.includes(searchTerm)) {
+       return false;
+     }
+   }
 
          // Size Check
          if (sizes.size > 0) {
@@ -3314,27 +3315,27 @@ this.modal.classList.add('is-open');
          }
 
          // Status Check
-         if (statuses.size > 0) {
-           let statusMatch = false;
-           if (statuses.has('featured') && item.featured === true) statusMatch = true;
-           if (statuses.has('onsale') && item.pricemultiplier < 1) statusMatch = true;
-           if (statuses.has('onhand') && item.inStock === true) statusMatch = true;
-           if (statuses.has('available') && item.remakecustom === true) statusMatch = true;
+if (statuses.size > 0) {
+  let statusMatch = false;
+  if (statuses.has('featured') && item.featured === true) statusMatch = true;
+  if (statuses.has('onsale') && item.pricemultiplier < 1) statusMatch = true;
+  if (statuses.has('onhand') && item.inStock === true) statusMatch = true;
+  if (statuses.has('available') && item.remakecustom === true) statusMatch = true;
 
-           if (statuses.has('recent')) {
-             const parts = item.dateCreated.split('-');
-             if (parts.length === 3) {
-               const year = 2000 + parseInt(parts[2], 10);
-               const month = parseInt(parts[0], 10) - 1;
-               const day = parseInt(parts[1], 10);
-               const dateCreated = new Date(year, month, day);
-               const oneYearAgo = new Date();
-               oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-               if (dateCreated >= oneYearAgo) statusMatch = true;
-             }
-           }
-           if (!statusMatch) return false;
-         }
+  if (statuses.has('recent')) {
+    const parts = item.dateCreated.split('-');
+    if (parts.length === 3) {
+      const year = 2000 + parseInt(parts[2], 10);
+      const month = parseInt(parts[0], 10) - 1;
+      const day = parseInt(parts[1], 10);
+      const dateCreated = new Date(year, month, day);
+      const oneYearAgo = new Date();
+      oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+      if (dateCreated >= oneYearAgo) statusMatch = true;
+    }
+  }
+  if (!statusMatch) return false;
+}
 
          // Collection Check
          if (collection !== 'All' && item.type !== collection) {
