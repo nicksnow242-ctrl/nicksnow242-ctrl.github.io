@@ -2130,27 +2130,40 @@ while (rawItem[`fullsizesrc${extraIdx}`]) {
 
 createBadgeCanvas(img, item) {
     console.log('=== createBadgeCanvas called ===');
-    console.log('item.featured:', item.featured, 'type:', typeof item.featured);
-    console.log('item.pricemultiplier:', item.pricemultiplier, 'type:', typeof item.pricemultiplier);
+    console.log('All item keys:', Object.keys(item));
+    console.log('item.featured:', item.featured);
+    console.log('item.Featured:', item.Featured);
+    console.log('item.isFeatured:', item.isFeatured);
+    console.log('item.pricemultiplier:', item.pricemultiplier);
 
     // Determine which badge to show
     let badgeType = '';
 
     // Priority 1: On Sale (pricemultiplier < 1)
     const multiplier = parseFloat(item.pricemultiplier);
-    console.log('multiplier:', multiplier, 'isNaN:', isNaN(multiplier));
 
     if (!isNaN(multiplier) && multiplier < 1) {
         badgeType = 'sale';
         console.log('→ Setting badgeType to: sale');
     }
-    // Priority 2: Featured (case-insensitive check)
-    else if (item.featured === true || String(item.featured).toLowerCase() === 'true') {
-        badgeType = 'featured';
-        console.log('→ Setting badgeType to: featured');
-    }
-    // Neither: Return original image
+    // Priority 2: Featured - check multiple possible field names
     else {
+        // Check for featured field with various capitalizations
+        const featuredValue = item.featured !== undefined ? item.featured :
+                             item.Featured !== undefined ? item.Featured :
+                             item.isFeatured !== undefined ? item.isFeatured :
+                             null;
+
+        console.log('Featured value found:', featuredValue);
+
+        if (featuredValue === true || String(featuredValue).toLowerCase() === 'true') {
+            badgeType = 'featured';
+            console.log('→ Setting badgeType to: featured');
+        }
+    }
+
+    // Neither: Return original image
+    if (!badgeType) {
         console.log('→ No badge, returning original image');
         return img;
     }
