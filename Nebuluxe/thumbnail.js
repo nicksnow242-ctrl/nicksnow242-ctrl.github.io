@@ -15,11 +15,11 @@ window.thumbnails = [
     "suggestedprice": 700,
     "description": "Last week I listened to an MPR segment on the radio about a contentious wolf population bill in the Montana Congress. I have since read several more articles. This story is exactly illustrative of the idea I had when making this piece. The bill raised the number of wolves that can be killed in the state by 37% - an all time high. Certain Republican representatives, wanting to maintain their brand of genocidal piggery, were fighting for a stronger version of the bill that would HALVE the population of wolves in a single year which would skyrocket the population up the endangered species list. During public comment the vast majority of people opposed any raise in the quota, notable was the strong pushback from biologists. The only county exempted was Yellowstone county, because wolves are too big a driver of tourism there. \n\nThe real kicker for me is that the reason for this bill isn’t for stock protection, not for the management of other species, not for human health concerns. Every source looked at only cited the benefits for hunters and trappers. Recreation. By a short jump in reasoning imma say that It is really for the YC/Gianforte types.\n\nThis isn’t so much about another abject failure of an already sham democracy, anger at people with degenerate cultural values, or even about the wolves. Its about how our relationship with animals is in the process of becoming along this line: Object of science (already bad) —> Commodity —> Museum/Image",
     "type": "No Collection",
-    "src": "/Nebuluxe/Images/Thumbnails/DSC2205v2.jpg",
-    "fullsizesrc": "/Nebuluxe/Images/Fullsize/DSC2205.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2220.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/IMG2024062373714006.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/IMG2024062317371069.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC2205v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2205.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2220.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/IMG2024062373714006.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/IMG2024062317371069.jpg"
   },
   {
     "ID": 2,
@@ -37,9 +37,9 @@ window.thumbnails = [
     "suggestedprice": 150,
     "description": "\"We are even beyond the realm of germination here, because true twins have their own specificity as such, and enshrine the particular, and sacrosanct, fascination of the two - of that which has been two from the start, and has never been One. The only thing cloning enshrines, by contrast, is the reiteration of the same: 1 + 1 + 1+ 1, etc.\n\nBut there is a point of no return in simulation: the point when prostheses are introduced at a deeper level, when they are so completely internalized that they infiltrate the anonymous and micromolecular core of the body, when they impose subsequent symbolic circuits in such a way that every possible body is now nothing but an invariant reproduction of the prosthesis: and this point means the end of the body, the end of its history, the end of its vicissitudes.\"\n\n- Jean Baudrillard",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/fdfsadf.png",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC3007.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC3019.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/fdfsadf.png",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC3007.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC3019.jpg"
   },
   {
     "ID": 3,
@@ -57,10 +57,10 @@ window.thumbnails = [
     "suggestedprice": 100,
     "description": "The trajectory of the moment is clear. Whether the LLM craze is substantiated or not there is already set in motion an escalating ravenousness for energy. In tech this logistical problem has become primary over the impulsion to innovate the next big thing. There is a massive push to leverage the future itself to accumulate unthinkable amounts of data and energy to see what falls out. In recent interviews Nick Land has had this idea: sustaining a highly negentropic system such as ours requires monumental amounts of energy. Practical considerations and scope are choking our current chthonic energy supply (coal, oil, impractical geothermal). The future is solar, or its doppelganger fission. The sun is a fount that every year radiates energy equivalent to combusting every atom of the planet Jupiter three times over. Thats exuberance. And that is the only direction of limitless expansion. The fatal destiny of AI is to drink the sun.",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC28702.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2870.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2878.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC2873.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC28702.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2870.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2878.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2873.jpg"
   },
   {
     "ID": 4,
@@ -78,9 +78,9 @@ window.thumbnails = [
     "suggestedprice": 250,
     "description": "The origin and essence of our wealth are given in the radiation of the sun, which dispenses energy - wealth - without any return. The sun gives without ever receiving. Men were conscious of this long before astrophysics measured that ceaseless prodigality; they saw it ripen the harvests and they associated its splendor with the act ofsomeone who gives without receiving. It is necessary at this point to note a dual origin of moral judgments. In former times value was given to unproductive glory, whereas in our day it is measured in terms of production: Precedence is given to energy acquisition over energy expenditure. Glory itself is justified by the consequences of a glorious deed in the sphere of utility. But, dominated though it is by practical judgment and Christian morality, the archaic sensibility is still alive: In particular it reappears in the romantic protest against the bourgeois world; only in the classical conceptions of the economy does it lose its rights entirely.\n\n-Bataille",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/SC2864.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC28643.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2864.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/SC2864.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC28643.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2864.jpg"
   },
   {
     "ID": 5,
@@ -98,9 +98,9 @@ window.thumbnails = [
     "suggestedprice": 450,
     "description": "If only it were possible to walk through a truely empty space forever",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC28953.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2895.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC28992.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC28953.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2895.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC28992.jpg"
   },
   {
     "ID": 6,
@@ -118,10 +118,10 @@ window.thumbnails = [
     "suggestedprice": 70,
     "description": "The origin and essence of our wealth are given in the radiation of the sun, which dispenses energy - wealth - without any return. The sun gives without ever receiving. Men were conscious of this long before astrophysics measured that ceaseless prodigality; they saw it ripen the harvests and they associated its splendor with the act ofsomeone who gives without receiving. It is necessary at this point to note a dual origin of moral judgments. In former times value was given to unproductive glory, whereas in our day it is measured in terms of production: Precedence is given to energy acquisition over energy expenditure. Glory itself is justified by the consequences of a glorious deed in the sphere of utility. But, dominated though it is by practical judgment and Christian morality, the archaic sensibility is still alive: In particular it reappears in the romantic protest against the bourgeois world; only in the classical conceptions of the economy does it lose its rights entirely.\n\n-Bataille",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC28664.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2866.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2867.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC2868.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC28664.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2866.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2867.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2868.jpg"
   },
   {
     "ID": 7,
@@ -139,16 +139,16 @@ window.thumbnails = [
     "suggestedprice": 1500,
     "description": "𝑭𝒐𝒓𝒈𝒆𝒕𝒕𝒊𝒏𝒈 𝒇𝒍𝒐𝒘𝒔 𝒕𝒉𝒓𝒐𝒖𝒈𝒉 𝒂 𝒌𝒊𝒔𝒔𝒊𝒏𝒈-𝒇𝒆𝒏𝒄𝒆\n\n𝑭𝒐𝒓 𝒂 𝒅𝒖𝒍𝒍 𝒃𝒍𝒂𝒅𝒆 𝒄𝒐𝒏𝒔𝒆𝒒𝒖𝒆𝒏𝒄𝒆.\n\n𝑰𝒇 𝒕𝒉𝒊𝒔 𝒊𝒔 𝒉𝒆𝒂𝒍𝒊𝒏𝒈 𝒍𝒆𝒕 𝒊𝒕 𝒃𝒖𝒓𝒏 𝒍𝒊𝒌𝒆 𝒕𝒉𝒆 𝒏𝒊𝒈𝒉𝒕.\n\n𝑩𝒖𝒊𝒍𝒅 𝒂 𝒍𝒂𝒅𝒅𝒆𝒓 𝒕𝒐 𝒕𝒉𝒆 𝒃𝒍𝒖𝒆 𝒔𝒖𝒏\n\n𝑰𝒏𝒏𝒐𝒄𝒆𝒏𝒄𝒆 𝒄𝒖𝒕 𝒐𝒖𝒕 𝒕𝒉𝒆 𝒕𝒐𝒏𝒈𝒖𝒆.\n\n𝑰𝒇 𝒕𝒉𝒊𝒔 𝒂𝒏 𝒂𝒑𝒑𝒂𝒓𝒊𝒕𝒊𝒐𝒏 𝒍𝒆𝒕 𝒕𝒉𝒆 𝒈𝒍𝒐𝒂𝒎𝒊𝒏𝒈 𝒈𝒖𝒊𝒅𝒆.\n\n𝑯𝒐𝒍𝒍𝒐𝒘𝒆𝒅 𝒉𝒂𝒏𝒅 𝒇𝒖𝒍𝒍 𝒉𝒊𝒑 𝒕𝒐 𝒉𝒐𝒍𝒅\n\n𝑹𝒆𝒏𝒅𝒆𝒓 𝒚𝒐𝒖 𝒅𝒐𝒘𝒏 𝒕𝒉𝒆𝒓𝒆 𝒊𝒏 𝒕𝒉𝒆 𝒄𝒐𝒍𝒅.\n\n𝑰𝒇 𝒕𝒉𝒊𝒔 𝒊𝒔 𝒏𝒐𝒕𝒉𝒊𝒏𝒈 𝒍𝒆𝒕 𝒏𝒐𝒕𝒉𝒊𝒏𝒈 𝒃𝒆 𝒔𝒂𝒄𝒓𝒆𝒅.\n\n𝑨𝒎𝒆𝒏.",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC27442.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2744.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2738.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC2752.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/DSC2766.jpg",
-    "fullsizesrc5": "Nebuluxe/Images/Fullsize/DSC2757.jpg",
-    "fullsizesrc6": "Nebuluxe/Images/Fullsize/DSC2763.jpg",
-    "fullsizesrc7": "Nebuluxe/Images/Fullsize/DSC2768.jpg",
-    "fullsizesrc8": "Nebuluxe/Images/Fullsize/DSC2762.jpg",
-    "fullsizesrc9": "Nebuluxe/Images/Fullsize/DSC2760.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC27442.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2744.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2738.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2752.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2766.jpg",
+    "fullsizesrc5": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2757.jpg",
+    "fullsizesrc6": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2763.jpg",
+    "fullsizesrc7": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2768.jpg",
+    "fullsizesrc8": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2762.jpg",
+    "fullsizesrc9": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2760.jpg"
   },
   {
     "ID": 8,
@@ -166,11 +166,11 @@ window.thumbnails = [
     "suggestedprice": 450,
     "description": "It is of little use to confront Christianity with its contradictions. To do so is to fundamentally misunderstand how ideology functions, both secular and religious. But a good contradiction is not overt and obvious. The church goer is the product of the church-factory. Should there be at least a modicum of QC introduced to the process? Might I invoke the Biblical insistence that the left hand is accountable to the right, lop it off, gouge the eye lest the soul rot for you are your brother’s keeper; all trees are required to bear good fruit. Look around, what do you see? Docile indolence, consumerism, gleeful thirst for annihilation (especially at a distance), sickly repression, coercive care, nimbyism, logs so huge the motes can’t even be seen so they are fantasized instead, money worship, spectacle worship, disavowed responsibility, desperate transgression, and ressentiment. To put it another way: we see normal people who’s behavior falls entirely within secularized modes. These are exactly the caricatured forms of nihilism against which Christianity puffs its chest and rails against; declares itself to be an antidote to. Despite all its insistence it really is just a nihilism with a telos. Bats flapping in the belfry… for the body to be so rotten its homeostatic regulator is obviously broke - oopsie something committed a patricide, the factory runs itself now.",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC282122.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC28212.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2812.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC2810.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/DSC2811.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC282122.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC28212.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2812.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2810.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2811.jpg"
   },
   {
     "ID": 9,
@@ -188,12 +188,12 @@ window.thumbnails = [
     "suggestedprice": 250,
     "description": "It is all played out on the order of appearances. The technoptic and hetero-dominant strategy is one of depth. Force things to speak so that they mean something - statistics, polls, models. But a confession under duress always hides something, a secret, just as a statistical empiricism is defined by its outliers, not its average. This is the coy game of matter, of the mass(es), charged with probability, to play at depth while remaining without it; optical illusion and metaphysical game.",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC2835.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/SC2832.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2829.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC2827.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/DSC2825.jpg",
-    "fullsizesrc5": "Nebuluxe/Images/Fullsize/DSC2826.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC2835.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/SC2832.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2829.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2827.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2825.jpg",
+    "fullsizesrc5": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2826.jpg"
   },
   {
     "ID": 10,
@@ -211,14 +211,14 @@ window.thumbnails = [
     "suggestedprice": 1500,
     "description": "Cybernetics. A brutally material metaphysics of inputs and outputs. One which can say that the human does not exist, but only a layering of systems. Wetware, soft technologies bleed into the churn of Emperial territory. ICE (intrusion countermeasure electronics) is the method of control coming from the future - ensure that everything stays within the model no matter what. Ascendancy of cold passions, cold screens, cold gods.",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DC2845.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2845.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2857.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC2850.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/DSC2851.jpg",
-    "fullsizesrc5": "Nebuluxe/Images/Fullsize/DSC2853.jpg",
-    "fullsizesrc6": "Nebuluxe/Images/Fullsize/DSC2854.jpg",
-    "fullsizesrc7": "Nebuluxe/Images/Fullsize/DSC2849.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DC2845.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2845.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2857.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2850.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2851.jpg",
+    "fullsizesrc5": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2853.jpg",
+    "fullsizesrc6": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2854.jpg",
+    "fullsizesrc7": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2849.jpg"
   },
   {
     "ID": 11,
@@ -236,8 +236,8 @@ window.thumbnails = [
     "suggestedprice": 30,
     "description": "A technical experiment. A cat in a bit of a different style for me.",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC202.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2302.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC202.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2302.jpg"
   },
   {
     "ID": 12,
@@ -255,10 +255,10 @@ window.thumbnails = [
     "suggestedprice": 70,
     "description": "Abyss is encountered by all who seek and knock. Traversing it thrills and annihilates, terrifies and seduces. Tragic is the Argonaught who washes back upon familiar shores and temperate climbs. It would be better to drift forever like Camus. Better yet to follow infernal stars or a wafted scent from one craggy outcrop to the next. Perhaps one might find some less euclidean space better provisioned. What a joy to stretch the legs and bend the back!\n\n“Have ye courage, O my brethren? Are ye stout-hearted? NOT the courage before witnesses, but anchorite and eagle courage, which not even a God any longer beholdeth?\nCold souls, mules, the blind and the drunken, I do not call stout-hearted. He hath heart who knoweth fear, but VANQUISHETH it; who seeth the abyss, but with PRIDE.\nHe who seeth the abyss, but with eagle’s eyes,—he who with eagle’s talons GRASPETH the abyss: he hath courage.”\n\n~I've made this in two different colorways",
     "type": "Comission",
-    "src": "Nebuluxe/Images/Thumbnails/DSC269.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC26942.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2684.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC2694.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC269.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC26942.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2684.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2694.jpg"
   },
   {
     "ID": 13,
@@ -276,11 +276,11 @@ window.thumbnails = [
     "suggestedprice": 2000,
     "description": "This is about control; technologies of control. In meatspace marauding state thugs punch gas and shoot - downwards or across the pond. The Central Intelligence Corporation perfects the Technopticon. The perfect crime has already been pulled off - the gerrymandering of our dispositions and the murder of reality. Control is increasingly experienced as violence. It jacks straight into the pain-pleasure highway. The gamble of provocation is a win-win for technocrats.The more vulnerable you are the more techniques of control might be brought to bear upon you. Floating on the malaise, bodies open to the world, heads bound tightly.",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/v2q.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/v2f.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/v2w.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC2692.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/DSC2690.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/v2q.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/v2f.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/v2w.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2692.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2690.jpg"
   },
   {
     "ID": 14,
@@ -298,9 +298,9 @@ window.thumbnails = [
     "suggestedprice": 400,
     "description": "The leaves are so slippery at times",
     "type": "Abstract",
-    "src": "Nebuluxe/Images/Thumbnails/DSC27242.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2724.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC27262.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC27242.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2724.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC27262.jpg"
   },
   {
     "ID": 15,
@@ -318,9 +318,9 @@ window.thumbnails = [
     "suggestedprice": 300,
     "description": "The stars not so fixed, nor the self so whole as we'd like to believe",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC22502.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2250.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/lfkdjasettt.png"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC22502.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2250.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/lfkdjasettt.png"
   },
   {
     "ID": 16,
@@ -338,9 +338,9 @@ window.thumbnails = [
     "suggestedprice": 80,
     "description": "A quilt inspired autumnal crow",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC1944v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2198.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC1944.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC1944v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2198.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1944.jpg"
   },
   {
     "ID": 17,
@@ -358,11 +358,11 @@ window.thumbnails = [
     "suggestedprice": 415,
     "description": "A quirp I came across in Hamlet. A sentiment every smaller artist shares",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC22062.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2880.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2206.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC2218.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/20240716211358.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC22062.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2880.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2206.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2218.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/20240716211358.jpg"
   },
   {
     "ID": 18,
@@ -380,11 +380,11 @@ window.thumbnails = [
     "suggestedprice": 80,
     "description": "A piece from a photo taken on a roadtrip down the Alcan highway. This scene was at midnight during July",
     "type": "Comission",
-    "src": "Nebuluxe/Images/Thumbnails/DS2199.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2199.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/2024071634623.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC2211.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/AlcanMidnight1.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DS2199.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2199.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/2024071634623.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2211.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/AlcanMidnight1.jpg"
   },
   {
     "ID": 19,
@@ -402,9 +402,9 @@ window.thumbnails = [
     "suggestedprice": 30,
     "description": "Lost in a snowstorm",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/SC2204.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2204.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2213.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/SC2204.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2204.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2213.jpg"
   },
   {
     "ID": 20,
@@ -422,9 +422,9 @@ window.thumbnails = [
     "suggestedprice": 30,
     "description": "A bit of western for the fans",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/20240905606.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/20240909125606.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2210.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/20240905606.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/20240909125606.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2210.jpg"
   },
   {
     "ID": 21,
@@ -442,9 +442,9 @@ window.thumbnails = [
     "suggestedprice": 20,
     "description": "An autumnal pumpkin",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/202825171159.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/20240825171159.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC1949.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/202825171159.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/20240825171159.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1949.jpg"
   },
   {
     "ID": 22,
@@ -462,10 +462,10 @@ window.thumbnails = [
     "suggestedprice": 80,
     "description": "If the unconscious is structured like a language then the matrix upon which it sits must be something like an architecture",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC1943.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2266.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2279.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/20240815083705.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC1943.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2266.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2279.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/20240815083705.jpg"
   },
   {
     "ID": 23,
@@ -483,14 +483,14 @@ window.thumbnails = [
     "suggestedprice": 500,
     "description": "Exploring how light interacts with fabric. Turns out you can make some pretty interesting curtains with this method.",
     "type": "Window Hanging",
-    "src": "Nebuluxe/Images/Thumbnails/DSC19931.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/2024080164434.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/2024073172550.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/2024073172413.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/DSC1933.jpg",
-    "fullsizesrc5": "Nebuluxe/Images/Fullsize/DSC1934.jpg",
-    "fullsizesrc6": "Nebuluxe/Images/Fullsize/DSC1932.jpg",
-    "fullsizesrc7": "Nebuluxe/Images/Fullsize/DSC1931.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC19931.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/2024080164434.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/2024073172550.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/2024073172413.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1933.jpg",
+    "fullsizesrc5": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1934.jpg",
+    "fullsizesrc6": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1932.jpg",
+    "fullsizesrc7": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1931.jpg"
   },
   {
     "ID": 24,
@@ -508,8 +508,8 @@ window.thumbnails = [
     "suggestedprice": 20,
     "description": "Inspired by the Japanese Kodama, especially their Ghibli interpretations",
     "type": "Echos",
-    "src": "Nebuluxe/Images/Thumbnails/20250244950.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/2025021844950.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/20250244950.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/2025021844950.jpg"
   },
   {
     "ID": 25,
@@ -527,8 +527,8 @@ window.thumbnails = [
     "suggestedprice": 400,
     "description": "Sirens, inspired by Adorno and Horkheimer's interpretation in the Dialectic of Enlightenment. There the ambiguity between the Siren's call as a force of entrapment, orgasm, and pleading is highlighted. Odessyus is interpreted as the owner, as mythical burgoise. The leader can be free to hear and see, though bodily bound while the worker has their higher faculties stunted though free to move. Thus the seductive call of capital (simultaneously progressive, retrogressive, and transgressive) affects both classes in different, negative ways.",
     "type": "Echos",
-    "src": "Nebuluxe/Images/Thumbnails/202508150553.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/20250815095553.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/202508150553.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/20250815095553.jpg"
   },
   {
     "ID": 26,
@@ -546,12 +546,12 @@ window.thumbnails = [
     "suggestedprice": 20,
     "description": "A series of abstract scrappy cats.",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/B1v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/A1.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/C1.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/D1.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/E1.jpg",
-    "fullsizesrc5": "Nebuluxe/Images/Fullsize/B1.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/B1v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/A1.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/C1.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/D1.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/E1.jpg",
+    "fullsizesrc5": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/B1.jpg"
   },
   {
     "ID": 27,
@@ -568,9 +568,9 @@ window.thumbnails = [
     "suggestedprice": 1,
     "description": "A piece made to raise funds for Montana For Palestine.\n\nDisappearing future. Going... Going... Gone. Domestic surplus of terror, export it. Politics are structured after the fashion of a joke. Liberalism is a pun. But don't laugh, you'll inhale smoke. Laughing is for the free. We see again that Machiavelli was more correct than he himself ever knew. Daedalus his Prince. Life? Liberty? Security? Wind, wind, all western wind...",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/7v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/IMG2603.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/7.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/7v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/IMG2603.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/7.jpg"
   },
   {
     "ID": 28,
@@ -588,11 +588,11 @@ window.thumbnails = [
     "suggestedprice": 80,
     "description": "Portrait of a sheep",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/oihewqv2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/oihewq.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/2024061120938.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/zcxvz.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/IMG2024061317355077.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/oihewqv2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/oihewq.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/2024061120938.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/zcxvz.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/IMG2024061317355077.jpg"
   },
   {
     "ID": 29,
@@ -610,10 +610,10 @@ window.thumbnails = [
     "suggestedprice": 80,
     "description": "Portrait of an elk",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/xalkjev2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/xalkje.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/2024061120938.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/ijbvldkjasb.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/xalkjev2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/xalkje.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/2024061120938.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/ijbvldkjasb.jpg"
   },
   {
     "ID": 30,
@@ -631,11 +631,11 @@ window.thumbnails = [
     "suggestedprice": 150,
     "description": "Girls just wanna have fun right?",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC1979v3.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC1979v2.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC1981.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC1982.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/DSC1980.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC1979v3.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1979v2.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1981.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1982.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1980.jpg"
   },
   {
     "ID": 31,
@@ -653,10 +653,10 @@ window.thumbnails = [
     "suggestedprice": 350,
     "description": "The afternoon after the first autumn snowfall",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC2002v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2002.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2000.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC2001.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC2002v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2002.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2000.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2001.jpg"
   },
   {
     "ID": 32,
@@ -674,9 +674,9 @@ window.thumbnails = [
     "suggestedprice": 30,
     "description": "Portrait of a hawk",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC1929v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC1929.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/lkajie.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC1929v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1929.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/lkajie.jpg"
   },
   {
     "ID": 33,
@@ -694,9 +694,9 @@ window.thumbnails = [
     "suggestedprice": 30,
     "description": "A rainbow trout, for the fishers out there",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC1266v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC1266.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/hggaye.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC1266v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1266.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/hggaye.jpg"
   },
   {
     "ID": 34,
@@ -714,10 +714,10 @@ window.thumbnails = [
     "suggestedprice": 80,
     "description": "\"Why is the ocean erotic? Because she's mother. Because she's life. She's birth. She's death. She's the primal horror of horrors and the sweet womb of night. She's erotic because she beckons and we come.\" -Contrapoints",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC1268v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2201.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC1279.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC2216.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC1268v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2201.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1279.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2216.jpg"
   },
   {
     "ID": 35,
@@ -735,10 +735,10 @@ window.thumbnails = [
     "suggestedprice": 20,
     "description": "A simple abstract",
     "type": "Abstract",
-    "src": "Nebuluxe/Images/Thumbnails/DSC1270v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC1270.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/oiqwe.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC1271.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC1270v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1270.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/oiqwe.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1271.jpg"
   },
   {
     "ID": 36,
@@ -756,11 +756,11 @@ window.thumbnails = [
     "suggestedprice": 80,
     "description": "I know the rules, and I'm gonna shred",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC2203v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2203.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC1280.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/mnklzxi.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/DSC2214.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC2203v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2203.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1280.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/mnklzxi.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2214.jpg"
   },
   {
     "ID": 37,
@@ -778,9 +778,9 @@ window.thumbnails = [
     "suggestedprice": 30,
     "description": "A little elegant sailboat",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC1267v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/_DSC1267.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC1276.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC1267v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/_DSC1267.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1276.jpg"
   },
   {
     "ID": 38,
@@ -798,14 +798,14 @@ window.thumbnails = [
     "suggestedprice": 80,
     "description": "When the first sip of coffee in the morning hits. I've done this in two different colorways",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC1265v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC1265.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2202.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC2202v2.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/20240507205847.jpg",
-    "fullsizesrc5": "Nebuluxe/Images/Fullsize/DSC1461.jpg",
-    "fullsizesrc6": "Nebuluxe/Images/Fullsize/DSC1274.jpg",
-    "fullsizesrc7": "Nebuluxe/Images/Fullsize/2eawf.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC1265v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1265.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2202.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2202v2.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/20240507205847.jpg",
+    "fullsizesrc5": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1461.jpg",
+    "fullsizesrc6": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1274.jpg",
+    "fullsizesrc7": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/2eawf.jpg"
   },
   {
     "ID": 39,
@@ -823,9 +823,9 @@ window.thumbnails = [
     "suggestedprice": 80,
     "description": "An elegant wine scene",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC14.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC1264.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC1272.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC14.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1264.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1272.jpg"
   },
   {
     "ID": 40,
@@ -843,10 +843,10 @@ window.thumbnails = [
     "suggestedprice": 30,
     "description": "The joy of endless groad",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC1262v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC1262.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC1278.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/mmnewa.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC1262v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1262.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1278.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/mmnewa.jpg"
   },
   {
     "ID": 41,
@@ -864,10 +864,10 @@ window.thumbnails = [
     "suggestedprice": 30,
     "description": "An elegant flowy mountain scene",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC1263v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC1263.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC1273.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/mewae.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC1263v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1263.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1273.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/mewae.jpg"
   },
   {
     "ID": 42,
@@ -885,11 +885,11 @@ window.thumbnails = [
     "suggestedprice": 175,
     "description": "Commemorating the new season we will probably have for the rest of our lifetimes - wildfire season",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC1974v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC1974.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2197.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC1972.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/DSC2217.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC1974v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1974.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2197.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1972.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2217.jpg"
   },
   {
     "ID": 43,
@@ -907,10 +907,10 @@ window.thumbnails = [
     "suggestedprice": 20,
     "description": "Simple sunrise scene",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/IMG2024064114056.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/IMG2024062014114056.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/ewioasd.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/lknlk.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/IMG2024064114056.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/IMG2024062014114056.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/ewioasd.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/lknlk.jpg"
   },
   {
     "ID": 44,
@@ -928,9 +928,9 @@ window.thumbnails = [
     "suggestedprice": 80,
     "description": "Colorful runners to use scraps",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/iouewqv2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/iouewq.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/runners.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/iouewqv2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/iouewq.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/runners.jpg"
   },
   {
     "ID": 45,
@@ -948,8 +948,8 @@ window.thumbnails = [
     "suggestedprice": 150,
     "description": "Fireweed window hanging for the end of summer",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC2610v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2610.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC2610v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2610.jpg"
   },
   {
     "ID": 46,
@@ -967,11 +967,11 @@ window.thumbnails = [
     "suggestedprice": 150,
     "description": "The double movement of pure speed and objective inertia. What do you do when it invites you to follow into the woods?",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC2616.png",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2616.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2616v2.png",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC2618.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/DSC2617.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC2616.png",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2616.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2616v2.png",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2618.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2617.jpg"
   },
   {
     "ID": 47,
@@ -989,9 +989,9 @@ window.thumbnails = [
     "suggestedprice": 150,
     "description": "And you may ask yourself: how did we get here?",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC2612.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2611.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2614.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC2612.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2611.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2614.jpg"
   },
   {
     "ID": 48,
@@ -1009,13 +1009,13 @@ window.thumbnails = [
     "suggestedprice": 500,
     "description": "These natural spaces are disappearing into the virtual. Models abound for every type of conservation. Populations of all types of animals are recorded and adjusted to be optimal. Logging operations are enacted to prevent wildfires, only civil fires will be allowed in the future. (There is a company in Bozeman that exclusively creates mathematical and virtual models of wildfires.) Watersheds, air quality, weather history, and maps straight from Borge’s short story… all manners of recorded information. What a treasure trove the satellite image is! Further, our direct experience of Nature is inextricable from their our virtual experience. “This forest looks like it’s out of a movie.” “My watch says to take a left here and follow the gully up to 6500’.” “Let me take a picture so I can remember this place exactly as it is.” Most insidiously: “What a relaxing hike, I’m glad I got that in before work tomorrow.” Taken to the extreme we get zoos, the Biosphere, and the island of Tuvalu - obvious sites of simulation. They say “We may be pastiche nature but REAL Nature exists elsewhere.” Well, I’m having trouble finding “real” nature.",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC2628.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2627.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2638.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC2635.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/DSC2636.jpg",
-    "fullsizesrc5": "Nebuluxe/Images/Fullsize/DSC2632.jpg",
-    "fullsizesrc6": "Nebuluxe/Images/Fullsize/DSC2634.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC2628.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2627.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2638.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2635.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2636.jpg",
+    "fullsizesrc5": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2632.jpg",
+    "fullsizesrc6": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2634.jpg"
   },
   {
     "ID": 49,
@@ -1033,12 +1033,12 @@ window.thumbnails = [
     "suggestedprice": 500,
     "description": "The epochal crisis of the 20th century was undoubtedly the nuclear bomb. The entire world was only ever a hairsbreadth away from apocalypse; one hasty red button away from mutual destruction. But the bomb proliferated. It jumped from country to country, mind to mind, until it found no more terra and it went into orbit. Now its purpose is to circle overhead, menacingly, forevermore most useful as a threat. It is manufactured crisis par excellence, forever a hair away, forever in the stratosphere.\n\nThe climate crisis has superseded the Bomb. Truly, it is a better crisis for this century. Distributed instead of centralized, frictional and tactile instead of orbiting at distance. Horrifically it is disguised by its own acceleration - just crank the AC a little higher. Terrestrial destruction is one and the same thing as accumulation. We frolic in a collective death drive, fascinated by unfurling technics. The surface fascinates, I would prefer to be seduced. Climate destruction is a symptom of a post-history concrete virus concretizing itself into real time. Auto immune responses will produce miracles. Catastrophe is happening, will happen, had already arrived. The constant liberal narrative of “we need to change soon… or else” is bullshit.\n\nThere have always been millenarian cults and doomsayers, each equally convinced. How do you account for the universality of this event horizon, the prevalence in the imaginary, the coincidence of so disparate fields into one conclusion? The stigmata are here (right here!) to see, touch, and believe, oh we of little faith. The violence of 4° C is unfathomable, how could it do anything but reverberate out of the future?",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC2665v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2665.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2658.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC2668.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/DSC2667.jpg",
-    "fullsizesrc5": "Nebuluxe/Images/Fullsize/DSC2666.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC2665v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2665.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2658.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2668.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2667.jpg",
+    "fullsizesrc5": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2666.jpg"
   },
   {
     "ID": 50,
@@ -1056,11 +1056,11 @@ window.thumbnails = [
     "suggestedprice": 50,
     "description": "\"In that single gigantic instant I was millions of acts both delightful and awful; not one of them amazed me more than the fact that all of them occupied the same point in space, without overlappng or transparency. What my eyes behel was simultaneous, but what I shall now write down will be successive, because language is successive.\" - Borges\n\n50 each or 110 for the set",
     "type": "Abstract",
-    "src": "Nebuluxe/Images/Thumbnails/DSC2652v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2652.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2657v3.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC2657v2.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/DSC2657.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC2652v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2652.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2657v3.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2657v2.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2657.jpg"
   },
   {
     "ID": 51,
@@ -1078,9 +1078,9 @@ window.thumbnails = [
     "suggestedprice": 180,
     "description": "Crisis is an indispensable state of affairs. Without its tension the American terrorist state would implode/explode. I am a hostage to the State of crisis, and so are you. It is up to us to maintain the tension, to play our parts as manufactured other along with the third world. \n\nMany have already noted the similarities to the present rhetoric of Iran's nuclear capabilities with Iraq's WMD, with Castro's supposed atrocities, Allende's anti-liberalism, Vietnam's liberation. We are entralled by this simulacrum being created in real itme before us. The dialectic is dead - crisis has us running in place. History is now evnet and not process. There are no terms under which we hostages are to be released. \n\nSo let us watch together as the special effects of violence build up, as extras we participate. Suspend, for a time, the feeling that it is all meaningless. Perhaps they will add meaning in post.",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC2643v2.png",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2643.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2644.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC2643v2.png",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2643.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2644.jpg"
   },
   {
     "ID": 52,
@@ -1098,11 +1098,11 @@ window.thumbnails = [
     "suggestedprice": 500,
     "description": "\"Looking closely at this silent terrain, I realized that the entire zone which defined the landscape of my life was now bounded by as continuous artificial horizon, formed by the raised parapets and embankments of the motorways and their access roads and interchanges. These encircled the vehicles below like the walls of a crater several miles in diameter.\" J.G. Ballard",
     "type": "Echos",
-    "src": "Nebuluxe/Images/Thumbnails/DSC2491v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2491.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/2025021123437.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC2493v2.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/DSC2493.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC2491v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2491.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/2025021123437.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2493v2.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2493.jpg"
   },
   {
     "ID": 53,
@@ -1120,8 +1120,8 @@ window.thumbnails = [
     "suggestedprice": 30,
     "description": "Inspired by Kafka's Josephine the Songstress",
     "type": "Echos",
-    "src": "Nebuluxe/Images/Thumbnails/DSC2482v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2482.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC2482v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2482.jpg"
   },
   {
     "ID": 54,
@@ -1139,9 +1139,9 @@ window.thumbnails = [
     "suggestedprice": 80,
     "description": "I have a longing for life, and I go on living in spite of logic. Though I may not believe in the order of the universe, yet I love the sticky little leaves as they open in spring. I love the blue sky, I love some people, whom one loves you know sometimes without knowing why. I love some great deeds done by men, though I've long ceased perhaps to have faith in them, yet from old habit one's heart prizes them. Here they have brought the soup for you, eat it, it will do you good. It's first-rate soup, they know how to make it here. I want to travel in Europe, Alyosha, I shall set off from here. And yet I know that I am only going to a graveyard, but it's a most precious graveyard, that's what it is! Precious are the dead that lie there, every stone over them speaks of such burning life in the past, of such passionate faith in their work, their truth, their struggle and their science, that I know I shall fall on the ground and kiss those stones and weep over them; though I'm convinced in my heart that it's long been nothing but a graveyard. And I shall not weep from despair, but simply because I shall be happy in my tears, I shall steep my soul in emotion. I love the sticky leaves in spring, the blue sky- that's all it is. It's not a matter of intellect or logic, it's loving with one's inside, with one's stomach. One loves the first strength of one's youth. Do you understand anything of my tirade, Alyosha?\" - Dostoevsky",
     "type": "Echos",
-    "src": "Nebuluxe/Images/Thumbnails/2025021082155.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/20250216082155.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2488.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/2025021082155.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/20250216082155.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2488.jpg"
   },
   {
     "ID": 55,
@@ -1159,12 +1159,12 @@ window.thumbnails = [
     "suggestedprice": 450,
     "description": "\"Of greater power and a better nature / you, who are free, depend; that Force engenders / the mind in you, outside othe heavens' sway.\"\n-Dante",
     "type": "Echos",
-    "src": "Nebuluxe/Images/Thumbnails/Untitledv2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/Untitled22.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/20241221164309.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/20241120132046.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/DSC2473.jpg",
-    "fullsizesrc5": "Nebuluxe/Images/Fullsize/UntitledFrameClose.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/Untitledv2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/Untitled22.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/20241221164309.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/20241120132046.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2473.jpg",
+    "fullsizesrc5": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/UntitledFrameClose.jpg"
   },
   {
     "ID": 56,
@@ -1182,9 +1182,9 @@ window.thumbnails = [
     "suggestedprice": 450,
     "description": "Odile, the doppleganger of Swan Lake",
     "type": "Echos",
-    "src": "Nebuluxe/Images/Thumbnails/DSC2479v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2479.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/20250211_223426.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC2479v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2479.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/20250211_223426.jpg"
   },
   {
     "ID": 57,
@@ -1202,13 +1202,13 @@ window.thumbnails = [
     "suggestedprice": 375,
     "description": "Contemplation, asceticism, nirvana, living well",
     "type": "Echos",
-    "src": "Nebuluxe/Images/Thumbnails/DSC1919.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC1924.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/20250815095553.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC1926.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/DSC1921.jpg",
-    "fullsizesrc5": "Nebuluxe/Images/Fullsize/DSC1927.jpg",
-    "fullsizesrc6": "Nebuluxe/Images/Fullsize/DSC1922.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC1919.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1924.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/20250815095553.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1926.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1921.jpg",
+    "fullsizesrc5": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1927.jpg",
+    "fullsizesrc6": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1922.jpg"
   },
   {
     "ID": 58,
@@ -1226,10 +1226,10 @@ window.thumbnails = [
     "suggestedprice": 80,
     "description": "Don Juan - a figure of both Absurdity and Aesthetics",
     "type": "Echos",
-    "src": "Nebuluxe/Images/Thumbnails/DSC1940v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC1940.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC1939.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC1937.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC1940v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1940.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1939.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1937.jpg"
   },
   {
     "ID": 59,
@@ -1247,9 +1247,9 @@ window.thumbnails = [
     "suggestedprice": 80,
     "description": "Temptress, Sorceress, and dare I say Heroine?",
     "type": "Echos",
-    "src": "Nebuluxe/Images/Thumbnails/IMG26083.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/IMG2608.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/20250613174928.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/IMG26083.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/IMG2608.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/20250613174928.jpg"
   },
   {
     "ID": 60,
@@ -1267,13 +1267,13 @@ window.thumbnails = [
     "suggestedprice": 250,
     "description": "If this poem was written today it would end with the dragon's destruction of the village. The dragon's heat-death is the process of decoding all the overcodings created by panoptic law, religion, academia, family, and tradition. We can think of the dragon as liquidated value, after all, its treasure is the \"plunder of the ancients\" (the earth itself). We can see in retrospect how past societies were configured to guard against the unbounded circulation of value that is our reality today. Beowulf has given me a different starting point to think about these things.\n\n250 each, 550 for the set",
     "type": "Echos",
-    "src": "Nebuluxe/Images/Thumbnails/DSC2331v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2331.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2332.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC2330.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/DSC2333.jpg",
-    "fullsizesrc5": "Nebuluxe/Images/Fullsize/20241117120536.jpg",
-    "fullsizesrc6": "Nebuluxe/Images/Fullsize/DSC2328.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC2331v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2331.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2332.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2330.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2333.jpg",
+    "fullsizesrc5": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/20241117120536.jpg",
+    "fullsizesrc6": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2328.jpg"
   },
   {
     "ID": 61,
@@ -1291,17 +1291,17 @@ window.thumbnails = [
     "suggestedprice": "~8000. Please reach out",
     "description": "Is newness possible? We certainly need it. How bad do things have to get before you question underlying structures? Neoliberalism, academic philosophy, the sciences in general but especially the information sciences are all tethered to capital - the more they orbit the tighter, more narrow, their revolutions become. The great miraculating machine of capitalism coopts relentlessly, perpetuates itself by a logic of accumulation, no market, no territory safe from fracking, a violent injection. Bodies, the earth, even electrons have been brought to bear the signs of general exchange. Indeed the gravity of our situation, the inertia, is too great to be escaped even by light. Is there any possibility for change, not concession but change? If such a thing exists then it lies beyond the logics which brought us here, outside of a liberation which returns to it’s beginning. Something which moves upstream of circulating values.\n\nThe tragedy we live in is that should the colonization of Mars occur, we can not imagine social relations there being any different than they are here. This is because every trajectory to Mars is currently Muskian; every colonization just the discovery of more Terra. To reach an alien territory a different kind of voyage must be undertaken. A voyage of subterranean logics, perversity, even, for once in our damned history, joy. There are the starts of such voyages everywhere, if you know where to look. We can no longer seek a house built upon rock, but instead a launchpad built upon sand.\n\nI think this is the best thing I’ve ever made. That is because for me it is a starting point, a line that has no end but only departs, one entry of many to something new. An idea which came to me entirely from somewhere else, maybe even sometime else. Departure",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC1783v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC1783.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2859.jpg",
-    "fullsizesrc3": "Nebuluxe/Images/Fullsize/DSC805.jpg",
-    "fullsizesrc4": "Nebuluxe/Images/Fullsize/20250815094753.jpg",
-    "fullsizesrc5": "Nebuluxe/Images/Fullsize/DSC2348.jpg",
-    "fullsizesrc6": "Nebuluxe/Images/Fullsize/DSC2349.jpg",
-    "fullsizesrc7": "Nebuluxe/Images/Fullsize/DSC2345.jpg",
-    "fullsizesrc8": "Nebuluxe/Images/Fullsize/DSC2346.jpg",
-    "fullsizesrc9": "Nebuluxe/Images/Fullsize/DSC2347.jpg",
-    "fullsizesrc10": "Nebuluxe/Images/Fullsize/DSC2343.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/DSC1783v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC1783.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2859.jpg",
+    "fullsizesrc3": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC805.jpg",
+    "fullsizesrc4": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/20250815094753.jpg",
+    "fullsizesrc5": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2348.jpg",
+    "fullsizesrc6": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2349.jpg",
+    "fullsizesrc7": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2345.jpg",
+    "fullsizesrc8": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2346.jpg",
+    "fullsizesrc9": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2347.jpg",
+    "fullsizesrc10": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/DSC2343.jpg"
   },
   {
     "ID": 62,
@@ -1319,8 +1319,8 @@ window.thumbnails = [
     "suggestedprice": "N/A",
     "description": "For little Junie, who is no longer with us.",
     "type": "Comission",
-    "src": "Nebuluxe/Images/Thumbnails/2025080851608.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/20250808151608.jpg",
-    "fullsizesrc2": "Nebuluxe/Images/Fullsize/20250811084226.jpg"
+    "src": "/Nebuluxe/Images/Thumbnails/Nebuluxe/Images/Thumbnails/2025080851608.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/20250808151608.jpg",
+    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/Nebuluxe/Images/Fullsize/20250811084226.jpg"
   }
 ]
