@@ -15,8 +15,8 @@ window.thumbnails = [
     "suggestedprice": 700,
     "description": "Last week I listened to an MPR segment on the radio about a contentious wolf population bill in the Montana Congress. I have since read several more articles. This story is exactly illustrative of the idea I had when making this piece. The bill raised the number of wolves that can be killed in the state by 37% - an all time high. Certain Republican representatives, wanting to maintain their brand of genocidal piggery, were fighting for a stronger version of the bill that would HALVE the population of wolves in a single year which would skyrocket the population up the endangered species list. During public comment the vast majority of people opposed any raise in the quota, notable was the strong pushback from biologists. The only county exempted was Yellowstone county, because wolves are too big a driver of tourism there. \n\nThe real kicker for me is that the reason for this bill isn’t for stock protection, not for the management of other species, not for human health concerns. Every source looked at only cited the benefits for hunters and trappers. Recreation. By a short jump in reasoning imma say that It is really for the YC/Gianforte types.\n\nThis isn’t so much about another abject failure of an already sham democracy, anger at people with degenerate cultural values, or even about the wolves. Its about how our relationship with animals is in the process of becoming along this line: Object of science (already bad) —> Commodity —> Museum/Image",
     "type": "No Collection",
-    "src": "Nebuluxe/Images/Thumbnails/DSC2205v2.jpg",
-    "fullsizesrc": "Nebuluxe/Images/Fullsize/DSC2205.jpg",
+    "src": "/Nebuluxe/Images/Thumbnails/DSC2205v2.jpg",
+    "fullsizesrc": "/Nebuluxe/Images/Fullsize/DSC2205.jpg",
     "fullsizesrc2": "Nebuluxe/Images/Fullsize/DSC2220.jpg",
     "fullsizesrc3": "Nebuluxe/Images/Fullsize/IMG2024062373714006.jpg",
     "fullsizesrc4": "Nebuluxe/Images/Fullsize/IMG2024062317371069.jpg"
