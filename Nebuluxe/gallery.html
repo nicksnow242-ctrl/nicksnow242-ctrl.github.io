@@ -3361,7 +3361,7 @@ this.modal.classList.add('is-open');
            if (dateCreated) {
              const oneYearAgo = new Date();
              oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-             if (dateCreated >= oneYearAgo) statusMatch = true;
+             if (dateCreated <= oneYearAgo) statusMatch = true;
            }
          }
 
