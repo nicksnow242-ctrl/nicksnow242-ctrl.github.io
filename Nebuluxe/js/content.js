@@ -4,30 +4,32 @@
 const contentData = {
   Reading: {
     2026: [
-      { title: "The Silent Ocean", author: "A. N. Author", rating: "9/10" },
-      { title: "Neon Dreams", author: "Cyber Scribe", rating: "10/10" },
-      { title: "Echoes of Code", author: "Dev Null", rating: "8/10" },
-      { title: "The Last Algorithm", author: "Jane Doe", rating: "10/10" }
+      { title: "Post Left Theory", author: "Tony Chamas & David McKerracker", rating: "8/10" },
+      { title: "Ring World", author: "Lary Niven", rating: "6/10" },
+      { title: "Gargantua and Pantagruel", author: "François Rabelais", rating: "7/10" },
+      { title: "temp", author: "Jane Doe", rating: "10/10" }
     ]
   },
   Film: {
     2026: [
-      { title: "Blade Runner 2099", author: "Dir. V. Villeneuve", rating: "10/10" },
-      { title: "The Matrix: Resurrections 2", author: "Dir. L. Wachowski", rating: "8/10" },
-      { title: "Dune: Part Three", author: "Dir. D. Villeneuve", rating: "9/10" }
+      { title: "The Odyssey", author: "Christopher Nolan", rating: "5/10" },
+      { title: "Backrooms", author: "Kane Parsons", rating: "10/10" },
+      { title: "Temp", author: "Dir. D. Villeneuve", rating: "9/10" }
     ]
  },
   Pod: {
     2026: [
-      { title: "Tech Horizons Ep. 42", author: "Host: J. Doe", rating: "9/10" },
-      { title: "Cyberpunk History", author: "Host: A. Ray", rating: "8/10" },
-      { title: "The AI Awakening", author: "Host: M. Chen", rating: "10/10" }
+      { title: "Pill Pod", author: "Plastic Pills", rating: "8/10" },
+      { title: "Theory Underground", author: "David Mckerracher", rating: "8/10" },
+      { title: "One Dime Radio", author: "Tony Chamas", rating: "7/10" },
+      { title: "Trash Future", author: "various", rating: "6/10" },
+      { title: "The Dangerous Maybe", author: "Michael Downs & Nance", rating: "8/10" },
     ]
   },
   Articles: {
     2026: [
-      { title: "The Future of AI", author: "Tech Monthly", rating: "9/10" },
-      { title: "Green Energy Grid", author: "Eco Journal", rating: "8/10" },
+      { title: "temp", author: "Tech Monthly", rating: "9/10" },
+      { title: "temp", author: "Eco Journal", rating: "8/10" },
       { title: "Quantum Computing Basics", author: "Science Daily", rating: "9/10" }
     ]
   }
