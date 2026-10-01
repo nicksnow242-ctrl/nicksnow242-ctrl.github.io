@@ -1266,6 +1266,25 @@ var particles;
   }
 }
 
+/* ========================================== */
+/* MOBILE RESPONSIVE */
+/* ========================================== */
+@media (max-width: 768px) {
+  #tools-grid {
+    padding-left: 10px;
+    padding-right: 10px;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  #tools-grid {
+    padding-left: 10px;
+    padding-right: 10px;
+    gap: 15px;
+  }
+}
+
 #tools-grid::-webkit-scrollbar {
   width: 6px;
 }
@@ -1303,12 +1322,12 @@ function createSparkles(slideElement) {
   slideElement.appendChild(container);
 
   const colors = [
-    '#ff96dc', // pink
-    '#c896ff', // purple
-    '#40e8ff', // cyan
-    '#ffffff', // white
-    '#ffd6e0', // light pink
-    '#e8d5f5'  // light purple
+    '#ff96dc',
+    '#c896ff',
+    '#40e8ff',
+    '#ffffff',
+    '#ffd6e0',
+    '#e8d5f5'
   ];
 
   const sparkleCount = 18;
@@ -1317,29 +1336,24 @@ function createSparkles(slideElement) {
     const sparkle = document.createElement('div');
     sparkle.className = 'sparkle';
 
-    // Random position within the slide
     const x = Math.random() * 100;
     const y = Math.random() * 100;
     sparkle.style.left = x + '%';
     sparkle.style.top = y + '%';
 
-    // Random size
     const size = 4 + Math.random() * 10;
     sparkle.style.width = size + 'px';
     sparkle.style.height = size + 'px';
 
-    // Random color
     const color = colors[Math.floor(Math.random() * colors.length)];
     sparkle.style.color = color;
     sparkle.style.background = color;
 
-    // Random direction for movement
     const angle = Math.random() * Math.PI * 2;
     const distance = 30 + Math.random() * 50;
     sparkle.style.setProperty('--dx', Math.cos(angle) * distance + 'px');
     sparkle.style.setProperty('--dy', Math.sin(angle) * distance + 'px');
 
-    // Stagger the animations
     sparkle.style.animationDelay = (Math.random() * 0.5) + 's';
 
     container.appendChild(sparkle);
@@ -1354,7 +1368,6 @@ function handleToolClick(e, url) {
 
   const link = e.currentTarget;
 
-  // Prevent double-clicking while animation is playing
   if (link.classList.contains('sparkling')) return;
 
   link.classList.add('sparkling');
@@ -1362,11 +1375,9 @@ function handleToolClick(e, url) {
   const slide = link.querySelector('.slide');
   const sparkleContainer = createSparkles(slide);
 
-  // After 2 seconds, navigate to the URL
   setTimeout(() => {
     window.open(url, '_blank', 'noopener,noreferrer');
 
-    // Clean up
     if (sparkleContainer && sparkleContainer.parentNode) {
       sparkleContainer.parentNode.removeChild(sparkleContainer);
     }
@@ -1412,7 +1423,6 @@ function renderToolsGrid() {
       </div>
     `;
 
-    // Attach click handler with sparkle animation
     link.addEventListener('click', (e) => handleToolClick(e, targetUrl));
 
     toolsGrid.appendChild(link);
