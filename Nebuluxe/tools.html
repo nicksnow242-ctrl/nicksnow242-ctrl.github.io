@@ -1196,7 +1196,8 @@ function autoSizeText() {
       const originalSize = parseFloat(window.getComputedStyle(p).fontSize);
       let currentSize = originalSize;
 
-      while ((p.scrollWidth > p.clientWidth || p.scrollHeight > p.clientHeight) && currentSize > 6) {
+      // Reduce font size until text fits, but never below 12px
+      while ((p.scrollWidth > p.clientWidth || p.scrollHeight > p.clientHeight) && currentSize > 12) {
         currentSize -= 0.5;
         p.style.fontSize = currentSize + 'px';
       }
