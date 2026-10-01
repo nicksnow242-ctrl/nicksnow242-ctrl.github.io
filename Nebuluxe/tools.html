@@ -1102,7 +1102,6 @@ var particles;
   padding-bottom: 25px;
   z-index: 10;
   pointer-events: none;
-  box-sizing: border-box;
 }
 
 .tool-link {
@@ -1111,7 +1110,6 @@ var particles;
   color: inherit;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
-  padding: 25px;
 }
 
 .tool-link:hover .slide {
@@ -1273,21 +1271,17 @@ var particles;
 /* ========================================== */
 @media (max-width: 768px) {
   #tools-grid {
+    padding-left: 10px;
+    padding-right: 10px;
     gap: 20px;
-  }
-
-  .tool-link {
-    padding: 20px;
   }
 }
 
 @media (max-width: 480px) {
   #tools-grid {
+    padding-left: 10px;
+    padding-right: 10px;
     gap: 15px;
-  }
-
-  .tool-link {
-    padding: 15px;
   }
 }
 
