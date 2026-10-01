@@ -1078,5 +1078,157 @@ var particles;
 <!-- ========================================== -->
 <!-- END CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- ========================================== -->
+<script src="js/tools.js"></script>
+<!-- ========================================== -->
+<!-- DYNAMIC TOOLS GRID -->
+<!-- ========================================== -->
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Michroma&display=swap");
+
+#tools-grid {
+  position: absolute;
+  top: 110px; /* Positions below the top banner */
+  left: 0;
+  width: 100%;
+  height: calc(100% - 110px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  padding: 40px;
+  overflow-y: auto;
+  z-index: 10;
+  pointer-events: none; /* Allows clicking through empty space to the canvas */
+}
+
+.tool-link {
+  pointer-events: auto;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.tool-link:hover .slide {
+  transform: rotate(0deg) skew(0deg, 0deg) scale(1.05);
+  filter: blur(0px) brightness(1.15);
+}
+
+.slide {
+  transform: rotate(0.2deg) skew(0.2deg, -0.2deg);
+  filter: blur(2px);
+  text-transform: uppercase;
+  font-weight: 900;
+  padding: 25px;
+  background: radial-gradient(
+    circle,
+    rgba(112, 101, 140, 1) 37%,
+    rgba(80, 74, 103, 1) 76%
+  );
+  width: fit-content;
+  font-size: 20px;
+  font-family: "Michroma", sans-serif;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.slide-content {
+  width: 380px;
+  height: 280px;
+  background: linear-gradient(
+    143deg,
+    rgba(70, 92, 124, 1) 24%,
+    rgba(86, 123, 162, 1) 100%
+  );
+  text-align: center;
+  padding: 17px;
+  border: 14px solid #534774;
+  text-shadow: 3px 3px 0px rgba(208, 216, 206, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 15px;
+}
+
+.slide-content p {
+  margin: 0;
+  line-height: 1.2;
+}
+
+.highlight-text {
+  font-size: 40px;
+  display: block;
+  margin-top: 5px;
+}
+
+/* Scrollbar styling for the tools grid to match the theme */
+#tools-grid::-webkit-scrollbar {
+  width: 8px;
+}
+#tools-grid::-webkit-scrollbar-track {
+  background: rgba(112, 101, 140, 0.2);
+}
+#tools-grid::-webkit-scrollbar-thumb {
+  background: rgba(112, 101, 140, 0.6);
+  border-radius: 4px;
+}
+</style>
+
+<div id="tools-grid"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const toolsGrid = document.getElementById('tools-grid');
+
+  // Function to render tools
+  function renderTools() {
+    if (!toolsGrid || typeof window.tools === 'undefined') return;
+
+    toolsGrid.innerHTML = ''; // Clear existing
+
+    window.tools.forEach(tool => {
+      const link = document.createElement('a');
+      link.className = 'tool-link';
+
+      // Ensure URL has a protocol
+      const targetUrl = tool.url.startsWith('http://') || tool.url.startsWith('https://')
+        ? tool.url
+        : 'https://' + tool.url;
+
+      link.href = targetUrl;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+
+      link.innerHTML = `
+        <div class="slide">
+          <div class="slide-content">
+            <p>${tool.small1} <span class="highlight-text">${tool.big1}</span></p>
+            <div></div>
+            <p>${tool.small2} <span class="highlight-text">${tool.big2}</span> ${tool.small3}</p>
+          </div>
+        </div>
+      `;
+
+      toolsGrid.appendChild(link);
+    });
+  }
+
+  // Initial render
+  renderTools();
+
+  // Fallback: If tools.js loads asynchronously after DOMContentLoaded
+  if (typeof window.tools === 'undefined') {
+    const checkTools = setInterval(() => {
+      if (typeof window.tools !== 'undefined') {
+        renderTools();
+        clearInterval(checkTools);
+      }
+    }, 100);
+  }
+});
+</script>
+<!-- ========================================== -->
+<!-- END DYNAMIC TOOLS GRID -->
+<!-- ========================================== -->
 </body>
 </html>
