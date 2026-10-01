@@ -8,3 +8,4 @@ window.tools = [
     "small3":"bottom text",
     "url": "google.com"
   }
+];
