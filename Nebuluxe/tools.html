@@ -1096,7 +1096,7 @@ var particles;
   flex-wrap: wrap;
   justify-content: center;
   align-content: center;
-  gap: 25px; /* Reduced gap to match smaller buttons */
+  gap: 25px;
   padding: 25px;
   padding-top: 140px;
   padding-bottom: 25px;
@@ -1112,9 +1112,7 @@ var particles;
 }
 
 .tool-link:hover .slide {
-  /* Removed the sharpening effect (filter), kept the zoom (scale) */
   transform: rotate(0deg) skew(0deg, 0deg) scale(1.05);
-  /* Added subtle vaporwave glow around the border */
   box-shadow: 0 0 15px rgba(255, 150, 220, 0.7), 0 0 30px rgba(200, 150, 255, 0.5);
 }
 
@@ -1122,49 +1120,58 @@ var particles;
   transform: rotate(0.2deg) skew(0.2deg, -0.2deg);
   text-transform: uppercase;
   font-weight: 900;
-  padding: 12px; /* Reduced from 25px */
+  padding: 12px;
   background: radial-gradient(
     circle,
     rgba(112, 101, 140, 1) 37%,
     rgba(80, 74, 103, 1) 76%
   );
   width: fit-content;
-  font-size: 12px; /* Reduced from 20px */
+  font-size: 12px;
   font-family: "Michroma", sans-serif;
   border-radius: 4px;
   transition: all 0.3s ease;
 }
 
 .slide-content {
-  width: 190px; /* Reduced from 380px */
-  height: 140px; /* Reduced from 280px */
+  width: 190px;
+  height: 140px;
   background: linear-gradient(
     143deg,
     rgba(70, 92, 124, 1) 24%,
     rgba(86, 123, 162, 1) 100%
   );
   text-align: center;
-  padding: 8px; /* Reduced from 17px */
-  border: 7px solid #534774; /* Reduced from 14px */
+  padding: 8px;
+  border: 7px solid #534774;
   text-shadow: 2px 2px 0px rgba(208, 216, 206, 1);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 8px; /* Reduced from 15px */
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
 }
 
 .slide-content p {
   margin: 0;
   line-height: 1.2;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .highlight-text {
-  font-size: 20px; /* Reduced from 40px */
+  font-size: 20px;
   display: block;
   margin-top: 4px;
+  text-align: center;
+  width: 100%;
 }
 
-/* Scrollbar styling for the tools grid to match the theme */
 #tools-grid::-webkit-scrollbar {
   width: 6px;
 }
@@ -1180,6 +1187,23 @@ var particles;
 <div id="tools-grid"></div>
 
 <script>
+function autoSizeText() {
+  document.querySelectorAll('.slide-content').forEach(content => {
+    const paragraphs = content.querySelectorAll('p');
+
+    paragraphs.forEach(p => {
+      const originalSize = parseFloat(window.getComputedStyle(p).fontSize);
+      let currentSize = originalSize;
+
+      // Reduce font size until text fits both horizontally and vertically
+      while ((p.scrollWidth > p.clientWidth || p.scrollHeight > p.clientHeight) && currentSize > 6) {
+        currentSize -= 0.5;
+        p.style.fontSize = currentSize + 'px';
+      }
+    });
+  });
+}
+
 function renderToolsGrid() {
   const toolsGrid = document.getElementById('tools-grid');
   if (!toolsGrid) {
@@ -1187,21 +1211,19 @@ function renderToolsGrid() {
     return;
   }
 
-  // Check if tools.js has loaded and populated window.tools
   if (typeof window.tools === 'undefined' || !Array.isArray(window.tools)) {
     console.log('⏳ Waiting for js/tools.js to load...');
-    setTimeout(renderToolsGrid, 100); // Retry in 100ms
+    setTimeout(renderToolsGrid, 100);
     return;
   }
 
   console.log('✅ tools.js loaded successfully. Rendering', window.tools.length, 'items.');
-  toolsGrid.innerHTML = ''; // Clear existing
+  toolsGrid.innerHTML = '';
 
   window.tools.forEach(tool => {
     const link = document.createElement('a');
     link.className = 'tool-link';
 
-    // Ensure URL has a protocol
     const targetUrl = tool.url && (tool.url.startsWith('http://') || tool.url.startsWith('https://'))
       ? tool.url
       : 'https://' + (tool.url || '#');
@@ -1210,7 +1232,6 @@ function renderToolsGrid() {
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
 
-    // Using valid <div></div> instead of self-closing <div />
     link.innerHTML = `
       <div class="slide">
         <div class="slide-content">
@@ -1223,9 +1244,11 @@ function renderToolsGrid() {
 
     toolsGrid.appendChild(link);
   });
+
+  // Auto-size text after rendering
+  setTimeout(autoSizeText, 50);
 }
 
-// Run immediately, and also wait for DOMContentLoaded just in case
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', renderToolsGrid);
 } else {
