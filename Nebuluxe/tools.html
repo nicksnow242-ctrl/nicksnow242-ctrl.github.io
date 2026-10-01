@@ -1088,7 +1088,6 @@ var particles;
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Michroma&display=swap");
 
-/* 3. Let the tools grid expand the page height naturally */
 #tools-grid {
   position: relative;
   width: 100%;
@@ -1096,11 +1095,11 @@ var particles;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-content: center; /* Centers items when there are few, pushes down when there are many */
-  gap: 40px;
-  padding: 40px;
-  padding-top: 150px; /* Leaves room for the 110px fixed top banner + 40px breathing room */
-  padding-bottom: 40px;
+  align-content: center;
+  gap: 25px; /* Reduced gap to match smaller buttons */
+  padding: 25px;
+  padding-top: 140px;
+  padding-bottom: 25px;
   z-index: 10;
   pointer-events: none;
 }
@@ -1109,48 +1108,49 @@ var particles;
   pointer-events: auto;
   text-decoration: none;
   color: inherit;
-  transition: transform 0.3s ease, filter 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .tool-link:hover .slide {
+  /* Removed the sharpening effect (filter), kept the zoom (scale) */
   transform: rotate(0deg) skew(0deg, 0deg) scale(1.05);
-  filter: blur(0px) brightness(1.15);
+  /* Added subtle vaporwave glow around the border */
+  box-shadow: 0 0 15px rgba(255, 150, 220, 0.7), 0 0 30px rgba(200, 150, 255, 0.5);
 }
 
 .slide {
   transform: rotate(0.2deg) skew(0.2deg, -0.2deg);
-  filter: blur(2px);
   text-transform: uppercase;
   font-weight: 900;
-  padding: 25px;
+  padding: 12px; /* Reduced from 25px */
   background: radial-gradient(
     circle,
     rgba(112, 101, 140, 1) 37%,
     rgba(80, 74, 103, 1) 76%
   );
   width: fit-content;
-  font-size: 20px;
+  font-size: 12px; /* Reduced from 20px */
   font-family: "Michroma", sans-serif;
   border-radius: 4px;
   transition: all 0.3s ease;
 }
 
 .slide-content {
-  width: 380px;
-  height: 280px;
+  width: 190px; /* Reduced from 380px */
+  height: 140px; /* Reduced from 280px */
   background: linear-gradient(
     143deg,
     rgba(70, 92, 124, 1) 24%,
     rgba(86, 123, 162, 1) 100%
   );
   text-align: center;
-  padding: 17px;
-  border: 14px solid #534774;
-  text-shadow: 3px 3px 0px rgba(208, 216, 206, 1);
+  padding: 8px; /* Reduced from 17px */
+  border: 7px solid #534774; /* Reduced from 14px */
+  text-shadow: 2px 2px 0px rgba(208, 216, 206, 1);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 15px;
+  gap: 8px; /* Reduced from 15px */
 }
 
 .slide-content p {
@@ -1159,14 +1159,14 @@ var particles;
 }
 
 .highlight-text {
-  font-size: 40px;
+  font-size: 20px; /* Reduced from 40px */
   display: block;
-  margin-top: 5px;
+  margin-top: 4px;
 }
 
 /* Scrollbar styling for the tools grid to match the theme */
 #tools-grid::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 #tools-grid::-webkit-scrollbar-track {
   background: rgba(112, 101, 140, 0.2);
