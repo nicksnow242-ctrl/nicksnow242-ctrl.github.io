@@ -7,4 +7,4 @@ window.tools = [
     "big2":"USE",
     "small3":"bottom text",
     "url": "google.com"
-  },
+  }
