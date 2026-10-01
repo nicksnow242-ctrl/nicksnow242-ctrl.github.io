@@ -122,5 +122,14 @@ window.tools = [
     "small2": "For the",
     "big2": "Radially Inclined",
     "url": "https://www.desmos.com/calculator/roxwqgwssd"
+  },
+  {
+    "ID": 16,
+    "small1": "Printer go",
+    "big1": "Brrrrrrrrr",
+    "small2": "Knowledge is",
+    "big2": "Power",
+    "small3": "Thanks Anna",
+    "url": "https://annas-archive.pk/"
   }
 ];
