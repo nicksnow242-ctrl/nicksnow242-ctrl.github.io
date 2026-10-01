@@ -1158,6 +1158,7 @@ var particles;
   align-items: center;
   gap: 8px;
   overflow: hidden;
+  word-wrap: break-word;
 }
 
 .slide-content p {
@@ -1269,25 +1270,40 @@ var particles;
 }
 
 /* ========================================== */
-/* MOBILE RESPONSIVE */
+/* MOBILE RESPONSIVE (2 per row) */
 /* ========================================== */
-@media (max-width: 768px) {
-  #tools-grid {
-    gap: 20px;
-  }
-
-  .tool-link {
-    padding: 5px;
-  }
-}
-
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   #tools-grid {
     gap: 15px;
+    padding: 15px;
+    padding-top: 130px;
+    padding-bottom: 15px;
   }
 
   .tool-link {
     padding: 5px;
+    /* Force exactly 2 items per row */
+    flex: 0 0 calc(50% - 10px);
+    display: flex;
+    justify-content: center;
+  }
+
+  .slide {
+    padding: 8px;
+    font-size: 10px;
+  }
+
+  .slide-content {
+    width: 145px;
+    height: 115px;
+    padding: 6px;
+    border: 5px solid #534774;
+    gap: 4px;
+  }
+
+  .highlight-text {
+    font-size: 16px;
+    margin-top: 2px;
   }
 }
 
@@ -1323,7 +1339,11 @@ function autoSizeText() {
       const originalSize = parseFloat(window.getComputedStyle(p).fontSize);
       let currentSize = originalSize;
 
-      while ((p.scrollWidth > p.clientWidth || p.scrollHeight > p.clientHeight) && currentSize > 12) {
+      // Reduce font size until text fits, but never below 12px (or 10px on mobile)
+      const isMobile = window.innerWidth <= 600;
+      const minSize = isMobile ? 10 : 12;
+
+      while ((p.scrollWidth > p.clientWidth || p.scrollHeight > p.clientHeight) && currentSize > minSize) {
         currentSize -= 0.5;
         p.style.fontSize = currentSize + 'px';
       }
