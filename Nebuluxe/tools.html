@@ -1306,6 +1306,15 @@ var particles;
 <div id="tools-grid"></div>
 
 <script>
+// Fisher-Yates shuffle algorithm to randomize array order
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
 function autoSizeText() {
   document.querySelectorAll('.slide-content').forEach(content => {
     const paragraphs = content.querySelectorAll('p');
@@ -1407,7 +1416,10 @@ function renderToolsGrid() {
   console.log('✅ tools.js loaded successfully. Rendering', window.tools.length, 'items.');
   toolsGrid.innerHTML = '';
 
-  window.tools.forEach(tool => {
+  // Create a copy of the array and shuffle it for random order on every load
+  const shuffledTools = shuffleArray([...window.tools]);
+
+  shuffledTools.forEach(tool => {
     const link = document.createElement('a');
     link.className = 'tool-link';
 
