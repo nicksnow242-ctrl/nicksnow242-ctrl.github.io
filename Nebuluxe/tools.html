@@ -1082,7 +1082,7 @@ var particles;
 <!-- END CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- ========================================== -->
 <script src="js/tools.js"></script>
-<<!-- ========================================== -->
+<!-- ========================================== -->
 <!-- DYNAMIC TOOLS GRID -->
 <!-- ========================================== -->
 <style>
@@ -1113,6 +1113,7 @@ var particles;
 
 .tool-link:hover .slide {
   transform: rotate(0deg) skew(0deg, 0deg) scale(1.05);
+  filter: blur(1px);
   box-shadow: 0 0 15px rgba(255, 150, 220, 0.7), 0 0 30px rgba(200, 150, 255, 0.5);
 }
 
@@ -1196,7 +1197,6 @@ function autoSizeText() {
       const originalSize = parseFloat(window.getComputedStyle(p).fontSize);
       let currentSize = originalSize;
 
-      // Reduce font size until text fits, but never below 12px
       while ((p.scrollWidth > p.clientWidth || p.scrollHeight > p.clientHeight) && currentSize > 12) {
         currentSize -= 0.5;
         p.style.fontSize = currentSize + 'px';
