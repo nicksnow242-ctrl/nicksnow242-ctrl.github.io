@@ -2400,20 +2400,49 @@ createBadgeCanvas(img, item) {
             if (e.target === this.modal) this.closeModal();
         });
         document.addEventListener('keydown', (e) => {
-            if (this.modal.classList.contains('is-open')) {
-                if (e.key === 'Escape') {
-                    this.closeModal();
-                } else if (e.key === 'ArrowLeft') {
-                    e.preventDefault();
-                    this.prevImage();
-                } else if (e.key === 'ArrowRight') {
-                    e.preventDefault();
-                    this.nextImage();
-                }
-            }
-        });
-        showFullImage(item) {
-    const overlay = document.getElementById('full-image-overlay');
+      if (e.key === 'Escape') {
+          const overlay = document.getElementById('full-image-overlay');
+          if (overlay && overlay.classList.contains('is-open')) {
+              this.closeFullImage();
+          }
+          if (this.modal && this.modal.classList.contains('is-open')) {
+              this.closeModal();
+          }
+      } else if (this.modal && this.modal.classList.contains('is-open')) {
+          if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.prevImage();
+          } else if (e.key === 'ArrowRight') {
+              e.preventDefault();
+              this.nextImage();
+          }
+      }
+  });
+
+  // Add full image overlay click-to-close listener
+  const fullImageOverlay = document.getElementById('full-image-overlay');
+  if (fullImageOverlay) {
+      fullImageOverlay.addEventListener('click', () => this.closeFullImage());
+  }
+} // <-- This bracket closes setupEventListeners()
+
+// These methods MUST be outside setupEventListeners, as direct methods of the class
+showFullImage(item) {
+  const overlay = document.getElementById('full-image-overlay');
+  const img = document.getElementById('full-image-display');
+  const fullSrc = item.fullsizesrc || item.bigsrc || item.src;
+  img.src = fullSrc;
+  overlay.classList.add('is-open');
+}
+
+closeFullImage() {
+  const overlay = document.getElementById('full-image-overlay');
+  overlay.classList.remove('is-open');
+}
+
+buildImageArray(item) {
+  const images = [];
+  // ... rest of your code continues normally
     const img = document.getElementById('full-image-display');
     const fullSrc = item.fullsizesrc || item.bigsrc || item.src;
     img.src = fullSrc;
