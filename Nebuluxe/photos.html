@@ -13,7 +13,6 @@ html, body {
   padding: 0;
   margin: 0;
   background: #02020a;
-  background: linear-gradient(135deg, #02020a 0%, #0a0a1a 50%, #000000 100%);
   background-attachment: fixed;
   font-family: 'Share Tech Mono', 'Segoe UI', system-ui, sans-serif;
   color: #e0f7ff;
@@ -2620,119 +2619,118 @@ createBadgeCanvas(img, item) {
 <!-- ============================================================
       END GALLERY SECTION
      ============================================================ -->
-
      <script>
-       const canvas = document.getElementById("circuit-canvas");
-       const ctx = canvas.getContext("2d");
+       document.addEventListener("DOMContentLoaded", () => {
+         const canvas = document.getElementById("circuit-canvas");
+         if (!canvas) return; // Safety check
 
-       let width, height;
-       let particles = [];
+         const ctx = canvas.getContext("2d");
+         let width, height;
+         let particles = [];
 
-       // Cyberpunk Cyan/Blue configuration
-       const baseHue = 180; // Cyan
-       const hueRange = 60; // Shifts toward blue
+         // Cyberpunk Cyan/Blue configuration
+         const baseHue = 180; // Cyan
+         const hueRange = 60; // Shifts toward blue
 
-       function resize() {
-         width = window.innerWidth;
-         height = window.innerHeight;
-         canvas.width = width;
-         canvas.height = height;
-       }
-
-       window.addEventListener("resize", resize);
-       resize();
-
-       class Particle {
-         constructor(x, y) {
-           this.x = x;
-           this.y = y;
-           this.age = 0;
-           this.life = Math.random() * 150 + 100; // Longer life for ambient feel
-           this.dead = false;
-
-           const speed = Math.random() * 2 + 1;
-           // 45-degree angles (0, 45, 90, 135, etc.) for that classic circuit board look
-           const angle = Math.floor(Math.random() * 8) * (Math.PI / 4);
-
-           this.vx = Math.cos(angle) * speed;
-           this.vy = Math.sin(angle) * speed;
-
-           const hue = baseHue + Math.random() * hueRange;
-           const saturation = 100;
-           const lightness = 50;
-           this.color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-           this.width = Math.random() * 1.5 + 0.5;
+         function resize() {
+           width = window.innerWidth;
+           height = window.innerHeight;
+           canvas.width = width;
+           canvas.height = height;
          }
 
-         update() {
-           this.age++;
-           if (this.age > this.life) {
-             this.dead = true;
-             return;
+         window.addEventListener("resize", resize);
+         resize(); // Initial call
+
+         class Particle {
+           constructor(x, y) {
+             this.x = x;
+             this.y = y;
+             this.age = 0;
+             this.life = Math.random() * 150 + 100; // Longer life for ambient feel
+             this.dead = false;
+
+             const speed = Math.random() * 2 + 1;
+             // 45-degree angles for that classic circuit board look
+             const angle = Math.floor(Math.random() * 8) * (Math.PI / 4);
+
+             this.vx = Math.cos(angle) * speed;
+             this.vy = Math.sin(angle) * speed;
+
+             const hue = baseHue + Math.random() * hueRange;
+             this.color = `hsl(${hue}, 100%, 50%)`;
+             this.width = Math.random() * 1.5 + 0.5;
            }
 
-           const prevX = this.x;
-           const prevY = this.y;
+           update() {
+             this.age++;
+             if (this.age > this.life) {
+               this.dead = true;
+               return;
+             }
 
-           this.x += this.vx;
-           this.y += this.vy;
+             const prevX = this.x;
+             const prevY = this.y;
 
-           // Random 45-degree turns to simulate circuit paths
-           if (Math.random() < 0.05) {
-             let currentAngle = Math.atan2(this.vy, this.vx);
-             const turn = (Math.random() < 0.5 ? 1 : -1) * (Math.PI / 4);
-             const newAngle = currentAngle + turn;
+             this.x += this.vx;
+             this.y += this.vy;
 
-             const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
-             this.vx = Math.cos(newAngle) * speed;
-             this.vy = Math.sin(newAngle) * speed;
-           }
+             // Random 45-degree turns to simulate circuit paths
+             if (Math.random() < 0.05) {
+               let currentAngle = Math.atan2(this.vy, this.vx);
+               const turn = (Math.random() < 0.5 ? 1 : -1) * (Math.PI / 4);
+               const newAngle = currentAngle + turn;
 
-           ctx.beginPath();
-           ctx.moveTo(prevX, prevY);
-           ctx.lineTo(this.x, this.y);
-           ctx.strokeStyle = this.color;
-           ctx.lineWidth = this.width;
-           ctx.lineCap = "round";
-           ctx.stroke();
-         }
-       }
+               const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+               this.vx = Math.cos(newAngle) * speed;
+               this.vy = Math.sin(newAngle) * speed;
+             }
 
-       function clearCanvas() {
-         // Low opacity fade for trail effect.
-         // #02020a matches the dark cyberpunk background, creating smooth fading trails.
-         ctx.fillStyle = `rgba(2, 2, 10, 0.05)`;
-         ctx.fillRect(0, 0, width, height);
-       }
-
-       let tick = 0;
-       function animate() {
-         requestAnimationFrame(animate);
-         clearCanvas();
-
-         tick++;
-         // Spawn ambient particles randomly across the entire screen
-         if (tick % 4 === 0) {
-           const particlesPerPulse = 3;
-           for (let i = 0; i < particlesPerPulse; i++) {
-             const startX = Math.random() * width;
-             const startY = Math.random() * height;
-             particles.push(new Particle(startX, startY));
+             ctx.beginPath();
+             ctx.moveTo(prevX, prevY);
+             ctx.lineTo(this.x, this.y);
+             ctx.strokeStyle = this.color;
+             ctx.lineWidth = this.width;
+             ctx.lineCap = "round";
+             ctx.stroke();
            }
          }
 
-         for (let i = particles.length - 1; i >= 0; i--) {
-           const p = particles[i];
-           p.update();
-           // Remove dead particles or those that drift off-screen
-           if (p.dead || p.x < 0 || p.x > width || p.y < 0 || p.y > height) {
-             particles.splice(i, 1);
+         function clearCanvas() {
+           // Low opacity fade for trail effect using the dark theme color
+           ctx.fillStyle = `rgba(2, 2, 10, 0.05)`;
+           ctx.fillRect(0, 0, width, height);
+         }
+
+         let tick = 0;
+         function animate() {
+           requestAnimationFrame(animate);
+           clearCanvas();
+
+           tick++;
+           // Spawn ambient particles randomly across the entire screen
+           if (tick % 4 === 0) {
+             const particlesPerPulse = 3;
+             for (let i = 0; i < particlesPerPulse; i++) {
+               const startX = Math.random() * width;
+               const startY = Math.random() * height;
+               particles.push(new Particle(startX, startY));
+             }
+           }
+
+           for (let i = particles.length - 1; i >= 0; i--) {
+             const p = particles[i];
+             p.update();
+             // Remove dead particles or those that drift off-screen
+             if (p.dead || p.x < 0 || p.x > width || p.y < 0 || p.y > height) {
+               particles.splice(i, 1);
+             }
            }
          }
-       }
 
-       // Start the animation
-       animate();
+         // Start the animation
+         animate();
+       });
      </script>
      </body>
 </html>
