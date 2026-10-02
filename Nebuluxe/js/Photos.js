@@ -1,4 +1,4 @@
-window.photos = [
+window.Photos = [
   {
     "ID": 1,
     "smallscr": "/Nebuluxe/Images/Photos/small/PowerlineLandscapeFinal.jpg",
