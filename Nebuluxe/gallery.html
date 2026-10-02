@@ -4,19 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gallery</title>
+<script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 html, body {
   width: 100%;
-  min-height: 100%;
+  min-height: 100%; /* Allows the page to grow taller than the viewport */
   padding: 0;
   margin: 0;
-  background: #02020a;
-  background: linear-gradient(135deg, #02020a 0%, #0a0a1a 50%, #000000 100%);
+  background: #FFFFFF;
+  background: linear-gradient(0deg, #FFFFFF 0%, #F2E8D5 100%);
   background-attachment: fixed;
-  font-family: 'Share Tech Mono', 'Segoe UI', system-ui, sans-serif;
-  color: #e0f7ff;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+#projector {
+  position: fixed; /* Changed from absolute to fixed */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none; /* Prevents the canvas from blocking gallery clicks */
 }
 
 /* ========================================== */
@@ -33,11 +43,10 @@ html, body {
   align-items: center;
   padding: 0 30px;
   z-index: 100;
-  background: rgba(2, 2, 10, 0.85);
+  background: rgba(255, 255, 255, 0.65);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(0, 243, 255, 0.2);
-  box-shadow: 0 4px 20px rgba(0, 243, 255, 0.05);
+  border-bottom: 1px solid rgba(180, 154, 93, 0.2);
 }
 
 .banner-title {
@@ -46,8 +55,8 @@ html, body {
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #00f3ff;
-  text-shadow: 0 0 10px rgba(0, 243, 255, 0.5), 0 0 20px rgba(0, 243, 255, 0.3);
+  color: #b49a5d;
+  text-shadow: 0 0 10px rgba(180, 154, 93, 0.3);
   margin: 0;
 }
 
@@ -72,32 +81,32 @@ html, body {
   width: 100%;
   height: auto;
   display: block;
-  filter: drop-shadow(0 0 8px rgba(0, 243, 255, 0.7))
-          drop-shadow(0 0 15px rgba(0, 136, 255, 0.5))
-          drop-shadow(0 0 30px rgba(0, 243, 255, 0.3));
+  filter: drop-shadow(0 0 8px rgba(180, 154, 93, 0.7))
+          drop-shadow(0 0 15px rgba(180, 154, 93, 0.5))
+          drop-shadow(0 0 30px rgba(255, 215, 0, 0.3));
   animation: logo-glow-pulse 4s ease-in-out infinite alternate;
   transition: filter 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .glowing-logo-wrapper:hover .glowing-logo-svg {
   animation-play-state: paused;
-  filter: drop-shadow(0 0 15px rgba(0, 243, 255, 1))
-          drop-shadow(0 0 35px rgba(0, 136, 255, 1))
-          drop-shadow(0 0 70px rgba(0, 243, 255, 0.8))
-          drop-shadow(0 0 100px rgba(136, 204, 255, 0.6));
+  filter: drop-shadow(0 0 15px rgba(255, 215, 0, 1))
+          drop-shadow(0 0 35px rgba(180, 154, 93, 1))
+          drop-shadow(0 0 70px rgba(255, 215, 0, 0.8))
+          drop-shadow(0 0 100px rgba(255, 240, 150, 0.6));
   transform: scale(1.08);
 }
 
 @keyframes logo-glow-pulse {
   0% {
-    filter: drop-shadow(0 0 8px rgba(0, 243, 255, 0.7))
-            drop-shadow(0 0 15px rgba(0, 136, 255, 0.5))
-            drop-shadow(0 0 30px rgba(0, 243, 255, 0.3));
+    filter: drop-shadow(0 0 8px rgba(180, 154, 93, 0.7))
+            drop-shadow(0 0 15px rgba(180, 154, 93, 0.5))
+            drop-shadow(0 0 30px rgba(255, 215, 0, 0.3));
   }
   100% {
-    filter: drop-shadow(0 0 12px rgba(0, 243, 255, 0.9))
-            drop-shadow(0 0 25px rgba(0, 136, 255, 0.7))
-            drop-shadow(0 0 45px rgba(0, 243, 255, 0.5));
+    filter: drop-shadow(0 0 12px rgba(180, 154, 93, 0.9))
+            drop-shadow(0 0 25px rgba(180, 154, 93, 0.7))
+            drop-shadow(0 0 45px rgba(255, 215, 0, 0.5));
   }
 }
 
@@ -110,7 +119,7 @@ html, body {
   left: 5%;
   z-index: 101;
   width: 110px;
-  font-family: 'Share Tech Mono', 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Segoe UI', system-ui, sans-serif;
   pointer-events: none;
 }
 
@@ -128,16 +137,16 @@ html, body {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: saturate(1.2) brightness(1.1)
-          drop-shadow(0 0 10px rgba(0, 243, 255, 0.6))
-          drop-shadow(0 4px 8px rgba(0, 0, 0, 0.8));
+  filter: sepia(0.3) saturate(1.2)
+          drop-shadow(0 0 10px rgba(180, 154, 93, 0.6))
+          drop-shadow(0 4px 8px rgba(139, 115, 85, 0.4));
   transition: filter 0.3s ease, transform 0.3s ease;
 }
 
 .mascot-gif-wrapper:hover .mascot-gif {
-  filter: saturate(1.4) brightness(1.2)
-          drop-shadow(0 0 18px rgba(0, 243, 255, 0.9))
-          drop-shadow(0 6px 12px rgba(0, 0, 0, 0.9));
+  filter: sepia(0.4) saturate(1.3)
+          drop-shadow(0 0 18px rgba(180, 154, 93, 0.9))
+          drop-shadow(0 6px 12px rgba(139, 115, 85, 0.5));
   transform: scale(1.08);
 }
 
@@ -153,8 +162,8 @@ html, body {
   width: 80%;
   height: 12px;
   background: radial-gradient(ellipse at center,
-              rgba(0, 243, 255, 1) 0%,
-              rgba(0, 136, 255, 1) 70%);
+              rgba(180, 154, 93, 1) 0%,
+              rgba(211, 183, 118, 1) 70%);
   border-radius: 50%;
   filter: blur(4px);
   animation: glowPulse 2.5s ease-in-out infinite;
@@ -177,12 +186,12 @@ html, body {
   left: 0;
   margin-bottom: 10px;
   width: 280px;
-  background: rgba(10, 10, 20, 0.95);
-  border: 1px solid rgba(0, 243, 255, 0.3);
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5),
-              0 0 20px rgba(0, 243, 255, 0.1);
-  color: #e0f7ff;
+  background: rgba(255, 253, 245, 0.95);
+  border: 1px solid rgba(180, 154, 93, 0.4);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(180, 154, 93, 0.15),
+              0 0 20px rgba(255, 255, 255, 0.5);
+  color: #5C4A32;
   pointer-events: auto;
   opacity: 0;
   transform: translateY(10px) scale(0.95);
@@ -195,8 +204,8 @@ html, body {
   opacity: 1;
   transform: translateY(0) scale(1);
   visibility: visible;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6),
-              0 0 30px rgba(0, 243, 255, 0.15);
+  box-shadow: 0 15px 40px rgba(180, 154, 93, 0.25),
+              0 0 30px rgba(255, 240, 150, 0.3);
 }
 
 .speech-content {
@@ -207,7 +216,7 @@ html, body {
   margin: 0;
   font-size: 14px;
   line-height: 1.6;
-  color: #e0f7ff;
+  color: #5C4A32;
   min-height: 44px;
 }
 
@@ -217,10 +226,10 @@ html, body {
   width: 4px;
   height: 12px;
   margin-left: 2px;
-  background: #00f3ff;
+  background: #b49a5d;
   vertical-align: middle;
   animation: caretBlink 1s steps(2) infinite;
-  box-shadow: 0 0 6px rgba(0, 243, 255, 0.8);
+  box-shadow: 0 0 6px rgba(180, 154, 93, 0.8);
 }
 
 @keyframes caretBlink {
@@ -233,40 +242,40 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  border-top: 1px solid rgba(0, 243, 255, 0.2);
+  border-top: 1px solid rgba(180, 154, 93, 0.2);
   padding-top: 12px;
 }
 
 .speech-option {
   background: none;
   border: none;
-  color: #88ccff;
-  font-family: 'Share Tech Mono', monospace;
+  color: #8A7355;
+  font-family: inherit;
   font-size: 13px;
   text-align: left;
   cursor: pointer;
   padding: 6px 8px;
-  border-radius: 4px;
+  border-radius: 6px;
   transition: all 0.25s ease;
   margin: 0;
 }
 
 .speech-option::before {
   content: '> ';
-  color: rgba(0, 243, 255, 0.6);
+  color: rgba(180, 154, 93, 0.6);
   font-weight: bold;
   transition: all 0.25s ease;
 }
 
 .speech-option:hover {
-  color: #00f3ff;
-  background: rgba(0, 243, 255, 0.1);
+  color: #5C4A32;
+  background: rgba(180, 154, 93, 0.1);
   transform: translateX(4px);
 }
 
 .speech-option:hover::before {
-  color: #00f3ff;
-  text-shadow: 0 0 8px rgba(0, 243, 255, 0.6);
+  color: #b49a5d;
+  text-shadow: 0 0 8px rgba(180, 154, 93, 0.6);
 }
 
 .speech-tail {
@@ -275,9 +284,9 @@ html, body {
   left: 40px;
   width: 20px;
   height: 20px;
-  background: rgba(10, 10, 20, 0.95);
-  border-right: 1px solid rgba(0, 243, 255, 0.3);
-  border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+  background: rgba(255, 253, 245, 0.95);
+  border-right: 1px solid rgba(180, 154, 93, 0.4);
+  border-bottom: 1px solid rgba(180, 154, 93, 0.4);
   transform: rotate(45deg);
   z-index: 0;
 }
@@ -289,7 +298,7 @@ html, body {
   left: 38px;
   width: 24px;
   height: 3px;
-  background: rgba(10, 10, 20, 0.95);
+  background: rgba(255, 253, 245, 0.95);
   z-index: 2;
 }
 
@@ -306,11 +315,11 @@ html, body {
 /* CYBERPUNK MECHA MUSIC PLAYER STYLES */
 /* ========================================== */
 :root {
-  --neon-blue: #00f3ff;
-  --neon-glow: rgba(0, 243, 255, 0.6);
-  --dark-metal: #050510;
-  --grunge-gray: #0a0a1a;
-  --mech-border: 2px solid var(--neon-blue);
+  --neon-orange: #ff5e00;
+  --neon-glow: rgba(255, 94, 0, 0.6);
+  --dark-metal: #0a0a0a;
+  --grunge-gray: #1a1a1a;
+  --mech-border: 2px solid var(--neon-orange);
 }
 
 .music-player-container {
@@ -333,14 +342,14 @@ html, body {
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  box-shadow: 0 0 15px var(--neon-glow), inset 0 0 10px rgba(0, 243, 255, 0.2);
+  box-shadow: 0 0 15px var(--neon-glow), inset 0 0 10px rgba(255, 94, 0, 0.2);
   position: relative;
   z-index: 10001;
 }
 
 .activation-core:hover {
-  background: var(--neon-blue);
-  box-shadow: 0 0 25px var(--neon-blue);
+  background: var(--neon-orange);
+  box-shadow: 0 0 25px var(--neon-orange);
 }
 
 .activation-core:hover .core-icon {
@@ -349,7 +358,7 @@ html, body {
 }
 
 .core-icon {
-  color: var(--neon-blue);
+  color: var(--neon-orange);
   font-size: 32px;
   transition: color 0.3s ease;
   position: relative;
@@ -370,7 +379,7 @@ html, body {
   left: 0;
   width: 30px;
   height: 30px;
-  border: 2px solid var(--neon-blue);
+  border: 2px solid var(--neon-orange);
   border-radius: 50%;
   transform: translate(-50%, -50%) scale(1);
   opacity: 0;
@@ -394,10 +403,10 @@ html, body {
 
 @keyframes icon-glitch {
   0%, 100% { transform: translate(0); text-shadow: none; }
-  10% { transform: translate(-2px, 1px); text-shadow: 2px 0 #ff0055, -2px 0 #00f3ff; }
-  20% { transform: translate(2px, -1px); text-shadow: -2px 0 #ff0055, 2px 0 #00f3ff; }
-  30% { transform: translate(-1px, 2px); text-shadow: 1px 0 #ff0055, -1px 0 #00f3ff; }
-  40% { transform: translate(1px, -2px); text-shadow: -1px 0 #ff0055, 1px 0 #00f3ff; }
+  10% { transform: translate(-2px, 1px); text-shadow: 2px 0 #ff0000, -2px 0 #00ffff; }
+  20% { transform: translate(2px, -1px); text-shadow: -2px 0 #ff0000, 2px 0 #00ffff; }
+  30% { transform: translate(-1px, 2px); text-shadow: 1px 0 #ff0000, -1px 0 #00ffff; }
+  40% { transform: translate(1px, -2px); text-shadow: -1px 0 #ff0000, 1px 0 #00ffff; }
   50% { transform: translate(0); text-shadow: none; }
 }
 
@@ -423,7 +432,7 @@ html, body {
 
 .mech-plate {
   background: var(--dark-metal);
-  border: 1px solid #1a1a2e;
+  border: 1px solid #333;
   position: relative;
   overflow: hidden;
 }
@@ -432,7 +441,7 @@ html, body {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3) 1px, transparent 1px, transparent 2px);
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15) 1px, transparent 1px, transparent 2px);
   pointer-events: none;
   z-index: 2;
 }
@@ -444,7 +453,7 @@ html, body {
   align-items: center;
   padding: 0 15px;
   justify-content: space-between;
-  color: var(--neon-blue);
+  color: var(--neon-orange);
   font-size: 12px;
   letter-spacing: 2px;
   clip-path: polygon(0 0, 100% 0, 100% 100%, 10% 100%, 0 70%);
@@ -452,7 +461,7 @@ html, body {
 
 .plate-main {
   padding: 20px;
-  border-bottom: 1px dashed #1a1a2e;
+  border-bottom: 1px dashed #444;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -474,8 +483,8 @@ html, body {
   position: absolute;
   width: 15px;
   height: 100%;
-  background: repeating-linear-gradient(45deg, #111, #111 5px, #050510 5px, #050510 10px);
-  border-left: 1px solid var(--neon-blue);
+  background: repeating-linear-gradient(45deg, #222, #222 5px, #111 5px, #111 10px);
+  border-left: 1px solid var(--neon-orange);
   right: -15px;
   top: 0;
   opacity: 0;
@@ -489,7 +498,7 @@ html, body {
   height: 160px;
   border-radius: 50%;
   overflow: hidden;
-  border: 3px solid var(--neon-blue);
+  border: 3px solid var(--neon-orange);
   box-shadow: 0 0 15px var(--neon-glow), inset 0 0 20px rgba(0,0,0,0.8);
   position: relative;
   background: #000;
@@ -531,15 +540,15 @@ html, body {
 
 .artist-name {
   font-size: 12px;
-  color: var(--neon-blue);
+  color: var(--neon-orange);
   letter-spacing: 2px;
   text-transform: uppercase;
 }
 
 .control-btn {
   background: transparent;
-  border: 1px solid #1a1a2e;
-  color: var(--neon-blue);
+  border: 1px solid #444;
+  color: var(--neon-orange);
   cursor: pointer;
   width: 50px;
   height: 50px;
@@ -551,17 +560,17 @@ html, body {
 }
 
 .control-btn:hover {
-  background: var(--neon-blue);
+  background: var(--neon-orange);
   color: var(--dark-metal);
   box-shadow: 0 0 15px var(--neon-glow);
-  border-color: var(--neon-blue);
+  border-color: var(--neon-orange);
 }
 
 .play-btn {
   width: 65px;
   height: 65px;
-  border: 2px solid var(--neon-blue);
-  background: rgba(0, 243, 255, 0.1);
+  border: 2px solid var(--neon-orange);
+  background: rgba(255, 94, 0, 0.1);
 }
 
 .play-btn svg { width: 28px; height: 28px; }
@@ -593,7 +602,7 @@ html, body {
 <header class="top-banner">
   <a href="index.html#wheel" class="glowing-logo-wrapper" aria-label="Go to Home">
     <svg class="glowing-logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1767 1270">
-      <g fill="#00f3ff">
+      <g fill="#b49a5d">
         <path d="M972 225zl-6 62q-4 36-14 75-8 28-17 49-12 30-26 55-11 22-25 40v2q38 48 93 77l9 3h1l9-10q26-34 28-78c2-22-4-44-21-58l-10-6q-3-1-1-4l2-2q18 4 28 20c13 19 13 45 10 67q-4 21-12 38a125 125 0 0 1-26 37l1 1 19 8 26 10q48 15 101 22 53 8 111 8h316a3 3 0 0 1 3 4q-1 4-5 4h-302q-59 1-119-8-47-6-96-19a411 411 0 0 1-61-22l-13 12-28 18q-14 7-31 12-32 8-65 2-25-5-48-18-15-8-28-20l-5-7h-2a602 602 0 0 1-221 48l-52 2H194q-3 0-4-3a3 3 0 0 1 3-4h113l174-1q36 0 80-3 79-5 155-29l39-13 7-3v-1q-38-42-37-99c1-20 9-48 27-59q7-4 14-4a2 2 0 0 1 2 3q0 2-2 3-17 8-24 24-6 14-7 29c-4 37 11 72 35 100h2q13-6 24-13l31-23q25-20 43-46l2-1v-1l-20-30q-29-50-44-103-13-44-18-100l-1-33v-12h-1l-3 4-14 23-5 8q-26 39-58 80-23 27-52 57-34 35-73 63-53 38-116 60l-32 9q-39 9-85 7l-39-1H4q-3 0-4-3l3-3 24-1h348q34 0 65-9a438 438 0 0 0 188-109q21-19 42-41l38-45q29-37 52-73l19-31 19-31q21-38 36-72l21-49q13-32 23-66l1-3h1q2-1 4 2l3 11 13 41a955 955 0 0 0 91 185q24 39 51 75 42 54 94 100 44 40 97 70 30 17 64 29 23 8 46 12l11 3h2l407 1 2 2v3a2 2 0 0 1-3 2h-383q-12 1-27-1-32-6-54-13-39-13-81-38l-16-10-16-10q-38-27-66-53-39-36-74-80-27-34-54-75zM882 24q-12 36-29 75l-17 37-42 84q0 17 2 32 2 36 8 68l4 20 7 30q16 52 42 98 9 16 20 30h1q6-7 13-19l14-26q8-15 19-42 15-36 24-75 4-15 7-37 5-37 8-75 1-11-4-20l-24-46-24-50q-18-41-29-84M777 595zq12 13 27 22 24 14 53 19 30 4 59-5a149 149 0 0 0 62-37c-37-16-69-43-95-73l-6-8h-1l-11 14q-19 21-40 37-15 13-37 25zM530 865zc24 1 40 21 33 44q-9 23-33 26l-14 1q-17-2-24-1h-20l-1-1 1-1c9-1 17-1 17-12v-97q1-8-6-11l-11-1-1-1 1-1h31q13-1 27 1 18 3 22 19 2 22-15 31zm-28 1c12 0 25 0 32-10q7-11 5-23-3-17-19-19h-13q-5 4-5 10zm0 5v48l1 8c4 7 19 6 25 6q21-4 22-25 2-24-19-35a69 69 0 0 0-29-2M68 826v88q-1 8 3 15 4 5 12 5h1v1l-1 1H47v-1l1-1 5-1c11-3 10-16 10-26v-87q-7-6-15-7l-1-1 1-1h25q2 0 3 2l7 9 76 93v-77l-1-16q-3-8-13-9l-1-1v-1l20 1 15-1 1 1-1 2c-14 0-15 11-15 22v102a1 1 0 0 1-3 1zM309 874v47c0 10 6 11 15 11h16c15-1 22-12 25-25l1-1 1 1-1 27-2 2h-85l-1-1 1-1 9-1c8-1 8-8 8-15v-92c0-12-7-13-17-13l-1-1 1-1h81l1 1v25l-1 1-1-1-1-6q-3-11-13-15l-13-1h-12q-12 1-11 13v41h28l7-2q7-4 7-12l1-1h1v36h-1l-1-1v-5q-4-11-17-11zM776 918zq-23 23-54 21c-21-2-38-16-38-38v-73q2-9-6-13l-11-1-1-1 1-1h47v1l-1 1-8 1c-8 2-8 8-8 14v64q0 39 39 41 24-3 41-19v-93c-2-8-10-8-16-8h-1v-1l1-1h45a1 1 0 0 1 2 1l-1 1-9 1q-8 2-8 12v97q0 10 9 10l8 1 1 1-1 1h-28l-1-1-1-3zM907 812l1-1h45l2 1-1 1-9 1q-9 2-8 12v94q0 13 14 12h23q8 0 14-3 12-9 14-23l1-1 1 1-2 28-2 2h-93v-1l1-1c7-1 15 0 16-10v-94l-1-10c-1-7-10-7-16-7zM1207 918zq-23 23-54 21c-21-2-38-16-38-38v-73q2-9-6-12l-10-2a1 1 0 0 1-2-1l1-1h47v2h-1l-8 1c-8 2-8 8-8 14v64q0 39 39 41 23-3 41-19v-93c-2-8-10-8-16-8h-1v-1l1-1h45a1 1 0 0 1 2 1v1h-1l-9 1q-9 2-8 12v97q0 9 9 10l8 1 1 1-1 1h-28l-1-1-1-4zM1398 866zl24-34c3-5 8-15-1-17l-6-1-1-1 2-1h37l1 1v1h-1q-17 4-26 19l-27 36v2q27 42 33 49 6 11 16 14l7 1 1 1-1 1h-43l-1-1 1-1 8-1 2-2-2-4-30-47h-1l-26 38-3 4c-3 10 4 11 11 12l1 1-1 1h-38l-1-1 1-1q16-3 25-16l29-41v-1l-34-51q-7-11-19-12l-1-1v-1h42l1 1v1h-1c-4 0-13 1-8 8zM1586 873zv47c0 10 6 11 15 11h16c15-1 22-12 25-25l1-1 1 1-1 27-2 2h-85l-1-1 1-1 9-1c8-1 8-8 8-15v-92c0-12-7-13-17-13l-1-1 1-1h81l1 1v25l-1 1-1-1-1-6q-3-11-13-15l-13-1h-12q-11 1-11 13v41h28l7-2q7-4 7-12l1-1h1v36h-1l-1-1v-5q-4-11-17-11zM1766 1063v3l-1 1-1763-1-1-1v-4l1-1 1763-1 1 1zM989 1215q11 0 12-4l1-7v-54l-1-7c-1-3-10-3-13-3q-15 3-16 17l-1 1v-1l2-22q2 3 5 3h56q4 0 6-3h1l-2 23h-1l-1-8q-3-10-12-10h-10q-5 1-5 6v63c1 6 8 5 12 6v1h-32zM749 1215q7-1 10-6l6-10 26-62a1 1 0 0 1 2 0v2l31 65q3 9 13 11l-2 1h-26l-1-1h1q8-1 8-3 1-3-1-6l-14-31h-25l-10 26q-5 14 11 14l-1 1h-27zm30-43h21v-1l-10-22h-1ZM951 1215l-1 1h-12q-7 1-10-5l-27-35h-11l-1 1v31c0 7 6 6 11 7v1h-29l-1-1q5 0 8-2 3-1 3-6v-57q1-10-6-10l-4-1-1-1h29c9-1 19 2 22 11q2 15-12 23v1q10 17 22 30 7 9 19 12zm-61-42c8 1 20 1 22-9 2-6 1-16-4-21q-7-5-15-3l-3 2-1 7z"/>
         <path d="m2 1205-1-1v-5h9l324-1q44 0 84 8l33 7 13 3 16 5 42 13 60 18q44 10 92 10h416l33-1 32-4 44-9 60-16 22-7 72-18q22-5 47-7 30-3 64-2h301v8h-344q-23 0-42 3l-21 4-56 13-34 9-64 18q-26 8-56 12-36 5-75 5H890l-214-1-44-2q-33-3-67-13l-70-22q-21-7-47-13l-44-9q-24-4-47-5H2"/>
       </g>
@@ -603,6 +612,8 @@ html, body {
   <h1 class="banner-title">Gallery</h1>
   <div></div>
 </header>
+
+<canvas id="projector"></canvas>
 
 <!-- ========== MASCOT POPUP HTML ========== -->
 <div class="mascot-popup" id="mascotPopup">
@@ -640,7 +651,7 @@ html, body {
         ]
       },
       greet: {
-        text: "Greetings, flesh-creature! The neon hues of this realm are especially vibrant today, aren't they?",
+        text: "Greetings, flesh-creature! The golden hues of this realm are especially vibrant today, aren't they?",
         options: [
           { label: "What's your name?", next: "greet_name" },
           { label: "How's the weather?", next: "greet_weather" }
@@ -733,6 +744,151 @@ html, body {
   });
 </script>
 
+<!-- ========== PARTICLE ENGINE SCRIPT ========== -->
+<script>
+var ParticleEngine = (function() {
+	'use strict';
+	function ParticleEngine(canvas_id) {
+		if (!(this instanceof ParticleEngine)) return new ParticleEngine(canvas_id);
+		var _ParticleEngine = this;
+		this.canvas_id = canvas_id;
+		this.stage = new createjs.Stage(canvas_id);
+		this.totalWidth = this.canvasWidth = document.getElementById(canvas_id).width = document.getElementById(canvas_id).offsetWidth;
+		this.totalHeight = this.canvasHeight = document.getElementById(canvas_id).height = document.getElementById(canvas_id).offsetHeight;
+		this.compositeStyle = "source-over";
+		this.particleSettings = [
+			{id:"small", num:300, fromX:0, toX:this.totalWidth, ballwidth:3, alphamax:0.6, areaHeight:.5, color:"#D1C0A5", fill:false},
+			{id:"medium", num:100, fromX:0, toX:this.totalWidth, ballwidth:8, alphamax:0.5, areaHeight:1, color:"#B8A380", fill:true},
+			{id:"large", num:10, fromX:0, toX:this.totalWidth, ballwidth:30, alphamax:0.4, areaHeight:1, color:"#9C8561", fill:true}
+		];
+		this.particleArray = [];
+		this.lights = [
+			{ellipseWidth:400, ellipseHeight:100, alpha:0.6, offsetX:0, offsetY:0, color:"#E8DCC4"},
+			{ellipseWidth:350, ellipseHeight:250, alpha:0.4, offsetX:-50, offsetY:0, color:"#D8C8A8"},
+			{ellipseWidth:100, ellipseHeight:80, alpha:0.3, offsetX:80, offsetY:-50, color:"#F0E4D0"}
+		];
+		this.stage.compositeOperation = _ParticleEngine.compositeStyle;
+
+		function drawBgLight() {
+			for (var i = 0, len = _ParticleEngine.lights.length; i < len; i++) {
+				var light = new createjs.Shape();
+				light.graphics.beginFill(_ParticleEngine.lights[i].color).drawEllipse(0, 0, _ParticleEngine.lights[i].ellipseWidth, _ParticleEngine.lights[i].ellipseHeight);
+				light.regX = _ParticleEngine.lights[i].ellipseWidth/2;
+				light.regY = _ParticleEngine.lights[i].ellipseHeight/2;
+				light.y = light.initY = _ParticleEngine.totalHeight/2 + _ParticleEngine.lights[i].offsetY;
+				light.x = light.initX = _ParticleEngine.totalWidth/2 + _ParticleEngine.lights[i].offsetX;
+				var blurFilter = new createjs.BlurFilter(_ParticleEngine.lights[i].ellipseWidth, _ParticleEngine.lights[i].ellipseHeight, 1);
+				var bounds = blurFilter.getBounds();
+				light.filters = [blurFilter];
+				light.cache(bounds.x-_ParticleEngine.lights[i].ellipseWidth/2, bounds.y-_ParticleEngine.lights[i].ellipseHeight/2, bounds.width*2, bounds.height*2);
+				light.alpha = _ParticleEngine.lights[i].alpha;
+				light.compositeOperation = "source-over";
+				_ParticleEngine.stage.addChildAt(light, 0);
+				_ParticleEngine.lights[i].elem = light;
+			}
+			gsap.fromTo(_ParticleEngine.lights[0].elem, {scaleX:1.5, x:_ParticleEngine.lights[0].elem.initX, y:_ParticleEngine.lights[0].elem.initY}, {duration: 10, yoyo:true, repeat:-1, ease:"power1.inOut", scaleX:2, scaleY:0.7});
+			gsap.fromTo(_ParticleEngine.lights[1].elem, {x:_ParticleEngine.lights[1].elem.initX, y:_ParticleEngine.lights[1].elem.initY}, {duration: 12, delay:5, yoyo:true, repeat:-1, ease:"power1.inOut", scaleY:2, scaleX:2, y:_ParticleEngine.totalHeight/2-50, x:_ParticleEngine.totalWidth/2+100});
+			gsap.fromTo(_ParticleEngine.lights[2].elem, {x:_ParticleEngine.lights[2].elem.initX, y:_ParticleEngine.lights[2].elem.initY}, {duration: 8, delay:2, yoyo:true, repeat:-1, ease:"power1.inOut", scaleY:1.5, scaleX:1.5, y:_ParticleEngine.totalHeight/2, x:_ParticleEngine.totalWidth/2-200});
+		}
+
+		function drawParticles() {
+			for (var i = 0, len = _ParticleEngine.particleSettings.length; i < len; i++) {
+				var ball = _ParticleEngine.particleSettings[i];
+				for (var s = 0; s < ball.num; s++ ) {
+					var circle = new createjs.Shape();
+					if(ball.fill) {
+						circle.graphics.beginFill(ball.color).drawCircle(0, 0, ball.ballwidth);
+						var blurFilter = new createjs.BlurFilter(ball.ballwidth/2, ball.ballwidth/2, 1);
+						circle.filters = [blurFilter];
+						var bounds = blurFilter.getBounds();
+						circle.cache(-50+bounds.x, -50+bounds.y, 100+bounds.width, 100+bounds.height);
+					} else {
+						circle.graphics.beginStroke(ball.color).setStrokeStyle(1).drawCircle(0, 0, ball.ballwidth);
+					}
+					circle.alpha = range(0, 0.1);
+					circle.alphaMax = ball.alphamax;
+					circle.distance = ball.ballwidth * 2;
+					circle.ballwidth = ball.ballwidth;
+					circle.flag = ball.id;
+					_ParticleEngine.applySettings(circle, ball.fromX, ball.toX, ball.areaHeight);
+					circle.speed = range(2, 10);
+					circle.y = circle.initY;
+					circle.x = circle.initX;
+					circle.scaleX = circle.scaleY = range(0.3, 1);
+					_ParticleEngine.stage.addChild(circle);
+					animateBall(circle);
+					_ParticleEngine.particleArray.push(circle);
+				}
+			}
+		}
+
+		this.applySettings = function(circle, positionX, totalWidth, areaHeight) {
+			circle.speed = range(1, 3);
+			circle.initY = weightedRange(0, _ParticleEngine.totalHeight, 1, [_ParticleEngine.totalHeight * (2-areaHeight/2)/4, _ParticleEngine.totalHeight*(2+areaHeight/2)/4], 0.8 );
+			circle.initX = weightedRange(positionX, totalWidth, 1, [positionX+ ((totalWidth-positionX))/4, positionX+ ((totalWidth-positionX)) * 3/4], 0.6);
+		}
+
+		function animateBall(ball) {
+			var scale = range(0.3, 1);
+			var xpos = range(ball.initX - ball.distance, ball.initX + ball.distance);
+			var ypos = range(ball.initY - ball.distance, ball.initY + ball.distance);
+			var speed = ball.speed;
+			gsap.to(ball, {duration: speed, scaleX: scale, scaleY: scale, x: xpos, y: ypos, onComplete: animateBall, onCompleteParams: [ball], ease: "power3.inOut"});
+			gsap.to(ball, {duration: speed/2, alpha: range(0.1, ball.alphaMax), onComplete: fadeout, onCompleteParams: [ball, speed]});
+		}
+
+		function fadeout(ball, speed) {
+			ball.speed = range(2, 10);
+			gsap.to(ball, {duration: speed/2, alpha: 0 });
+		}
+		drawBgLight();
+		drawParticles();
+	}
+
+	ParticleEngine.prototype.render = function() { this.stage.update(); }
+	ParticleEngine.prototype.resize = function() {
+		this.totalWidth = this.canvasWidth = document.getElementById(this.canvas_id).width = document.getElementById(this.canvas_id).offsetWidth;
+		this.totalHeight = this.canvasHeight = document.getElementById(this.canvas_id).height = document.getElementById(this.canvas_id).offsetHeight;
+		this.render();
+		for (var i = 0, length = this.particleArray.length; i < length; i++) {
+			this.applySettings(this.particleArray[i], 0, this.totalWidth, this.particleArray[i].areaHeight);
+		}
+		for (var j = 0, len = this.lights.length; j < len; j++) {
+			this.lights[j].elem.initY = this.totalHeight/2 + this.lights[j].offsetY;
+			this.lights[j].elem.initX = this.totalWidth/2 + this.lights[j].offsetX;
+			gsap.to(this.lights[j].elem, {duration: 0.5, x: this.lights[j].elem.initX, y: this.lights[j].elem.initY});
+		}
+	}
+	return ParticleEngine;
+}());
+
+function range(min, max) { return min + (max - min) * Math.random(); }
+function round(num, precision) { var decimal = Math.pow(10, precision); return Math.round(decimal * num) / decimal; }
+function weightedRange(to, from, decimalPlaces, weightedRange, weightStrength) {
+	if (typeof from === "undefined" || from === null) from = 0;
+	if (typeof decimalPlaces === "undefined" || decimalPlaces === null) decimalPlaces = 0;
+	if (typeof weightedRange === "undefined" || weightedRange === null) weightedRange = 0;
+	if (typeof weightStrength === "undefined" || weightStrength === null) weightStrength = 0;
+	var ret;
+	if(to == from) { return(to); }
+	if(weightedRange && Math.random() <= weightStrength) {
+		ret = round(Math.random() * (weightedRange[1] - weightedRange[0]) + weightedRange[0], decimalPlaces);
+	} else {
+		ret = round(Math.random() * (to - from) + from, decimalPlaces);
+	}
+	return ret;
+}
+
+var particles;
+(function(){
+	particles = new ParticleEngine('projector');
+	createjs.Ticker.on("tick", updateCanvas);
+	window.addEventListener('resize', resizeCanvas, false);
+	function updateCanvas(){ particles.render(); }
+	function resizeCanvas(){ particles.resize(); }
+}());
+</script>
+
 <!-- ========================================== -->
 <!-- CYBERPUNK MECHA MUSIC PLAYER -->
 <!-- ========================================== -->
@@ -755,7 +911,7 @@ html, body {
 
     <div class="mech-plate plate-main">
       <div class="oval-frame">
-        <img id="album-art" src="https://via.placeholder.com/160x160/050510/00f3ff?text=NO+DISC" alt="Album Art" class="album-art">
+        <img id="album-art" src="https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=NO+DISC" alt="Album Art" class="album-art">
       </div>
       <div class="song-info">
         <div id="song-title" class="song-title">STANDBY</div>
@@ -826,7 +982,7 @@ html, body {
       artistName.classList.add('glitch-text');
       songTitle.textContent = currentSong.title;
       artistName.textContent = currentSong.artist;
-      albumArtImg.src = currentSong.art || 'https://via.placeholder.com/160x160/050510/00f3ff?text=NO+DISC';
+      albumArtImg.src = currentSong.art || 'https://via.placeholder.com/160x160/0a0a0a/ff5e00?text=NO+DISC';
     }
   }
 
@@ -937,7 +1093,7 @@ html, body {
   background: transparent;
   touch-action: none;
   margin-top: 110px;
-  font-family: 'Share Tech Mono', 'Segoe UI', system-ui, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
 }
 
 .gallery-wrapper * {
@@ -965,7 +1121,7 @@ html, body {
 .gallery-loader {
   position: absolute;
   top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(2, 2, 10, 0.95);
+  background: rgba(255, 253, 245, 0.95);
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -997,7 +1153,7 @@ html, body {
   margin-left: -2px;
   background-color: transparent;
   border-radius: 0 20px 0 20px;
-  box-shadow: inset 0 0 0 1px #00f3ff, 0 0 8px 0 #00f3ff;
+  box-shadow: inset 0 0 0 1px #b49a5d, 0 0 8px 0 #b49a5d;
   transform-origin: center 40px;
 }
 
@@ -1016,15 +1172,15 @@ html, body {
 }
 
 @keyframes loader-pulse {
-  0%, 100% { box-shadow: inset 0 0 0 1px #00f3ff, 0 0 8px 0 #00f3ff; }
-  50% { box-shadow: inset 0 0 0 1px #0088ff, 0 0 12px 0 #0088ff; }
+  0%, 100% { box-shadow: inset 0 0 0 1px #b49a5d, 0 0 8px 0 #b49a5d; }
+  50% { box-shadow: inset 0 0 0 1px #5C4A32, 0 0 12px 0 #5C4A32; }
 }
 
 .loader-bar {
   width: 120px;
   height: 4px;
   position: relative;
-  background: rgba(0, 243, 255, 0.2);
+  background: rgba(180, 154, 93, 0.2);
   border-radius: 2px;
   overflow: hidden;
   margin-bottom: 12px;
@@ -1035,13 +1191,13 @@ html, body {
   height: 100%;
   position: absolute;
   left: 0;
-  background: #00f3ff;
+  background: #b49a5d;
   transition: width 0.2s ease;
 }
 
 .loader-text {
   font-family: 'Share Tech Mono', monospace;
-  color: #00f3ff;
+  color: #5C4A32;
   font-size: 16px;
 }
 
@@ -1064,22 +1220,22 @@ html, body {
   bottom: 20px;
   right: 76px;
   display: flex;
-  background: rgba(10, 10, 20, 0.9);
-  border: 1px solid rgba(0, 243, 255, 0.3);
-  border-radius: 4px;
+  background: rgba(255, 253, 245, 0.9);
+  border: 1px solid rgba(180, 154, 93, 0.4);
+  border-radius: 22px;
   overflow: hidden;
   z-index: 1000;
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 .gallery-wrapper .zoom-btn {
   width: 44px;
   height: 44px;
   background: transparent;
-  color: #00f3ff;
+  color: #b49a5d;
   border: none;
-  border-right: 1px solid rgba(0, 243, 255, 0.3);
+  border-right: 1px solid rgba(180, 154, 93, 0.4);
   font-size: 24px;
   font-weight: bold;
   cursor: pointer;
@@ -1095,12 +1251,12 @@ html, body {
 }
 
 .gallery-wrapper .zoom-btn:hover {
-  background: rgba(0, 243, 255, 0.1);
-  color: #fff;
+  background: rgba(180, 154, 93, 0.1);
+  color: #5C4A32;
 }
 
 .gallery-wrapper .zoom-btn:active {
-  background: rgba(0, 243, 255, 0.2);
+  background: rgba(180, 154, 93, 0.2);
 }
 
 .gallery-wrapper .fullscreen-btn {
@@ -1109,10 +1265,10 @@ html, body {
   right: 20px;
   width: 44px;
   height: 44px;
-  background: rgba(10, 10, 20, 0.9);
-  color: #00f3ff;
-  border: 1px solid rgba(0, 243, 255, 0.3);
-  border-radius: 4px;
+  background: rgba(255, 253, 245, 0.9);
+  color: #b49a5d;
+  border: 1px solid rgba(180, 154, 93, 0.4);
+  border-radius: 50%;
   font-size: 20px;
   cursor: pointer;
   z-index: 1000;
@@ -1125,7 +1281,7 @@ html, body {
 
 .gallery-wrapper .fullscreen-btn:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+  box-shadow: 0 0 15px rgba(180, 154, 93, 0.4);
 }
 
 .gallery-wrapper .hint {
@@ -1133,11 +1289,11 @@ html, body {
   left: 12px;
   bottom: 12px;
   z-index: 10;
-  background: rgba(10, 10, 20, 0.9);
-  color: #88ccff;
+  background: rgba(255, 253, 245, 0.9);
+  color: #5C4A32;
   padding: 8px 12px;
-  border-radius: 4px;
-  border: 1px solid rgba(0, 243, 255, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(180, 154, 93, 0.3);
   opacity: 0.9;
   font-size: 13px;
   pointer-events: none;
@@ -1151,8 +1307,8 @@ html, body {
 .gallery-modal {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
   z-index: 2000;
   display: none;
   align-items: center;
@@ -1168,15 +1324,15 @@ html, body {
 }
 
 .gallery-card {
-  background: #0a0a14;
-  border: 1px solid rgba(0, 243, 255, 0.3);
-  border-radius: 8px;
+  background: #FFFDF5;
+  border: 1px solid rgba(180, 154, 93, 0.4);
+  border-radius: 12px;
   width: 100%;
   max-width: 900px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(0, 243, 255, 0.1);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
   position: relative;
   overflow: hidden;
   transform: scale(0.95);
@@ -1203,12 +1359,12 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(255, 253, 245, 0.25);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   padding: 20px;
   min-width: 0;
-  border-right: 1px solid rgba(0, 243, 255, 0.2);
+  border-right: 1px solid rgba(180, 154, 93, 0.2);
   position: relative;
 }
 
@@ -1229,10 +1385,10 @@ html, body {
   transform: translateY(-50%);
   width: 40px;
   height: 40px;
-  border-radius: 4px;
-  background: rgba(10, 10, 20, 0.85);
-  border: 1px solid rgba(0, 243, 255, 0.4);
-  color: #00f3ff;
+  border-radius: 50%;
+  background: rgba(255, 253, 245, 0.85);
+  border: 1px solid rgba(180, 154, 93, 0.4);
+  color: #b49a5d;
   font-size: 16px;
   cursor: pointer;
   display: flex;
@@ -1252,10 +1408,10 @@ html, body {
 }
 
 .carousel-arrow:hover {
-  background: #00f3ff;
-  color: #000;
+  background: #b49a5d;
+  color: #fff;
   transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+  box-shadow: 0 4px 12px rgba(180, 154, 93, 0.3);
 }
 
 .carousel-prev {
@@ -1276,11 +1432,11 @@ html, body {
   gap: 8px;
   z-index: 5;
   padding: 6px 12px;
-  background: rgba(10, 10, 20, 0.8);
+  background: rgba(255, 253, 245, 0.7);
   border-radius: 20px;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgba(0, 243, 255, 0.2);
+  border: 1px solid rgba(180, 154, 93, 0.2);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease;
@@ -1295,7 +1451,7 @@ html, body {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(0, 243, 255, 0.3);
+  background: rgba(180, 154, 93, 0.35);
   border: none;
   cursor: pointer;
   padding: 0;
@@ -1303,15 +1459,15 @@ html, body {
 }
 
 .carousel-dot:hover {
-  background: rgba(0, 243, 255, 0.7);
+  background: rgba(180, 154, 93, 0.7);
   transform: scale(1.2);
 }
 
 .carousel-dot.active {
-  background: #00f3ff;
+  background: #b49a5d;
   width: 20px;
   border-radius: 4px;
-  box-shadow: 0 0 8px rgba(0, 243, 255, 0.8);
+  box-shadow: 0 0 6px rgba(180, 154, 93, 0.5);
 }
 
 /* Hide carousel controls when only one image */
@@ -1336,53 +1492,51 @@ html, body {
 .gallery-card-close {
   position: absolute;
   top: 15px;
-  left: 15px;
-  background: rgba(10, 10, 20, 0.9);
-  border: 1px solid rgba(0, 243, 255, 0.4);
-  border-radius: 4px;
+  left: 15px; /* Changed from right: 15px */
+  background: rgba(255, 253, 245, 0.9);
+  border: 1px solid rgba(180, 154, 93, 0.4);
+  border-radius: 50%;
   width: 32px;
   height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
-  color: #00f3ff;
+  color: #5C4A32;
   cursor: pointer;
   z-index: 10;
   transition: all 0.2s ease;
 }
 
 .gallery-card-close:hover {
-  background: #00f3ff;
-  color: #000;
-  box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+  background: #b49a5d;
+  color: #fff;
 }
 
 .gallery-card-title {
   font-size: 26px;
   font-weight: 600;
-  color: #e0f7ff;
+  color: #5C4A32;
   margin: 0;
   line-height: 1.2;
 }
 
 .gallery-card-meta {
   font-size: 14px;
-  color: #88ccff;
+  color: #8A7355;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
 .gallery-card-meta strong {
-  color: #00f3ff;
+  color: #5C4A32;
 }
 
 .gallery-card-price {
   font-size: 22px;
   font-weight: bold;
-  color: #00f3ff;
-  text-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+  color: #b49a5d;
   margin-top: 4px;
   margin-bottom: 8px;
 }
@@ -1390,11 +1544,11 @@ html, body {
 .gallery-card-desc {
   font-size: 14px;
   line-height: 1.6;
-  color: #c0e0ff;
+  color: #5C4A32;
   overflow-y: auto;
   flex: 1;
   padding-right: 10px;
-  border-top: 1px solid rgba(0, 243, 255, 0.2);
+  border-top: 1px solid rgba(180, 154, 93, 0.2);
   padding-top: 12px;
   margin-top: 4px;
 }
@@ -1403,10 +1557,10 @@ html, body {
   width: 6px;
 }
 .gallery-card-desc::-webkit-scrollbar-track {
-  background: rgba(0,0,0,0.3);
+  background: transparent;
 }
 .gallery-card-desc::-webkit-scrollbar-thumb {
-  background: rgba(0, 243, 255, 0.4);
+  background: rgba(180, 154, 93, 0.4);
   border-radius: 3px;
 }
 
@@ -1419,27 +1573,24 @@ html, body {
   display: block;
   width: 100%;
   padding: 14px;
-  background: transparent;
-  color: #00f3ff;
+  background: #b49a5d;
+  color: #fff;
   text-align: center;
   text-decoration: none;
-  border: 1px solid #00f3ff;
-  border-radius: 4px;
+  border-radius: 8px;
   font-weight: 600;
   font-size: 16px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  transition: background 0.2s, transform 0.1s;
+  border: none;
   cursor: pointer;
-  font-family: 'Share Tech Mono', monospace;
-  text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
+  font-family: inherit;
 }
 
 .inquire-btn:hover {
-  background: #00f3ff;
-  color: #000;
-  box-shadow: 0 0 20px rgba(0, 243, 255, 0.6);
+  background: #9C8561;
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(180, 154, 93, 0.3);
 }
 
 .inquire-btn:active {
@@ -1449,30 +1600,30 @@ html, body {
 /* ============================================================
    MOBILE RESPONSIVENESS
    ============================================================ */
-@media (max-width: 768px) {
-  .gallery-wrapper .hint {
-    position: fixed;
-    bottom: 70px;
-    left: 12px;
-    font-size: 11px;
-    padding: 6px 10px;
-  }
-  .gallery-wrapper .fullscreen-btn {
-    bottom: 15px;
-    right: 15px;
-    width: 38px;
-    height: 38px;
-    font-size: 16px;
-  }
-  .gallery-wrapper .zoom-controls {
-    bottom: 15px;
-    right: 65px;
-  }
-  .gallery-wrapper .zoom-btn {
-    width: 38px;
-    height: 38px;
-    font-size: 20px;
-  }
+   @media (max-width: 768px) {
+     .gallery-wrapper .hint {
+       position: fixed;
+       bottom: 70px;
+       left: 12px;
+       font-size: 11px;
+       padding: 6px 10px;
+     }
+     .gallery-wrapper .fullscreen-btn {
+       bottom: 15px;
+       right: 15px;
+       width: 38px;
+       height: 38px;
+       font-size: 16px;
+     }
+     .gallery-wrapper .zoom-controls {
+       bottom: 15px;
+       right: 65px;
+     }
+     .gallery-wrapper .zoom-btn {
+       width: 38px;
+       height: 38px;
+       font-size: 20px;
+     }
 
   .gallery-card {
     max-height: 95vh;
@@ -1487,7 +1638,7 @@ html, body {
     max-height: 40vh;
     padding: 12px;
     border-right: none;
-    border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+    border-bottom: 1px solid rgba(180, 154, 93, 0.2);
   }
   .gallery-card-image {
     max-height: 35vh;
@@ -1515,7 +1666,6 @@ html, body {
   .carousel-prev { left: 10px; }
   .carousel-next { right: 10px; }
 }
-
 /* Badge Base Styles */
 .boho-service-badge {
     position: absolute;
@@ -1524,12 +1674,12 @@ html, body {
     font-size: 0.7rem;
     font-weight: 700;
     padding: 4px 10px;
-    border-radius: 4px;
-    letter-spacing: 0.1em;
+    border-radius: 12px;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    z-index: 10;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    z-index: 10; /* Ensures it sits above carousel arrows */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     display: flex;
     align-items: center;
     gap: 5px;
@@ -1537,34 +1687,31 @@ html, body {
     -webkit-backdrop-filter: blur(6px);
 }
 
-/* On Sale Badge (Cyberpunk Pink/Red) */
+/* On Sale Badge (Red) - Takes priority */
 .badge-sale {
-    background: rgba(255, 0, 85, 0.85);
+    background: rgba(220, 53, 69, 0.9);
     color: #ffffff;
-    border-color: rgba(255, 0, 85, 0.5);
 }
 
-/* Featured Badge (Cyan) */
+/* Featured Badge (Green with Star) */
 .badge-featured {
-    background: rgba(0, 243, 255, 0.85);
-    color: #000000;
-    border-color: rgba(0, 243, 255, 0.5);
+    background: rgba(40, 167, 69, 0.9);
+    color: #ffffff;
 }
-
 /* Price Strike-through Styles */
 .price-original {
     text-decoration: line-through;
-    color: #88ccff;
+    color: #8A7355;
     font-size: 0.8em;
     font-weight: normal;
     margin-right: 8px;
     opacity: 0.8;
 }
 .price-sale {
-    color: #ff0055;
+    color: #dc3545; /* Red to match your "On Sale" badge */
     font-weight: bold;
-    text-shadow: 0 0 5px rgba(255, 0, 85, 0.5);
 }
+
 </style>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -1654,7 +1801,7 @@ class InfinitePortraitGallery {
 
         this.gl = this.canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false });
         if (!this.gl) {
-            this.container.innerHTML = '<div style="color:#00f3ff; padding:20px; text-align:center; font-family: monospace;">WebGL is not supported on this browser.</div>';
+            this.container.innerHTML = '<div style="color:#5C4A32; padding:20px; text-align:center; font-family: monospace;">WebGL is not supported on this browser.</div>';
             return;
         }
 
@@ -1866,6 +2013,7 @@ class InfinitePortraitGallery {
     for (let i = 0; i < imageCount; i++) {
       const rawItem = sourceItems[i % sourceItems.length];
 
+      // Normalize JSON-style data to match what the gallery expects
       const item = {
         title: rawItem.title || rawItem.Title || 'Untitled',
         alt: rawItem.alt || rawItem.title || rawItem.Title || '',
@@ -1880,6 +2028,7 @@ class InfinitePortraitGallery {
         length: rawItem.length != null ? String(rawItem.length) + '"' : '?',
         width: rawItem.width != null ? String(rawItem.width) + '"' : '?',
         description: rawItem.description || '',
+        // Convert "TRUE"/"FALSE" strings to real booleans (handles both formats)
         inStock: typeof rawItem.inStock === 'string'
             ? rawItem.inStock.toUpperCase() === 'TRUE'
             : Boolean(rawItem.inStock),
@@ -1891,6 +2040,7 @@ class InfinitePortraitGallery {
             : Boolean(rawItem.featured)
       };
 
+// Also copy over any additional fullsizesrc fields (fullsizesrc6, 7, etc.)
 let extraIdx = 6;
 while (rawItem[`fullsizesrc${extraIdx}`]) {
   item[`fullsizesrc${extraIdx}`] = rawItem[`fullsizesrc${extraIdx}`];
@@ -1902,8 +2052,10 @@ while (rawItem[`fullsizesrc${extraIdx}`]) {
 
         const promise = new Promise((resolve) => {
     img.onload = () => {
+        // Apply badge to thumbnail if applicable
         const finalImg = this.createBadgeCanvas(img, item);
 
+        // Wait for badge canvas to be ready if it was created
         const processImage = () => {
             let w = finalImg.naturalWidth || finalImg.width;
             let h = finalImg.naturalHeight || finalImg.height;
@@ -1926,15 +2078,18 @@ while (rawItem[`fullsizesrc${extraIdx}`]) {
             resolve();
         };
 
+        // If badge was applied, wait for the new image to load
         if (finalImg !== img) {
             finalImg.onload = processImage;
-            finalImg.onerror = processImage;
+            finalImg.onerror = processImage; // Fallback if badge fails
         } else {
             processImage();
         }
     };
             img.onerror = () => {
+                // Cycle through Default1, Default2, Default3, Default4 based on the index
                 const fallbackIndex = (i % 4) + 1;
+
                 img.src = `Images/Misc/Default${fallbackIndex}.gif`;
 
                 img.onload = () => {
@@ -1948,6 +2103,7 @@ while (rawItem[`fullsizesrc${extraIdx}`]) {
                     resolve();
                 };
 
+                // If the local fallback also fails, resolve anyway to prevent the loader from hanging
                 img.onerror = () => {
                     console.warn(`Failed to load local fallback: Images/Misc/Default${fallbackIndex}.gif`);
                     resolve();
@@ -1978,23 +2134,33 @@ while (rawItem[`fullsizesrc${extraIdx}`]) {
 }
 
 createBadgeCanvas(img, item) {
+    // Determine which badge to show
     let badgeType = '';
+
+    // Priority 1: On Sale (pricemultiplier < 1)
     const multiplier = parseFloat(item.pricemultiplier);
     if (!isNaN(multiplier) && multiplier < 1) {
         badgeType = 'sale';
-    } else if (item.featured === true) {
+    }
+    // Priority 2: Featured
+    else if (item.featured === true) {
         badgeType = 'featured';
-    } else {
+    }
+    // Neither: Return original image
+    else {
         return img;
     }
 
+    // Create a 2D canvas to composite the badge onto the image
     const canvas = document.createElement('canvas');
     canvas.width = img.naturalWidth;
     canvas.height = img.naturalHeight;
     const ctx = canvas.getContext('2d');
 
+    // Draw the original image
     ctx.drawImage(img, 0, 0);
 
+    // Calculate badge size relative to image
     const fontSize = Math.max(12, Math.min(24, img.naturalWidth * 0.08));
     const padding = fontSize * 0.6;
 
@@ -2007,24 +2173,27 @@ createBadgeCanvas(img, item) {
     if (badgeType === 'sale') {
         const percentOff = Math.round((1 - multiplier) * 100);
         badgeText = `On Sale - ${percentOff}% Off`;
-        badgeColor = 'rgba(255, 0, 85, 0.85)';
+        badgeColor = 'rgba(220, 53, 69, 0.9)';
 
-        ctx.font = `bold ${fontSize}px 'Share Tech Mono', monospace`;
+        ctx.font = `bold ${fontSize}px 'Segoe UI', system-ui, sans-serif`;
         const textMetrics = ctx.measureText(badgeText);
         badgeWidth = textMetrics.width + (padding * 2);
         badgeHeight = fontSize + (padding * 2);
     } else if (badgeType === 'featured') {
-        badgeColor = 'rgba(0, 243, 255, 0.85)';
+        badgeColor = 'rgba(40, 167, 69, 0.9)';
+        // Make it a perfect circle for just the star
         const starSize = fontSize * 1.4;
         badgeWidth = starSize + (padding * 2);
         badgeHeight = starSize + (padding * 2);
-        borderRadius = badgeWidth / 2;
+        borderRadius = badgeWidth / 2; // This makes the rounded rectangle a perfect circle
     }
 
+    // Position (top-left with margin)
     const margin = fontSize * 0.5;
     const x = margin;
     const y = margin;
 
+    // Draw badge background with rounded corners (or circle for featured)
     ctx.fillStyle = badgeColor;
     ctx.beginPath();
     ctx.moveTo(x + borderRadius, y);
@@ -2039,10 +2208,12 @@ createBadgeCanvas(img, item) {
     ctx.closePath();
     ctx.fill();
 
+    // Draw subtle border
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
     ctx.lineWidth = 2;
     ctx.stroke();
 
+    // Draw star shape for featured badge (centered in the circle)
     if (badgeType === 'featured') {
         const starCenterX = x + (badgeWidth / 2);
         const starCenterY = y + (badgeHeight / 2);
@@ -2050,7 +2221,7 @@ createBadgeCanvas(img, item) {
         const innerRadius = outerRadius * 0.4;
         const spikes = 5;
 
-        ctx.fillStyle = '#000000';
+        ctx.fillStyle = '#ffffff';
         ctx.beginPath();
         for (let i = 0; i < spikes * 2; i++) {
             const radius = i % 2 === 0 ? outerRadius : innerRadius;
@@ -2067,18 +2238,21 @@ createBadgeCanvas(img, item) {
         ctx.fill();
     }
 
+    // Draw text (only for 'sale' badge)
     if (badgeText) {
         ctx.fillStyle = '#ffffff';
-        ctx.font = `bold ${fontSize}px 'Share Tech Mono', monospace`;
+        ctx.font = `bold ${fontSize}px 'Segoe UI', system-ui, sans-serif`;
         ctx.textBaseline = 'middle';
         ctx.fillText(badgeText, x + padding, y + (badgeHeight / 2));
     }
 
+    // Create a new Image object from the canvas
     const badgeImg = new Image();
     badgeImg.src = canvas.toDataURL();
 
     return badgeImg;
 }
+
 
     createTexture(img) {
         const tex = this.gl.createTexture();
@@ -2329,6 +2503,7 @@ createBadgeCanvas(img, item) {
         if (zoomInBtn) zoomInBtn.addEventListener('click', () => { this.zoom = Math.min(3.0, this.zoom + 0.1); });
         if (zoomOutBtn) zoomOutBtn.addEventListener('click', () => { this.zoom = Math.max(0.5, this.zoom - 0.1); });
 
+        // Carousel arrow listeners
         this.carouselPrev.addEventListener('click', (e) => {
             e.stopPropagation();
             this.prevImage();
@@ -2357,13 +2532,18 @@ createBadgeCanvas(img, item) {
         });
     }
 
+    // ============================================================
+    // CAROUSEL METHODS
+    // ============================================================
     buildImageArray(item) {
    const images = [];
+   // Prioritize fullsizesrc1, then fall back to fullsizesrc, fullSizeSrc, or src
    const primarySrc = item.fullsizesrc1 || item.fullsizesrc || item.fullSizeSrc || item.src;
    if (primarySrc) {
        images.push(primarySrc);
    }
 
+   // Iterate through fullsizesrc2, fullsizesrc3, etc. (also catches the 'fullsizescr' typo)
    let i = 2;
    while (true) {
        const nextImage = item[`fullsizesrc${i}`] || item[`fullsizescr${i}`];
@@ -2402,6 +2582,7 @@ createBadgeCanvas(img, item) {
         const src = this.currentImages[this.currentImageIndex];
         const fallbackSrc = this.currentItem.src;
 
+        // Fade out
         this.modalImage.style.opacity = '0';
 
         setTimeout(() => {
@@ -2411,6 +2592,7 @@ createBadgeCanvas(img, item) {
                 console.warn(`Failed to load carousel image: ${src}. Falling back to thumbnail.`);
                 this.modalImage.src = fallbackSrc;
             };
+            // Fade in
             this.modalImage.style.opacity = '1';
         }, 200);
 
@@ -2436,12 +2618,15 @@ createBadgeCanvas(img, item) {
     }
 
     getThumbnailBadge(item) {
+        // Priority 1: On Sale (pricemultiplier < 1)
         if (item.pricemultiplier < 1) {
             return `<span class="boho-service-badge badge-sale">On Sale</span>`;
         }
+        // Priority 2: Featured
         if (item.featured === true) {
             return `<span class="boho-service-badge badge-featured"><i class="fas fa-star"></i></span>`;
         }
+        // Neither: Return empty string (no badge)
         return '';
     }
 
@@ -2449,10 +2634,17 @@ createBadgeCanvas(img, item) {
     if (!item) return;
 
     this.currentItem = item;
+
+    // Build the carousel image array
     this.currentImages = this.buildImageArray(item);
     this.currentImageIndex = 0;
 
+    // ==========================================
+    // Generate and inject the badge
+    // ==========================================
     const carouselContainer = this.container.querySelector('#carousel-container');
+
+    // Remove any existing badge first to prevent duplicates when switching items
     const existingBadge = carouselContainer.querySelector('.boho-service-badge');
     if (existingBadge) existingBadge.remove();
 
@@ -2461,22 +2653,29 @@ createBadgeCanvas(img, item) {
         carouselContainer.insertAdjacentHTML('afterbegin', badgeHTML);
     }
 
+    // ==========================================
+    // Safe Price Calculation with Strikethrough
+    // ==========================================
     let priceHTML = "Price N/A";
 
     if (item.pricerange) {
         priceHTML = item.pricerange;
     } else if (item.suggestedprice !== undefined && item.suggestedprice !== null && item.suggestedprice !== "") {
+        // Use parseFloat to safely handle numbers or strings
         const originalPrice = parseFloat(item.suggestedprice) || 0;
         const multiplier = parseFloat(item.pricemultiplier) || 1;
 
         if (originalPrice > 0 && multiplier < 1) {
+            // On Sale: Crossed out original + Red sale price
             const discountedPrice = (originalPrice * multiplier).toFixed(2);
             priceHTML = `<span class="price-original">$${originalPrice.toFixed(2)}</span> <span class="price-sale">$${discountedPrice}</span>`;
         } else if (originalPrice > 0) {
+            // Regular Price
             priceHTML = `Suggested Price - $${(originalPrice * multiplier).toFixed(2)}`;
         }
     }
 
+    // Handle availability
     let availability = "Available";
     if (item.type) {
         availability = item.type;
@@ -2489,6 +2688,7 @@ createBadgeCanvas(img, item) {
         }
     }
 
+    // Set initial image (no fade for first load)
     const primarySrc = this.currentImages[0] || item.src;
     this.modalImage.src = primarySrc;
     this.modalImage.alt = item.alt || item.name || item.title || 'Artwork';
@@ -2498,44 +2698,58 @@ createBadgeCanvas(img, item) {
         this.modalImage.src = item.src;
     };
 
+    // Use item.name OR item.title to support both data structures
     const itemName = item.name || item.title || 'Untitled';
 
+    // Update DOM elements
     document.getElementById('modal-title').textContent = itemName;
+
+    // IMPORTANT: Use innerHTML here so the <span> tags render correctly
     document.getElementById('modal-price').innerHTML = priceHTML;
+
     document.getElementById('modal-availability').textContent = availability;
     document.getElementById('modal-size').textContent = `${item.length || '?'} x ${item.width || '?'}`;
     document.getElementById('modal-description').textContent = item.description || 'No description available.';
 
-    const inquireUrl = `inputform.html?name=${encodeURIComponent(itemName)}&price=${encodeURIComponent(priceHTML.replace(/<[^>]*>/g, ''))}`;
+    // Redirect to inputform.html, passing 'name' and 'price'
+    const inquireUrl = `inputform.html?name=${encodeURIComponent(itemName)}&price=${encodeURIComponent(priceHTML.replace(/<[^>]*>/g, ''))}`; // Strips HTML tags for the URL
 
     const inquireBtn = this.container.querySelector('#modal-inquire-btn') || document.getElementById('modal-inquire-btn');
     if (inquireBtn) {
         inquireBtn.href = inquireUrl;
     }
 
-    this.renderCarouselDots();
-    if (this.currentImages.length <= 1) {
-        this.carouselContainer.classList.add('single-image');
-    } else {
-        this.carouselContainer.classList.remove('single-image');
+    // Update carousel UI
+this.renderCarouselDots();
+if (this.currentImages.length <= 1) {
+    this.carouselContainer.classList.add('single-image');
+} else {
+    this.carouselContainer.classList.remove('single-image');
+}
+
+// ==========================================
+// Detect default images and hide content panel
+// ==========================================
+const contentPanel = this.container.querySelector('.gallery-card-content');
+const isDefaultImage = item.title && item.title.startsWith('Default Artwork');
+
+if (isDefaultImage) {
+    // Hide the entire content panel for default images
+    if (contentPanel) {
+        contentPanel.style.display = 'none';
     }
-
-    const contentPanel = this.container.querySelector('.gallery-card-content');
-    const isDefaultImage = item.title && item.title.startsWith('Default Artwork');
-
-    if (isDefaultImage) {
-        if (contentPanel) {
-            contentPanel.style.display = 'none';
-        }
-        this.carouselContainer.style.flex = '1';
-    } else {
-        if (contentPanel) {
-            contentPanel.style.display = 'flex';
-        }
-        this.carouselContainer.style.flex = '';
+    // Make the image container take full width
+    this.carouselContainer.style.flex = '1';
+} else {
+    // Show the content panel for regular images
+    if (contentPanel) {
+        contentPanel.style.display = 'flex';
     }
+    // Reset the image container flex
+    this.carouselContainer.style.flex = '';
+}
 
-    this.modal.classList.add('is-open');
+this.modal.classList.add('is-open');
 }
 
     closeModal() {
@@ -2601,6 +2815,691 @@ createBadgeCanvas(img, item) {
       END GALLERY SECTION
      ============================================================ -->
 
-  
+     <!-- ========================================== -->
+   <!-- FILTER TAB (Styles, HTML, and Script) -->
+   <!-- ========================================== -->
+   <style>
+     .filter-tab {
+       position: fixed;
+       top: 110px;
+       left: 0;
+       z-index: 1001;
+       background: rgba(255, 255, 255, 0.65);
+       backdrop-filter: blur(12px);
+       -webkit-backdrop-filter: blur(12px);
+       border-bottom: 1px solid rgba(180, 154, 93, 0.2);
+       border-right: 1px solid rgba(180, 154, 93, 0.2);
+       border-radius: 0 0 12px 0;
+       transition: width 0.4s cubic-bezier(0.25, 1, 0.3, 1),
+                   border-radius 0.4s cubic-bezier(0.25, 1, 0.3, 1),
+                   box-shadow 0.4s ease,
+                   height 0.4s cubic-bezier(0.25, 1, 0.3, 1);
+       width: 130px;
+       height: 50px;
+       overflow: hidden;
+       display: flex;
+       align-items: center;
+       box-shadow: 0 4px 12px rgba(180, 154, 93, 0.1);
+     }
+
+     .filter-tab.is-open {
+       width: 100%;
+       height: auto;
+       min-height: 90px;
+       border-right: none;
+       border-radius: 0;
+       box-shadow: 0 10px 30px rgba(180, 154, 93, 0.15);
+     }
+
+     .filter-tab-toggle {
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       gap: 8px;
+       width: 130px;
+       height: 50px;
+       flex-shrink: 0;
+       background: transparent;
+       border: none;
+       cursor: pointer;
+       outline: none;
+       transition: all 0.3s ease;
+     }
+
+     .filter-tab-text {
+       color: #b49a5d;
+       font-family: 'Segoe UI', system-ui, sans-serif;
+       font-size: 16px;
+       font-weight: 600;
+       letter-spacing: 0.05em;
+       transition: text-shadow 0.3s ease, transform 0.3s ease;
+     }
+
+     .filter-tab-toggle:hover .filter-tab-text {
+       text-shadow: 0 0 8px rgba(180, 154, 93, 0.8), 0 0 15px rgba(180, 154, 93, 0.4);
+       transform: scale(1.05);
+     }
+
+     .filter-tab-arrow {
+       display: flex;
+       align-items: center;
+       color: #b49a5d;
+       transition: transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
+     }
+
+     .filter-tab.is-open .filter-tab-arrow {
+       transform: rotate(90deg);
+     }
+
+     .filter-tab-content {
+       flex: 1;
+       padding: 20px 30px;
+       opacity: 0;
+       transform: translateY(10px);
+       transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.25, 1, 0.3, 1);
+       pointer-events: none;
+     }
+
+     .filter-tab.is-open .filter-tab-content {
+       opacity: 1;
+       transform: translateY(0);
+       pointer-events: auto;
+       transition-delay: 0.1s;
+     }
+
+     .filter-layout {
+       display: grid;
+       grid-template-columns: 1fr 1fr 1fr;
+       gap: 24px;
+       align-items: start;
+       width: 100%;
+     }
+
+     .filter-group {
+       display: flex;
+       flex-direction: column;
+       gap: 8px;
+     }
+
+     .filter-label {
+       font-size: 10px;
+       color: #8A7355;
+       font-weight: 700;
+       text-transform: uppercase;
+       letter-spacing: 0.1em;
+     }
+
+     .filter-toggles {
+       display: flex;
+       flex-wrap: wrap;
+       gap: 6px;
+     }
+
+     /* Compact Cyberpunk Toggle Styles */
+     .cyber-toggle {
+       display: flex;
+       align-items: center;
+       gap: 5px;
+       padding: 5px 10px;
+       border: 1px solid rgba(180, 154, 93, 0.4);
+       border-radius: 6px;
+       background: rgba(255, 255, 255, 0.5);
+       cursor: pointer;
+       transition: all 0.3s ease;
+       position: relative;
+       overflow: hidden;
+     }
+
+     .cyber-toggle input {
+       position: absolute;
+       opacity: 0;
+       pointer-events: none;
+     }
+
+     .cyber-icon {
+       width: 16px;
+       height: 16px;
+       flex-shrink: 0;
+     }
+
+     .cyber-text {
+       font-family: 'Share Tech Mono', monospace;
+       font-size: 11px;
+       font-weight: 400;
+       color: #5C4A32;
+       transition: all 0.3s ease;
+     }
+
+     .cyber-toggle:hover {
+       border-color: rgba(180, 154, 93, 0.8);
+       background: rgba(255, 255, 255, 0.8);
+     }
+
+     /* Active State */
+     .cyber-toggle.active {
+       background: #0a0a0a;
+       border-color: #b49a5d;
+       box-shadow: 0 0 12px rgba(180, 154, 93, 0.3), inset 0 0 10px rgba(180, 154, 93, 0.1);
+     }
+
+     .cyber-toggle.active .cyber-text {
+       color: #b49a5d;
+       text-shadow: 0 0 8px rgba(180, 154, 93, 0.6);
+     }
+
+     .cyber-toggle.active .unchecked {
+       opacity: 0;
+     }
+
+     .cyber-toggle.active .glow-1,
+     .cyber-toggle.active .glow-2 {
+       opacity: 1;
+     }
+
+     /* Search & Select Inputs */
+     .filter-search,
+     .filter-select {
+       padding: 6px 10px;
+       border: 1px solid rgba(180, 154, 93, 0.4);
+       border-radius: 6px;
+       background: rgba(255, 255, 255, 0.8);
+       color: #5C4A32;
+       font-family: 'Share Tech Mono', monospace;
+       font-size: 11px;
+       outline: none;
+       backdrop-filter: blur(4px);
+       transition: all 0.25s ease;
+       width: 100%;
+       box-sizing: border-box;
+     }
+
+     .filter-search::placeholder {
+       color: rgba(92, 74, 50, 0.6);
+     }
+
+     .filter-search:hover, .filter-search:focus,
+     .filter-select:hover, .filter-select:focus {
+       border-color: #b49a5d;
+       box-shadow: 0 0 8px rgba(180, 154, 93, 0.3);
+     }
+
+     .filter-reset-btn {
+       margin-top: 12px;
+       padding: 6px 10px;
+       border: 1px solid rgba(180, 154, 93, 0.4);
+       border-radius: 6px;
+       background: transparent;
+       color: #8A7355;
+       font-family: 'Share Tech Mono', monospace;
+       font-size: 11px;
+       font-weight: 400;
+       cursor: pointer;
+       transition: all 0.25s ease;
+       width: 100%;
+     }
+
+     .filter-reset-btn:hover {
+       background: rgba(180, 154, 93, 0.1);
+       color: #5C4A32;
+       border-color: #b49a5d;
+     }
+
+     @media (max-width: 900px) {
+       .filter-layout {
+         grid-template-columns: 1fr 1fr;
+       }
+     }
+
+     @media (max-width: 768px) {
+       .filter-tab { width: 110px; }
+       .filter-tab-toggle { width: 110px; }
+       .filter-tab-text { font-size: 14px; }
+       .filter-layout {
+         grid-template-columns: 1fr;
+         gap: 16px;
+       }
+       .filter-tab.is-open {
+         max-height: 80vh;
+         overflow-y: auto;
+       }
+       .filter-tab-content {
+         padding: 16px 20px;
+       }
+     }
+   </style>
+
+   <div class="filter-tab" id="filterTab">
+     <button class="filter-tab-toggle" id="filterTabToggle" aria-label="Toggle Filters" aria-expanded="false">
+       <span class="filter-tab-text">Filters</span>
+       <span class="filter-tab-arrow">
+         <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+           <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+         </svg>
+       </span>
+     </button>
+
+     <div class="filter-tab-content">
+       <div class="filter-layout">
+
+         <!-- Column 1: Search & Collection (Left) -->
+         <div class="filter-group">
+           <span class="filter-label">Search</span>
+           <input type="text" class="filter-search" id="searchInput" placeholder="Search by Name" autocomplete="off" />
+
+           <span class="filter-label" style="margin-top: 12px;">Collection</span>
+           <select class="filter-select" id="collectionSelect">
+             <option value="All">All Collections</option>
+           </select>
+         </div>
+
+         <!-- Column 2: Size Filters (Middle) -->
+         <div class="filter-group">
+           <span class="filter-label">Size</span>
+           <div class="filter-toggles">
+             <label class="cyber-toggle">
+               <input type="checkbox" data-filter="size" data-value="small" />
+               <svg class="cyber-icon" viewBox="0 0 24 24">
+                 <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                 <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                 <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
+               </svg>
+               <span class="cyber-text">Small</span>
+             </label>
+
+             <label class="cyber-toggle">
+               <input type="checkbox" data-filter="size" data-value="medium" />
+               <svg class="cyber-icon" viewBox="0 0 24 24">
+                 <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                 <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                 <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
+               </svg>
+               <span class="cyber-text">Medium</span>
+             </label>
+
+             <label class="cyber-toggle">
+               <input type="checkbox" data-filter="size" data-value="large" />
+               <svg class="cyber-icon" viewBox="0 0 24 24">
+                 <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                 <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                 <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
+               </svg>
+               <span class="cyber-text">Large</span>
+             </label>
+
+             <label class="cyber-toggle">
+               <input type="checkbox" data-filter="size" data-value="gargantuan" />
+               <svg class="cyber-icon" viewBox="0 0 24 24">
+                 <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                 <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                 <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
+               </svg>
+               <span class="cyber-text">Gargantuan</span>
+             </label>
+           </div>
+         </div>
+
+         <!-- Column 3: Status Filters & Reset (Right) -->
+         <div class="filter-group">
+           <span class="filter-label">Status</span>
+           <div class="filter-toggles">
+             <label class="cyber-toggle">
+               <input type="checkbox" data-filter="status" data-value="featured" />
+               <svg class="cyber-icon" viewBox="0 0 24 24">
+                 <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                 <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                 <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
+               </svg>
+               <span class="cyber-text">Featured</span>
+             </label>
+
+             <label class="cyber-toggle">
+               <input type="checkbox" data-filter="status" data-value="onsale" />
+               <svg class="cyber-icon" viewBox="0 0 24 24">
+                 <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                 <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                 <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
+               </svg>
+               <span class="cyber-text">On Sale</span>
+             </label>
+
+             <label class="cyber-toggle">
+               <input type="checkbox" data-filter="status" data-value="recent" />
+               <svg class="cyber-icon" viewBox="0 0 24 24">
+                 <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                 <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                 <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
+               </svg>
+               <span class="cyber-text">Recent</span>
+             </label>
+
+             <label class="cyber-toggle">
+               <input type="checkbox" data-filter="status" data-value="onhand" />
+               <svg class="cyber-icon" viewBox="0 0 24 24">
+                 <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                 <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                 <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
+               </svg>
+               <span class="cyber-text">On Hand</span>
+             </label>
+
+             <label class="cyber-toggle">
+               <input type="checkbox" data-filter="status" data-value="available" />
+               <svg class="cyber-icon" viewBox="0 0 24 24">
+                 <polygon class="unchecked" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#8A7355" />
+                 <polygon class="glow-1" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#b49a5d" opacity="0" />
+                 <polygon class="glow-2" points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke="#D1C0A5" opacity="0" />
+               </svg>
+               <span class="cyber-text">Available</span>
+             </label>
+           </div>
+           <button class="filter-reset-btn" id="resetFiltersBtn">Reset All Filters</button>
+         </div>
+
+       </div>
+     </div>
+   </div>
+
+   <script>
+   document.addEventListener('DOMContentLoaded', function() {
+     const filterTab = document.getElementById('filterTab');
+     const filterTabToggle = document.getElementById('filterTabToggle');
+     const searchInput = document.getElementById('searchInput');
+     const collectionSelect = document.getElementById('collectionSelect');
+     const resetBtn = document.getElementById('resetFiltersBtn');
+
+     // 1. Toggle Tab Open/Close
+     if (filterTab && filterTabToggle) {
+       filterTabToggle.addEventListener('click', function(e) {
+         e.stopPropagation();
+         const isOpen = filterTab.classList.toggle('is-open');
+         filterTabToggle.setAttribute('aria-expanded', isOpen);
+       });
+
+       // Close on outside click
+       document.addEventListener('click', function(e) {
+         if (!filterTab.contains(e.target)) {
+           filterTab.classList.remove('is-open');
+           filterTabToggle.setAttribute('aria-expanded', 'false');
+         }
+       });
+     }
+
+     // 2. Populate Collection Dropdown dynamically
+     function populateCollections() {
+       setTimeout(() => {
+         if (!window.thumbnails || !Array.isArray(window.thumbnails)) return;
+         const uniqueTypes = new Set();
+         window.thumbnails.forEach(item => {
+           if (item.type) uniqueTypes.add(item.type);
+         });
+         uniqueTypes.forEach(type => {
+           const option = document.createElement('option');
+           option.value = type;
+           option.textContent = type;
+           collectionSelect.appendChild(option);
+         });
+       }, 500);
+     }
+     populateCollections();
+
+     // 3. Cyberpunk Toggle Animations & Logic
+     document.querySelectorAll('.cyber-toggle').forEach(toggle => {
+       const input = toggle.querySelector('input');
+       const glow1 = toggle.querySelector('.glow-1');
+       const glow2 = toggle.querySelector('.glow-2');
+       const unchecked = toggle.querySelector('.unchecked');
+
+       // Initial state setup
+       gsap.set(glow1, { x: -5, rotation: -20, transformOrigin: "center center" });
+       gsap.set(glow2, { x: 5, rotation: 20, transformOrigin: "center center" });
+
+       input.addEventListener('change', () => {
+         if (input.checked) {
+           toggle.classList.add('active');
+           // Glitch in effect
+           gsap.fromTo(glow1,
+             { x: -10, rotation: -30, opacity: 0 },
+             { x: 0, rotation: 0, opacity: 1, duration: 0.4, ease: "elastic.out(1, 0.5)" }
+           );
+           gsap.fromTo(glow2,
+             { x: 10, rotation: 30, opacity: 0 },
+             { x: 0, rotation: 0, opacity: 1, duration: 0.4, delay: 0.05, ease: "elastic.out(1, 0.5)" }
+           );
+           gsap.to(unchecked, { opacity: 0, duration: 0.2 });
+         } else {
+           toggle.classList.remove('active');
+           // Glitch out effect
+           gsap.to(glow1, { x: -5, rotation: -20, opacity: 0, duration: 0.3, ease: "power2.in" });
+           gsap.to(glow2, { x: 5, rotation: 20, opacity: 0, duration: 0.3, ease: "power2.in" });
+           gsap.to(unchecked, { opacity: 1, duration: 0.2 });
+         }
+         triggerFilterUpdate();
+       });
+     });
+
+     // 4. Handle Search & Collection Changes
+     searchInput.addEventListener('input', triggerFilterUpdate);
+     collectionSelect.addEventListener('change', triggerFilterUpdate);
+
+     // 5. Handle Reset
+     resetBtn.addEventListener('click', function() {
+       // Reset toggles
+       document.querySelectorAll('.cyber-toggle input').forEach(input => {
+         if (input.checked) {
+           input.checked = false;
+           const toggle = input.closest('.cyber-toggle');
+           toggle.classList.remove('active');
+           const glow1 = toggle.querySelector('.glow-1');
+           const glow2 = toggle.querySelector('.glow-2');
+           const unchecked = toggle.querySelector('.unchecked');
+           if(glow1) gsap.to(glow1, { x: -5, rotation: -20, opacity: 0, duration: 0.3, ease: "power2.in" });
+           if(glow2) gsap.to(glow2, { x: 5, rotation: 20, opacity: 0, duration: 0.3, ease: "power2.in" });
+           if(unchecked) gsap.to(unchecked, { opacity: 1, duration: 0.2 });
+         }
+       });
+
+       // Reset text inputs
+       searchInput.value = '';
+       collectionSelect.value = 'All';
+
+       // Restore full dataset safely
+       if (window._originalThumbnails) {
+         window.thumbnails = [...window._originalThumbnails];
+       }
+
+       triggerFilterUpdate();
+     });
+
+     // 6. Core Filtering Logic
+     function triggerFilterUpdate() {
+       const sizes = new Set();
+       document.querySelectorAll('.cyber-toggle input[data-filter="size"]:checked').forEach(el => sizes.add(el.dataset.value));
+
+       const statuses = new Set();
+       document.querySelectorAll('.cyber-toggle input[data-filter="status"]:checked').forEach(el => statuses.add(el.dataset.value));
+
+       const collection = collectionSelect.value;
+       const searchTerm = searchInput.value.trim().toLowerCase();
+
+       applyFilters(sizes, statuses, collection, searchTerm);
+     }
+
+     function applyFilters(sizes, statuses, collection, searchTerm) {
+       // Always filter from the original, complete dataset to prevent data degradation
+       const sourceData = window._originalThumbnails || window.thumbnails;
+       if (!sourceData || !Array.isArray(sourceData) || sourceData.length === 0) {
+         console.warn("No thumbnail data available to filter.");
+         return;
+       }
+
+       // Save original if not already saved
+       if (!window._originalThumbnails && window.thumbnails && window.thumbnails.length > 0) {
+         window._originalThumbnails = [...window.thumbnails];
+       }
+
+       const filtered = sourceData.filter(item => {
+         // Search Check (Substring match on Title, case-insensitive)
+   if (searchTerm) {
+     // Check multiple possible title field names to handle case variations
+     const title = (item.title || item.Title || item.name || item.Name || '').toLowerCase();
+     if (!title.includes(searchTerm)) {
+       return false;
+     }
+   }
+
+         // Size Check
+         if (sizes.size > 0) {
+           let sizeMatch = false;
+           if (sizes.has('small') && item.area < 70) sizeMatch = true;
+           if (sizes.has('medium') && item.area >= 70 && item.area <= 220) sizeMatch = true;
+           if (sizes.has('large') && item.area > 220 && item.area <= 400) sizeMatch = true;
+           if (sizes.has('gargantuan') && item.area > 400) sizeMatch = true;
+           if (!sizeMatch) return false;
+         }
+
+         // Status Check
+       if (statuses.size > 0) {
+         let statusMatch = false;
+
+         // Featured: handle boolean true, string "TRUE", or string "true"
+         if (statuses.has('featured') && (item.featured === true || item.featured === "TRUE" || item.featured === "true"|| item.featured === "True")) statusMatch = true;
+
+         // On Sale: check if pricemultiplier exists and is less than 1
+         if (statuses.has('onsale') && item.pricemultiplier !== undefined && parseFloat(item.pricemultiplier) < 1) statusMatch = true;
+
+         // On Hand: handle boolean true, string "TRUE", or string "true"
+         if (statuses.has('onhand') && (item.inStock === true || item.inStock === "TRUE" || item.inStock === "true")) statusMatch = true;
+
+         // Available: handle boolean true, string "TRUE", or string "true"
+         if (statuses.has('available') && (item.remakecustom === true || item.remakecustom === "TRUE" || item.remakecustom === "true")) statusMatch = true;
+
+         // Recent: handle both "MM-DD-YY" and "M/DD/YY" date formats
+         if (statuses.has('recent')) {
+           let dateCreated = null;
+
+           // Try to parse the date in multiple formats
+           if (item.dateCreated) {
+             // Format: "6/23/24" (M/DD/YY)
+             if (item.dateCreated.includes('/')) {
+               const parts = item.dateCreated.split('/');
+               if (parts.length === 3) {
+                 const year = 2000 + parseInt(parts[2], 10);
+                 const month = parseInt(parts[0], 10) - 1; // JS months are 0-indexed
+                 const day = parseInt(parts[1], 10);
+                 dateCreated = new Date(year, month, day);
+               }
+             }
+             // Format: "01-03-23" (MM-DD-YY)
+             else if (item.dateCreated.includes('-')) {
+               const parts = item.dateCreated.split('-');
+               if (parts.length === 3) {
+                 const year = 2000 + parseInt(parts[2], 10);
+                 const month = parseInt(parts[0], 10) - 1;
+                 const day = parseInt(parts[1], 10);
+                 dateCreated = new Date(year, month, day);
+               }
+             }
+           }
+
+           if (dateCreated) {
+             const oneYearAgo = new Date();
+             oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+             if (dateCreated >= oneYearAgo) statusMatch = true;
+           }
+         }
+
+         if (!statusMatch) return false;
+       }
+
+         // Collection Check
+         if (collection !== 'All' && item.type !== collection) {
+           return false;
+         }
+
+         return true;
+       });
+
+       window.thumbnails = filtered;
+       reloadGallery(filtered);
+     }
+
+     // 7. Gallery Reload Helper (with WebGL context cleanup)
+     function reloadGallery(filteredData) {
+       const container = document.getElementById('gallery-container');
+       if (!container) return;
+
+       // Clean up old WebGL context to prevent memory leaks
+       if (window.currentGallery && window.currentGallery.gl) {
+         const loseContext = window.currentGallery.gl.getExtension('WEBGL_lose_context');
+         if (loseContext) loseContext.loseContext();
+       }
+
+       // Update the active global reference
+       window.thumbnails = filteredData;
+
+       // Preserve modal and controls HTML structure
+       const cacheHTML = container.querySelector('.cache') ? container.querySelector('.cache').outerHTML : '<div class="cache"></div>';
+       const hintHTML = container.querySelector('.hint') ? container.querySelector('.hint').outerHTML : '<div class="hint">Scroll / Drag / + or -</div>';
+
+       container.innerHTML = `
+         ${cacheHTML}
+         <div id="gallery-loader" class="gallery-loader">
+           <div class="loader-container">
+             <div class="loader-common loader-one"></div>
+             <div class="loader-common loader-two"></div>
+             <div class="loader-common loader-three"></div>
+             <div class="loader-common loader-four"></div>
+             <div class="loader-common loader-five"></div>
+             <div class="loader-common loader-six"></div>
+             <div class="loader-common loader-seven"></div>
+             <div class="loader-common loader-eight"></div>
+           </div>
+           <div class="loader-bar"><div id="loader-progress" class="loader-progress"></div></div>
+           <div id="loader-text" class="loader-text">Loading... 0%</div>
+         </div>
+         ${hintHTML}
+         <div class="zoom-controls">
+           <button class="zoom-btn" id="zoom-in-btn" aria-label="Zoom In">+</button>
+           <button class="zoom-btn" id="zoom-out-btn" aria-label="Zoom Out">-</button>
+         </div>
+         <button class="fullscreen-btn" aria-label="Toggle Fullscreen"><i class="fas fa-expand"></i></button>
+         <div id="gallery-modal" class="gallery-modal">
+           <div class="gallery-card">
+             <button class="gallery-card-close" id="modal-close-btn" aria-label="Close">&times;</button>
+             <div class="gallery-card-layout">
+               <div id="carousel-container" class="gallery-card-image-container">
+                 <button class="carousel-arrow carousel-prev" id="carousel-prev" aria-label="Previous image"><i class="fas fa-chevron-left"></i></button>
+                 <img id="modal-full-image" class="gallery-card-image" src="" alt="Full size artwork">
+                 <button class="carousel-arrow carousel-next" id="carousel-next" aria-label="Next image"><i class="fas fa-chevron-right"></i></button>
+                 <div class="carousel-dots" id="carousel-dots"></div>
+               </div>
+               <div class="gallery-card-content">
+                 <h2 id="modal-title" class="gallery-card-title">Artwork Title</h2>
+                 <div class="gallery-card-meta">
+                   <div id="modal-price" class="gallery-card-price">$0.00</div>
+                   <div><strong>Availability:</strong> <span id="modal-availability">Checking...</span></div>
+                   <div><strong>Size:</strong> <span id="modal-size">0 x 0</span></div>
+                 </div>
+                 <div id="modal-description" class="gallery-card-desc">Description goes here.</div>
+                 <div class="gallery-card-footer">
+                   <a id="modal-inquire-btn" class="inquire-btn" href="#" target="_blank">Inquire About This</a>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+       `;
+
+       setTimeout(() => {
+         if (typeof InfinitePortraitGallery === 'function') {
+           window.currentGallery = new InfinitePortraitGallery('gallery-container');
+         }
+       }, 100);
+     }
+   });
+   </script>
+   <!-- ========================================== -->
+   <!-- END FILTER TAB -->
+   <!-- ========================================== -->
 </body>
 </html>
