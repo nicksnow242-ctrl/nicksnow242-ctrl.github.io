@@ -201,11 +201,6 @@ window.photos = [
     "bigsrc": "/Nebuluxe/Images/Photos/bigsize/HelmetBWFinal.jpg"
   },
   {
-    "ID": 41,
-    "smallscr": "/Nebuluxe/Images/Photos/small/BarbBWFinal.jpg",
-    "bigsrc": "/Nebuluxe/Images/Photos/bigsize/BarbBWFinal.jpg"
-  },
-  {
     "ID": 42,
     "smallscr": "/Nebuluxe/Images/Photos/small/FadingTreesFinal.jpg",
     "bigsrc": "/Nebuluxe/Images/Photos/bigsize/FadingTreesFinal.jpg"
