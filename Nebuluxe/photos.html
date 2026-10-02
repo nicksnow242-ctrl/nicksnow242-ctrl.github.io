@@ -1666,11 +1666,12 @@ class InfinitePortraitGallery {
         if (!this.container) return;
 
         this.canvas = document.createElement('canvas');
-        this.canvas.setAttribute('tabindex', '0');
-        this.canvas.style.outline = 'none';
-        this.canvas.style.width = '100%';
-        this.canvas.style.height = '100%';
-        this.container.appendChild(this.canvas);
+  this.canvas.setAttribute('tabindex', '0');
+  this.canvas.style.outline = 'none';
+  this.canvas.style.width = '100%';
+  this.canvas.style.height = '100%';
+  this.canvas.style.zIndex = '1'; // Added this line
+  this.container.appendChild(this.canvas);
 
         this.gl = this.canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false });
         if (!this.gl) {
