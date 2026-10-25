@@ -5,10 +5,11 @@ window.other_services = [
         fullsizesrc1:'/Nebuluxe/Images/Fullsize/DSC18470.jpg',
         fullsizesrc2:'/Nebuluxe/Images/Fullsize/DSC19440.jpg',
         alt: 'A thief came in the night',
-        name: 'Magnets',
+        name: 'Awards',
         pricerange: '$4-$50',
-        description: 'loren ipsum',
-        type: 'No Collection'
+        description: 'Podium, Finisher, and Celebratory Items',
+        type: '',
+        url:'awardportfolio.html'
     },
     {
         id: 2,
@@ -16,10 +17,10 @@ window.other_services = [
         fullsizesrc1:'/Nebuluxe/Images/Fullsize/DSC18470.jpg',
         fullsizesrc2:'/Nebuluxe/Images/Fullsize/DSC19440.jpg',
         alt: 'A thief came in the night',
-        name: 'Kits',
+        name: 'Magnets',
         pricerange: '$4-$50',
         description: 'loren ipsum',
-        type: 'No Collection'
+        type: 'Wholesale Available'
     },
     {
         id: 3,
@@ -27,10 +28,10 @@ window.other_services = [
         fullsizesrc1:'Images/Fullsize/DSC1847.jpg',
         fullsizesrc2:'Images/Fullsize/DSC1944.jpg',
         alt: 'A thief came in the night',
-        name: 'Clothing',
+        name: 'Bookmarks',
         pricerange: '$4-$50',
         description: 'loren ipsum',
-        type: 'No Collection'
+        type: 'Wholesale Available'
     },
     {
         id: 4,
@@ -38,10 +39,10 @@ window.other_services = [
         fullsizesrc1:'Images/Fullsize/DSC1847.jpg',
         fullsizesrc2:'Images/Fullsize/DSC1944.jpg',
         alt: 'A thief came in the night',
-        name: 'Magnets',
+        name: 'Clothing',
         pricerange: '$4-$50',
         description: 'loren ipsum',
-        type: 'No Collection'
+        type: ''
     },
     {
         id: 5,
@@ -49,10 +50,10 @@ window.other_services = [
         fullsizesrc1:'Images/Fullsize/DSC1847.jpg',
         fullsizesrc2:'Images/Fullsize/DSC1944.jpg',
         alt: 'A thief came in the night',
-        name: 'Kits',
+        name: 'Ear Rings',
         pricerange: '$4-$50',
         description: 'loren ipsum',
-        type: 'No Collection'
+        type: 'Wholesale Available'
     },
     {
         id: 6,
@@ -60,9 +61,20 @@ window.other_services = [
         fullsizesrc1:'Images/Fullsize/DSC1847.jpg',
         fullsizesrc2:'Images/Fullsize/DSC1944.jpg',
         alt: 'A thief came in the night',
-        name: 'Clothing',
+        name: 'Kits',
         pricerange: '$4-$50',
         description: 'loren ipsum',
-        type: 'No Collection'
+        type: 'Wholesale Available'
+    },
+    {
+        id: 7,
+        src: 'Images/other_services/test3.JPG',
+        fullsizesrc1:'Images/Fullsize/DSC1847.jpg',
+        fullsizesrc2:'Images/Fullsize/DSC1944.jpg',
+        alt: 'A thief came in the night',
+        name: 'Lighting',
+        pricerange: '$4-$50',
+        description: 'loren ipsum',
+        type: ''
     }
 ]
