@@ -1623,55 +1623,48 @@ var particles;
   }
 
   function renderBohoServices() {
-  const grid = document.getElementById('services-grid');
-  if (!grid) return;
+    const grid = document.getElementById('services-grid');
+    if (!grid) return;
 
-  if (typeof window.other_services === 'undefined' || !Array.isArray(window.other_services) || window.other_services.length === 0) {
-    grid.innerHTML = `<div class="boho-gallery-error" style="grid-column: 1 / -1;"><strong>No services found.</strong><br>Please check that <code>js/other_services.js</code> defines <code>window.other_services</code> as a non-empty array.</div>`;
-    return;
-  }
-
-  grid.innerHTML = '';
-
-  window.other_services.forEach(service => {
-    const candidates = buildImageCandidates(service.src);
-    const typeBadge = service.type ? `<span class="boho-service-badge">${service.type}</span>` : '';
-    const priceTag = service.pricerange ? `<span class="boho-service-price">${service.pricerange}</span>` : '';
-
-    const card = document.createElement('article');
-    card.className = 'boho-service-card';
-
-    const imageWrapper = service.url
-      ? `<a href="${service.url}" class="boho-service-image-wrapper" style="display:block;text-decoration:none;"><img alt="${service.alt || service.name || 'Service image'}" class="boho-service-image"></a>`
-      : `<div class="boho-service-image-wrapper"><img alt="${service.alt || service.name || 'Service image'}" class="boho-service-image"></div>`;
-
-    card.innerHTML = `
-      ${imageWrapper}
-      <div class="boho-service-content">
-        <div class="boho-service-header">
-          <h3 class="boho-service-title">${service.name || 'Untitled Service'}</h3>
-          ${priceTag}
-        </div>
-        <button class="boho-service-btn" data-id="${service.id}">View Details</button>
-      </div>
-    `;
-    grid.appendChild(card);
-
-    if (typeBadge) {
-      const wrapper = card.querySelector('.boho-service-image-wrapper');
-      wrapper.insertAdjacentHTML('afterbegin', typeBadge);
+    if (typeof window.other_services === 'undefined' || !Array.isArray(window.other_services) || window.other_services.length === 0) {
+      grid.innerHTML = `<div class="boho-gallery-error" style="grid-column: 1 / -1;"><strong>No services found.</strong><br>Please check that <code>js/other_services.js</code> defines <code>window.other_services</code> as a non-empty array.</div>`;
+      return;
     }
 
-    const img = card.querySelector('.boho-service-image');
-    attachSmartLoader(img, candidates, []);
+    grid.innerHTML = '';
 
-    const btn = card.querySelector('.boho-service-btn');
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      openModal(service);
+    window.other_services.forEach(service => {
+      const candidates = buildImageCandidates(service.src);
+      const typeBadge = service.type ? `<span class="boho-service-badge">${service.type}</span>` : '';
+      const priceTag = service.pricerange ? `<span class="boho-service-price">${service.pricerange}</span>` : '';
+
+      const card = document.createElement('article');
+      card.className = 'boho-service-card';
+      card.innerHTML = `
+        <div class="boho-service-image-wrapper">
+          ${typeBadge}
+          <img alt="${service.alt || service.name || 'Service image'}" class="boho-service-image">
+        </div>
+        <div class="boho-service-content">
+          <div class="boho-service-header">
+            <h3 class="boho-service-title">${service.name || 'Untitled Service'}</h3>
+            ${priceTag}
+          </div>
+          <button class="boho-service-btn" data-id="${service.id}">View Details</button>
+        </div>
+      `;
+      grid.appendChild(card);
+
+      const img = card.querySelector('.boho-service-image');
+      attachSmartLoader(img, candidates, []);
+
+      const btn = card.querySelector('.boho-service-btn');
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openModal(service);
+      });
     });
-  });
-}
+  }
 
   function handleServicesLoadError() {
     const grid = document.getElementById('services-grid');
