@@ -345,49 +345,44 @@ var particles;
 }());
 </script>
 <!-- ========================================== -->
-<!-- GALLERY IMAGE LOADER (DEBUG MODE) -->
+<!-- GALLERY IMAGE LOADER -->
 <!-- ========================================== -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const galleryGrid = document.getElementById('gallery-grid');
 
-    // ⚠️ PATH CHECK:
-    // If this HTML file is INSIDE the "Nebuluxe" folder, remove "Nebuluxe/" from the paths below.
-    // If this HTML file is OUTSIDE the "Nebuluxe" folder, leave it exactly as is.
+    // ✅ FIXED: Removed the duplicate "Nebuluxe/" from the beginning of each path
     const imageFiles = [
-      'Nebuluxe/Images/AwardPortfolio/2025062790543.jpg',
-      'Nebuluxe/Images/AwardPortfolio/DSC1985.jpg',
-      'Nebuluxe/Images/AwardPortfolio/DSC1986.jpg',
-      'Nebuluxe/Images/AwardPortfolio/DSC1989.jpg',
-      'Nebuluxe/Images/AwardPortfolio/DSC2646.jpg',
-      'Nebuluxe/Images/AwardPortfolio/DSC2651.jpg',
-      'Nebuluxe/Images/AwardPortfolio/DSC2903.jpg',
-      'Nebuluxe/Images/AwardPortfolio/DSC2905.jpg',
-      'Nebuluxe/Images/AwardPortfolio/MTCupawards.png'
+      'Images/AwardPortfolio/2025062790543.jpg',
+      'Images/AwardPortfolio/DSC1985.jpg',
+      'Images/AwardPortfolio/DSC1986.jpg',
+      'Images/AwardPortfolio/DSC1989.jpg',
+      'Images/AwardPortfolio/DSC2646.jpg',
+      'Images/AwardPortfolio/DSC2651.jpg',
+      'Images/AwardPortfolio/DSC2903.jpg',
+      'Images/AwardPortfolio/DSC2905.jpg',
+      'Images/AwardPortfolio/MTCupawards.png'
     ];
 
     imageFiles.forEach(filepath => {
       const item = document.createElement('div');
       item.className = 'gallery-item';
 
-      // Add a visible border so you can see the grid layout even if images fail
-      item.style.border = '2px dashed #cbd5e1';
+      // Keep the border temporarily just to confirm the grid is rendering
+      item.style.border = '1px solid #e2e8f0';
 
       const img = document.createElement('img');
-      img.src = filepath;
+      img.src = filepath; // Now correctly resolves to Images/AwardPortfolio/...
 
       const cleanName = filepath.split('/').pop().replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
       img.alt = cleanName;
       img.loading = 'lazy';
 
-      // DEBUG: Print the exact URL the browser is trying to load
-      console.log("Attempting to load:", img.src);
-
-      // DEBUG: If it fails, show a red box instead of hiding it
+      // If it still fails, this will tell us exactly why
       img.onerror = function() {
         console.warn('❌ FAILED to load image:', img.src);
         img.alt = "NOT FOUND:\n" + cleanName;
-        img.style.backgroundColor = "#fee2e2"; // Light red background
+        img.style.backgroundColor = "#fee2e2";
         img.style.display = "flex";
         img.style.alignItems = "center";
         img.style.justifyContent = "center";
@@ -396,6 +391,11 @@ var particles;
         img.style.textAlign = "center";
         img.style.padding = "10px";
         img.style.whiteSpace = "pre-line";
+      };
+
+      // Once the image loads successfully, remove the debug border
+      img.onload = function() {
+        item.style.border = 'none';
       };
 
       item.appendChild(img);
