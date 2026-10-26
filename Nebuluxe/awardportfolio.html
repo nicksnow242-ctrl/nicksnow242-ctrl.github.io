@@ -9,10 +9,11 @@
 <style>
 html, body {
   width: 100%;
-  height: 100%;
+  min-height: 100%; /* Allows the page to grow */
   padding: 0;
   margin: 0;
-  overflow: hidden;
+  overflow-y: auto; /* Enables vertical scrolling */
+  overflow-x: hidden; /* Prevents horizontal scrollbar */
   background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
   background-attachment: fixed;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -20,7 +21,7 @@ html, body {
 }
 
 #projector {
-  position: absolute;
+  position: fixed; /* Stays in the background while you scroll */
   top: 0;
   left: 0;
   width: 100%;
@@ -349,8 +350,7 @@ var particles;
   document.addEventListener('DOMContentLoaded', function() {
     const galleryGrid = document.getElementById('gallery-grid');
 
-    // ⚠️ UPDATE THIS ARRAY: Add the exact filenames of your images
-    // located in the Nebuluxe/Images/AwardPortfolio folder.
+    // Array now correctly holds the full relative paths
     const imageFiles = [
       'Nebuluxe/Images/AwardPortfolio/2025062790543.jpg',
       'Nebuluxe/Images/AwardPortfolio/DSC1985.jpg',
@@ -360,25 +360,24 @@ var particles;
       'Nebuluxe/Images/AwardPortfolio/DSC2651.jpg',
       'Nebuluxe/Images/AwardPortfolio/DSC2903.jpg',
       'Nebuluxe/Images/AwardPortfolio/DSC2905.jpg',
-      'Nebuluxe/Images/AwardPortfolio/MTCupawards.png',
-      // Add more filenames here, separated by commas
+      'Nebuluxe/Images/AwardPortfolio/MTCupawards.png'
     ];
 
-    const folderPath = 'Nebuluxe/Images/AwardPortfolio/';
-
-    imageFiles.forEach(filename => {
+    imageFiles.forEach(filepath => {
       const item = document.createElement('div');
       item.className = 'gallery-item';
 
       const img = document.createElement('img');
-      img.src = folderPath + filename;
-      // Creates a clean alt text by removing the file extension
-      img.alt = filename.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
-      img.loading = 'lazy'; // Performance optimization
+      img.src = filepath; // Use the full path directly
+
+      // Extracts just the filename (e.g., "DSC1985") for clean alt text
+      const cleanName = filepath.split('/').pop().replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+      img.alt = cleanName;
+      img.loading = 'lazy';
 
       // Graceful fallback if a filename is typed incorrectly
       img.onerror = function() {
-        console.warn('Failed to load image:', filename);
+        console.warn('Failed to load image:', filepath);
         item.style.display = 'none';
       };
 
