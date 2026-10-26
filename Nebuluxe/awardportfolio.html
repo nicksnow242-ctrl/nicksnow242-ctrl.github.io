@@ -9,11 +9,11 @@
 <style>
 html, body {
   width: 100%;
-  min-height: 100%; /* Allows the page to grow */
+  min-height: 100vh; /* Allows the page to grow and scroll */
   padding: 0;
   margin: 0;
   overflow-y: auto; /* Enables vertical scrolling */
-  overflow-x: hidden; /* Prevents horizontal scrollbar */
+  overflow-x: hidden;
   background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
   background-attachment: fixed;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -119,9 +119,10 @@ html, body {
 .gallery-container {
   position: relative;
   z-index: 10;
-  padding: 120px 40px 60px; /* Top padding clears the fixed header */
+  padding: 120px 40px 60px;
   max-width: 1400px;
   margin: 0 auto;
+  min-height: 100vh; /* Ensures the container takes up screen space */
 }
 
 .gallery-grid {
@@ -344,13 +345,15 @@ var particles;
 }());
 </script>
 <!-- ========================================== -->
-<!-- GALLERY IMAGE LOADER -->
+<!-- GALLERY IMAGE LOADER (DEBUG MODE) -->
 <!-- ========================================== -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const galleryGrid = document.getElementById('gallery-grid');
 
-    // Array now correctly holds the full relative paths
+    // ⚠️ PATH CHECK:
+    // If this HTML file is INSIDE the "Nebuluxe" folder, remove "Nebuluxe/" from the paths below.
+    // If this HTML file is OUTSIDE the "Nebuluxe" folder, leave it exactly as is.
     const imageFiles = [
       'Nebuluxe/Images/AwardPortfolio/2025062790543.jpg',
       'Nebuluxe/Images/AwardPortfolio/DSC1985.jpg',
@@ -367,18 +370,32 @@ var particles;
       const item = document.createElement('div');
       item.className = 'gallery-item';
 
-      const img = document.createElement('img');
-      img.src = filepath; // Use the full path directly
+      // Add a visible border so you can see the grid layout even if images fail
+      item.style.border = '2px dashed #cbd5e1';
 
-      // Extracts just the filename (e.g., "DSC1985") for clean alt text
+      const img = document.createElement('img');
+      img.src = filepath;
+
       const cleanName = filepath.split('/').pop().replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
       img.alt = cleanName;
       img.loading = 'lazy';
 
-      // Graceful fallback if a filename is typed incorrectly
+      // DEBUG: Print the exact URL the browser is trying to load
+      console.log("Attempting to load:", img.src);
+
+      // DEBUG: If it fails, show a red box instead of hiding it
       img.onerror = function() {
-        console.warn('Failed to load image:', filepath);
-        item.style.display = 'none';
+        console.warn('❌ FAILED to load image:', img.src);
+        img.alt = "NOT FOUND:\n" + cleanName;
+        img.style.backgroundColor = "#fee2e2"; // Light red background
+        img.style.display = "flex";
+        img.style.alignItems = "center";
+        img.style.justifyContent = "center";
+        img.style.color = "#991b1b";
+        img.style.fontSize = "12px";
+        img.style.textAlign = "center";
+        img.style.padding = "10px";
+        img.style.whiteSpace = "pre-line";
       };
 
       item.appendChild(img);
