@@ -114,59 +114,135 @@ html, body {
   }
 }
 /* ========================================== */
-/* Gallery Grid Styles */
+/* Editorial Gallery Grid Styles */
 /* ========================================== */
 .gallery-container {
   position: relative;
   z-index: 10;
-  padding: 120px 40px 60px;
+  padding: 120px 40px 80px;
   max-width: 1400px;
   margin: 0 auto;
-  min-height: 100vh; /* Ensures the container takes up screen space */
 }
 
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: 1fr;
   gap: 24px;
+  grid-auto-flow: dense; /* Helps pack items neatly */
 }
 
-.gallery-item {
-  position: relative;
-  border-radius: 8px;
-  overflow: hidden;
+/* --- Base Card Styling --- */
+.gallery-item, .gallery-text-block {
   background: #ffffff;
+  border-radius: 8px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  aspect-ratio: 4 / 3; /* Maintains consistent, professional sizing */
-  cursor: pointer;
+  overflow: hidden;
 }
 
-.gallery-item:hover {
+.gallery-item:hover, .gallery-text-block:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 20px -4px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Image Card Specifics --- */
+.gallery-item {
+  display: flex;
+  flex-direction: column;
 }
 
 .gallery-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
-  transition: transform 0.5s ease;
+  flex-grow: 1;
+  transition: transform 0.6s ease;
 }
 
 .gallery-item:hover img {
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
 
-@media (max-width: 768px) {
-  .gallery-container {
-    padding: 100px 20px 40px;
-  }
+.gallery-caption {
+  padding: 20px;
+  border-top: 1px solid #f1f5f9;
+  background: #ffffff;
+}
+
+.gallery-caption h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 6px 0;
+  letter-spacing: 0.02em;
+}
+
+.gallery-caption p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* --- Text Block Specifics --- */
+.gallery-text-block {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-left: 4px solid #b49a5d; /* Elegant gold accent */
+}
+
+.gallery-text-block h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 16px 0;
+  letter-spacing: 0.02em;
+}
+
+.gallery-text-block p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #475569;
+  margin: 0;
+}
+
+/* --- Layout Variants (Desktop) --- */
+@media (min-width: 768px) {
   .gallery-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(2, 1fr);
   }
+}
+
+@media (min-width: 1024px) {
+  .gallery-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  /* Visual Rhythm Classes */
+  .layout-normal { grid-column: span 1; aspect-ratio: 4/3; }
+  .layout-wide   { grid-column: span 2; aspect-ratio: 16/9; }
+  .layout-tall   { grid-column: span 1; grid-row: span 2; aspect-ratio: 3/4; }
+
+  .layout-text   { grid-column: span 2; aspect-ratio: auto; min-height: 280px; }
+  .layout-text-full {
+    grid-column: 1 / -1;
+    aspect-ratio: auto;
+    min-height: 220px;
+    text-align: center;
+    border-left: none;
+    border-top: 4px solid #b49a5d;
+    align-items: center;
+  }
+}
+
+/* --- Mobile Adjustments --- */
+@media (max-width: 767px) {
+  .gallery-container { padding: 100px 20px 60px; }
+  .gallery-text-block { padding: 30px 24px; border-left: none; border-top: 4px solid #b49a5d; }
+  .layout-text-full { text-align: left; align-items: flex-start; }
 }
 </style>
 </head>
@@ -345,61 +421,126 @@ var particles;
 }());
 </script>
 <!-- ========================================== -->
-<!-- GALLERY IMAGE LOADER -->
+<!-- EDITORIAL GALLERY LOADER -->
 <!-- ========================================== -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const galleryGrid = document.getElementById('gallery-grid');
 
-    // ✅ FIXED: Removed the duplicate "Nebuluxe/" from the beginning of each path
-    const imageFiles = [
-      'Images/AwardPortfolio/2025062790543.jpg',
-      'Images/AwardPortfolio/DSC1985.jpg',
-      'Images/AwardPortfolio/DSC1986.jpg',
-      'Images/AwardPortfolio/DSC1989.jpg',
-      'Images/AwardPortfolio/DSC2646.jpg',
-      'Images/AwardPortfolio/DSC2651.jpg',
-      'Images/AwardPortfolio/DSC2903.jpg',
-      'Images/AwardPortfolio/DSC2905.jpg',
-      'Images/AwardPortfolio/MTCupawards.png'
+    // Mix of images and 4 larger text blocks.
+    // Layout options: 'normal', 'wide', 'tall', 'text', 'text-full'
+    const galleryData = [
+      {
+        type: 'image',
+        src: 'Images/AwardPortfolio/2025062790543.jpg',
+        title: 'Innovation Award 2025',
+        subtitle: 'Recognized for groundbreaking technological advancement.',
+        layout: 'wide'
+      },
+      {
+        type: 'image',
+        src: 'Images/AwardPortfolio/DSC1985.jpg',
+        title: 'Team Excellence',
+        subtitle: 'Celebrating our core development and design team.',
+        layout: 'tall'
+      },
+      {
+        type: 'text',
+        title: 'Driven by Purpose',
+        content: 'Every project we undertake is guided by a commitment to excellence. We believe that true innovation happens at the intersection of bold ideas and meticulous execution.',
+        layout: 'text'
+      },
+      {
+        type: 'image',
+        src: 'Images/AwardPortfolio/DSC1986.jpg',
+        title: 'Global Design Summit',
+        subtitle: 'Keynote presentation on future industry trends.',
+        layout: 'normal'
+      },
+      {
+        type: 'image',
+        src: 'Images/AwardPortfolio/DSC1989.jpg',
+        title: 'International Reach',
+        subtitle: 'Expanding our impact across global markets.',
+        layout: 'normal'
+      },
+      {
+        type: 'text',
+        title: 'The Power of Collaboration',
+        content: 'Our greatest achievements are not solitary victories. They are the result of diverse minds working in harmony toward a singular, ambitious vision.',
+        layout: 'text'
+      },
+      {
+        type: 'image',
+        src: 'Images/AwardPortfolio/DSC2646.jpg',
+        title: 'Client Success Stories',
+        subtitle: 'Delivering measurable, transformative results.',
+        layout: 'wide'
+      },
+      {
+        type: 'image',
+        src: 'Images/AwardPortfolio/DSC2651.jpg',
+        title: 'Future Forward',
+        subtitle: 'Investing in tomorrow\'s technology today.',
+        layout: 'tall'
+      },
+      {
+        type: 'text',
+        title: 'A Legacy of Quality',
+        content: 'We don\'t just build for today. We engineer solutions that stand the test of time, setting new industry standards with every release.',
+        layout: 'text'
+      },
+      {
+        type: 'image',
+        src: 'Images/AwardPortfolio/DSC2903.jpg',
+        title: 'Community Impact',
+        subtitle: 'Giving back through technology and education initiatives.',
+        layout: 'normal'
+      },
+      {
+        type: 'image',
+        src: 'Images/AwardPortfolio/DSC2905.jpg',
+        title: 'Sustainable Growth',
+        subtitle: 'Balancing rapid innovation with environmental responsibility.',
+        layout: 'normal'
+      },
+      {
+        type: 'text',
+        title: 'Join Us on the Journey',
+        content: 'We are always looking for passionate individuals and forward-thinking partners to help us shape the future. Let\'s build something extraordinary together.',
+        layout: 'text-full'
+      }
     ];
 
-    imageFiles.forEach(filepath => {
-      const item = document.createElement('div');
-      item.className = 'gallery-item';
+    galleryData.forEach(data => {
+      if (data.type === 'image') {
+        const item = document.createElement('div');
+        item.className = `gallery-item layout-${data.layout}`;
 
-      // Keep the border temporarily just to confirm the grid is rendering
-      item.style.border = '1px solid #e2e8f0';
+        const img = document.createElement('img');
+        img.src = data.src;
+        img.alt = data.title;
+        img.loading = 'lazy';
 
-      const img = document.createElement('img');
-      img.src = filepath; // Now correctly resolves to Images/AwardPortfolio/...
+        const caption = document.createElement('div');
+        caption.className = 'gallery-caption';
+        caption.innerHTML = `<h3>${data.title}</h3><p>${data.subtitle}</p>`;
 
-      const cleanName = filepath.split('/').pop().replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
-      img.alt = cleanName;
-      img.loading = 'lazy';
+        img.onerror = function() {
+          console.warn('❌ FAILED to load image:', data.src);
+          item.style.display = 'none'; // Hide broken images cleanly
+        };
 
-      // If it still fails, this will tell us exactly why
-      img.onerror = function() {
-        console.warn('❌ FAILED to load image:', img.src);
-        img.alt = "NOT FOUND:\n" + cleanName;
-        img.style.backgroundColor = "#fee2e2";
-        img.style.display = "flex";
-        img.style.alignItems = "center";
-        img.style.justifyContent = "center";
-        img.style.color = "#991b1b";
-        img.style.fontSize = "12px";
-        img.style.textAlign = "center";
-        img.style.padding = "10px";
-        img.style.whiteSpace = "pre-line";
-      };
+        item.appendChild(img);
+        item.appendChild(caption);
+        galleryGrid.appendChild(item);
 
-      // Once the image loads successfully, remove the debug border
-      img.onload = function() {
-        item.style.border = 'none';
-      };
-
-      item.appendChild(img);
-      galleryGrid.appendChild(item);
+      } else if (data.type === 'text') {
+        const textBlock = document.createElement('div');
+        textBlock.className = `gallery-text-block layout-${data.layout}`;
+        textBlock.innerHTML = `<h3>${data.title}</h3><p>${data.content}</p>`;
+        galleryGrid.appendChild(textBlock);
+      }
     });
   });
 </script>
