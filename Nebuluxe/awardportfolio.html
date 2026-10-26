@@ -128,7 +128,7 @@ html, body {
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
-  grid-auto-flow: dense; /* Helps pack items neatly */
+  /* Removed grid-auto-flow: dense to prevent overlapping calculation errors */
 }
 
 /* --- Base Card Styling --- */
@@ -138,6 +138,8 @@ html, body {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .gallery-item:hover, .gallery-text-block:hover {
@@ -146,17 +148,18 @@ html, body {
 }
 
 /* --- Image Card Specifics --- */
-.gallery-item {
-  display: flex;
-  flex-direction: column;
-  height: 100%; /* Ensures the card fills its grid cell */
+.image-wrapper {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
 }
 
 .gallery-item img {
   width: 100%;
-  flex: 1; /* Takes up all remaining space after the caption is sized */
-  min-height: 0; /* Crucial: allows the flex item to shrink properly */
+  height: 100%;
   object-fit: cover;
+  display: block;
   transition: transform 0.6s ease;
 }
 
@@ -165,7 +168,7 @@ html, body {
 }
 
 .gallery-caption {
-  flex-shrink: 0; /* Prevents the caption from being squished or hidden */
+  flex-shrink: 0; /* Prevents the caption from being squished */
   padding: 20px;
   border-top: 1px solid #f1f5f9;
   background: #ffffff;
@@ -192,7 +195,7 @@ html, body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  border-left: 4px solid #b49a5d; /* Elegant gold accent */
+  border-left: 4px solid #b49a5d;
 }
 
 .gallery-text-block h3 {
@@ -221,23 +224,27 @@ html, body {
   .gallery-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 32px;
+    align-items: stretch; /* Ensures all items in a row match height safely */
   }
 
-  /* Visual Rhythm Classes */
-  .layout-normal { grid-column: span 1; aspect-ratio: 4/3; }
-  .layout-wide   { grid-column: span 2; aspect-ratio: 16/9; }
-  .layout-tall   { grid-column: span 1; grid-row: span 2; aspect-ratio: 3/4; }
+  /* Visual Rhythm Classes applied to the main card */
+  .layout-normal { grid-column: span 1; }
+  .layout-wide   { grid-column: span 2; }
+  .layout-tall   { grid-column: span 1; grid-row: span 2; }
 
-  .layout-text   { grid-column: span 2; aspect-ratio: auto; min-height: 280px; }
+  .layout-text   { grid-column: span 2; }
   .layout-text-full {
     grid-column: 1 / -1;
-    aspect-ratio: auto;
-    min-height: 220px;
     text-align: center;
     border-left: none;
     border-top: 4px solid #b49a5d;
     align-items: center;
   }
+
+  /* ✅ Aspect ratios applied ONLY to the image wrapper to prevent grid conflicts */
+  .layout-normal .image-wrapper { aspect-ratio: 4/3; }
+  .layout-wide .image-wrapper   { aspect-ratio: 16/9; }
+  .layout-tall .image-wrapper   { height: 100%; } /* Fills the 2-row span naturally */
 }
 
 /* --- Mobile Adjustments --- */
@@ -429,8 +436,6 @@ var particles;
   document.addEventListener('DOMContentLoaded', function() {
     const galleryGrid = document.getElementById('gallery-grid');
 
-    // Mix of images and 4 larger text blocks.
-    // Layout options: 'normal', 'wide', 'tall', 'text', 'text-full'
     const galleryData = [
       {
         type: 'image',
@@ -509,7 +514,6 @@ var particles;
       {
         type: 'text',
         title: 'Support Local',
-        // ✅ FIXED: Added the missing closing quotation mark here 👇
         content: 'Local events are better when they use local art for their awards! Let\'s work together on it!',
         layout: 'text-full'
       }
@@ -519,6 +523,10 @@ var particles;
       if (data.type === 'image') {
         const item = document.createElement('div');
         item.className = `gallery-item layout-${data.layout}`;
+
+        // ✅ NEW: Wrapper isolates the image sizing from the grid item
+        const imgWrapper = document.createElement('div');
+        imgWrapper.className = 'image-wrapper';
 
         const img = document.createElement('img');
         img.src = data.src;
@@ -531,10 +539,11 @@ var particles;
 
         img.onerror = function() {
           console.warn('❌ FAILED to load image:', data.src);
-          item.style.display = 'none'; // Hide broken images cleanly
+          item.style.display = 'none';
         };
 
-        item.appendChild(img);
+        imgWrapper.appendChild(img);
+        item.appendChild(imgWrapper);
         item.appendChild(caption);
         galleryGrid.appendChild(item);
 
