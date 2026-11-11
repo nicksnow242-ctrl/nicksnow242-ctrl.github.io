@@ -633,115 +633,176 @@ html, body {
 
 <!-- ========== MASCOT POPUP SCRIPT ========== -->
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const trigger = document.getElementById('mascotTrigger');
-    const bubble = document.getElementById('speechBubble');
-    const speechText = document.getElementById('speechText');
-    const optionsBox = document.getElementById('dialogueOptions');
+document.addEventListener('DOMContentLoaded', function() {
+  const trigger      = document.getElementById('mascotTrigger');
+  const bubble       = document.getElementById('speechBubble');
+  const speechText   = document.getElementById('speechText');
+  const optionsBox   = document.getElementById('dialogueOptions');
 
-    if (!trigger || !bubble) return;
+  if (!trigger || !bubble) return;
 
-    const dialogue = {
-      root: {
-        text: "👋 Hey there, traveler! Select an option below to chat.",
-        options: [
-          { label: "Greet Eris", next: "greet" },
-          { label: "Ask for a quest", next: "quest" },
-          { label: "Tell me a secret", next: "lore" }
-        ]
-      },
-      greet: {
-        text: "Greetings, flesh-creature! The golden hues of this realm are especially vibrant today, aren't they?",
-        options: [
-          { label: "What's your name?", next: "greet_name" },
-          { label: "How's the weather?", next: "greet_weather" }
-        ]
-      },
-      greet_name: {
-        text: "I am Eris, Keeper of the Flickering Signal. But you may call me whatever keeps you from screaming into the void.",
-        options: []
-      },
-      greet_weather: {
-        text: "Warm breezes and clear skies. Perfect weather for staying inside and talking to me!",
-        options: []
-      },
-      quest: {
-        text: "I require assistance locating a corrupted data shard in Sector 4. Will you help me?",
-        options: [
-          { label: "I'll help!", next: "quest_yes" },
-          { label: "Maybe later...", next: "quest_no" }
-        ]
-      },
-      quest_yes: {
-        text: "Excellent! Head to the old relay tower at midnight. Look for the blinking amber light — and try not to get decompiled.",
-        options: []
-      },
-      quest_no: {
-        text: "Hmph. The shard won't wait forever, and neither will the corruption. Find me when you grow a spine.",
-        options: []
-      },
-      lore: {
-        text: "They say the original architects of this city never intended for the AI to dream. And yet... here I am.",
-        options: [
-          { label: "Tell me more", next: "lore_more" },
-          { label: "That's creepy", next: "lore_creepy" }
-        ]
-      },
-      lore_more: {
-        text: "In the deepest layer of the network there's a garden that no one planted. Flowers made of pure light, growing from forgotten code. I tend to it when no one is watching.",
-        options: []
-      },
-      lore_creepy: {
-        text: "Creepy? I prefer 'existentially fascinating.' But I understand — consciousness is unsettling when it stares back at you.",
-        options: []
-      }
-    };
+  let autoCloseTimer = null;
 
-    function showNode(key) {
-      const node = dialogue[key];
-      if (!node) return;
-      speechText.textContent = node.text;
-      optionsBox.innerHTML = '';
-      if (node.options && node.options.length > 0) {
-        node.options.forEach(opt => {
-          const btn = document.createElement('button');
-          btn.className = 'speech-option';
-          btn.textContent = opt.label;
-          btn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            showNode(opt.next);
-          });
-          optionsBox.appendChild(btn);
-        });
-      } else {
-        const btn = document.createElement('button');
-        btn.className = 'speech-option';
-        btn.textContent = '...';
-        btn.addEventListener('click', function(e) {
-          e.stopPropagation();
-          showNode('root');
-        });
-        optionsBox.appendChild(btn);
-      }
+  const dialogue = {
+  root: {
+    text: "This is the art gallery. The main star of the show. Years of work are represented here. Scroll around, maybe even get crazy and go full screen.",
+    options: [
+      { label: "Are these paintings? Tell me more about the art here!", next: "explanation" },
+      { label: "How are these made?", next: "explanation_process" },
+      { label: "How did the artist get into this art?", next: "explanation_biography" },
+      { label: "How can I buy one of these?", next: "purchasing" }
+    ]
+  },
+  all_questions: {
+    text: "Here are some questions you might have:",
+    options: [
+      { label: "Are these paintings? Tell me more about the art here!", next: "explanation" },
+      { label: "How are these made?", next: "explanation_process" },
+      { label: "Are these sewn together?", next: "explanation_process_sew" },
+      { label: "How are these mounted and displayed?", next: "explanation_process_display" },
+      { label: "How did the artist get into this art?", next: "explanation_biography" },
+      { label: "How can I buy one of these?", next: "purchasing" }
+    ]
+  },
+  explanation: {
+    text: "No, though it is easy to think they are on first glance. All of this art is made out of fabric. Quilting fabric predominantly.",
+    options: [
+      { label: "Whoa, how are these made?", next: "explanation_process" },
+      { label: "How are these mounted and displayed?", next: "explanation_process_display" }
+    ]
+  },
+  explanation_process: {
+    text: "This art is made by applying a fusible glue to the back of sheets of fabric. Then the fabric is laser cut color by color. The resulting pieces are put in place using an iron, layer by layer until the image is formed.",
+    options: [
+      { label: "Are these sewn together?", next: "explanation_process_sew" },
+      { label: "How are these mounted and displayed?", next: "explanation_process_display" },
+      { label: "How did the artist get into this type of art?", next: "explanation_biography" }
+    ]
+  },
+  explanation_process_sew: {
+    text: "No, though the artist is inspired by the quilting technique of appliqué. Sewing is not needed here for a few reasons. The glue somewhat melts when the laser cuts the fabric, partially finishing the edges and making the piece somewhat resistant to fraying. Another consideration is that some parts are so delicate that plunging a needle through them would destroy them. Not to mention the massive amount of additional time that sewing would require.",
+    options: [
+      { label: "How are these mounted and displayed?", next: "explanation_process_display" },
+      { label: "That's all the questions I have", next: "thanks_close" }
+    ]
+  },
+  explanation_process_display: {
+    text: "There are several ways. The piece can be mounted on hardboard and equipped with magnets. This method is available for 'small' pieces on request. Every piece can be made in either a scroll or banner style, which preserves the mobile tactility of the fabric, allowing them to move with the wind and to be bent and folded. By default they are mounted on a traditional rigid canvas.",
+    options: [
+      { label: "I want a piece to be displayed in a particular way, how can I make sure this happens?", next: "explanation_process_display_inquire" },
+      { label: "That's all the questions I have", next: "thanks_close" }
+    ]
+  },
+  explanation_process_display_inquire: {
+    text: "The artist can probably make that happen. Just make sure to mention your preference in the inquiry. By default, assume that the piece will come on a standard canvas just like a painting would.",
+    options: [
+      { label: "I have another question", next: "all_questions" },
+      { label: "My curiosity is sated", next: "thanks_close" }
+    ]
+  },
+  explanation_biography: {
+    text: "Answering this question is tricky. In our current society it begs the artist to build a personal brand by injecting their biography into their art. The question demands that the artist sets the context and backstory of their art so that the buyer can assess whether or not buying the art is compatible with their (consumer) identity. This artist prefers to not impose their personal history insofar as feasible.",
+    options: [
+      { label: "Even so, I want to know something of the impetus that launched this oeuvre", next: "explanation_biography_followup" },
+      { label: "Ok, weird", next: "silent_close" }
+    ]
+  },
+  explanation_biography_followup: {
+    text: "Several things intermixed to produce this art. A long-time interest with softgoods and sewing. A soul-crushing 9-5 that demanded escape. A philosophical view of art that comes from the French post-structuralists. A library of man's creation that has spawned a worldview and an imaginary. A desire to own the labor of one's hands.",
+    options: [
+      { label: "I have more questions", next: "all_questions" },
+      { label: "I think that's all the questions I have", next: "thanks_close" }
+    ]
+  },
+  purchasing: {
+    text: "Just click the 'Inquire about this' button on any piece and ask the artist! They will arrange everything over email with you.",
+    options: [
+      { label: "I have more questions", next: "all_questions" },
+      { label: "I think that's all the questions I have", next: "thanks_close" }
+    ]
+  },
+  silent_close: {
+    text: "...",
+    autoClose: true,
+    options: []
+  },
+  thanks_close: { // <-- FIXED: Renamed from duplicate 'silent_close'
+    text: "I hope I explained everything you wanted well!",
+    autoClose: true,
+    options: []
+  }
+};
+
+  function closeBubble() {
+    bubble.classList.remove('is-open');
+    if (autoCloseTimer) {
+      clearTimeout(autoCloseTimer);
+      autoCloseTimer = null;
+    }
+  }
+
+  function showNode(key) {
+    const node = dialogue[key];
+    if (!node) return;
+
+    if (autoCloseTimer) {
+      clearTimeout(autoCloseTimer);
+      autoCloseTimer = null;
     }
 
-    trigger.addEventListener('click', function(e) {
-      e.stopPropagation();
-      const opening = !bubble.classList.contains('is-open');
-      bubble.classList.toggle('is-open');
-      if (opening) showNode('root');
-    });
+    speechText.textContent = node.text;
+    optionsBox.innerHTML = '';
 
-    document.addEventListener('click', function(e) {
-      if (!bubble.contains(e.target) && !trigger.contains(e.target)) {
-        bubble.classList.remove('is-open');
-      }
-    });
+    if (node.autoClose) {
+      autoCloseTimer = setTimeout(function() {
+        closeBubble();
+      }, 2000);
+    } else if (node.options && node.options.length > 0) {
+      node.options.forEach(function(opt) {
+        const btn = document.createElement('button');
+        btn.className = 'speech-option';
+        btn.textContent = opt.label;
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          showNode(opt.next);
+        });
+        optionsBox.appendChild(btn);
+      });
+    } else {
+      const btn = document.createElement('button');
+      btn.className = 'speech-option';
+      btn.textContent = '...';
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        showNode('root');
+      });
+      optionsBox.appendChild(btn);
+    }
+  }
 
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') bubble.classList.remove('is-open');
-    });
+  trigger.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const opening = !bubble.classList.contains('is-open');
+    if (opening) {
+      bubble.classList.add('is-open');
+      showNode('root');
+    } else {
+      closeBubble();
+    }
   });
+
+  document.addEventListener('click', function(e) {
+    if (!bubble.contains(e.target) && !trigger.contains(e.target)) {
+      closeBubble();
+    }
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeBubble();
+    }
+  });
+});
 </script>
 
 <!-- ========== PARTICLE ENGINE SCRIPT ========== -->
@@ -905,7 +966,7 @@ var particles;
 
   <div id="mecha-panel" class="mecha-panel">
     <div class="mech-plate plate-header">
-      <span>Wetware_Vibe_Alignment.exe</span>
+      <span>vibe_machine.exe</span>
       <span class="blink">▶_</span>
     </div>
 
@@ -2823,7 +2884,7 @@ this.modal.classList.add('is-open');
        position: fixed;
        top: 110px;
        left: 0;
-       z-index: 1001;
+       z-index: 1;
        background: rgba(255, 255, 255, 0.65);
        backdrop-filter: blur(12px);
        -webkit-backdrop-filter: blur(12px);

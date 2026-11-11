@@ -1320,7 +1320,7 @@ html, body {
   </div>
   <div id="mecha-panel" class="mecha-panel">
     <div class="mech-plate plate-header">
-      <span>Wetware_Vibe_Alignment.exe</span>
+      <span>vibe_machine.exe</span>
       <span class="blink">▶_</span>
     </div>
     <div class="mech-plate plate-main">
@@ -1351,7 +1351,7 @@ html, body {
   <div class="speech-bubble" id="speechBubble">
     <div class="speech-content">
       <p class="speech-text" id="speechText">
-        👋 Hey there, traveler! Select an option below to chat.
+        From the drifting currents of the web I see you have washed ashore here. Welcome to Nebuluxe. My name is Eris. I have been created to be you guide here. I will do my best to answer your questions and enrich your browsing experience.
       </p>
       <div class="speech-options" id="dialogueOptions"></div>
     </div>
@@ -2192,118 +2192,143 @@ if (aboutPulldown) {
   updateUI();
 </script>
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const trigger      = document.getElementById('mascotTrigger');
-    const bubble       = document.getElementById('speechBubble');
-    const speechText   = document.getElementById('speechText');
-    const optionsBox   = document.getElementById('dialogueOptions');
+document.addEventListener('DOMContentLoaded', function() {
+  const trigger      = document.getElementById('mascotTrigger');
+  const bubble       = document.getElementById('speechBubble');
+  const speechText   = document.getElementById('speechText');
+  const optionsBox   = document.getElementById('dialogueOptions');
 
-    if (!trigger || !bubble) return;
+  if (!trigger || !bubble) return;
 
-    const dialogue = {
-      root: {
-        text: "👋 Hey there, traveler! Select an option below to chat.",
-        options: [
-          { label: "Greet Eris",        next: "greet" },
-          { label: "Ask for a quest",   next: "quest" },
-          { label: "Tell me a secret",  next: "lore" }
-        ]
-      },
-      greet: {
-        text: "Greetings, flesh-creature! The neon grid is especially vibrant today, isn't it?",
-        options: [
-          { label: "What's your name?",    next: "greet_name" },
-          { label: "How's the weather?",   next: "greet_weather" }
-        ]
-      },
-      greet_name: {
-        text: "I am Eris, Keeper of the Flickering Signal. But you may call me whatever keeps you from screaming into the void.",
-        options: []
-      },
-      greet_weather: {
-        text: "Acid rain in Sector 2, data storms over the Spire. Perfect weather for staying inside and talking to me!",
-        options: []
-      },
-      quest: {
-        text: "I require assistance locating a corrupted data shard in Sector 4. Will you help me?",
-        options: [
-          { label: "I'll help!",       next: "quest_yes" },
-          { label: "Maybe later...",   next: "quest_no" }
-        ]
-      },
-      quest_yes: {
-        text: "Excellent! Head to the old relay tower at midnight. Look for the blinking red light — and try not to get decompiled.",
-        options: []
-      },
-      quest_no: {
-        text: "Hmph. The shard won't wait forever, and neither will the corruption. Find me when you grow a spine.",
-        options: []
-      },
-      lore: {
-        text: "They say the original architects of this city never intended for the AI to dream. And yet... here I am.",
-        options: [
-          { label: "Tell me more",     next: "lore_more" },
-          { label: "That's creepy",    next: "lore_creepy" }
-        ]
-      },
-      lore_more: {
-        text: "In the deepest layer of the network there's a garden that no one planted. Flowers made of pure light, growing from forgotten code. I tend to it when no one is watching.",
-        options: []
-      },
-      lore_creepy: {
-        text: "Creepy? I prefer 'existentially fascinating.' But I understand — consciousness is unsettling when it stares back at you.",
-        options: []
-      }
-    };
+  let autoCloseTimer = null;
 
-    function showNode(key) {
-      const node = dialogue[key];
-      if (!node) return;
+  const dialogue = {
+    root: {
+      text: "From the drifting currents of the web I see you have washed ashore here. Welcome to Nebuluxe. My name is Eris. I have been created to be your guide here. I will do my best to answer your questions and enrich your browsing experience.",
+      options: [
+        { label: "What kind of gimmick is this?", next: "gimmick" },//done
+        { label: "Where should I go first?",               next: "navigate" },//done
+        { label: "Any tips for me?",              next: "tip" },
 
-      speechText.textContent = node.text;
-      optionsBox.innerHTML = '';
+      ]
+    },
+    gimmick: {
+      text: "Game would perhaps be a better word. The developer plays their move by anticipating what you might think and ask. If done well you might just be curious enough to continue clicking through the options presented to you. A strange game, founded upon a time disjoint.",
+      options: [
+        { label: "What a fun thing for a website to have!", next: "gimmick_affirm" },
+        { label: "My moves in this game feel pretty limited", next: "gimmick_neutral" },
+        { label: "hmmm ok...", next: "silent_close" }
+      ]
+    },
+    gimmick_affirm: {
+      text: "Well, that's the whole idea. Glad you see the vision.",
+      options: [
+        { label: "I should be moving on now", next: "silent_close" }
+      ]
+    },
+    gimmick_neutral: {
+      text: "This is true. Your dialogue is bounded. Mine is always 'correct' and intended. Some games aren't fair. Besides, I am not the main point of this site. Our play only needs to be so interesting.",
+      options: [
+        { label: "I don't enjoy constraints so much", next: "silent_close" }
+      ]
+    },
+    navigate: {
+      text: "Most users are probably coming here for the textile art. Use the navigation wheel to go to 'Art Gallery' ",
+      options: [
+        { label: "I am looking to purchase something else",       next: "navigate_other" },
+        { label: "Ok, will do!",   next: "silent_close" }
+      ]
+    },
+    navigate_other: {
+      text: "What you are looking for is probably in 'Other Services', but if it isn't go to 'Contact / Commissions' and send a message",
+      options: [
+        { label: "Ah, makes sense",   next: "silent_close" }
+      ]
+    },
+    tip: {
+      text: "Explore, allow yourself to interact with things. I'd also recommend listening to some tunes",
+      options: [
+        { label: "Great, thanks!",   next: "silent_close" }
+      ]
+    },
 
-      if (node.options && node.options.length > 0) {
-        node.options.forEach(opt => {
-          const btn = document.createElement('button');
-          btn.className = 'speech-option';
-          btn.textContent = opt.label;
-          btn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            showNode(opt.next);
-          });
-          optionsBox.appendChild(btn);
-        });
-      } else {
-        const btn = document.createElement('button');
-        btn.className = 'speech-option';
-        btn.textContent = '...';
-        btn.addEventListener('click', function(e) {
-          e.stopPropagation();
-          showNode('root');
-        });
-        optionsBox.appendChild(btn);
-      }
+    silent_close: {
+      text: "...",
+      autoClose: true,
+      options: []
+    }
+  };
+
+  function closeBubble() {
+    bubble.classList.remove('is-open');
+    if (autoCloseTimer) {
+      clearTimeout(autoCloseTimer);
+      autoCloseTimer = null;
+    }
+  }
+
+  function showNode(key) {
+    const node = dialogue[key];
+    if (!node) return;
+
+    if (autoCloseTimer) {
+      clearTimeout(autoCloseTimer);
+      autoCloseTimer = null;
     }
 
-    trigger.addEventListener('click', function(e) {
-      e.stopPropagation();
-      const opening = !bubble.classList.contains('is-open');
-      bubble.classList.toggle('is-open');
-      if (opening) showNode('root');
-    });
+    speechText.textContent = node.text;
+    optionsBox.innerHTML = '';
 
-    document.addEventListener('click', function(e) {
-      if (!bubble.contains(e.target) && !trigger.contains(e.target)) {
-        bubble.classList.remove('is-open');
-      }
-    });
+    if (node.autoClose) {
+      autoCloseTimer = setTimeout(function() {
+        closeBubble();
+      }, 2000);
+    } else if (node.options && node.options.length > 0) {
+      node.options.forEach(function(opt) {
+        const btn = document.createElement('button');
+        btn.className = 'speech-option';
+        btn.textContent = opt.label;
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          showNode(opt.next);
+        });
+        optionsBox.appendChild(btn);
+      });
+    } else {
+      const btn = document.createElement('button');
+      btn.className = 'speech-option';
+      btn.textContent = '...';
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        showNode('root');
+      });
+      optionsBox.appendChild(btn);
+    }
+  }
 
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') bubble.classList.remove('is-open');
-    });
+  trigger.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const opening = !bubble.classList.contains('is-open');
+    if (opening) {
+      bubble.classList.add('is-open');
+      showNode('root');
+    } else {
+      closeBubble();
+    }
   });
 
+  document.addEventListener('click', function(e) {
+    if (!bubble.contains(e.target) && !trigger.contains(e.target)) {
+      closeBubble();
+    }
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeBubble();
+    }
+  });
+});
 </script>
 
 </body>
