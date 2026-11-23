@@ -645,58 +645,18 @@
 
     const dialogue = {
       root: {
-        text: "👋 Hey there, traveler! Select an option below to chat.",
-        options: [
-          { label: "Greet Eris", next: "greet" },
-          { label: "Ask for a quest", next: "quest" },
-          { label: "Tell me a secret", next: "lore" }
-        ]
-      },
-      greet: {
-        text: "Greetings, flesh-creature! The golden hues of this realm are especially vibrant today, aren't they?",
-        options: [
-          { label: "What's your name?", next: "greet_name" },
-          { label: "How's the weather?", next: "greet_weather" }
-        ]
-      },
-      greet_name: {
-        text: "I am Eris, Keeper of the Flickering Signal. But you may call me whatever keeps you from screaming into the void.",
-        options: []
-      },
-      greet_weather: {
-        text: "Warm breezes and clear skies. Perfect weather for staying inside and talking to me!",
-        options: []
-      },
-      quest: {
-        text: "I require assistance locating a corrupted data shard in Sector 4. Will you help me?",
-        options: [
-          { label: "I'll help!", next: "quest_yes" },
-          { label: "Maybe later...", next: "quest_no" }
-        ]
-      },
-      quest_yes: {
-        text: "Excellent! Head to the old relay tower at midnight. Look for the blinking amber light — and try not to get decompiled.",
-        options: []
-      },
-      quest_no: {
-        text: "Hmph. The shard won't wait forever, and neither will the corruption. Find me when you grow a spine.",
-        options: []
-      },
-      lore: {
-        text: "They say the original architects of this city never intended for the AI to dream. And yet... here I am.",
-        options: [
-          { label: "Tell me more", next: "lore_more" },
-          { label: "That's creepy", next: "lore_creepy" }
-        ]
-      },
-      lore_more: {
-        text: "In the deepest layer of the network there's a garden that no one planted. Flowers made of pure light, growing from forgotten code. I tend to it when no one is watching.",
-        options: []
-      },
-      lore_creepy: {
-        text: "Creepy? I prefer 'existentially fascinating.' But I understand — consciousness is unsettling when it stares back at you.",
-        options: []
-      }
+        tip: {
+          text: "This page contains a few tools that you might find helpful. Think of it as a little library of sites that could be used for specific tasks.",
+          options: [
+            { label: "Great, thanks!",   next: "silent_close" }
+          ]
+        },
+
+        silent_close: {
+          text: "...",
+          autoClose: true,
+          options: []
+        }
     };
 
     function showNode(key) {

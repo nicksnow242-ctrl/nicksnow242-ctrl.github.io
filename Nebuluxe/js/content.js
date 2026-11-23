@@ -4,6 +4,9 @@
 const contentData = {
   Reading: {
     2026: [
+      { title: "Technopoly", author: "Neil Postman", rating: "6/10" },
+      { title: "Dune Messiah", author: "Frank Herbert", rating: "8/10" },
+      { title: "Dune", author: "Frank Herbert", rating: "7/10" },
       { title: "Neuromancer", author: "William Gibson", rating: "8/10" },
       { title: "The King in Yellow", author: "Robert Chambers", rating: "7/10" },
       { title: "Xenosystems", author: "Nick Land", rating: "8/10" },

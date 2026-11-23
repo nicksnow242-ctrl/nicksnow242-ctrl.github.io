@@ -45,8 +45,8 @@ window.other_services = [
         fullsizesrc1:'Images/other_services/comingsoon.png',
         alt: 'A thief came in the night',
         name: 'Clothing',
-        pricerange: '?',
-        description: 'Coming Soon',
+        pricerange: '-',
+        description: 'Prototypes pending',
         type: ''
     },
     {
@@ -74,10 +74,9 @@ window.other_services = [
         src: 'Images/other_services/kits/IMG2024053160556313.jpg',
         fullsizesrc1:'Images/other_services/kits/IMG2024053160556313.jpg',
         fullsizesrc2:'Images/other_services/kits/20240531134445.jpg',
-        fullsizesrc3:'Images/other_services/kits/IMG20240531160556437.jpg',
-        fullsizesrc4:'Images/other_services/kits/2024082935801.jpg',
-        fullsizesrc5:'Images/other_services/kits/20240829135549.jpg',
-        fullsizesrc6:'Images/other_services/kits/20240906160256.jpg',
+        fullsizesrc3:'Images/other_services/kits/2024082935801.jpg',
+        fullsizesrc4:'Images/other_services/kits/20240829135549.jpg',
+        fullsizesrc5:'Images/other_services/kits/20240906160256.jpg',
         alt: 'A thief came in the night',
         name: 'Kits',
         pricerange: '$4-$50',
@@ -86,13 +85,12 @@ window.other_services = [
     },
     {
         id: 7,
-        src: 'Images/other_services/test3.JPG',
-        fullsizesrc1:'Images/Fullsize/DSC1847.jpg',
-        fullsizesrc2:'Images/Fullsize/DSC1944.jpg',
+        src: 'Images/other_services/comingsoon.png',
+        fullsizesrc1:'Images/other_services/comingsoon.png',
         alt: 'A thief came in the night',
         name: 'Lighting',
-        pricerange: '$4-$50',
-        description: 'loren ipsum',
+        pricerange: '-',
+        description: 'Prototypes pending',
         type: ''
     }
 ]
