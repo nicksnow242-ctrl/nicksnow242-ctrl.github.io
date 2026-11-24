@@ -1244,6 +1244,81 @@ html, body {
   0%, 100% { transform: translateY(0); opacity: 1; }
   50% { transform: translateY(10px); opacity: 0.6; }
 }
+/* ==========================================
+   MOBILE OPTIMIZATIONS
+   ========================================== */
+
+@media (max-width: 768px) {
+  /* 1. Hero Section & Arrow: Ensure it fits in viewport without scrolling */
+  .hero-section {
+    height: 100dvh; /* Dynamic viewport height prevents mobile browser address bar issues */
+    padding: 0;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .glowing-logo-wrapper {
+    width: 65vw;
+    max-width: 350px;
+    margin-top: 15vh;
+  }
+
+  .scroll-indicator {
+    position: relative;
+    bottom: auto;
+    margin-bottom: 4vh;
+  }
+
+  /* 2. About Pullout: Make smaller to prevent overlap with mascot */
+  .about-pulldown {
+    width: 240px;
+    right: 10px;
+    transform: translateY(calc(100% - 40px)); /* Shows only the 40px header when closed */
+  }
+
+  .about-header {
+    height: 40px;
+    font-size: 11px;
+  }
+
+  .about-header::after {
+    bottom: 4px;
+    width: 30px;
+  }
+
+  .about-content {
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* 3. Scroll Wheel: Scale down so it's fully visible and not cut off */
+  .ccm-11__machine {
+    transform: scale(0.85);
+    transform-origin: center center;
+  }
+}
+
+/* Extra small mobile devices (e.g., iPhone SE, older Androids) */
+@media (max-width: 380px) {
+  .ccm-11__machine {
+    transform: scale(0.75);
+  }
+
+  .about-pulldown {
+    width: 220px;
+  }
+
+  .glowing-logo-wrapper {
+    width: 75vw;
+    margin-top: 10vh;
+  }
+
+  /* Ensures vertical clearance from the about pullout tab */
+  .mascot-popup {
+    bottom: 50px !important;
+  }
+}
 </style>
 </head>
 <body>
