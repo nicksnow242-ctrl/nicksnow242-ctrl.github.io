@@ -899,15 +899,17 @@ html, body {
 }
 
 /* New dedicated settings bar (hidden by default) */
+/* Dedicated settings bar for fullscreen mode (hidden by default) */
 .reader-settings-bar {
   display: none;
   justify-content: center;
   align-items: center;
-  padding: 10px 0;
+  padding: 15px 0;
   margin-bottom: 15px;
   border-bottom: 1px solid rgba(0, 255, 65, 0.2);
   width: 100%;
   box-sizing: border-box;
+  background: rgba(0, 26, 0, 0.5); /* Subtle background to separate the area */
 }
 
 /* Show settings bar ONLY when reader is in fullscreen */
@@ -916,128 +918,66 @@ html, body {
   display: flex;
 }
 
-/* Mobile Fullscreen: Stack title on top to prevent ANY overlap with buttons */
 @media (max-width: 768px) {
+  /* ... (keep all your existing mobile styles for banner, filter, document-area, etc.) ... */
+
+  /* Mobile Fullscreen Layout: Prevent Overlap */
   #reader-view:fullscreen .reader-header,
   #reader-view:-webkit-full-screen .reader-header {
     flex-wrap: wrap;
     gap: 10px;
+    padding-bottom: 10px;
   }
 
   #reader-view:fullscreen .reader-title,
   #reader-view:-webkit-full-screen .reader-title {
-    flex: 1 1 100%; /* Forces title to its own full-width line */
-    order: -1; /* Moves title to the very top row */
-    white-space: normal; /* Allows wrapping if still too long */
+    flex: 1 1 100%;
+    order: -1; /* Forces title to its own top row */
+    white-space: normal;
     text-align: center;
     margin-bottom: 5px;
-    font-size: 22px;
+    font-size: 20px;
   }
 
   #reader-view:fullscreen .back-btn,
   #reader-view:-webkit-full-screen .back-btn {
     order: 1;
     flex: 1;
+    font-size: 14px;
+    padding: 8px 12px;
   }
 
+  /* Fullscreen button: reset position, hide text, show ONLY the symbol */
   #reader-view:fullscreen .fullscreen-btn,
   #reader-view:-webkit-full-screen .fullscreen-btn {
+    position: static !important; /* Overrides desktop fixed positioning */
+    top: auto !important;
+    right: auto !important;
     order: 2;
-    flex: 1;
-    font-size: 12px;
-    padding: 8px 10px;
+    flex: 0 0 auto;
+    font-size: 0; /* Hides the word "Fullscreen" or "Exit" */
+    padding: 8px 12px;
   }
-}
 
-.reader-meta {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  font-size: 14px;
-  color: var(--text-dim);
-  margin-bottom: 30px;
-  width: 100%;
-  box-sizing: border-box;
-}
-.reader-meta span { display: flex; align-items: center; gap: 6px; }
+  /* Inject the symbol back in via pseudo-element */
+  #reader-view:fullscreen .fullscreen-btn::after,
+  #reader-view:-webkit-full-screen .fullscreen-btn::after {
+    content: '⛶';
+    font-size: 20px;
+  }
 
-.reader-content {
-  flex: 1;
-  overflow-y: auto;
-  padding-right: 15px;
-  font-size: 16px;
-  line-height: 1.8;
-  color: #d0ffd9;
-  width: 100%;
-  box-sizing: border-box;
-}
-.reader-content p { margin-bottom: 20px; text-align: justify; }
+  /* Toggles layout in fullscreen */
+  .settings-group {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+  }
 
-.reader-content::-webkit-scrollbar { width: 6px; }
-.reader-content::-webkit-scrollbar-track { background: var(--deep-green); }
-.reader-content::-webkit-scrollbar-thumb { background: var(--mid-green); border-radius: 3px; }
-.reader-content::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Ensure reader-view fills the entire screen */
-#reader-view:fullscreen,
-#reader-view:-webkit-full-screen {
-
-  padding: 15px 0 0 0 !important; /* Changed from padding: 0 to add 15px top padding */
-  width: 100% !important;
-  height: 100% !important;
-  overflow: auto !important;
-  padding-top: 15px !important;
-   box-sizing: border-box !important;
-}
-
-.reader-view:fullscreen .back-btn,
-.reader-view:-webkit-full-screen .back-btn {
-  display: none;
-}
-
-.reader-view:fullscreen .fullscreen-btn,
-.reader-view:-webkit-full-screen .fullscreen-btn {
-  position: fixed;
-  top: 25px;
-  right: 25px;
-  z-index: 10000;
-}
-
-.reader-view:fullscreen .reader-content,
-.reader-view:-webkit-full-screen .reader-content {
-  max-width: 800px;
-  width: 100%;
-  margin: 0 auto;
-  padding-left: 0;
-  padding-right: 20px;
-  font-size: 18px;
-}
-
-.reader-view:fullscreen .reader-title,
-.reader-view:-webkit-full-screen .reader-title {
-  font-size: 36px;
-}
-
-.reader-view:fullscreen .reader-header,
-.reader-view:-webkit-full-screen .reader-header {
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 40px;
-}
-
-.reader-view:fullscreen .reader-meta,
-.reader-view:-webkit-full-screen .reader-meta {
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 40px;
-  font-size: 15px;
+  .style-orbs, .size-orbs {
+    display: flex !important;
+    gap: 10px;
+  }
 }
 
 .text-list-container {
@@ -2402,102 +2342,99 @@ var particles;
     }
 
     // 4. Open the Reader View
-    function openReader(writing) {
-      if (!document.getElementById('reader-view')) {
-        const reader = document.createElement('div');
-        reader.id = 'reader-view';
-        reader.className = 'reader-view style-dark font-medium'; // Start with Dark as default
+  function openReader(writing) {
+    if (!document.getElementById('reader-view')) {
+      const reader = document.createElement('div');
+      reader.id = 'reader-view';
+      reader.className = 'reader-view style-dark font-medium';
 
-        reader.innerHTML = `
-  <div class="reader-header">
-    <button class="back-btn" id="back-to-list">← Back</button>
-    <h2 class="reader-title" id="reader-title"></h2>
-    <div class="reader-header-controls">
-      <div class="settings-group">
-        <div class="style-orbs">
-          <button class="style-orb orb-dark active" data-style="dark" title="Dark"></button>
-          <button class="style-orb orb-parchment" data-style="parchment" title="Parchment"></button>
-          <button class="style-orb orb-swirl" data-style="swirl" title="Swirl"></button>
+      reader.innerHTML = `
+        <div class="reader-header">
+          <button class="back-btn" id="back-to-list">← Back</button>
+          <h2 class="reader-title" id="reader-title"></h2>
+          <button class="fullscreen-btn" id="fullscreen-toggle" title="Toggle Fullscreen">⛶ Fullscreen</button>
         </div>
-        <div class="size-orbs">
-          <button class="size-orb size-small" data-size="small" title="Small Text"></button>
-          <button class="size-orb size-medium active" data-size="medium" title="Medium Text"></button>
-          <button class="size-orb size-large" data-size="large" title="Large Text"></button>
+
+        <!-- Dedicated settings bar for fullscreen mode -->
+        <div class="reader-settings-bar">
+          <div class="settings-group">
+            <div class="style-orbs">
+              <button class="style-orb orb-dark active" data-style="dark" title="Dark"></button>
+              <button class="style-orb orb-parchment" data-style="parchment" title="Parchment"></button>
+              <button class="style-orb orb-swirl" data-style="swirl" title="Swirl"></button>
+            </div>
+            <div class="size-orbs">
+              <button class="size-orb size-small" data-size="small" title="Small Text"></button>
+              <button class="size-orb size-medium active" data-size="medium" title="Medium Text"></button>
+              <button class="size-orb size-large" data-size="large" title="Large Text"></button>
+            </div>
+          </div>
         </div>
-      </div>
-      <button class="fullscreen-btn" id="fullscreen-toggle" title="Toggle Fullscreen">⛶ Fullscreen</button>
-    </div>
-  </div>
-  <div class="reader-meta">
-    <span>✍️ <strong id="reader-author"></strong></span>
-    <span>📖 <strong id="reader-subtitle"></strong></span>
-  </div>
-  <div class="reader-content" id="reader-content"></div>
-`;
-        documentArea.appendChild(reader);
 
-        // Style orb selector logic (Independent)
-  const styleOrbs = reader.querySelectorAll('.style-orb');
-  styleOrbs.forEach(styleOrb => {
-    styleOrb.addEventListener('click', () => {
-      // Update active state visually
-      styleOrbs.forEach(o => o.classList.remove('active'));
-      styleOrb.classList.add('active');
+        <div class="reader-meta">
+          <span>✍️ <strong id="reader-author"></strong></span>
+          <span>📖 <strong id="reader-subtitle"></strong></span>
+        </div>
+        <div class="reader-content" id="reader-content"></div>
+      `;
+      documentArea.appendChild(reader);
 
-      // Update reader theme class
-      const selectedStyle = styleOrb.getAttribute('data-style');
-      reader.classList.remove('style-dark', 'style-parchment', 'style-swirl');
-      reader.classList.add('style-' + selectedStyle);
-    });
-  });
-
-  // Size orb selector logic (Independent)
-  const sizeOrbs = reader.querySelectorAll('.size-orb');
-  sizeOrbs.forEach(sizeOrb => {
-    sizeOrb.addEventListener('click', () => {
-      // Update active state visually
-      sizeOrbs.forEach(o => o.classList.remove('active'));
-      sizeOrb.classList.add('active');
-
-      // Update reader font class
-      const selectedSize = sizeOrb.getAttribute('data-size');
-      reader.classList.remove('font-small', 'font-medium', 'font-large');
-      reader.classList.add('font-' + selectedSize);
-    });
-  });
-
-        document.getElementById('back-to-list').addEventListener('click', () => {
-          if (document.fullscreenElement || document.webkitFullscreenElement) {
-            (document.exitFullscreen || document.webkitExitFullscreen).call(document);
-          }
-          reader.classList.remove('active');
-          documentArea.classList.remove('grid-hidden');
-          document.body.classList.remove('reader-active');
+      // Style orb selector logic
+      const styleOrbs = reader.querySelectorAll('.style-orb');
+      styleOrbs.forEach(styleOrb => {
+        styleOrb.addEventListener('click', () => {
+          styleOrbs.forEach(o => o.classList.remove('active'));
+          styleOrb.classList.add('active');
+          const selectedStyle = styleOrb.getAttribute('data-style');
+          reader.classList.remove('style-dark', 'style-parchment', 'style-swirl');
+          reader.classList.add('style-' + selectedStyle);
         });
+      });
 
-        const fsBtn = document.getElementById('fullscreen-toggle');
-        fsBtn.addEventListener('click', toggleFullscreen);
+      // Size orb selector logic
+      const sizeOrbs = reader.querySelectorAll('.size-orb');
+      sizeOrbs.forEach(sizeOrb => {
+        sizeOrb.addEventListener('click', () => {
+          sizeOrbs.forEach(o => o.classList.remove('active'));
+          sizeOrb.classList.add('active');
+          const selectedSize = sizeOrb.getAttribute('data-size');
+          reader.classList.remove('font-small', 'font-medium', 'font-large');
+          reader.classList.add('font-' + selectedSize);
+        });
+      });
 
-        const syncFsButton = () => {
-          const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
-          fsBtn.textContent = isFs ? '⛶ Exit Fullscreen' : '⛶ Fullscreen';
-        };
-        document.addEventListener('fullscreenchange', syncFsButton);
-        document.addEventListener('webkitfullscreenchange', syncFsButton);
-      }
+      document.getElementById('back-to-list').addEventListener('click', () => {
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
+          (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+        }
+        reader.classList.remove('active');
+        documentArea.classList.remove('grid-hidden');
+        document.body.classList.remove('reader-active');
+      });
 
-      document.getElementById('reader-title').textContent = writing.title;
-      document.getElementById('reader-author').textContent = writing.author;
-      document.getElementById('reader-subtitle').textContent = writing.subtitle || '';
-      document.getElementById('reader-content').innerHTML = writing.content;
+      const fsBtn = document.getElementById('fullscreen-toggle');
+      fsBtn.addEventListener('click', toggleFullscreen);
 
-      const readerView = document.getElementById('reader-view');
-      readerView.classList.add('active');
-      documentArea.classList.add('grid-hidden');
-      document.body.classList.add('reader-active');
-
-      document.getElementById('reader-content').scrollTop = 0;
+      const syncFsButton = () => {
+        const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+        fsBtn.textContent = isFs ? '⛶ Exit' : '⛶ Fullscreen';
+      };
+      document.addEventListener('fullscreenchange', syncFsButton);
+      document.addEventListener('webkitfullscreenchange', syncFsButton);
     }
+
+    document.getElementById('reader-title').textContent = writing.title;
+    document.getElementById('reader-author').textContent = writing.author;
+    document.getElementById('reader-subtitle').textContent = writing.subtitle || '';
+    document.getElementById('reader-content').innerHTML = writing.content;
+
+    const readerView = document.getElementById('reader-view');
+    readerView.classList.add('active');
+    documentArea.classList.add('grid-hidden');
+    document.body.classList.add('reader-active');
+
+    document.getElementById('reader-content').scrollTop = 0;
+  }
 
     // 5. Fullscreen toggle function
     function toggleFullscreen() {
