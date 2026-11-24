@@ -1119,16 +1119,30 @@ body.reader-active .filter-sidebar { display: none; }
     if (!trigger || !bubble) return;
 
     const dialogue = {
-      root: { text: "👋 Hey there, traveler! Select an option below to chat.", options: [{ label: "Greet Eris", next: "greet" }, { label: "Ask for a quest", next: "quest" }, { label: "Tell me a secret", next: "lore" }] },
-      greet: { text: "Greetings, flesh-creature! The neon hues of this realm are especially vibrant today, aren't they?", options: [{ label: "What's your name?", next: "greet_name" }, { label: "How's the weather?", next: "greet_weather" }] },
-      greet_name: { text: "I am Eris, Keeper of the Flickering Signal. But you may call me whatever keeps you from screaming into the void.", options: [] },
-      greet_weather: { text: "Warm breezes and clear skies. Perfect weather for staying inside and reading documents!", options: [] },
-      quest: { text: "I require assistance locating a corrupted data shard in Sector 4. Will you help me?", options: [{ label: "I'll help!", next: "quest_yes" }, { label: "Maybe later...", next: "quest_no" }] },
-      quest_yes: { text: "Excellent! Head to the old relay tower at midnight. Look for the blinking green light — and try not to get decompiled.", options: [] },
-      quest_no: { text: "Hmph. The shard won't wait forever, and neither will the corruption. Find me when you grow a spine.", options: [] },
-      lore: { text: "They say the original architects of this city never intended for the AI to dream. And yet... here I am.", options: [{ label: "Tell me more", next: "lore_more" }, { label: "That's creepy", next: "lore_creepy" }] },
-      lore_more: { text: "In the deepest layer of the network there's a garden that no one planted. Flowers made of pure light, growing from forgotten code. I tend to it when no one is watching.", options: [] },
-      lore_creepy: { text: "Creepy? I prefer 'existentially fascinating.' But I understand — consciousness is unsettling when it stares back at you.", options: [] }
+      root: {
+        text: "What is a man beyond what he can consume and leave behind? This page is a small effort in the recording of a man.",
+        options: [
+          { label: "What is written here?", next: "fullpagewriting" },
+          { label: "Great, thanks!", next: "polite_close" }
+        ]
+      },
+      fullpagewriting: {
+        text: "Really anything, though an effort to collect writings with some value has been made. If you decide to read them I highly encourage you to go into the full screen mode and play around with the settings there.",
+        options: [
+
+          { label: "Great, thanks!", next: "polite_close" }
+        ]
+      },
+      silent_close: {
+        text: "...",
+        autoClose: true,
+        options: []
+      },
+      polite_close: {
+        text: "Of course!",
+        autoClose: true,
+        options: []
+      }
     };
 
     function showNode(key) {
@@ -2105,7 +2119,7 @@ var particles;
 
     const header = document.createElement('div');
     header.className = 'filter-sidebar-header';
-    header.textContent = 'Doc Type';
+    header.textContent = 'Filter';
     filterSidebar.appendChild(header);
 
     const itemsContainer = document.createElement('div');

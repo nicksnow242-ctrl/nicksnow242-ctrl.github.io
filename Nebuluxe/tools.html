@@ -645,12 +645,15 @@
 
     const dialogue = {
       root: {
-        tip: {
-          text: "This page contains a few tools that you might find helpful. Think of it as a little library of sites that could be used for specific tasks.",
-          options: [
-            { label: "Great, thanks!",   next: "silent_close" }
-          ]
-        },
+        text: "This page contains a few tools that you might find helpful. Think of it as a little library of sites that could be used for specific tasks.",
+        options: [
+          { label: "What kind of gimmick is this?", next: "gimmick" },//done
+          { label: "Where should I go first?",               next: "navigate" },//done
+          { label: "Any tips for me?",              next: "tip" },
+
+        ]
+      },
+    
 
         silent_close: {
           text: "...",
@@ -867,7 +870,7 @@ var particles;
 
   <div id="mecha-panel" class="mecha-panel">
     <div class="mech-plate plate-header">
-      <span>Wetware_Vibe_Alignment.exe</span>
+      <span>vibe_machine.exe</span>
       <span class="blink">▶_</span>
     </div>
 

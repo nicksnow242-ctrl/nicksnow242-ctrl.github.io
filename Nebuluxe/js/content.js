@@ -26,11 +26,10 @@ const contentData = {
  },
   Pod: {
     2026: [
-      { title: "Pill Pod", author: "Plastic Pills", rating: "8/10" },
-      { title: "Theory Underground", author: "David Mckerracher", rating: "8/10" },
-      { title: "One Dime Radio", author: "Tony Chamas", rating: "8/10" },
-      { title: "Trash Future", author: "various", rating: "5/10" },
-      { title: "The Dangerous Maybe", author: "Michael Downs & Nance", rating: "8/10" },
+      { title: "Pill Pod", author: "Plastic Pills", rating: "" },
+      { title: "Theory Underground", author: "David Mckerracher", rating: "" },
+      { title: "One Dime Radio", author: "Tony Chamas", rating: "" },
+      { title: "The Dangerous Maybe", author: "Michael Downs & Nance", rating: "" },
     ]
   },
   Articles: {

@@ -684,7 +684,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const dialogue = {
     root: {
-      text: "On this page you can message the developer/artist/CEO king about anything you'd like.",
+      text: "On this page you can message the developer/artist about anything you'd like.",
       options: [
         { label: "Can I request a commission?", next: "commission" },
         { label: "I'd like to talk to the artist about one of their peices", next: "art_dialogue" },
@@ -704,9 +704,9 @@ document.addEventListener('DOMContentLoaded', function() {
       ]
     },
     off_topic: {
-      text: "That is fine too! Just don't waste anyone's time.",
+      text: "That is fine too! But just so you know I got limited minutes here.",
       options: [
-        { label: "I actually want to express how much hate I have in my heart", next: "silent_close" },
+        { label: "I actually want to express how much I hate this site. I can't find a google profile to leave a 1 star review under so I came here.", next: "silent_close" },
         { label: "Great, thanks!", next: "polite_close" }
       ]
     },

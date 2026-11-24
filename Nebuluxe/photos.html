@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gallery</title>
+<title>Photos</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
@@ -654,7 +654,7 @@ html, body {
 <div class="mascot-popup" id="mascotPopup">
   <div class="speech-bubble" id="speechBubble">
     <div class="speech-content">
-      <p class="speech-text" id="speechText">👋 Hey there, traveler! Select an option below to chat.</p>
+      <p class="speech-text" id="speechText">A few pictures for you to view. This is a side interest of sorts. It seems that social media is no longer a good place to put your work onto. It's better that they are here</p>
       <div class="speech-options" id="dialogueOptions"></div>
     </div>
     <div class="speech-tail"></div>
@@ -678,58 +678,18 @@ html, body {
 
     const dialogue = {
       root: {
-        text: "👋 Hey there, traveler! Select an option below to chat.",
+        text: "A few pictures for you to view. This is a side interest of sorts. It seems that social media is no longer a good place to put your work onto. It's better that they are here",
         options: [
-          { label: "Greet Eris", next: "greet" },
-          { label: "Ask for a quest", next: "quest" },
-          { label: "Tell me a secret", next: "lore" }
+          { label: "I see. Thank you Eris", next: "silent_close" }
+        
         ]
       },
-      greet: {
-        text: "Greetings, flesh-creature! The neon hues of this realm are especially vibrant today, aren't they?",
-        options: [
-          { label: "What's your name?", next: "greet_name" },
-          { label: "How's the weather?", next: "greet_weather" }
-        ]
-      },
-      greet_name: {
-        text: "I am Eris, Keeper of the Flickering Signal. But you may call me whatever keeps you from screaming into the void.",
-        options: []
-      },
-      greet_weather: {
-        text: "Warm breezes and clear skies. Perfect weather for staying inside and talking to me!",
-        options: []
-      },
-      quest: {
-        text: "I require assistance locating a corrupted data shard in Sector 4. Will you help me?",
-        options: [
-          { label: "I'll help!", next: "quest_yes" },
-          { label: "Maybe later...", next: "quest_no" }
-        ]
-      },
-      quest_yes: {
-        text: "Excellent! Head to the old relay tower at midnight. Look for the blinking amber light — and try not to get decompiled.",
-        options: []
-      },
-      quest_no: {
-        text: "Hmph. The shard won't wait forever, and neither will the corruption. Find me when you grow a spine.",
-        options: []
-      },
-      lore: {
-        text: "They say the original architects of this city never intended for the AI to dream. And yet... here I am.",
-        options: [
-          { label: "Tell me more", next: "lore_more" },
-          { label: "That's creepy", next: "lore_creepy" }
-        ]
-      },
-      lore_more: {
-        text: "In the deepest layer of the network there's a garden that no one planted. Flowers made of pure light, growing from forgotten code. I tend to it when no one is watching.",
-        options: []
-      },
-      lore_creepy: {
-        text: "Creepy? I prefer 'existentially fascinating.' But I understand — consciousness is unsettling when it stares back at you.",
+      silent_close: {
+        text: "...",
+        autoClose: true,
         options: []
       }
+
     };
 
     function showNode(key) {
