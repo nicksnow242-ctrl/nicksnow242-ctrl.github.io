@@ -19,7 +19,7 @@
 
 html, body {
   width: 100%;
-  height: 100%;
+   height: 100dvh;
   padding: 0;
   margin: 0;
   overflow: hidden;
@@ -449,14 +449,7 @@ html, body {
   z-index: 2;
 }
 
-@media (max-width: 480px) {
-  .mascot-popup { bottom: 40px; left: 5%; }
-  .mascot-gif-wrapper { width: 80px; height: 80px; }
-  .speech-bubble { width: 240px; }
-  .speech-content { padding: 14px 16px; }
-  .speech-text { font-size: 13px; }
-  .speech-option { font-size: 12px; }
-}
+
 
 /* ========================================== */
 /* CYBERPUNK MECHA MUSIC PLAYER */
@@ -729,15 +722,6 @@ html, body {
 .music-player-container .blink { animation: blinker 1s linear infinite; }
 @keyframes blinker { 50% { opacity: 0; } }
 
-@media (max-width: 768px) {
-  .music-player-container { top: 10px; right: 10px; }
-  .music-player-container .mecha-panel { width: 280px; }
-  .music-player-container .oval-frame { width: 130px; height: 130px; }
-  .reading-list-sidebar { width: 100%; right: -100%; transition: right 0.3s ease; }
-  .reading-list-sidebar.mobile-open { right: 0; }
-  .document-area { margin-right: 0; }
-  .text-list-container { grid-template-columns: 1fr; }
-}
 
 /* ========================================== */
 /* FILTER SIDEBAR STYLES (Radio Buttons)      */
@@ -867,8 +851,8 @@ html, body {
 .reader-header {
   display: flex;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 30px;
+  gap: 10px;
+  margin-bottom: 15px;
   padding-bottom: 15px;
   border-bottom: 1px solid rgba(0, 255, 65, 0.3);
   width: 100%;
@@ -898,12 +882,71 @@ html, body {
 }
 
 .reader-title {
-  font-size: 28px;
+  font-size: 20px;
   color: var(--neon-green);
   text-shadow: 0 0 10px var(--neon-glow-green);
   margin: 0;
+  overflow: hidden;
   flex: 1;
+  text-overflow: ellipsis;
+ min-width: 0;
   text-align: center;
+}
+@media (min-width: 769px) {
+  .reader-title {
+    font-size: 28px;
+  }
+}
+
+/* New dedicated settings bar (hidden by default) */
+.reader-settings-bar {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+  margin-bottom: 15px;
+  border-bottom: 1px solid rgba(0, 255, 65, 0.2);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Show settings bar ONLY when reader is in fullscreen */
+#reader-view:fullscreen .reader-settings-bar,
+#reader-view:-webkit-full-screen .reader-settings-bar {
+  display: flex;
+}
+
+/* Mobile Fullscreen: Stack title on top to prevent ANY overlap with buttons */
+@media (max-width: 768px) {
+  #reader-view:fullscreen .reader-header,
+  #reader-view:-webkit-full-screen .reader-header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  #reader-view:fullscreen .reader-title,
+  #reader-view:-webkit-full-screen .reader-title {
+    flex: 1 1 100%; /* Forces title to its own full-width line */
+    order: -1; /* Moves title to the very top row */
+    white-space: normal; /* Allows wrapping if still too long */
+    text-align: center;
+    margin-bottom: 5px;
+    font-size: 22px;
+  }
+
+  #reader-view:fullscreen .back-btn,
+  #reader-view:-webkit-full-screen .back-btn {
+    order: 1;
+    flex: 1;
+  }
+
+  #reader-view:fullscreen .fullscreen-btn,
+  #reader-view:-webkit-full-screen .fullscreen-btn {
+    order: 2;
+    flex: 1;
+    font-size: 12px;
+    padding: 8px 10px;
+  }
 }
 
 .reader-meta {
@@ -1010,22 +1053,159 @@ html, body {
 body.reader-active .filter-sidebar { display: none; }
 
 @media (max-width: 768px) {
+  /* 1. Compact Top Banner */
+  .top-banner {
+    height: 60px;
+    padding: 0 10px;
+    grid-template-columns: 50px 1fr 50px;
+  }
+  .banner-title {
+    font-size: 16px;
+    letter-spacing: 0.1em;
+  }
+  .glowing-logo-wrapper {
+    width: 50px;
+  }
+  .main-layout {
+    margin-top: 60px;
+    height: calc(100dvh - 60px);
+    flex-direction: column;
+  }
+
+  /* 2. Filter Sidebar as Horizontal Scroll Strip (with visible title) */
   .filter-sidebar {
-    width: 100%;
-    height: auto;
-    max-height: 200px;
     position: relative;
     top: 0;
+    width: 100%;
+    height: auto;
     border-right: none;
-    border-bottom: 2px solid var(--neon-green);
+    border-bottom: 1px solid var(--neon-green);
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+  }
+  .filter-sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(0, 255, 65, 0.2);
+    flex-shrink: 0;
+    letter-spacing: 1px;
   }
   .filter-sidebar-items {
     flex-direction: row;
-    flex-wrap: wrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px;
+    gap: 8px;
+    scrollbar-width: none; /* Firefox */
   }
+  .filter-sidebar-items::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+  .toggle-btn-group {
+    flex-shrink: 0;
+  }
+  .cyber-toggle {
+    padding: 4px 10px;
+  }
+  .cyber-text {
+    font-size: 11px;
+  }
+  .cyber-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* 3. Document Area Adjustments */
   .document-area {
     margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 10px;
+    height: calc(100dvh - 130px); /* 60px header + ~70px filter area */
+    overflow-y: auto;
   }
+  .text-list-container {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .text-list-item {
+    padding: 12px;
+    font-size: 12px;
+  }
+  .text-list-item .book-title { font-size: 14px; }
+  .text-list-item .book-author { font-size: 11px; }
+
+  /* 4. Reading List Sidebar as Pullout */
+  .reading-list-sidebar {
+    position: fixed;
+    top: 60px;
+    right: -100%;
+    width: 85%;
+    max-width: 320px;
+    height: calc(100dvh - 60px);
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 200;
+  }
+  .reading-list-sidebar.mobile-open {
+    right: 0;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+  }
+
+  /* 5. Mobile Toggle Button for Reading List */
+  .mobile-reading-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background: var(--deep-green);
+    border: 1px solid var(--neon-green);
+    border-radius: 50%;
+    color: var(--neon-green);
+    font-size: 20px;
+    z-index: 150;
+    cursor: pointer;
+    box-shadow: 0 0 15px var(--neon-glow-green);
+    transition: transform 0.2s ease;
+  }
+  .mobile-reading-toggle:active {
+    transform: scale(0.9);
+  }
+
+  /* 6. Music Player Adjustments (Always Top Right) */
+  .music-player-container {
+    top: 10px !important;
+    right: 10px !important;
+  }
+  .music-player-container .activation-core {
+    width: 45px;
+    height: 45px;
+  }
+  .music-player-container .core-icon {
+    font-size: 24px;
+  }
+  .music-player-container .mecha-panel {
+    width: 280px;
+    right: -5px;
+  }
+  .music-player-container .oval-frame {
+    width: 130px;
+    height: 130px;
+  }
+
+  /* 7. Mascot & Small Screen Adjustments */
+  .mascot-popup { bottom: 80px; left: 10px; }
+  .mascot-gif-wrapper { width: 70px; height: 70px; }
+  .speech-bubble { width: 220px; }
+  .speech-content { padding: 14px 16px; }
+  .speech-text { font-size: 13px; }
+  .speech-option { font-size: 12px; }
 }
 </style>
 </head>
@@ -2347,5 +2527,27 @@ var particles;
 <!-- ========================================== -->
 <!-- MAIN BODY: END           -->
 <!-- ========================================== -->
+<!-- Mobile Reading List Toggle -->
+<button class="mobile-reading-toggle" id="mobileReadingToggle" aria-label="Toggle Reading List">📚</button>
+<script>
+  // Mobile Reading List Toggle Logic
+  const mobileReadingToggle = document.getElementById('mobileReadingToggle');
+  const readingListSidebar = document.querySelector('.reading-list-sidebar');
+
+  if (mobileReadingToggle && readingListSidebar) {
+    mobileReadingToggle.addEventListener('click', () => {
+      readingListSidebar.classList.toggle('mobile-open');
+    });
+
+    // Close sidebar when clicking outside of it on mobile
+    document.addEventListener('click', (e) => {
+      if (window.innerWidth <= 768 &&
+          !readingListSidebar.contains(e.target) &&
+          !mobileReadingToggle.contains(e.target)) {
+        readingListSidebar.classList.remove('mobile-open');
+      }
+    });
+  }
+</script>
 </body>
 </html>

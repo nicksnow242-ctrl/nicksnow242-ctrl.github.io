@@ -595,6 +595,24 @@
   .music-player-container { top: 10px; right: 10px; }
   .mecha-panel { width: 280px; }
   .oval-frame { width: 130px; height: 130px; }
+  .top-banner {
+    grid-template-columns: 70px 1fr 70px;
+    padding: 0 15px;
+    height: 90px;
+  }
+
+  .banner-title {
+    font-size: 18px;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+  }
+
+  .glowing-logo-wrapper {
+    width: 70px;
+  }
 }
 </style>
 </head>
@@ -653,7 +671,7 @@
 
         ]
       },
-    
+
 
         silent_close: {
           text: "...",
