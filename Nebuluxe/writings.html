@@ -909,7 +909,7 @@ html, body {
   border-bottom: 1px solid rgba(0, 255, 65, 0.2);
   width: 100%;
   box-sizing: border-box;
-  background: rgba(0, 26, 0, 0.5); /* Subtle background to separate the area */
+  background: transparent; /* Subtle background to separate the area */
 }
 
 /* Show settings bar ONLY when reader is in fullscreen */
@@ -948,25 +948,28 @@ html, body {
   }
 
   /* Fullscreen button: reset position, hide text, show ONLY the symbol */
-  #reader-view:fullscreen .fullscreen-btn,
-  #reader-view:-webkit-full-screen .fullscreen-btn {
-    position: static !important;
-    top: auto !important;
-    right: auto !important;
-    order: 2;
-    flex: 0 0 auto;
-    font-size: 0 !important; /* Force-hides any text like "Exit" or "Fullscreen" */
-    padding: 8px 12px;
-    line-height: 1;
-  }
+  /* Fullscreen button: hide text completely, show ONLY the symbol */
+#reader-view:fullscreen .fullscreen-btn,
+#reader-view:-webkit-full-screen .fullscreen-btn {
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  order: 2;
+  flex: 0 0 auto;
+  color: transparent !important; /* Makes the actual text completely invisible */
+  padding: 8px 12px;
+  border: 1px solid var(--neon-green); /* Ensures the button border remains visible */
+}
 
-  /* Inject the symbol back in via pseudo-element */
-  #reader-view:fullscreen .fullscreen-btn::after,
-  #reader-view:-webkit-full-screen .fullscreen-btn::after {
-    content: '⛶';
-    font-size: 20px !important;
-    display: block;
-  }
+/* Inject the symbol back in via pseudo-element */
+#reader-view:fullscreen .fullscreen-btn::after,
+#reader-view:-webkit-full-screen .fullscreen-btn::after {
+  content: '⛶';
+  color: var(--neon-green) !important; /* Restores the neon green color for the icon */
+  font-size: 20px !important;
+  display: block;
+  line-height: 1;
+}
 
   /* Toggles layout in fullscreen */
   .settings-group {
@@ -1063,8 +1066,9 @@ body.reader-active .filter-sidebar { display: none; }
 
   /* 3. Document Area Adjustments */
   .document-area {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+    margin-left: 5px !important;
+    margin-right: 5px !important;
+    margin-bottom: 25px !important;
     padding: 10px;
     height: calc(100dvh - 130px); /* 60px header + ~70px filter area */
     overflow-y: auto;
