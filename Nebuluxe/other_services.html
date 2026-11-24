@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Other Goods & Services</title>
+<title>Other Goods <br>& Services</title>
 <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -589,29 +589,53 @@ html, body {
 .blink { animation: blinker 1s linear infinite; }
 @keyframes blinker { 50% { opacity: 0; } }
 
-@media (max-width: 768px) {
-  .music-player-container { top: 10px; right: 10px; }
-  .mecha-panel { width: 280px; }
-  .oval-frame { width: 130px; height: 130px; }
-  .top-banner {
-    grid-template-columns: 70px 1fr 70px;
-    padding: 0 15px;
-    height: 90px;
+.boho-service-image-trigger {
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.2s ease;
   }
 
-  .banner-title {
-    font-size: 18px;
-    letter-spacing: 0.1em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: center;
+  .boho-service-image-trigger:active .boho-service-image {
+    transform: scale(0.98);
+    opacity: 0.9;
   }
 
-  .glowing-logo-wrapper {
-    width: 70px;
-  }
-}
+  @media (max-width: 768px) {
+      .gallery-modal {
+        align-items: center;
+        overflow-y: auto;
+        padding: 15px;
+      }
+      .gallery-card {
+        margin: auto; /* Ensures perfect centering, allows scrolling if taller than viewport */
+        max-height: 95vh;
+        max-width: 95vw;
+        width: 100%;
+      }
+      .gallery-card-layout {
+        flex-direction: column;
+        overflow-y: visible;
+      }
+      .gallery-card-image-container {
+        flex: none;
+        max-height: 40vh;
+        padding: 12px;
+        border-right: none;
+        border-bottom: 1px solid rgba(192, 122, 95, 0.2);
+      }
+      .gallery-card-image {
+        max-height: 35vh;
+      }
+      .gallery-card-content {
+        flex: 1;
+        padding: 16px;
+        overflow-y: auto; /* Moves scrolling to the text content area */
+      }
+      .gallery-card-title { font-size: 20px; }
+      .carousel-arrow { opacity: 1; width: 36px; height: 36px; font-size: 14px; }
+      .carousel-dots { opacity: 1; }
+      .carousel-prev { left: 10px; }
+      .carousel-next { right: 10px; }
+    }
 </style>
 </head>
 <body>
@@ -1264,41 +1288,43 @@ var particles;
   /* ============================================================
      MODAL STYLES
      ============================================================ */
-  .gallery-modal {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(74, 64, 54, 0.5);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    z-index: 2000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
+     .gallery-modal {
+       position: fixed;
+       top: 0; left: 0; width: 100%; height: 100%;
+       background: rgba(74, 64, 54, 0.5);
+       backdrop-filter: blur(8px);
+       -webkit-backdrop-filter: blur(8px);
+       z-index: 10002; /* FIX 1: Higher than music player (9999) and its core (10001) */
+       display: none;
+       align-items: center;
+       justify-content: center;
+       padding: 20px;
+       opacity: 0;
+       transition: opacity 0.3s ease;
+       box-sizing: border-box;
+     }
 
-  .gallery-modal.is-open {
-    display: flex;
-    opacity: 1;
-  }
+     .gallery-modal.is-open {
+       display: flex;
+       opacity: 1;
+     }
 
-  .gallery-card {
-    background: #FDFBF7;
-    border: 1px solid rgba(192, 122, 95, 0.3);
-    border-radius: 16px;
-    width: 100%;
-    max-width: 900px;
-    max-height: 90vh;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 20px 50px rgba(74, 64, 54, 0.2);
-    position: relative;
-    overflow: hidden;
-    transform: scale(0.95);
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
+     .gallery-card {
+       background: #FDFBF7;
+       border: 1px solid rgba(192, 122, 95, 0.3);
+       border-radius: 16px;
+       width: 100%;
+       max-width: 900px;
+       max-height: 90vh;
+       display: flex;
+       flex-direction: column;
+       box-shadow: 0 20px 50px rgba(74, 64, 54, 0.2);
+       position: relative;
+       overflow: hidden;
+       transform: scale(0.95);
+       transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+       margin: auto; /* FIX 2: Ensures perfect centering, prevents scrollbar-induced left-shift */
+     }
 
   .gallery-modal.is-open .gallery-card {
     transform: scale(1);
@@ -1665,10 +1691,14 @@ var particles;
     const card = document.createElement('article');
     card.className = 'boho-service-card';
 
-    // 1. Image wrapper: Link if URL exists, otherwise just a div
+    const isClickable = !service.url;
+    const wrapperClass = isClickable ? 'boho-service-image-wrapper boho-service-image-trigger' : 'boho-service-image-wrapper';
+    const cursorStyle = isClickable ? 'cursor: pointer;' : '';
+
+    // 1. Image wrapper: Link if URL exists, otherwise a clickable div
     const imageWrapper = service.url
-      ? `<a href="${service.url}" class="boho-service-image-wrapper" style="display:block;text-decoration:none;"><img alt="${service.alt || service.name || 'Service image'}" class="boho-service-image"></a>`
-      : `<div class="boho-service-image-wrapper"><img alt="${service.alt || service.name || 'Service image'}" class="boho-service-image"></div>`;
+      ? `<a href="${service.url}" class="${wrapperClass}" style="display:block;text-decoration:none;"><img alt="${service.alt || service.name || 'Service image'}" class="boho-service-image"></a>`
+      : `<div class="${wrapperClass}" style="${cursorStyle}"><img alt="${service.alt || service.name || 'Service image'}" class="boho-service-image"></div>`;
 
     // 2. Action element: <a> tag if URL exists, <button> if it doesn't
     const actionElement = service.url
@@ -1697,13 +1727,22 @@ var particles;
     const img = card.querySelector('.boho-service-image');
     attachSmartLoader(img, candidates, []);
 
-    // 3. Event Listener: ONLY attach modal logic if there is NO url
+    // 3. Event Listener: Attach modal logic to BOTH button and image if there is NO external URL
     if (!service.url) {
       const btn = card.querySelector('.boho-service-btn');
-      btn.addEventListener('click', (e) => {
+      const imgTrigger = card.querySelector('.boho-service-image-trigger');
+
+      const openModalHandler = (e) => {
         e.preventDefault();
         openModal(service);
-      });
+      };
+
+      if (btn) {
+        btn.addEventListener('click', openModalHandler);
+      }
+      if (imgTrigger) {
+        imgTrigger.addEventListener('click', openModalHandler);
+      }
     }
   });
 }

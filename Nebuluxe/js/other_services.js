@@ -39,7 +39,7 @@ window.other_services = [
         description: 'Unironically the best bookmarks I have ever used. These are reversible, and magnetically snap to the page. I make them out of the scraps from other projects. They are excellent little gifts for anyone who like to read.',
         type: 'Wholesale Available'
     },
-    {
+  /*  {
         id: 4,
         src: 'Images/other_services/comingsoon.png',
         fullsizesrc1:'Images/other_services/comingsoon.png',
@@ -48,7 +48,7 @@ window.other_services = [
         pricerange: '-',
         description: 'Prototypes pending',
         type: ''
-    },
+    }, */
     {
         id: 5,
         src: 'Images/other_services/earrings/20241116102923.jpg',
@@ -80,10 +80,10 @@ window.other_services = [
         alt: 'A thief came in the night',
         name: 'Kits',
         pricerange: '$4-$50',
-        description: 'loren ipsum',
+        description: 'I can make you custom fabric kits that are great for applique quilting, clothing, or scrabooking. The shapes come with fusible adhesive pre applied so they are ready to go. I offer a few of my art pieces as kits for people to assemble themselves.',
         type: 'Wholesale Available'
-    },
-    {
+    }
+  /*  {
         id: 7,
         src: 'Images/other_services/comingsoon.png',
         fullsizesrc1:'Images/other_services/comingsoon.png',
@@ -92,5 +92,5 @@ window.other_services = [
         pricerange: '-',
         description: 'Prototypes pending',
         type: ''
-    }
+    } */
 ]
