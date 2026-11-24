@@ -950,20 +950,22 @@ html, body {
   /* Fullscreen button: reset position, hide text, show ONLY the symbol */
   #reader-view:fullscreen .fullscreen-btn,
   #reader-view:-webkit-full-screen .fullscreen-btn {
-    position: static !important; /* Overrides desktop fixed positioning */
+    position: static !important;
     top: auto !important;
     right: auto !important;
     order: 2;
     flex: 0 0 auto;
-    font-size: 0; /* Hides the word "Fullscreen" or "Exit" */
+    font-size: 0 !important; /* Force-hides any text like "Exit" or "Fullscreen" */
     padding: 8px 12px;
+    line-height: 1;
   }
 
   /* Inject the symbol back in via pseudo-element */
   #reader-view:fullscreen .fullscreen-btn::after,
   #reader-view:-webkit-full-screen .fullscreen-btn::after {
     content: '⛶';
-    font-size: 20px;
+    font-size: 20px !important;
+    display: block;
   }
 
   /* Toggles layout in fullscreen */
@@ -1768,7 +1770,7 @@ var particles;
   #reader-view:fullscreen,
   #reader-view:-webkit-full-screen {
     margin: 0 !important;
-    padding: 15px 0 0 0 !important; /* Added 15px top padding */
+    padding: 15px 10px 10px 50px !important; /* Added 15px top padding */
     width: 100% !important;
     height: 100% !important;
     overflow: auto !important;
