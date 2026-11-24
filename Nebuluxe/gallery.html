@@ -3149,7 +3149,10 @@ this.modal.classList.add('is-open');
      }
 
      @media (max-width: 768px) {
-       .filter-tab { width: 110px; }
+       .filter-tab {
+     width: 110px;
+     top: 90px; /* Matches the new 90px height of the mobile top banner */
+   }
        .filter-tab-toggle { width: 110px; }
        .filter-tab-text { font-size: 14px; }
        .filter-layout {
