@@ -2537,7 +2537,24 @@ createBadgeCanvas(img, item) {
             this.drag.lastY = e.touches[0].clientY;
         }, { passive: false });
 
-        window.addEventListener('touchend', () => { this.drag.isDragging = false; });
+        this.canvas.addEventListener('touchend', (e) => {
+    if (this.drag.dragDistance <= 10) {
+        const touch = e.changedTouches[0];
+        const rect = this.canvas.getBoundingClientRect();
+        const scaleX = this.canvas.width / rect.width;
+        const scaleY = this.canvas.height / rect.height;
+        const clickX = Math.max(0, Math.min(this.canvas.width - 1, Math.floor((touch.clientX - rect.left) * scaleX)));
+        const clickY = Math.max(0, Math.min(this.canvas.height - 1, Math.floor(this.canvas.height - (touch.clientY - rect.top) * scaleY)));
+
+        const tileIndex = this.pickTileAt(clickX, clickY);
+        if (tileIndex !== -1) {
+            const tiles = this.getVisibleTiles();
+            const tile = tiles[tileIndex];
+            if (tile && tile.thumbnailItem) this.openModal(tile.thumbnailItem);
+        }
+    }
+    this.drag.isDragging = false;
+});
 
         this.canvas.addEventListener('wheel', (e) => {
             e.preventDefault();
