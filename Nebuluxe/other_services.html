@@ -651,7 +651,7 @@ html, body {
     </svg>
   </a>
 
-  <h1 class="banner-title">Other Services</h1>
+  <h1 class="banner-title">Other Goods<br> & Services</h1>
   <div></div>
 </header>
 
@@ -1282,6 +1282,23 @@ var particles;
 
   @media (max-width: 768px) {
     .boho-gallery-section { padding: 30px 5% 40px; }
+    .top-banner {
+      grid-template-columns: 70px 1fr 70px;
+      padding: 0 15px;
+      height: 90px;
+    }
+
+    .banner-title {
+      font-size: 18px;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: center;
+    }
+    .glowing-logo-wrapper {
+      width: 70px;
+    }
     .boho-gallery-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
   }
 
