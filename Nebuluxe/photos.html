@@ -2369,7 +2369,7 @@ window.addEventListener('touchend', (e) => {
             const tiles = this.getVisibleTiles();
             const tile = tiles[tileIndex];
             if (tile && tile.thumbnailItem) {
-                this.openModal(tile.thumbnailItem); // Opens the full size gallery card
+                this.showFullImage(tile.thumbnailItem); // Opens the full size gallery card
             }
         }
     }
