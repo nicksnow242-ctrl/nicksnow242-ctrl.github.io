@@ -600,6 +600,49 @@ html, body {
   }
 
   @media (max-width: 768px) {
+    .music-player-container {
+    top: 15px;
+    right: 15px;
+    z-index: 9999; /* Ensures it stays above banner */
+  }
+
+  .activation-core {
+    width: 50px;
+    height: 50px;
+  }
+
+  .core-icon {
+    font-size: 26px;
+  }
+
+  .mecha-panel {
+    width: 280px;
+    top: 55px; /* Adjusted to account for smaller activation core */
+  }
+
+  .oval-frame {
+    width: 130px;
+    height: 130px;
+  }
+
+  .top-banner {
+    grid-template-columns: 70px 1fr 70px;
+    padding: 0 15px;
+    height: 90px;
+  }
+
+  .banner-title {
+    font-size: 18px;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+  }
+
+  .glowing-logo-wrapper {
+    width: 70px;
+  }
       .gallery-modal {
         align-items: center;
         overflow-y: auto;
@@ -1130,6 +1173,7 @@ var particles;
      ============================================================ */
   .boho-gallery-section {
     margin-top: 110px;
+    margin-left: 10%;
     height: calc(100vh - 110px);
     overflow-y: auto;
     padding: 40px 10% 60px;
@@ -1150,6 +1194,7 @@ var particles;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 16px;
+    margin-bottom: 230px;
   }
 
   .boho-service-card {

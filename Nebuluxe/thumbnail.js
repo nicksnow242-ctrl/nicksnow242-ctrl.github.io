@@ -1204,7 +1204,7 @@ window.thumbnails = [
     "type": "Echos",
     "src": "/Nebuluxe/Images/Thumbnails/DSC1919.jpg",
     "fullsizesrc": "/Nebuluxe/Images/Fullsize/DSC1924.jpg",
-    "fullsizesrc2": "/Nebuluxe/Images/Fullsize/20250815095553.jpg",
+    
     "fullsizesrc3": "/Nebuluxe/Images/Fullsize/DSC1926.jpg",
     "fullsizesrc4": "/Nebuluxe/Images/Fullsize/DSC1921.jpg",
     "fullsizesrc5": "/Nebuluxe/Images/Fullsize/DSC1927.jpg",
