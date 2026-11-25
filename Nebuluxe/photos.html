@@ -1471,89 +1471,107 @@ html, body {
    MOBILE RESPONSIVENESS
    ============================================================ */
    @media (max-width: 768px) {
-     .gallery-wrapper .hint {
-       position: fixed;
-       bottom: 15px;
-       left: 15px;
-       font-size: 11px;
-       padding: 6px 10px;
-     }
-     .gallery-wrapper .fullscreen-btn {
-       bottom: 15px;
-       right: 15px;
-       width: 38px;
-       height: 38px;
-       font-size: 16px;
-     }
-     .gallery-wrapper .zoom-controls {
-       bottom: 15px;
-       right: 65px;
-     }
-     .gallery-wrapper .zoom-btn {
-       width: 38px;
-       height: 38px;
-       font-size: 20px;
-     }
+  /* ========================================== */
+  /* MOBILE UI CONTROLS FIX */
+  /* ========================================== */
+  .gallery-wrapper .hint {
+    position: fixed;
+    bottom: max(24px, env(safe-area-inset-bottom));
+    left: 16px;
+    font-size: 12px;
+    padding: 8px 12px;
+    z-index: 1005;
+    pointer-events: none;
+  }
 
-     .gallery-card {
-       max-height: 95vh;
-       max-width: 95vw;
-     }
-     .gallery-card-layout {
-       flex-direction: column;
-       overflow-y: auto;
-     }
-     .gallery-card-image-container {
-       flex: none;
-       max-height: 40vh;
-       padding: 12px;
-       border-right: none;
-       border-bottom: 1px solid rgba(0, 243, 255, 0.2);
-     }
-     .gallery-card-image {
-       max-height: 35vh;
-     }
-     .gallery-card-content {
-       flex: 1;
-       padding: 16px;
-     }
-     .gallery-card-title {
-       font-size: 22px;
-     }
-     .top-banner {
-       grid-template-columns: 70px 1fr 70px;
-       padding: 0 15px;
-       height: 90px;
-     }
+  .gallery-wrapper .fullscreen-btn {
+    position: fixed;
+    bottom: max(24px, env(safe-area-inset-bottom));
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+    z-index: 1005;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
 
-     .banner-title {
-       font-size: 18px;
-       letter-spacing: 0.1em;
-       white-space: nowrap;
-       overflow: hidden;
-       text-overflow: ellipsis;
-       text-align: center;
-     }
+  .gallery-wrapper .zoom-controls {
+    position: fixed;
+    bottom: max(24px, env(safe-area-inset-bottom));
+    right: 80px; /* 20px (right edge) + 48px (fullscreen btn) + 12px (gap) */
+    z-index: 1005;
+    touch-action: manipulation;
+  }
 
-     .glowing-logo-wrapper {
-       width: 70px;
-     }
+  .gallery-wrapper .zoom-btn {
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* ========================================== */
 
-     /* Always show carousel controls on touch devices */
-     .carousel-arrow {
-       opacity: 1;
-       pointer-events: auto;
-       width: 36px;
-       height: 36px;
-       font-size: 14px;
-     }
-     .carousel-dots {
-       opacity: 1;
-       pointer-events: auto;
-     }
-     .carousel-prev { left: 10px; }
-     .carousel-next { right: 10px; }
-   }
+  .gallery-card {
+    max-height: 95vh;
+    max-width: 95vw;
+  }
+  .gallery-card-layout {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .gallery-card-image-container {
+    flex: none;
+    max-height: 40vh;
+    padding: 12px;
+    border-right: none;
+    border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+  }
+  .gallery-card-image {
+    max-height: 35vh;
+  }
+  .gallery-card-content {
+    flex: 1;
+    padding: 16px;
+  }
+  .gallery-card-title {
+    font-size: 22px;
+  }
+  .top-banner {
+    grid-template-columns: 70px 1fr 70px;
+    padding: 0 15px;
+    height: 90px;
+  }
+
+  .banner-title {
+    font-size: 18px;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+  }
+
+  .glowing-logo-wrapper {
+    width: 70px;
+  }
+
+  /* Always show carousel controls on touch devices */
+  .carousel-arrow {
+    opacity: 1;
+    pointer-events: auto;
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+  .carousel-dots {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .carousel-prev { left: 10px; }
+  .carousel-next { right: 10px; }
+}
 
 /* Badge Base Styles */
 .boho-service-badge {
