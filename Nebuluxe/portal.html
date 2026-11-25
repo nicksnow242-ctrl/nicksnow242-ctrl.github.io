@@ -647,7 +647,21 @@ html, body {
 .orb-drawer.open {
   transform: translateY(-50%) translateX(0);
 }
-
+.orb-icon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 68%;
+  height: 68%;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  z-index: 2;
+  opacity: 0.95;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.55));
+}
 .orb-drawer-tab {
   pointer-events: auto;
   position: absolute;
@@ -1173,14 +1187,45 @@ var particles;
 (function () {
   /* ========================================== */
   /* EDIT THIS ARRAY TO ADD OR REMOVE ORBS      */
-  /* Each orb now has color1 and color2 hex     */
+  /* Each orb can now have:                     */
+  /* label, url, color1, color2, image          */
   /* ========================================== */
   var ORB_SITES = [
-    { label: 'Home',    url: 'index.html',   color1: '#b026ff', color2: '#ff00ff' },
-    { label: 'Gallery', url: 'gallery.html', color1: '#ff00ff', color2: '#00ffff' },
-    { label: 'Music',   url: 'music.html',   color1: '#00ffff', color2: '#0080ff' },
-    { label: 'Links',   url: 'links.html',   color1: '#0080ff', color2: '#00ff88' },
-    { label: 'Blog',    url: 'blog.html',    color1: '#00ff88', color2: '#b026ff' }
+    {
+      label: 'Home',
+      url: 'index.html',
+      color1: '#000000',
+      color2: '#ff00ff',
+      image: 'https://theoryunderground.com/images/tu_logo.png'
+    },
+    {
+      label: 'Gallery',
+      url: 'gallery.html',
+      color1: '#ff00ff',
+      color2: '#00ffff',
+      image: 'Images/gallery.png'
+    },
+    {
+      label: 'Music',
+      url: 'music.html',
+      color1: '#00ffff',
+      color2: '#0080ff',
+      image: 'Images/music.png'
+    },
+    {
+      label: 'Links',
+      url: 'links.html',
+      color1: '#0080ff',
+      color2: '#00ff88',
+      image: 'Images/links.png'
+    },
+    {
+      label: 'Blog',
+      url: 'blog.html',
+      color1: '#00ff88',
+      color2: '#b026ff',
+      image: 'Images/blog.png'
+    }
   ];
 
   var canvas = document.getElementById('sketch-overlay');
@@ -1265,9 +1310,7 @@ var particles;
       ['#00ff88', '#b026ff']
     ];
 
-    for (var i = 0; i < ORB_SITES.length; i++) {
-      var site = ORB_SITES[i];
-
+    ORB_SITES.forEach(function (site, i) {
       if (!site.label) {
         site.label = site.url || ('Site ' + (i + 1));
       }
@@ -1285,7 +1328,33 @@ var particles;
 
       site.rgb1 = hexToRgb(site.color1);
       site.rgb2 = hexToRgb(site.color2);
-    }
+
+      /* ========================================== */
+      /* IMAGE PRELOAD */
+      /* ========================================== */
+      site.img = null;
+      site.imgLoaded = false;
+
+      if (site.image) {
+        var img = new Image();
+
+        img.onload = function () {
+          site.imgLoaded = true;
+        };
+
+        img.onerror = function () {
+          site.imgLoaded = false;
+        };
+
+        img.src = site.image;
+
+        if (img.complete && img.naturalWidth) {
+          site.imgLoaded = true;
+        }
+
+        site.img = img;
+      }
+    });
   }
 
   normalizeSites();
@@ -1405,40 +1474,101 @@ var particles;
     ctx.globalCompositeOperation = 'lighter';
   }
 
-  function drawCenterOrb() {
-    if (!centerSite) return;
+  function drawCenterImage(site, cx, cy, pulse, endColor) {
+  var img = site.img;
 
-    var cx = canvas.width / 2;
-    var cy = canvas.height / 2;
-
-    var t = centerSite === lockedSite ? getTransitionT() : 1;
-    var endColor = lerpRgb(centerSite.rgb1, centerSite.rgb2, t);
-
-    var pulseTime = performance.now() * 0.002;
-    var pulse = 1 + Math.sin(pulseTime) * 0.08;
-    var r = 26 * pulse;
-
-    var grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 3.2);
-    grad.addColorStop(0, 'rgba(255,255,255,0.95)');
-    grad.addColorStop(0.28, rgba(centerSite.rgb1, 0.75));
-    grad.addColorStop(1, rgba(endColor, 0));
-
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.arc(cx, cy, r * 3.2, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = 'rgba(255,255,255,0.9)';
-    ctx.beginPath();
-    ctx.arc(cx, cy, r * 0.58, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.strokeStyle = rgba(endColor, 0.55);
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.arc(cx, cy, r * 1.55, 0, Math.PI * 2);
-    ctx.stroke();
+  if (!img || !site.imgLoaded) {
+    return;
   }
+
+  var naturalW = img.naturalWidth || 128;
+  var naturalH = img.naturalHeight || 128;
+
+  var maxSize = 60 * pulse;
+  var scale = Math.min(maxSize / naturalW, maxSize / naturalH);
+
+  var drawW = naturalW * scale;
+  var drawH = naturalH * scale;
+
+  ctx.save();
+
+  /* Important: draw the image normally, not additively */
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.globalAlpha = 1;
+
+  ctx.shadowColor = rgba(endColor, 0.8);
+  ctx.shadowBlur = 18;
+
+  ctx.drawImage(
+    img,
+    cx - drawW / 2,
+    cy - drawH / 2,
+    drawW,
+    drawH
+  );
+
+  ctx.restore();
+}
+
+function drawCenterOrb() {
+if (!centerSite) return;
+
+var cx = canvas.width / 2;
+var cy = canvas.height / 2;
+
+var t = centerSite === lockedSite ? getTransitionT() : 1;
+var endColor = lerpRgb(centerSite.rgb1, centerSite.rgb2, t);
+
+var pulseTime = performance.now() * 0.002;
+var pulse = 1 + Math.sin(pulseTime) * 0.08;
+var r = 26 * pulse;
+
+var hasImage = !!(centerSite.img && centerSite.imgLoaded);
+
+ctx.save();
+
+/* Glow behind the portal */
+ctx.globalCompositeOperation = 'lighter';
+
+var grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 3.2);
+grad.addColorStop(0, 'rgba(255,255,255,0.95)');
+grad.addColorStop(0.28, rgba(centerSite.rgb1, 0.75));
+grad.addColorStop(1, rgba(endColor, 0));
+
+ctx.fillStyle = grad;
+ctx.beginPath();
+ctx.arc(cx, cy, r * 3.2, 0, Math.PI * 2);
+ctx.fill();
+
+/* Draw image/core normally */
+ctx.globalCompositeOperation = 'source-over';
+
+if (hasImage) {
+  /* Dark backing circle so the image is visible */
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+  ctx.beginPath();
+  ctx.arc(cx, cy, 34 * pulse, 0, Math.PI * 2);
+  ctx.fill();
+
+  drawCenterImage(centerSite, cx, cy, pulse, endColor);
+} else {
+  /* Fallback core when no image exists */
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+  ctx.beginPath();
+  ctx.arc(cx, cy, r * 0.58, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+/* Outer ring */
+ctx.globalCompositeOperation = 'lighter';
+ctx.strokeStyle = rgba(endColor, 0.65);
+ctx.lineWidth = 1.5;
+ctx.beginPath();
+ctx.arc(cx, cy, hasImage ? 38 * pulse : r * 1.55, 0, Math.PI * 2);
+ctx.stroke();
+
+ctx.restore();
+}
 
   window.addEventListener('resize', resize);
   resize();
@@ -1553,9 +1683,7 @@ var particles;
         orb.setAttribute('aria-label', site.label);
         orb.title = site.label;
 
-        /*
-          The orb visual is generated from its two hex colors.
-        */
+        /* Orb gradient background */
         orb.style.background =
           'radial-gradient(circle at 30% 30%, ' +
           'rgba(255,255,255,0.95), ' +
@@ -1566,6 +1694,21 @@ var particles;
           '0 0 12px ' + rgba(site.rgb1, 0.85) +
           ', 0 0 30px ' + rgba(site.rgb2, 0.35) +
           ', inset 0 0 8px rgba(255,255,255,0.2)';
+
+        /* Add orb image if one exists */
+        if (site.image) {
+          var icon = document.createElement('img');
+          icon.className = 'orb-icon';
+          icon.alt = '';
+          icon.draggable = false;
+          icon.src = site.image;
+
+          icon.addEventListener('error', function () {
+            icon.style.display = 'none';
+          });
+
+          orb.appendChild(icon);
+        }
 
         var label = document.createElement('span');
         label.className = 'orb-label';
