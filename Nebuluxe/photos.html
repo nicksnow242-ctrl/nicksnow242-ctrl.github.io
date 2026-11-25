@@ -660,7 +660,7 @@ html, body {
     </svg>
   </a>
 
-  <h1 class="banner-title">Gallery</h1>
+  <h1 class="banner-title">Photos</h1>
   <div></div>
 </header>
 
@@ -2368,11 +2368,13 @@ this.drag.lastY = e.touches[0].clientY;
 }, { passive: false });
 
 window.addEventListener('touchend', (e) => {
+    // Ignore the event if the touch didn't start on the canvas (e.g., tapping a UI button)
+    if (!this.drag.isDragging) return;
+
     this.drag.isDragging = false;
 
     // If it was a tap (minimal movement), trigger the open modal logic
     if (this.drag.dragDistance < 10) {
-        if (this.canvas.width === 0 || this.canvas.height === 0 || !this.pickingFramebuffer) return;
 
         const rect = this.canvas.getBoundingClientRect();
         const scaleX = this.canvas.width / rect.width;
